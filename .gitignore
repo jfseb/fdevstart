@@ -1,6 +1,5 @@
 node_modules
 docs
-gen
 info.lcov
 gen_cov
 sensitive
