@@ -1,0 +1,20 @@
+start tile abc in kdm client 130
+start intent #abc-def in kdm client 130
+open ticket 123424
+start va01 in uv2 client 130
+call funnyMo
+call Egon Bahr
+open IT/IBC ticket 2432424
+open OSS ticket 234234
+open BCP ticket 4723424
+open Customer ticket from BASF
+open JIRA Item  TIPCORE-UI234
+open FLPD in Correction System 750 SP1
+edit catalogs in uv2 client 120 in CUST scope.
+open FLPD in Corr System 750 SP1 in Client Scope 
+open FLPD in Dev System 750 SP1 in cross-system mode
+open FLPD in Development System 751 client 110
+open SE38 in Dev System 1709 home client 
+open SE38 in Dev System 1709 dev client
+
+

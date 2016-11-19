@@ -1,0 +1,58 @@
+{
+  "name": "fioridevbot",
+  "version": "0.0.1",
+  "description": "Sample from https://docs.botframework.com/en-us/node/builder/guides/understanding-natural-language/#navtitle",
+  "main": "main.js",
+  "scripts": {
+    "test2": "node console_app.js",
+    "run": "nodeunit",
+    "start": "electron .",
+    "startN": "node app3.js",
+    "ui": "electron .",
+    "test": "./node_modules/.bin/nodeunit test/match test/utils && standard"
+  },
+  "keywords": [
+    "bot",
+    "luis",
+    "electron"
+  ],
+  "standard": {
+    "ignore": [
+      "src\\utils\\dam*",
+      "**/out/",
+      "lib/text*",
+      "render"
+    ]
+  },
+  "author": "jfsebpublic@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^3.4.4",
+    "debug": "^2.3.2"
+  },
+  "bin": {
+    "nodeunit": ".nodeunit/bin/nodeunit"
+  },
+  "directories": {
+    "lib": "./lib",
+    "src": "./src",
+    "test" : "./test",
+    "doc": "./doc",
+    "man": "./man1"
+  },
+  "devDependencies": {
+    "electron": "^1.4.7",
+    "eslint": "^3.10.2",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "grunt": "^1.0.1",
+    "grunt-contrib-nodeunit": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-standard": "^2.0.0",
+    "gruntify-eslint": "^3.1.0",
+    "nodeunit": "^0.10.2",
+    "standard": "^8.5.0",
+    "textarea-autogrow": "^1.0.0"
+  }
+}
