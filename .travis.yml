@@ -13,4 +13,7 @@ node_js:
 after_script:
   - npm run instrument
   - npm run testcov
+  - cat info.lcov
+  - type info.lcov
+  - ls info.lcov
   - npm run tocoveralls
