@@ -13,15 +13,3 @@ node_js:
 after_script:
   - npm run instrument
   - npm run testcov
-  - npm run testcov2
-  - npm run testcov3
-  - npm run testcov4
-  - npm run testcov5
-  - cat info.lcov
-  - type info.lcov
-  - ls info.lcov
-  - ls -la info.lcov
-  - coveralls info.lcov
-  - npm run tocoveralls
-  - npm run tocoveralls2
-  - npm run testcov2
