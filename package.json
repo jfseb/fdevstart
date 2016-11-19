@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "description": "Sample from https://docs.botframework.com/en-us/node/builder/guides/understanding-natural-language/#navtitle",
   "main": "main.js",
+
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jfseb/fdevstart.git"
+  },
+  "bugs": {
+    "url": "http://github.com/jfseb/fdevstart/issues"
+  },
   "scripts": {
     "test2": "node console_app.js",
     "run": "nodeunit",
