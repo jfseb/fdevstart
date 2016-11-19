@@ -17,3 +17,5 @@ after_script:
   - type info.lcov
   - ls info.lcov
   - npm run tocoveralls
+  - npm run tocoveralls2
+  - npm run testcov2

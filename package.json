@@ -20,7 +20,9 @@
     "ui": "electron .",
     "instrument": "gulp instrument",
     "testcov": "set DO_COVERAGE=1 && nodeunit test/match test/utils test/covleven.js --reporter=lcov >info.lcov",
+    "testcov2": "set DO_COVERAGE=1 && nodeunit test/match test/utils test/covleven.js --reporter=lcov | coveralls",
     "tocoveralls": "cat info.lcov | coveralls",
+    "tocoveralls2": "cat info.lcov | ./node_modules/.bin/coveralls",
     "cover2": "nodeunit test/covleven.js --reporter=lcov | csoveralls",
     "coveralls": "./node_modules/.bin/nodeunit test/covleven.js --reporter=lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"
