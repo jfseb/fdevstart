@@ -2,7 +2,6 @@
 
 Sample app to identify links / apps and start them after textual, bot-like input
 
-
 High Level Features:
 
 * Simple Dialog system to integrate UI startup
