@@ -8,9 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Insert this line above script imports  -->
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-<!--
-<script type="text/javascript" src="lib/textarea-autogrow.min.js"></script>
--->
     <style>
     textarea.ui-input-text.ui-textinput-autogrow {
     overflow: hidden
@@ -262,7 +259,7 @@ window.addEventListener('contextmenu', (e) => {
     // You can also require other files to run in this process
     var hs = require('./src/utils/history.js');
     window.inputHistory = new hs({
-      lengtH : 30
+      length : 80
     });
 
  </script>
@@ -320,6 +317,9 @@ textarea.addEventListener("paste",updateText);
 textarea.addEventListener("keyup",updateText);
 
 textarea.addEventListener("keydown",function(e) {
+  if (e.key === "F12") {
+    remote.getCurrentWindow().webContents.toggleDevTools();
+  }
   if (e.key === "Enter") {
      var value = textarea.value;
      inputHistory.push(value);
