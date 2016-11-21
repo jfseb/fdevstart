@@ -79,17 +79,24 @@ exports.test_nrNoMatches2 = function (test) {
 exports.test_expandParametersInURL = function (test) {
   var fut = dispatcher._test.expandParametersInURL
   test.equal(fut({
-    context: {abc: 'def', hij: 1},
-    result: {type: 'url', pattern: 'http://abc{abc}?def={hij}'
-  }}), 'http://abcdef?def=1', 'ok')
+    context: {
+      abc: 'def', hij: 1
+    },
+    result: {
+      type: 'url', pattern: 'http://abc{abc}?def={hij}'
+    }
+  }), 'http://abcdef?def=1', 'ok')
   test.done()
 }
 
 exports.test_expandParametersInURL2 = function (test) {
   var fut = dispatcher._test.expandParametersInURL
-  test.equal(fut({context: {abc: 'def', hij: 1},
-    result: {type: 'url', pattern: 'http://abc{abc}?klm={abc}&{efabc}=8&def={hij}'
-  }}), 'http://abcdef?klm=def&{efabc}=8&def=1', 'ok')
+  test.equal(fut({
+    context: {abc: 'def', hij: 1},
+    result: {
+      type: 'url', pattern: 'http://abc{abc}?klm={abc}&{efabc}=8&def={hij}'
+    }
+  }), 'http://abcdef?klm=def&{efabc}=8&def=1', 'ok')
   test.done()
 }
 
