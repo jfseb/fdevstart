@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * connect dispatcher
  * to HTML engine
@@ -12,16 +10,17 @@
 //  port: 8080
 // })
 
-var botdialog = require('../bot/dialog');
+var botdialog = require('../bot/dialog')
 
-var htmlconnector = require('./htmlconnector.js');
+var htmlconnector = require('./htmlconnector.js')
 // Create bot and bind to console
-var connector = new htmlconnector.HTMLConnector();
+var connector = new htmlconnector.HTMLConnector()
 
 connector.setAnswerHook(function (sAnswer) {
-  console.log('Got answer : ' + sAnswer + '\n');
-});
+  console.log('Got answer : ' + sAnswer + '\n')
+})
 
-botdialog.makeBot(connector);
+botdialog.makeBot(connector)
 
-module.exports = connector;
+module.exports = connector
+

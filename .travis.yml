@@ -3,6 +3,7 @@ before_script:
   - npm i -g typescript typings
   - typings install
   - tsc
+  - gulp default
   - gulp instrument
 node_js:
  - "4"
