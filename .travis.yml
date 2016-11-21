@@ -8,7 +8,7 @@ node_js:
  - "4"
  - "6"
  - "node"
- after_script:
+after_script:
   - npm run instrument
   - npm run testcover
   - npm run tocoveralls
