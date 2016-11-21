@@ -12,7 +12,7 @@
         "noImplicitAny": false,
         "removeComments": false,
         "noLib": false,
-        "outDir" : "gen",
+        "outDir" : "gen_tsc",
        // "sourceMap" : true,
         "inlineSourceMap": true,
         "preserveConstEnums": true,
@@ -24,10 +24,10 @@
         "!node_modules/**"
     ],
     "files": [
-        "src/ts/utils/damerauLevenshtein.ts",
-        "src/ts/constants.ts",
-        "src/ts/interfaces.d.ts",
-        "src/ts/match/dispatcher.ts"
+        "src/utils/damerauLevenshtein.ts",
+        "src/constants.ts",
+        "src/interfaces.d.ts",
+        "src/match/dispatcher.ts"
     ],
     "exclude": []
 }

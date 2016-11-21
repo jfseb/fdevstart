@@ -1,8 +1,14 @@
-;(function () {
-  'use strict'
+/// <reference path="../../lib/node-4.d.ts" />
 
-  var exec = require('child_process').exec
-  var leven = require('../utils/damerauLevenshtein.js').levenshtein
+
+import * as distance from '../utils/damerauLevenshtein';
+
+import { exec } from 'child_process';
+//  var exec = require('child_process').exec
+//  var leven = require('../utils/damerauLevenshtein.js').levenshtein
+
+
+  //var leven = require('../utils/damerauLevenshtein.js')
 
   var oUnitTests = [
     {
@@ -261,8 +267,8 @@
 
   function calcDistance (sText1, sText2) {
     // console.log("length2" + sText1 + " - " + sText2)
-    var a0 = leven(sText1.substring(0, sText2.length), sText2)
-    var a = leven(sText1.toLowerCase(), sText2)
+    var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
+    var a = distance.levenshtein(sText1.toLowerCase(), sText2)
     return a0 * 500 / sText2.length + a
   }
 
@@ -462,14 +468,14 @@
     return noMatchA + noMatchB
   }
 
-  function sameOrStar (s1, s2, oEntity) {
+  function sameOrStar (s1 : string, s2 : string | RegExp | Function , oEntity) {
     return s1 === s2 ||
       (s1 === undefined && s2 === null) ||
       ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
       ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
   }
 
-  function sameOrStarEmpty (s1, s2, oEntity) {
+  function sameOrStarEmpty (s1 : string, s2 : string | RegExp | Function, oEntity) {
     if (s1 === undefined && s2 === undefined) {
       return true
     }
@@ -494,9 +500,9 @@
       //      console.log(oShowEntity.context.client + " " + oContext.client +":" + sameOrStar(oContext.client,oShowEntity.context.client) + "\n")
       //  console.log(JSON.stringify(oShowEntity.context) + "\n" + JSON.stringify(oContext.client) + "\n")
 
-      return sameOrStar(oShowEntity.context.systemId, oContext.systemId) &&
-        sameOrStar(oContext.tool, oShowEntity.context.tool) &&
-        sameOrStar(oContext.client, oShowEntity.context.client) &&
+      return sameOrStar(oShowEntity.context.systemId, oContext.systemId, oContext) &&
+        sameOrStar(oContext.tool, oShowEntity.context.tool, oContext) &&
+        sameOrStar(oContext.client, oShowEntity.context.client, oContext) &&
         sameOrStarEmpty(oContext.systemObjectCategory, oShowEntity.context.systemObjectCategory, oContext) &&
         sameOrStarEmpty(oContext.systemObjectId, oShowEntity.context.systemObjectId, oContext)
     //      && oShowEntity.context.tool === oContext.tool
@@ -556,7 +562,7 @@
 
   // E:\projects\nodejs\botbuilder\samplebot>"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" --incognito -url www.spiegel.de
 
-  var dispatcher = {
+  export const dispatcher = {
     execShowEntity: execShowEntity,
     _test: {
       sameOrStar: sameOrStar,
@@ -570,5 +576,7 @@
     }
   }
 
-  module.exports = dispatcher
-}())
+  //exports dispatcher;
+
+  //module.exports = dispatcher
+

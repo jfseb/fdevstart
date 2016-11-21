@@ -32,6 +32,8 @@ gulp.task('watch', function () {
     ['tsc', 'test', 'standard'])
 })
 
+const babel = require('gulp-babel')
+
 /**
  * compile tsc (including srcmaps)
  * @input srcDir
@@ -42,11 +44,16 @@ gulp.task('tsc', function () {
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(tsProject())
+
     // ts({
     // ...
     // }))
 
   return tsResult.js
+    .pipe(babel({
+      comments: true,
+      presets: ['es2015']
+    }))
     // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('gen'))
@@ -69,8 +76,6 @@ gulp.task('instrument', function () {
 
 var newer = require('gulp-newer')
 
-const babel = require('gulp-babel')
-
 var imgSrc = 'src/**/*.js'
 var imgDest = 'gen'
 
@@ -79,7 +84,7 @@ var imgDest = 'gen'
 //
 gulp.task('babel', function () {
   // Add the newer pipe to pass through newer images only
-  return gulp.src(imgSrc)
+  return gulp.src([imgSrc, 'gen_tsc/**/*.js'])
     .pipe(newer(imgDest))
     .pipe(babel({
       comments: true,

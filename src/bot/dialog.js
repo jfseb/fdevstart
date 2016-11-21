@@ -16,7 +16,7 @@
 
 var builder = require('botbuilder')
 
-var dispatcher = require('../match/dispatcher.js')
+var dispatcher = require('../match/dispatcher.js').dispatcher
 // globalTunnel.initialize({
 //  host: 'proxy.exxxample.com',
 //  port: 8080
