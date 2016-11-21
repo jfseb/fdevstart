@@ -288,6 +288,10 @@
     return null
   }
 
+  /**
+   * a function to match a unit test using levenshtein distances
+   * @public
+   */
   function fnFindUnitTest (ssystemObjectId, oContext) {
     return fnFindMatch(ssystemObjectId, oContext, oUnitTests)
   }

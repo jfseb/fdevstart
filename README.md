@@ -15,49 +15,37 @@ High Level Features:
 * Note: the luis model and service url (including subscription project) are not part of the build
 
 ## Built commandline
-Create a folder for your bot, cd into it, and run npm init.
 
     npm install
 
     npm init
 
-Run commandline
+Run Electrom application
 
-    node app2.js
+    npm start
 
-Run Electro application
+    or
 
 	electron .
 
-    npm start
+
+Run commandline bot
+
+    node console_app.js
 
 Run tests
 
 	npm test
 
-Get the BotBuilder and Restify modules using npm.
 
-    npm install --save botbuilder
-    npm install --save restify
 
-Create a file named app.js and say hello in a few lines of code.
+The code requires a luis model and subscription key which is not part of git
 
-    var restify = require('restify');
-    var builder = require('botbuilder');
 
-    // Create bot and add dialogs
-    var connector = new builder.ChatConnector({
-        appId: "YourAppId",
-        appPassword: "YourAppSecret"
-    });
-    var bot = new builder.UniversalBot(connector);
-    bot.dialog('/', function (session) {
-        session.send('Hello World');
-    });
+##Development
 
-    // Setup Restify Server
-    var server = restify.createServer();
-    server.post('/api/messages', connector.listen());
-    server.listen(process.env.port || 3978, function () {
-        console.log('%s listening to %s', server.name, server.url);
-    });
+We are moving towards typescript for some of the logic
+
+gulp, gulp-watch
+
+

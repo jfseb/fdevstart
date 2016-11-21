@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+       // "module" : "es6", //'es2015
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+      //  "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "noLib": false,
+        "outDir" : "release/",
+       // "sourceMap" : true,
+        "inlineSourceMap": true,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!node_modules/**"
+    ],
+    "files": [
+        "src/ts/constants.ts",
+        "src/ts/utils/damerauLevenshtein.ts",
+        "src/ts/interfaces.d.ts",
+        "src/ts/match/dispatcher.ts"
+    ],
+    "exclude": []
+}

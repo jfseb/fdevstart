@@ -1,6 +1,9 @@
 /**
- * connect dispatcher
- * to HTML engine
+ * The bot implementation
+ *
+ * Instantiate apssing a connector via
+ * makeBot
+ *
  */
 
 // var exec = require('child_process').exec
@@ -33,6 +36,12 @@ var bot
 //   connector.processMessage('start unit test ABC ')
 // }, 5000)
 
+/**
+ * Construct a bot
+ * @param connector {Connector} the connector to use
+ * HTMLConnector
+ * or connector = new builder.ConsoleConnector().listen()
+ */
 function makeBot (connector) {
   bot = new builder.UniversalBot(connector)
 

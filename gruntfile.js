@@ -2,6 +2,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch')
   grunt.loadNpmTasks('grunt-contrib-nodeunit')
   grunt.loadNpmTasks('grunt-standard')
+  grunt.loadNpmTasks('grunt-tsc')
 
   grunt.initConfig({
     eslint: {
@@ -12,21 +13,22 @@ module.exports = function (grunt) {
         src: ['dispatcher.js', 'test/**/*.js']
       }
     },
+    tsc: {},
     watch: {
-      files: ['*.js', 'src/**/*.js', 'lib/**/*.js', 'test/**/*.js'],
-      tasks: ['nodeunit', 'standard']
+      files: ['src/**/*.tsc', '*.js', 'src/**/*.js', 'lib/**/*.js', 'test/**/*.js'],
+      tasks: ['tsc', 'nodeunit', 'standard']
     },
     nodeunit: {
       all: ['test/**/*.nunit.js']
-      // options: {
-      //  reporter: 'junit',
-      //  reporterOptionsX: {
-      //    output: 'outputdir'
-      //  }
-      //  }
+    // options: {
+    //  reporter: 'junit',
+    //  reporterOptionsX: {
+    //    output: 'outputdir'
+    //  }
+    //  }
     }
   })
 
-    // Default task.
+  // Default task.
   grunt.registerTask('default', ['nodeunit', 'standard'])
 }

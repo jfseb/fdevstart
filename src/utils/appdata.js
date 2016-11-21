@@ -1,3 +1,13 @@
+/**
+ * The appdata service
+ * @file src/utils/appdata.js
+ * @author jfseb
+ */
+
+/**
+ * @module fsdevstart.utils.appdata
+ */
+
 ;(function () {
   'use strict'
   var process = require('process')
@@ -12,7 +22,10 @@
   function getUserHome () {
     return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
   }
-
+  /**
+   * Construct an appdata entity
+   * @constructor
+   */
   const AppData = function (sAppName, sFileName) {
     this.AppName = sAppName
     logger.log('Dest' + sAppName)
@@ -39,6 +52,13 @@
     return this.data[sKey]
   }
 
+  /**
+   * Constructor for file persistence handle,
+   * uses user home directory + <sAppName> + / + sFileName for persitence
+   * @param sAppName {string} the application name
+   * @param sFileName {string} the filename
+   * @constructor
+   */
   function PersistenceHandle (sAppName, sFileName) {
     this.AppName = sAppName
     logger.log('Dest' + sAppName)

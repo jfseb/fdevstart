@@ -1,3 +1,4 @@
+/*! copyright gerd forstmann, all rights reserved */
 var AppData = require('../../src/utils/appdata.js')
 
 exports.testCtor = function (test) {
@@ -21,6 +22,9 @@ exports.testCtor = function (test) {
   test.done()
 }
 
+/**
+ * Unit test for sth
+ */
 exports.testPersistence = function (test) {
   test.expect(2)
   var u

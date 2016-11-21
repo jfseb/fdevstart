@@ -1,40 +1,26 @@
 'use strict'
-// based on: http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance
 
+// based on: http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance
 // and:  http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
 
-/**
- * Distance of strings algorithm
- * @module fsdevstart.utils.damerauLevenshtein
- */
-
-/**
- * a function calculating distance between two strings
- * @public
- */
-function levenshtein (a, b) {
-  var i
-  var j
-
-  var cost
+export function levenshtein (a : string, b : string) {
+  var i : number
+  var j : number
+  var cost : number
   var d = []
   if (a.length === 0) {
     return b.length
   }
-
   if (b.length === 0) {
     return a.length
   }
-
   for (i = 0; i <= a.length; i++) {
     d[ i ] = []
     d[ i ][ 0 ] = i
   }
-
   for (j = 0; j <= b.length; j++) {
     d[ 0 ][ j ] = j
   }
-
   for (i = 1; i <= a.length; i++) {
     for (j = 1; j <= b.length; j++) {
       if (a.charAt(i - 1) === b.charAt(j - 1)) {
@@ -70,6 +56,3 @@ function levenshtein (a, b) {
   return d[ a.length ][ b.length ]
 }
 
-module.exports = {
-  distance: levenshtein
-}

@@ -1,5 +1,14 @@
 language: node_js
+before_script:
+  - npm i -g typescript typings
+  - typings install
+  - tsc
+  - gulp instrument
 node_js:
  - "4"
  - "6"
  - "node"
+ after_script:
+  - npm run instrument
+  - npm run testcover
+  - npm run tocoveralls

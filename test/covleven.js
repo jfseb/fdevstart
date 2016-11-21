@@ -1,5 +1,5 @@
 // import * as dlsh from '../../src/ts/utils/damerauLevenshtein.js'
-var dlsh = require('../../src/ts/utils/damerauLevenshtein.js').levenshtein
+var dlsh = require('../src-cov/damerauLevenshtein.js').distance
 
 exports.testDLSH = function (test) {
   var fn = dlsh
