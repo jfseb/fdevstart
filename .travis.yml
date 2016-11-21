@@ -11,5 +11,5 @@ node_js:
  - "node"
 after_script:
   - npm run instrument
-  - npm run testcover
+  - npm run testcov
   - npm run tocoveralls
