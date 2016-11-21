@@ -6,8 +6,11 @@
 var bb = require('botbuilder')
 var Message = bb.Message
 var HTMLConnector = (function () {
-  function HTMLConnector () {
+  function HTMLConnector (options) {
     this.replyCnt = 0
+    this.user = options && options.user || 'user1'
+    this.bot = options && options.bot || 'fdevstart'
+    this.conversationID = '' + Date.now()
   }
 
   HTMLConnector.prototype.setAnswerHook = function (answerHook) {
@@ -33,9 +36,9 @@ var HTMLConnector = (function () {
       var msg = new Message()
         .address({
           channelId: 'console',
-          user: { id: 'user', name: 'User1' },
-          bot: { id: 'bot', name: 'Bot' },
-          conversation: { id: 'Convo1' }
+          user: { id: this.user, name: this.user },
+          bot: { id: this.bot, name: this.bot },
+          conversation: { id: 'conv_' + this.conversationID }
         })
         .timestamp()
         .text(line)

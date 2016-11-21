@@ -1,4 +1,4 @@
-(function () {
+;(function () {
   'use strict'
 
   var exec = require('child_process').exec
@@ -35,8 +35,40 @@
     }
   ]
 
+  var oWikis = [
+    {
+      key: 'FCC ABAP Alignment',
+      context: {
+        systemObjectId: 'UI2 Support page',
+        path: '/unifiedshell/display/FCC+ABAP+Alignment'
+      }
+    },
+    {
+      key: 'NavTargetResolution',
+      context: {
+        systemObjectId: 'NavTargetResolution',
+        path: '/sap/bc/test/NavTargetResolution.js'
+      }
+    },
+    {
+      key: 'CSTR',
+      context: {
+        systemObjectId: 'ClientSideTargetResolution',
+        path: '/sap/bc/test/CleintSideTargetResolution.js'
+      }
+    },
+    {
+      key: 'Shell.controller.js',
+      context: {
+        systemObjectId: 'Shell.controller.js',
+        path: '/sap/bc/test/Shell.controller.js'
+      }
+    }
+  ]
+
+
   function calcDistance (sText1, sText2) {
-    // console.log("length2" + sText1 + " - " + sText2);
+    // console.log("length2" + sText1 + " - " + sText2)
     var a0 = leven.distance(sText1.substring(0, sText2.length), sText2)
     var a = leven.distance(sText1.toLowerCase(), sText2)
     return a0 * 500 / sText2.length + a
@@ -64,31 +96,71 @@
     return null
   }
 
-  var aShowEntityActions = [ {
-    context: {
-      systemId: 'UV2',
-      client: /^\d{3,3}$/,
-      systemtype: 'ABAPFES',
-      tool: 'FLP'
+
+
+
+  function fnFindWiki (sKeyword, oContext) {
+    // return a better context if there is a match
+    oUnitTests.sort(function (oEntry1, oEntry2) {
+      var u1 = calcDistance(oEntry1.key.toLowerCase(), sKeyword)
+      var u2 = calcDistance(oEntry2.key.toLowerCase(), sKeyword)
+      return u1 - u2
+    })
+    // later: in case of conflicts, ask,
+    // now:
+    var dist = calcDistance(oWikis[0].key.toLowerCase(), sKeyword)
+    console.log('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
+    if (dist < 150) {
+      var o1 = Object.assign({}, oContext)
+      var o2
+      o1.context = Object.assign({}, o1.context)
+      o2 = o1
+      o2.context = Object.assign(o1.context, oUnitTests[0].context)
+      return o2
+    }
+    return null
+  }
+
+
+  var aShowEntityActions = [
+    {
+      context: {
+        systemId: 'UV2',
+        client: /^\d{3,3}$/,
+        systemtype: 'ABAPFES',
+        tool: 'FLP'
+      },
+      result: {
+        type: 'URL',
+        url: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client={client}'
+      }
     },
-    result: {
-      type: 'URL',
-      url: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client={client}'
-    }
-  },
-{ context: {
-  systemId: 'uv2',
-  client: '120',
-  systemObjectCategory: 'catalog',
-  systemObjectId: /.*/,
-  systemtype: 'ABAPFES',
-  tool: 'FLPD'
-},
-    result: {
-      type: 'URL',
-      pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}#CATALOG:{systemObjectId}'
-    }
-},
+    {
+      context: {
+        systemId: 'UV2',
+        client: /^\d{3,3}$/,
+        systemtype: 'ABAPFES',
+        systemObjectId: 'flpd'
+      },
+      result: {
+        type: 'URL',
+        url: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}'
+      }
+    },
+    {
+      context: {
+        systemId: 'uv2',
+        client: '120',
+        systemObjectCategory: 'catalog',
+        systemObjectId: /.*/,
+        systemtype: 'ABAPFES',
+        tool: 'FLPD'
+      },
+      result: {
+        type: 'URL',
+        pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}#CATALOG:{systemObjectId}'
+      }
+    },
     {
       context: {
         systemObjectCategory: 'unit',
@@ -99,19 +171,30 @@
         pattern: 'http://localhost:8080/{path}'
       }
     },
-{ context: {
-  systemId: 'JIRA'
-},
-  result: {
-    type: 'URL',
-    pattern: 'https://jira.wdf.sap.corp:8080/TIPCOREUIII'
-  }
-}
-]
+    {
+      context: {
+        systemObjectCategory: 'wiki',
+        systemObjectId: fnFindWiki
+      },
+      result: {
+        type: 'URL',
+        pattern: 'https://wiki.wdf.sap.corp/{path}'
+      }
+    },
+    {
+      context: {
+        systemId: 'JIRA'
+      },
+      result: {
+        type: 'URL',
+        pattern: 'https://jira.wdf.sap.corp:8080/TIPCOREUIII'
+      }
+    }
+  ]
 
-    // if TOOL = JIRA || SystemId = JIRA -> SystemId = JIRA
-//
-//
+  // if TOOL = JIRA || SystemId = JIRA -> SystemId = JIRA
+  //
+  //
 
   function startBrowser (url) {
     var cmd =
@@ -124,7 +207,7 @@
       console.log(`stdout: ${stdout}`)
       console.log(`stderr: ${stderr}`)
     })
-  };
+  }
 
   function expandParametersInURL (oMergedContextResult) {
     var ptn = oMergedContextResult.result.pattern
@@ -175,9 +258,9 @@
 
   function sameOrStar (s1, s2, oEntity) {
     return s1 === s2 ||
-         (s1 === undefined && s2 === null) ||
-        ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
-        ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
+      (s1 === undefined && s2 === null) ||
+      ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
+      ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
   }
 
   function sameOrStarEmpty (s1, s2, oEntity) {
@@ -189,8 +272,8 @@
     }
 
     return s1 === s2 ||
-        ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
-        ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
+      ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
+      ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
   }
   function filterShowEntity (oContext, aShowEntity) {
     var aFiltered
@@ -200,38 +283,38 @@
       }
     })
     aFiltered = aShowEntity.filter(function (oShowEntity) {
- //       console.log("...")
- //      console.log(oShowEntity.context.tool + " " + oContext.tool + "\n");
- //      console.log(oShowEntity.context.client + " " + oContext.client +":" + sameOrStar(oContext.client,oShowEntity.context.client) + "\n");
- //  console.log(JSON.stringify(oShowEntity.context) + "\n" + JSON.stringify(oContext.client) + "\n");
+      //       console.log("...")
+      //      console.log(oShowEntity.context.tool + " " + oContext.tool + "\n")
+      //      console.log(oShowEntity.context.client + " " + oContext.client +":" + sameOrStar(oContext.client,oShowEntity.context.client) + "\n")
+      //  console.log(JSON.stringify(oShowEntity.context) + "\n" + JSON.stringify(oContext.client) + "\n")
 
       return sameOrStar(oShowEntity.context.systemId, oContext.systemId) &&
-             sameOrStar(oContext.tool, oShowEntity.context.tool) &&
-             sameOrStar(oContext.client, oShowEntity.context.client) &&
-             sameOrStarEmpty(oContext.systemObjectCategory, oShowEntity.context.systemObjectCategory, oContext) &&
-             sameOrStarEmpty(oContext.systemObjectId, oShowEntity.context.systemObjectId, oContext)
+        sameOrStar(oContext.tool, oShowEntity.context.tool) &&
+        sameOrStar(oContext.client, oShowEntity.context.client) &&
+        sameOrStarEmpty(oContext.systemObjectCategory, oShowEntity.context.systemObjectCategory, oContext) &&
+        sameOrStarEmpty(oContext.systemObjectId, oShowEntity.context.systemObjectId, oContext)
     //      && oShowEntity.context.tool === oContext.tool
     })
-  //  console.log(aFiltered.length);
+    //  console.log(aFiltered.length)
     // match other context parameters
     aFiltered.sort(function (a, b) {
       var nrMatchesA = nrMatches(a.context, oContext)
       var nrMatchesB = nrMatches(b.context, oContext)
       var nrNoMatchesA = nrNoMatches(a.context, oContext)
       var nrNoMatchesB = nrNoMatches(b.context, oContext)
-     //   console.log(JSON.stringify(a.context));
-     //   console.log(JSON.stringify(b.context));
-     //   console.log(JSON.stringify(oContext));
+      //   console.log(JSON.stringify(a.context))
+      //   console.log(JSON.stringify(b.context))
+      //   console.log(JSON.stringify(oContext))
       var res = -(nrMatchesA - nrMatchesB) * 100 + (nrNoMatchesA - nrNoMatchesB)
-   //     console.log("diff " + res);
+      //     console.log("diff " + res)
       return res
     })
     if (aFiltered.length === 0) {
       console.log('no target for showEntity ' + JSON.stringify(oContext))
     }
-    // console.log(JSON.stringify(aFiltered,undefined,2));
+    // console.log(JSON.stringify(aFiltered,undefined,2))
     if (aFiltered[0]) {
-        // execute all functions
+      // execute all functions
 
       var oMatch = aFiltered[0]
 
@@ -255,7 +338,7 @@
       return oMerged
     }
     return null
-  };
+  }
 
   function execShowEntity (oEntity) {
     var merged = filterShowEntity(oEntity, aShowEntityActions)
@@ -265,7 +348,7 @@
     return null
   }
 
-// E:\projects\nodejs\botbuilder\samplebot>"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" --incognito -url www.spiegel.de
+  // E:\projects\nodejs\botbuilder\samplebot>"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" --incognito -url www.spiegel.de
 
   var dispatcher = {
     execShowEntity: execShowEntity,
@@ -282,5 +365,4 @@
   }
 
   module.exports = dispatcher
-}()
-)
+}())

@@ -171,7 +171,7 @@ li {
 	<div style="margin-top:20px" data-theme="a">
 
 <ul class="ui-listview"  style="-webkit-app-region: no-drag" data-role="listview">
-
+<!--
   <li class="response">
   <div class="common response">
     thisi sthe way forward
@@ -196,18 +196,18 @@ li {
    a request
   </div>
   </li>
-
+-->
   <li class="common response">
   <div class="common response">
-   a response
+    Indicate your query or wish...
   </div>
   </li>
 
 
    <li data-icon="false" class="request"
-  ><textarea id="growme" rows=5 value="Abcdef"
+  ><textarea id="growme" rows="5" value="Abcdef"
   class="ui-input-textX"
-  >This is what i think is trues</textarea></li>
+  >Start FLPD in UV2 client 120</textarea></li>
 
 </ul>
 </div>
@@ -258,8 +258,13 @@ window.addEventListener('contextmenu', (e) => {
 <script>
     // You can also require other files to run in this process
     var hs = require('./src/utils/history.js');
+
+    var as = require('./src/utils/appdata.js');
+    var ad = new as.PersistenceHandle("fdevstart","history.json")
     window.inputHistory = new hs({
-      length : 80
+      length : 80,
+      save: ad.save.bind(ad),
+      load: ad.load.bind(ad)
     });
 
  </script>

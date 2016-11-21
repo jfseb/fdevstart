@@ -97,9 +97,9 @@ function makeBot (connector) {
 
       var systemId = builder.EntityRecognizer.findEntity(combinedEntities, 'SystemId')
       var client = builder.EntityRecognizer.findEntity(args.entities, 'client')
-      var systemObjectId = builder.EntityRecognizer.findEntity(args.entities, 'systemObjectId') ||
-      builder.EntityRecognizer.findEntity(args.entities, 'SystemObject') ||
-      builder.EntityRecognizer.findEntity(args.entities, 'builtin.number')
+      var systemObjectId = builder.EntityRecognizer.findEntity(combinedEntities, 'systemObjectId') ||
+      builder.EntityRecognizer.findEntity(combinedEntities, 'SystemObject') ||
+      builder.EntityRecognizer.findEntity(combinedEntities, 'builtin.number')
       var systemObjectCategory = builder.EntityRecognizer.findEntity(args.entities, 'SystemObjectCategory')
       session.dialogData.system = {
         systemId: systemId,
@@ -127,6 +127,9 @@ function makeBot (connector) {
       }
       if (sSystemObjectCategory === 'group') {
         sTool = 'FLPD'
+      }
+      if (!ssystemObjectId && !sSystemObjectCategory) {
+        sTool = 'FLP'
       }
 
       session.send('Showing entity "%s" of type "%s" in System "%s" client "%s" ',

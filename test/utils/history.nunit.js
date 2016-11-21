@@ -130,3 +130,104 @@ exports.testRetpushOld2 = function (test) {
   test.equal(u.forward(), 'exntry 2', 'fw 2y')
   test.done()
 }
+
+exports.testHistoryPersistenceWrite = function (test) {
+  // test.expect(3)
+  var u
+  var oLastSave
+  function fnSave (oData) {
+    oLastSave = oData
+  }
+  u = new History({ length: 6,
+    default: 'defaultfwd',
+    save: fnSave
+  })
+  u.push('entry 1')
+  u.push('exntry 2')
+  u.push('entry 3')
+
+  test.deepEqual(oLastSave, {
+    pos: 3,
+    entries: [ 'entry 1', 'exntry 2', 'entry 3' ]
+  }, 'last save')
+  u.push('entry 4')
+  test.equal(u.backward(), 'entry 4', 'backward 4')
+  test.deepEqual(oLastSave, {
+    pos: 4,
+    entries: [ 'entry 1', 'exntry 2', 'entry 3', 'entry 4' ]
+  }, 'save after backwards')
+
+  test.done()
+}
+
+exports.testHistoryPersistenceLoadEmpty = function (test) {
+  // test.expect(3)
+  var u
+  var fnCB
+  function fnLoad (cb) {
+    fnCB = cb
+  }
+  u = new History({ length: 5,
+    default: 'defaultfwd',
+    load: fnLoad
+  })
+  fnCB(undefined, {
+    pos: 2,
+    entries: [ 'hentry1', 'hentry2', 'hentry3' ]
+  })
+  u.push('entry 1')
+  test.equal(u.backward(), 'hentry3', 'backward 2')
+  test.equal(u.backward(), 'hentry2', 'backward 2')
+  test.equal(u.backward(), 'hentry1', 'backward 2n')
+  test.done()
+}
+
+exports.testHistoryPersistenceLoadEmptyPos2 = function (test) {
+  // test.expect(3)
+  var u
+  var fnCB
+  function fnLoad (cb) {
+    fnCB = cb
+  }
+  u = new History({ length: 5,
+    default: 'defaultfwd',
+    load: fnLoad
+  })
+  fnCB(undefined, {
+    pos: 3,
+    entries: [ 'hentry1', 'hentry2', 'hentry3' ]
+  })
+  u.push('entry 1')
+  test.equal(u.backward(), 'entry 1', 'backward 1')
+  test.equal(u.backward(), 'hentry3', 'backward 2')
+  test.equal(u.backward(), 'hentry2', 'backward 2')
+  test.equal(u.backward(), 'hentry1', 'backward 2n')
+  test.done()
+}
+
+exports.testHistoryPersistenceLoadLate = function (test) {
+  // test.expect(3)
+  var u
+  var fnCB
+  function fnLoad (cb) {
+    fnCB = cb
+  }
+  u = new History({ length: 5,
+    default: 'defaultfwd',
+    load: fnLoad
+  })
+  u.push('entry 1')
+  fnCB(undefined, {
+    pos: 3,
+    entries: [ 'hentry1', 'hentry2', 'hentry3' ]
+  })
+  u.push('exntry 2')
+  u.push('entry 3')
+  test.equal(u.backward(), 'entry 3', 'backward 1 ')
+  test.equal(u.backward(), 'exntry 2', 'backward 2')
+  test.equal(u.backward(), 'entry 1', 'backward 1')
+  test.equal(u.backward(), 'hentry3', 'backward 2')
+  test.equal(u.backward(), 'hentry2', 'backward 2')
+  test.equal(u.backward(), 'hentry2', 'backward 2n')
+  test.done()
+}

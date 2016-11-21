@@ -1,9 +1,28 @@
 function History (options) {
   this._default = options && options.default || ''
   this._data = []
+  this._save = options && options.save
   this._length = options && options.length || 20
   this._pos = (typeof options.pos === 'number') ? options.pos : (this._data.length)
   this._pos = Math.max(0, Math.min(this._data.length, this._pos))
+  var that = this
+  if (options && typeof options.load === 'function') {
+    options.load(function (err, oData) {
+      if (err) {
+        throw err
+      }
+      if (oData && oData.entries) {
+        if (that._data.length === 0) {
+          that._data = oData.entries || []
+          that._pos = oData.pos
+        } else {
+          that._data = oData.entries.concat(that._data)
+          that._pos = that._pos + oData.entries.length
+          that._shiftIfNeeded()
+        }
+      }
+    })
+  }
   console.log('here pos ' + this._pos)
 }
 
@@ -32,6 +51,7 @@ History.prototype._shiftIfNeeded = function () {
     console.log('shifting array' + JSON.stringify(this._data))
     this._data = this._data.slice(1)
     console.log('shifting array' + JSON.stringify(this._data) + ' new pos:' + this._pos)
+    this.save()
   }
 }
 
@@ -45,6 +65,7 @@ History.prototype.push = function (oNext) {
       if (oNext !== this._data[this._data.length - 1]) {
         this._data.push(oNext)
         this._shiftIfNeeded()
+        this.save()
         return
       } else {
         // we added the last thing again, do not increase
@@ -53,6 +74,7 @@ History.prototype.push = function (oNext) {
     } else {
       this._data.push(oNext)
       this._shiftIfNeeded()
+      this.save()
       return
     }
   } else {
@@ -66,8 +88,22 @@ History.prototype.push = function (oNext) {
       console.log('pushing ' + oNext + 'into ' + JSON.stringify(this._data))
       this._shiftIfNeeded()
       console.log('after push ' + this._pos + '/' + JSON.stringify(this._data))
+      this.save()
       return
     }
+  }
+}
+
+History.prototype.save = function () {
+  if (this._save) {
+    this._save({
+      pos: this._pos,
+      entries: this._data.slice(0)
+    }, function (err) {
+      if (err) {
+        console.log('error' + err)
+      }
+    })
   }
 }
 
