@@ -1,5 +1,8 @@
 /*! copyright gerd forstmann, all rights reserved */
-var AppData = require('../../src/utils/appdata.js')
+var process = require('process')
+var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+
+var AppData = require(root + '/utils/appdata.js')
 
 exports.testCtor = function (test) {
   // test.expect(3)

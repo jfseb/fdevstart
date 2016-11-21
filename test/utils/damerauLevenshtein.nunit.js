@@ -1,5 +1,9 @@
 // import * as dlsh from '../../src/ts/utils/damerauLevenshtein.js'
-var dlsh = require('../../src/ts/utils/damerauLevenshtein.js').levenshtein
+
+var process = require('process')
+var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+
+var dlsh = require(root + '/utils/damerauLevenshtein.js').levenshtein
 
 exports.testDLSH = function (test) {
   var fn = dlsh

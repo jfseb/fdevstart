@@ -15,12 +15,30 @@ var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap : false })
 // *
 
 var gulp = require('gulp')
+
 var ts = require('gulp-typescript')
-
 var sourcemaps = require('gulp-sourcemaps')
-var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false })
 
-gulp.task('scripts', function () {
+/**
+ * Directory containing generated sources which still contain
+ * JSDOC etc.
+ */
+var genDir = 'gen'
+var srcDir = 'src'
+var testDir = 'test'
+
+gulp.task('watch', function () {
+  gulp.watch([srcDir + '/**/*.js', testDir + '/**/*.js', srcDir + '/**/*.ts', 'gulpfile.js'],
+    ['tsc', 'test', 'standard'])
+})
+
+/**
+ * compile tsc (including srcmaps)
+ * @input srcDir
+ * @output genDir
+ */
+gulp.task('tsc', function () {
+  var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false })
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(tsProject())
@@ -31,42 +49,74 @@ gulp.task('scripts', function () {
   return tsResult.js
     // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-    .pipe(gulp.dest('release/js'))
+    .pipe(gulp.dest('gen'))
 })
 
 var jsdoc = require('gulp-jsdoc3')
 
 gulp.task('doc', function (cb) {
-  gulp.src(['./src/**/*.js', 'README.md', './release/**/*.js'], {read: false})
+  gulp.src([srcDir + '/**/*.js', 'README.md', './gen/**/*.js'], {read: false})
     .pipe(jsdoc(cb))
 })
 
 var instrument = require('gulp-instrument')
 
 gulp.task('instrument', function () {
-  return gulp.src('./src/utils/dam*.js')
+  return gulp.src([genDir + '/**/*.js'])
     .pipe(instrument())
-    .pipe(gulp.dest('src-cov'))
+    .pipe(gulp.dest('gen_cov'))
 })
 
-var jscoverage = require('gulp-coverage')
+var newer = require('gulp-newer')
 
-gulp.task('jscoverage', function () {
-  gulp.src(['./**/l*.js'])
-    .pipe(jscoverage())
-    .pipe(gulp.dest('./cov')) // default file name: src-cov.js
+const babel = require('gulp-babel')
+
+var imgSrc = 'src/**/*.js'
+var imgDest = 'gen'
+
+// compile standard sources with babel,
+// as the coverage input requires this
+//
+gulp.task('babel', function () {
+  // Add the newer pipe to pass through newer images only
+  return gulp.src(imgSrc)
+    .pipe(newer(imgDest))
+    .pipe(babel({
+      comments: true,
+      presets: ['es2015']
+    }))
+    .pipe(gulp.dest('gen'))
 })
 
 var nodeunit = require('gulp-nodeunit')
+var env = require('gulp-env')
 
+/**
+ * This does not work, as we are somehow unable to
+ * redirect the lvoc reporter output to a file
+ */
 gulp.task('testcov', function () {
+  const envs = env.set({
+    DO_COVERAGE: '1'
+  })
   gulp.src(['./**/covleven.js'])
+    .pipe(envs)
     .pipe(nodeunit({
       reporter: 'lcov',
       reporterOptions: {
         output: 'testcov'
       }
-    })).pipe(gulp.dest('./testcov/lco.info'))
+    })).pipe(gulp.dest('./cov/lcov.info'))
+})
+
+gulp.task('test', function () {
+  gulp.src(['test/**/*.js'])
+    .pipe(nodeunit({
+      // reporter: 'lcov',
+      // reporterOptions: {
+      //  output: 'testcov'
+      // }
+    })).pipe(gulp.dest('./out/lcov.info'))
 })
 //    .pipe(gulp.dest('./cov')) // default file name: src-cov.js
 // })
@@ -77,7 +127,7 @@ gulp.task('testcov', function () {
 var standard = require('gulp-standard')
 
 gulp.task('standard', function () {
-  return gulp.src(['./app.js'])
+  return gulp.src(['src/**/*.js', 'test/**/*.js', 'gulpfile.js'])
     .pipe(standard())
     .pipe(standard.reporter('default', {
       breakOnError: true,
@@ -88,9 +138,12 @@ gulp.task('standard', function () {
 var coveralls = require('gulp-coveralls')
 
 gulp.task('coveralls', function () {
-  gulp.src('test/**/lcov.info')
+  gulp.src('testcov/**/lcov.info')
     .pipe(coveralls())
 })
 
 // Default Task
-gulp.task('default', ['scripts', 'standard', 'instrument', 'doc', 'watch', 'gulp'])
+gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
+
+// Default Task
+gulp.task('default', ['tsc', 'babel', 'standard', 'instrument', 'doc'])

@@ -1,8 +1,11 @@
-const dispatcher = require('../../src/match/dispatcher.js')
+var process = require('process')
+var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+
+const dispatcher = require(root + '/match/dispatcher.js')
 
 exports.testReplacePattern = function (test) {
   const fn = dispatcher._test.sameOrStar
-    // test.expect(3);
+  // test.expect(3)
   test.deepEqual('a', 'a', 'a is a')
   test.deepEqual(fn(undefined, null), true, ' abc abc')
   test.deepEqual(fn('abc', 'abc'), true, ' abc abc')
@@ -17,7 +20,7 @@ exports.testReplacePattern = function (test) {
 
 exports.testSameOrStarFunction = function (test) {
   const fn = dispatcher._test.sameOrStar
-    // test.expect(3);
+  // test.expect(3)
   const fnX = function (sString) {
     return Boolean(sString === 'a')
   }
@@ -78,15 +81,15 @@ exports.test_expandParametersInURL = function (test) {
   test.equal(fut({
     context: {abc: 'def', hij: 1},
     result: {type: 'url', pattern: 'http://abc{abc}?def={hij}'
-   }}), 'http://abcdef?def=1', 'ok')
+  }}), 'http://abcdef?def=1', 'ok')
   test.done()
 }
 
 exports.test_expandParametersInURL2 = function (test) {
   var fut = dispatcher._test.expandParametersInURL
   test.equal(fut({context: {abc: 'def', hij: 1},
-  result: {type: 'url', pattern: 'http://abc{abc}?klm={abc}&{efabc}=8&def={hij}'
-   }}), 'http://abcdef?klm=def&{efabc}=8&def=1', 'ok')
+    result: {type: 'url', pattern: 'http://abc{abc}?klm={abc}&{efabc}=8&def={hij}'
+  }}), 'http://abcdef?klm=def&{efabc}=8&def=1', 'ok')
   test.done()
 }
 
@@ -185,28 +188,30 @@ var aShowEntityActions = [{
     pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client=120'
   }
 },
-{context: {
-  systemId: 'UV2',
-  client: /^\d{3,3}$/,
-  systemObjectCategory: 'CATALOG',
-  systemObjectId: /.*/,
-  systemtype: 'ABAPFES',
-  tool: 'FLPD'
-},
+  {
+    context: {
+      systemId: 'UV2',
+      client: /^\d{3,3}$/,
+      systemObjectCategory: 'CATALOG',
+      systemObjectId: /.*/,
+      systemtype: 'ABAPFES',
+      tool: 'FLPD'
+    },
     result: {
       type: 'URL',
       pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client=120'
     }
-},
+  },
 
-{context: {
-  systemId: 'JIRA'
-},
-  result: {
-    type: 'URL',
-    pattern: 'https://jira.wdf.sap.corp:8080/TIPCOREUIII'
+  {
+    context: {
+      systemId: 'JIRA'
+    },
+    result: {
+      type: 'URL',
+      pattern: 'https://jira.wdf.sap.corp:8080/TIPCOREUIII'
+    }
   }
-}
 ]
 
 exports.test_filterShowEntity = function (test) {
@@ -395,4 +400,3 @@ exports.testFilterShowEntityBetterMatch = function (test) {
   }, 'ok')
   test.done()
 }
-

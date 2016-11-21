@@ -12,7 +12,7 @@
         "noImplicitAny": false,
         "removeComments": false,
         "noLib": false,
-        "outDir" : "release/",
+        "outDir" : "gen",
        // "sourceMap" : true,
         "inlineSourceMap": true,
         "preserveConstEnums": true,
@@ -24,8 +24,8 @@
         "!node_modules/**"
     ],
     "files": [
-        "src/ts/constants.ts",
         "src/ts/utils/damerauLevenshtein.ts",
+        "src/ts/constants.ts",
         "src/ts/interfaces.d.ts",
         "src/ts/match/dispatcher.ts"
     ],

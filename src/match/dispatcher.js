@@ -2,7 +2,7 @@
   'use strict'
 
   var exec = require('child_process').exec
-  var leven = require('../utils/damerauLevenshtein.js')
+  var leven = require('../utils/damerauLevenshtein.js').levenshtein
 
   var oUnitTests = [
     {
@@ -261,8 +261,8 @@
 
   function calcDistance (sText1, sText2) {
     // console.log("length2" + sText1 + " - " + sText2)
-    var a0 = leven.distance(sText1.substring(0, sText2.length), sText2)
-    var a = leven.distance(sText1.toLowerCase(), sText2)
+    var a0 = leven(sText1.substring(0, sText2.length), sText2)
+    var a = leven(sText1.toLowerCase(), sText2)
     return a0 * 500 / sText2.length + a
   }
 

@@ -1,4 +1,8 @@
-var History = require('../../src/utils/history.js')
+
+var process = require('process')
+var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+
+var History = require(root + '/utils/history.js')
 
 exports.testCtor = function (test) {
   // test.expect(3)

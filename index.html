@@ -13,21 +13,21 @@
     textarea.ui-input-text.ui-textinput-autogrow {
       overflow: hidden
     }
-    
+
     body {
       font-family: monospace;
       font-size: 4mm;
       -webkit-app-region: drag;
       border-radius: 3mm;
     }
-    
+
     body {
       -webkit-margin-before: 0px;
       margin: 0px;
       padding: 0em;
       border-radius: 1.5em;
     }
-    
+
     li.common {
       background-color: "red", text-color yellow;
       padding-left: 0.2em;
@@ -35,18 +35,18 @@
       padding-top: 0.1em;
       padding-right: .2em;
     }
-    
+
     li.response {
       background-color: "red", text-color yellow;
       padding-left: 2em;
       padding-bottom: 0.1em;
     }
-    
+
     li.request {
       background-color: "red", text-color yellow;
       padding-right: 2em;
     }
-    
+
     div.common {
       border-color: #bbbbbb;
       box-sizing: border-box;
@@ -63,19 +63,19 @@
       rgba(0, 0, 0, .2)/*{global-box-shadow-color}*/
       ;
     }
-    
+
     div.request {
       border-color: #bbbbbb;
       color: #333333;
     }
-    
+
     div.response {
       font-style: italic;
       border-color: #000000;
       color: #000000;
       background-color: lightgrey;
     }
-    
+
     textarea {
       font-size: 15px;
       box-sizing: border-box;
@@ -90,7 +90,7 @@
       rgba(0, 0, 0, .2)/*{global-box-shadow-color}*/
       ;
     }
-    
+
     ul {
       margin: 5px;
       list-style: none;
@@ -100,7 +100,7 @@
       -webkit-margin-end: 0px;
       -webkit-padding-start: 0px;
     }
-    
+
     li {
       padding: .1em .1em;
       padding-top: 0.2em;
@@ -109,19 +109,19 @@
       padding-left: 0.1em;
       border-color: #dddddd;
     }
-    
+
     .ui-xlistview>.ui-li-static {
       padding: .01em 0.1em;
       padding-left: 1em;
     }
-    
+
     .ui-textinput-autogrow-resize {
       -webkit-transition: height .25s;
       -o-transition: height .25s;
       -moz-transition: height .25s;
       transition: height .25s
     }
-    
+
     #header-wrap {
       position: fixed;
       height: 20px;
@@ -135,7 +135,7 @@
       width: 100%;
       z-index: 100;
     }
-    
+
     #header-left {
       position: fixed;
       height: 20px;
@@ -150,7 +150,7 @@
       width: 18px;
       z-index: 102;
     }
-    
+
     #growme {
       resize: none;
       box-sizing: content-box;
@@ -216,7 +216,7 @@ const menu = new Menu()
 //menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked') }}))
 menu.append(new MenuItem({
   label: 'Exit Application',
-  click(item, focusedWindow) { 
+  click(item, focusedWindow) {
     focusedWindow.close()
     //if (process.platform !== 'darwin') {
 //      app.quit()
@@ -253,16 +253,16 @@ window.addEventListener('contextmenu', (e) => {
 
 <script>
     // You can also require other files to run in this process
-    var htmlconnector = require('./src/ui/renderer.js');
+    var htmlconnector = require('./gen/ui/renderer.js');
 
  </script>
 
 
 <script>
     // You can also require other files to run in this process
-    var hs = require('./src/utils/history.js');
+    var hs = require('./gen/utils/history.js');
 
-    var as = require('./src/utils/appdata.js');
+    var as = require('./gen/utils/appdata.js');
     var ad = new as.PersistenceHandle("fdevstart","history.json")
     window.inputHistory = new hs({
       length : 80,

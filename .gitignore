@@ -1,4 +1,6 @@
 node_modules
 docs
-release
+gen
+info.lcov
+gen_cov
 sensitive

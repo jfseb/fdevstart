@@ -11,15 +11,16 @@
     "url": "http://github.com/jfseb/fdevstart/issues"
   },
   "scripts": {
-    "test2": "node console_app.js",
+    "init": "gulp default",
+    "test": "gulp test",
+    "testOld": "./node_modules/.bin/nodeunit test/match test/utils test/covleven.js && standard",
+    "startConsole": "node console_app.js",
     "run": "nodeunit",
     "start": "electron .",
-    "startN": "node app3.js",
     "ui": "electron .",
     "instrument": "gulp instrument",
-    "testcover": "nodeunit test/covleven.js --reporter=lcov >info.lcov",
+    "testcov": "set DO_COVERAGE=1 && nodeunit test/match test/utils test/covleven.js --reporter=lcov >info.lcov",
     "tocoveralls": "cat info.lcov | coveralls",
-    "test": "./node_modules/.bin/nodeunit test/match test/utils test/covleven.js && standard",
     "cover2": "nodeunit test/covleven.js --reporter=lcov | csoveralls",
     "coveralls": "./node_modules/.bin/nodeunit test/covleven.js --reporter=lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"
@@ -32,6 +33,8 @@
   "standard": {
     "ignore": [
       "src\\utils\\dam*",
+      "gen/",
+      "gen_cov/",
       "**/out/",
       "src/ts/**/*.js",
       "src-cov/**/*.js",
@@ -56,34 +59,35 @@
     "doc": "./doc",
     "man": "./man1"
   },
+  "babel": {
+    "comments": true
+  },
   "devDependencies": {
+    "babel-preset-es2015": "^6.18.0",
     "electron": "^1.4.7",
     "eslint": "^3.10.2",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
-    "grunt": "^1.0.1",
-    "grunt-contrib-nodeunit": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-standard": "^2.0.0",
-    "grunt-tsc": "^1.0.12",
-    "gruntify-eslint": "^3.1.0",
     "gulp": "^3.9.1",
-    "gulp-coverage": "^0.3.38",
+    "gulp-babel": "^6.1.2",
     "gulp-coveralls": "^0.1.4",
+    "gulp-env": "^0.4.0",
     "gulp-instrument": "^0.1.0",
-    "gulp-jscoverage": "^0.1.0",
     "gulp-jsdoc3": "^1.0.1",
     "gulp-log-capture": "0.0.6",
+    "gulp-newer": "^1.3.0",
     "gulp-nodeunit": "0.0.5",
     "gulp-sourcemap": "^1.0.1",
     "gulp-standard": "^8.0.2",
     "gulp-typescript": "^3.1.3",
+    "gulp-watch": "^4.3.11",
     "jscoverage": "^0.6.0",
     "nodeunit": "^0.10.2",
     "request-defaults": "^1.2.0",
     "standard": "^8.5.0",
     "textarea-autogrow": "^1.0.0",
+    "tsc": "^1.20150623.0",
     "typescript": "^2.0.10"
   }
 }

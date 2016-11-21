@@ -9,7 +9,13 @@ var box_globals = {
     // Passing console into the sandbox will give your code access to it
     console: console
 };
-var example = sandbox('src-cov/damerauLevenshtein.js', box_globals);
+
+var process = require('process')
+var root = (process.env.DO_COVERAGE) ? '../gen_cov' : '../gen'
+
+var dlsh = require(root + '/utils/damerauLevenshtein.js').levenshtein
+
+var example = sandbox(root + '/utils/damerauLevenshtein.js', box_globals);
 
 
 exports.testDLSH = function (test) {
