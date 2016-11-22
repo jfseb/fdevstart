@@ -5,6 +5,12 @@
 
 // var exec = require('child_process').exec
 
+// var request2 = require('request-defaults')
+// var request = request2.globalDefaults({
+//  'proxy': 'http://proxy:8080',
+//  'https-proxy': 'https://proxy:8080'
+// })
+
 var builder = require('botbuilder')
 
 var dispatcher = require('../match/dispatcher.js')
@@ -113,7 +119,7 @@ function makeBot (connector) {
 
       console.log('Show entities: ' + JSON.stringify(args.entities, undefined, 2))
 
-      var sTool = 'FLP'
+      var sTool = null
       // dirty hack:
       if (sSystemObjectCategory === 'unit' ||
         sSystemObjectCategory === 'unit test') {

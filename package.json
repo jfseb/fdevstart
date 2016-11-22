@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "Sample from https://docs.botframework.com/en-us/node/builder/guides/understanding-natural-language/#navtitle",
   "main": "main.js",
-
   "repository": {
     "type": "git",
     "url": "http://github.com/jfseb/fdevstart.git"
@@ -44,7 +43,7 @@
   "directories": {
     "lib": "./lib",
     "src": "./src",
-    "test" : "./test",
+    "test": "./test",
     "doc": "./doc",
     "man": "./man1"
   },
@@ -60,6 +59,7 @@
     "grunt-standard": "^2.0.0",
     "gruntify-eslint": "^3.1.0",
     "nodeunit": "^0.10.2",
+    "request-defaults": "^1.2.0",
     "standard": "^8.5.0",
     "textarea-autogrow": "^1.0.0"
   }
