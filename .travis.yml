@@ -7,9 +7,9 @@ before_script:
   - gulp default
   - gulp instrument
 node_js:
- - "4"
  - "6"
  - "node"
+# - "4"   does not support sourcemaps
 after_script:
   - npm run instrument
   - npm run testcov
