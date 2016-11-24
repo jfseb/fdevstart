@@ -1,4 +1,5 @@
 /*! copyright gerd forstmann, all rights reserved */
+var debug = require('debug')('appdata.nunit')
 var process = require('process')
 var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
 
@@ -36,7 +37,7 @@ exports.testPersistence = function (test) {
     a: 1
   }, function (err) {
     if (err) {
-      console.log('got an error' + err)
+      debug('got an error' + err)
       throw err
     }
     var k = new AppData.PersistenceHandle('_Test3', 'File1')

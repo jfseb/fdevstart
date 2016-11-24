@@ -11,7 +11,7 @@
     "url": "http://github.com/jfseb/fdevstart/issues"
   },
   "scripts": {
-    "init": "gulp default",
+    "setup": "typings install debug && gulp default",
     "test": "gulp test",
     "testOld": "./node_modules/.bin/nodeunit test/match test/utils test/covleven.js && standard",
     "startConsole": "node console_app.js",

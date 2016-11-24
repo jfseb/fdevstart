@@ -1,6 +1,8 @@
 var process = require('process')
 var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
 
+var debug = require('debug')('dispatcher.nunit')
+
 const dispatcher = require(root + '/match/dispatcher.js').dispatcher
 
 exports.testReplacePattern = function (test) {
@@ -222,7 +224,7 @@ var aShowEntityActions = [{
 ]
 
 exports.test_filterShowEntity = function (test) {
-  console.log('Here dispatcher' + JSON.stringify(dispatcher))
+  debug('Here dispatcher' + JSON.stringify(dispatcher))
   var fut = dispatcher._test.filterShowEntity
   var aMerged = fut({
     systemId: 'UV2',

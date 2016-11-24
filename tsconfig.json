@@ -24,6 +24,7 @@
         "!node_modules/**"
     ],
     "files": [
+        "typings/modules/debug/index.d.ts",
         "src/utils/damerauLevenshtein.ts",
         "src/constants.ts",
         "src/interfaces.d.ts",

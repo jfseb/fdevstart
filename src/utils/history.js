@@ -1,3 +1,5 @@
+var debug = require('debug')('history')
+
 function History (options) {
   this._default = options && options.default || ''
   this._data = []
@@ -23,7 +25,7 @@ function History (options) {
       }
     })
   }
-  console.log('here pos ' + this._pos)
+  debug('here pos ' + this._pos)
 }
 
 History.prototype.get = function () {
@@ -48,9 +50,9 @@ History.prototype.forward = function () {
 History.prototype._shiftIfNeeded = function () {
   if (this._data.length > this._length) {
     this._pos = Math.max(0, this._pos - 1)
-    console.log('shifting array' + JSON.stringify(this._data))
+    debug('shifting array' + JSON.stringify(this._data))
     this._data = this._data.slice(1)
-    console.log('shifting array' + JSON.stringify(this._data) + ' new pos:' + this._pos)
+    debug('shifting array' + JSON.stringify(this._data) + ' new pos:' + this._pos)
     this.save()
   }
 }
@@ -80,14 +82,14 @@ History.prototype.push = function (oNext) {
   } else {
     // the new entry is not the current one
     if (this._data.length && this._pos === this._data.length - 1) {
-      console.log('should not get here')
+      debug('should not get here')
       return
     } else {
       this._data.push(oNext)
       this._pos = this._pos + 1
-      console.log('pushing ' + oNext + 'into ' + JSON.stringify(this._data))
+      debug('pushing ' + oNext + 'into ' + JSON.stringify(this._data))
       this._shiftIfNeeded()
-      console.log('after push ' + this._pos + '/' + JSON.stringify(this._data))
+      debug('after push ' + this._pos + '/' + JSON.stringify(this._data))
       this.save()
       return
     }
@@ -101,7 +103,7 @@ History.prototype.save = function () {
       entries: this._data.slice(0)
     }, function (err) {
       if (err) {
-        console.log('error' + err)
+        debug('error' + err)
       }
     })
   }
@@ -127,7 +129,7 @@ History.prototype.backward = function () {
   }
   this._state = 'history'
   this._pos = Math.max(0, this._pos - 1)
-  console.log('pos after backward ' + this._pos)
+  debug('pos after backward ' + this._pos)
   return this.get()
 }
 

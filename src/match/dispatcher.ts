@@ -3,6 +3,10 @@
 
 import * as distance from '../utils/damerauLevenshtein';
 
+import * as debug from 'debug';
+
+const debuglog = debug('dispatcher')
+
 import { exec } from 'child_process';
 //  var exec = require('child_process').exec
 //  var leven = require('../utils/damerauLevenshtein.js').levenshtein
@@ -282,7 +286,7 @@ import { exec } from 'child_process';
     // later: in case of conflicts, ask,
     // now:
     var dist = calcDistance(oMap[0].key.toLowerCase(), sKeyword)
-    console.log('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
+    debuglog('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
     if (dist < 150) {
       var o1 = Object.assign({}, oContext)
       var o2
@@ -412,8 +416,8 @@ import { exec } from 'child_process';
         console.error(`exec error: ${error}`)
         return
       }
-      console.log(`stdout: ${stdout}`)
-      console.log(`stderr: ${stderr}`)
+      debuglog(`stdout: ${stdout}`)
+      debuglog(`stderr: ${stderr}`)
     })
   }
 
@@ -438,7 +442,7 @@ import { exec } from 'child_process';
       return ptn
     } else {
       var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
-      console.log(s)
+      debuglog(s)
       return s
     }
   }
@@ -522,7 +526,7 @@ import { exec } from 'child_process';
       return res
     })
     if (aFiltered.length === 0) {
-      console.log('no target for showEntity ' + JSON.stringify(oContext))
+      debuglog('no target for showEntity ' + JSON.stringify(oContext))
     }
     // console.log(JSON.stringify(aFiltered,undefined,2))
     if (aFiltered[0]) {
@@ -542,7 +546,7 @@ import { exec } from 'child_process';
 
       Object.keys(oMatch.context).forEach(function (sKey) {
         if (typeof oMatch.context[sKey] === 'function') {
-          console.log('Now retrofitting :' + sKey + ' - ' + oContext[sKey])
+          debuglog('Now retrofitting :' + sKey + ' - ' + oContext[sKey])
           oMerged = oMatch.context[sKey](oContext[sKey], oMerged)
         }
       })
