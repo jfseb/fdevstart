@@ -96,8 +96,7 @@ exports.test_matchWordAliasDifferentCat = function (test) {
   test.done()
 }
 
-
-exports.test_matchWordAliasDifferentCat = function (test) {
+exports.test_matchWordAliasWayDifferentCat = function (test) {
   const fn = inputFilter.matchWord
   // test.expect(3)
 
