@@ -296,7 +296,176 @@ export function getRuleMap() {
 
 var mRuleArray: Array<inputFilter.mRule>;
 
-export function getMRules(): Array<inputFilter.mRule> {
+
+export function getMRulesSample(): Array<inputFilter.mRule> {
+  var mRules = [] as Array<inputFilter.mRule>;
+  mRules = mRules.concat([
+    // a generic rule for any id
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "systemObjectId",
+      regexp: /\S+/i,
+      _ranking: 0.5
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "fiori catalog",
+      regexp: /^[A-Z0-9a-z_\/]+$/i,
+      _ranking: 0.5
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "client",
+      regexp: /^\d{3,3}$/i,
+      _ranking: 0.8
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "systemId",
+      regexp: /^[A-Z][A-Z0-9][A-Z0-9]$/i,
+      _ranking: 0.7
+    },
+    {
+      type: inputFilter.EnumRuleType.WORD,
+      category : "systemId",
+      word : "UV2",
+      matchedString: "UV2"
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "transaction",
+      regexp: /^[A-Z][A-Z0-9_]{3,3}$/i,
+      _ranking: 0.7
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "fiori catalog",
+      regexp: /^SAP_BC[A-Z][A-Z0-9_]*$/,
+      _ranking: 0.85
+    },
+    {
+      type: inputFilter.EnumRuleType.REGEXP,
+      category : "fiori catalog",
+      regexp: /^SAP_TC[A-Z][A-Z0-9_]*$/,
+      _ranking: 0.85
+    },
+    // a few unit tests
+    {
+      category: "unit test",
+      matchedString: "NavTargetResolution",
+      type: 0,
+      word: "NavTargetResolution"
+    },
+    {
+      category: "unit test",
+      matchedString: "NavTargetResolutionAdapter",
+      type: 0,
+      word: "NavTargetResolutionAdapter"
+    },
+    // a few unit tests
+    {
+      category: "wiki",
+      matchedString: "UI2 Integration",
+      type: 0,
+      word: "UI2 Integration"
+    },
+    {
+      category: "wiki",
+      matchedString: "UI2 Support pages",
+      type: 0,
+      word: "UI2 Support pages"
+    },
+    // categories of this model
+    {
+      category: "category",
+      matchedString: "wiki",
+      type: 0,
+      word: "wiki",
+    },
+    {
+      category: "category",
+      matchedString: "unit test",
+      type: 0,
+      word: "unit test",
+    },
+    {
+      category: "category",
+      matchedString: "transaction",
+      type: 0,
+      word: "transaction",
+    },
+    {
+      category: "category",
+      matchedString: "transaction",
+      type: 0,
+      word: "ta",
+    },
+    {
+      category: "category",
+      matchedString: "fiori catalog",
+      type: 0,
+      word: "fiori catalog",
+    },
+    {
+      category: "category",
+      matchedString: "fiori catalog",
+      type: 0,
+      _ranking : 0.8,
+      word: "catalog",
+    },
+    {
+      category: "category",
+      matchedString: "systemId",
+      type: 0,
+      word: "system",
+    },
+    {
+      category: "category",
+      matchedString: "client",
+      type: 0,
+      word: "client",
+    },
+    // tools of the sample model
+    {
+      category: "tool",
+      matchedString: "FLPD",
+      type: 0,
+      word: "flpd",
+    },
+    {
+      category: "tool",
+      matchedString: "FLP",
+      type: 0,
+      word: "flp",
+    },
+    {
+      category: "tool",
+      matchedString: "FLP",
+      type: 0,
+      word: "Fiori Launchpad",
+    },
+    {
+      category: "tool",
+      matchedString: "wiki",
+      type: 0,
+      word: "wiki",
+    },
+
+    // fillers
+    // tools of the sample model
+    {
+      category: "filler",
+      type: 1,
+      regexp : /^((start)|(show)|(from)|(in))$/i,
+      matchedString : "filler",
+      _ranking : 0.9
+    },
+  ]
+  );
+  return mRules;
+}
+
+export function getMRulesOld(): Array<inputFilter.mRule> {
   var o = getRuleMap();
   var categories = {}
   var res: Array<inputFilter.mRule> = [];
@@ -314,7 +483,7 @@ export function getMRules(): Array<inputFilter.mRule> {
           });
           categories[category] = true;
         }
-        break;
+          break;
         case inputFilter.EnumRuleType.REGEXP: {
           var mRule: inputFilter.mRule = {
             type: oRule.type,
@@ -323,7 +492,7 @@ export function getMRules(): Array<inputFilter.mRule> {
             category: category
           };
           if (!(mRule.regexp instanceof RegExp)) {
-            throw new Error(JSON.stringify(oRule,undefined, 2))
+            throw new Error(JSON.stringify(oRule, undefined, 2))
           }
           if (oRule.argsMap) {
             Object.keys(oRule.argsMap).forEach(function (iIndex) {
@@ -335,7 +504,7 @@ export function getMRules(): Array<inputFilter.mRule> {
           res.push(mRule);
           categories[category] = true;
         }
-        break;
+          break;
         default:
           throw new Error('unknown rule' + JSON.stringify(oRule))
       } // switch

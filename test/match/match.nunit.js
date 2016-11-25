@@ -15,13 +15,13 @@ const ToolMatch = match.ToolMatch;
 
 var oMatch1 = {
   toolmatchresult : { spurious : {}, missing : {},
-    required : { 'a' : 1, 'b' : 2},
-    optional :{ 'b' : 2}
+    required : { 'a' : { _ranking : 0.4}, 'b' : { _ranking : 0.3}},
+    optional :{ 'b' : { _ranking : 0.5} }
   }
 };
 var oMatch2 = {
-  toolmatchresult : { spurious : {}, missing : {'A' : 1},
-    required : { 'a' :1, 'b' : 2},
+  toolmatchresult : { spurious : {}, missing : {'A' : { _ranking : 0.3}},
+    required : { 'a' : { _ranking : 0.4}, 'b' :{ _ranking : 0.3 }},
     optional : {}
   }
 };
@@ -30,7 +30,7 @@ exports.testMatchCompare= function (test) {
 
   // act
   // check
-  test.deepEqual(ToolMatch.compBetterMatch(oMatch1, oMatch2), -103, 'delta');
+  test.deepEqual(ToolMatch.compBetterMatch(oMatch1, oMatch2), -129.94, 'delta');
   test.done();
 };
 
@@ -39,7 +39,7 @@ exports.testRankResult = function (test) {
 
   // act
   // check
-  test.deepEqual(ToolMatch.rankResult(oMatch1.toolmatchresult), 300,'correct rank');
+  test.deepEqual(ToolMatch.rankResult(oMatch1.toolmatchresult), 300.06,'correct rank');
   test.done();
 };
 
@@ -153,7 +153,7 @@ optional : group -> ?
       s = s + `[${res.charAt(i)} <> ${expected.charAt(i)}]`;
     }
   }
-  console.log(s);
+  debuglog(s);
 
   test.deepEqual(res,expected, ' dumped');
   test.done();

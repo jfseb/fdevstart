@@ -54,10 +54,11 @@ export function matchTool(oSentence: IMatch.ISentence, oTool: IMatch.ITool): IMa
   oSentence.forEach(function (oWord, index) {
     if (!used[index] && !Word.isFiller(oWord) && !Word.isCategory(oWord)) {
       debuglog("have spurious word" + JSON.stringify(oWord));
-      spurious[oWord.matchedString] = 1;
-    }
-    if (!used[index] && oWord.category === Category.CAT_TOOL && oWord.matchedString === oTool.name ) {
-      toolmentioned.push(oWord);
+      if (!used[index] && oWord.category === Category.CAT_TOOL && oWord.matchedString === oTool.name ) {
+        toolmentioned.push(oWord);
+      } else {
+        spurious[oWord.matchedString] = 1;
+      }
     }
   });
   debuglog('satisfied : ' + Object.keys(oTool.requires).join(";"));

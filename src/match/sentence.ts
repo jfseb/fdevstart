@@ -32,3 +32,13 @@ export function findWordByCategory(oSentence, sCategory : string) : { word : IMa
     })
     return res;
 }
+
+export function rankingProduct(oSentence: IMatch.ISentence) : number {
+  return oSentence.reduce(function(prev, oWord) {
+    return prev * (oWord._ranking || 1.0);
+  },1.0)
+}
+
+export function cmpRankingProduct(a : IMatch.ISentence, b : IMatch.ISentence) {
+  return - (rankingProduct(a) - rankingProduct(b));
+}

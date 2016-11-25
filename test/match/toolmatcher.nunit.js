@@ -14,15 +14,15 @@ const toolmatcher = require(root + '/match/toolmatcher.js');
 exports.testMatchAtool = function (test) {
 
   var oSentence = [
-      {'matchedWord' : 'start', 'category' : 'filler'},
-      {'matchedWord' : 'catalog', 'category' : 'category'},
-      {'matchedWord' : 'ABC', 'category' : 'catalog'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'FLPD', 'category' : 'tool'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'UV2', 'category' : 'systemId'},
-      {'matchedWord' : 'client', 'category' : 'category'},
-      {'matchedWord' : '120', 'category' : 'client'}
+      {'matchedString' : 'start', 'category' : 'filler'},
+      {'matchedString' : 'catalog', 'category' : 'category'},
+      {'matchedString' : 'ABC', 'category' : 'catalog'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'FLPD', 'category' : 'tool'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'UV2', 'category' : 'systemId'},
+      {'matchedString' : 'client', 'category' : 'category'},
+      {'matchedString' : '120', 'category' : 'client'}
   ];
 
   var oTool = { 'name' : 'FLPD',
@@ -38,7 +38,8 @@ exports.testMatchAtool = function (test) {
   test.deepEqual(Object.keys(fn.missing).length, 0, 'correct length missing');
   test.deepEqual(Object.keys(fn.required).length, 2, 'correct length required');
   test.deepEqual(Object.keys(fn.optional).length, 1, 'correct length optional');
-  test.deepEqual(Object.keys(fn.spurious).length, 1, 'correct length spurious');
+  test.deepEqual(Object.keys(fn.spurious).length, 0, 'correct length spurious');
+  test.deepEqual(Object.keys(fn.toolmentioned).length, 1, 'correct length toolmentioned');
   test.done();
 };
 
@@ -46,15 +47,15 @@ exports.testMatchAtool = function (test) {
 exports.testMatchAtoolIncomplete = function (test) {
 
   var oSentence = [
-      {'matchedWord' : 'start', 'category' : 'filler'},
-      {'matchedWord' : 'catalog', 'category' : 'category'},
-      {'matchedWord' : 'ABC', 'category' : 'catalog'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'FLPD', 'category' : 'tool'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'UV2', 'category' : 'systemId'},
-      {'matchedWord' : 'client', 'category' : 'category'},
-      {'matchedWord' : 'UI2 Integrattion', 'category' : 'wiki'}
+      {'matchedString' : 'start', 'category' : 'filler'},
+      {'matchedString' : 'catalog', 'category' : 'category'},
+      {'matchedString' : 'ABC', 'category' : 'catalog'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'FLPD', 'category' : 'tool'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'UV2', 'category' : 'systemId'},
+      {'matchedString' : 'client', 'category' : 'category'},
+      {'matchedString' : 'UI2 Integrattion', 'category' : 'wiki'}
   ];
 
   var oTool = { 'name' : 'FLPD',
@@ -80,28 +81,28 @@ exports.testMatchAtoolIncomplete = function (test) {
 exports.testMatchTools = function (test) {
 
   var oSentence1 = [
-      {'matchedWord' : 'start', 'category' : 'filler'},
-      {'matchedWord' : 'catalog', 'category' : 'category'},
-      {'matchedWord' : 'ABC', 'category' : 'catalog'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'FLPD', 'category' : 'tool'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'UV2', 'category' : 'systemId'},
-      {'matchedWord' : 'client', 'category' : 'category'},
-      {'matchedWord' : 'UI2 Integrattion', 'category' : 'wiki'}
-  ];
+      {'matchedString' : 'start', 'category' : 'filler'},
+      {'matchedString' : 'catalog', 'category' : 'category'},
+      {'matchedString' : 'ABC', 'category' : 'catalog'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'FLPD', 'category' : 'tool'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'UV2', 'category' : 'systemId'},
+      {'matchedString' : 'client', 'category' : 'category'},
+      {'matchedString' : 'UI2 Integrattion', 'category' : 'wiki'}
+  ].map(function(oMember) { oMember._ranking = 1; return oMember; });
 
   var oSentence2 = [
-      {'matchedWord' : 'start', 'category' : 'filler'},
-      {'matchedWord' : 'wiki', 'category' : 'category'},
-      {'matchedWord' : 'ABC', 'category' : 'catalog'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'FLPD', 'category' : 'tool'},
-      {'matchedWord' : 'in', 'category' : 'filler'},
-      {'matchedWord' : 'UV2', 'category' : 'systemId'},
-      {'matchedWord' : 'client', 'category' : 'category'},
-      {'matchedWord' : 'UI2 Integrattion', 'category' : 'wiki'}
-  ];
+      {'matchedString' : 'start', 'category' : 'filler'},
+      {'matchedString' : 'wiki', 'category' : 'category'},
+      {'matchedString' : 'ABC', 'category' : 'catalog'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'FLPD', 'category' : 'tool'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'UV2', 'category' : 'systemId'},
+      {'matchedString' : 'client', 'category' : 'category'},
+      {'matchedString' : 'UI2 Integrattion', 'category' : 'wiki'}
+  ].map(function(oMember) { oMember._ranking = 1; return oMember; });
 
 
   var oToolFLPD = { 'name' : 'FLPD',

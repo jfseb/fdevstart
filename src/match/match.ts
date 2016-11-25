@@ -19,7 +19,16 @@ export function rankToolMatch(a: IMatch.IToolMatchResult) : number {
   var optional = Object.keys(a.optional || {}) .length;
   var spurious = Object.keys(a.spurious || {}).length;
   var matching = required + optional;
-  return matching * 100 - 3 * missing;
+  debuglog("caluclating rank of " + JSON.stringify(a));
+  var factor1 = Object.keys(a.required).reduce(function(prev, sCategory) {
+    return prev *= a.required[sCategory]._ranking;
+  },1.0);
+ var factor = Object.keys(a.optional).reduce(function(prev, sCategory) {
+    return prev *= a.optional[sCategory]._ranking;
+  },factor1);
+  var res =  matching * 100 - 30 * missing  -  10* spurious + factor;
+  debuglog("result is " + factor+  " res" +res);
+  return res;
 };
 
 export const ToolMatch = {
@@ -80,6 +89,61 @@ export const ToolMatch = {
     var oSentence = toolmatch.sentence;
     oSentence.forEach(function(oWord, index) {
       var sWord = `[${index}] : ${oWord.category} "${oWord.string}" => "${oWord.matchedString}"`
+      result.push(sWord + "\n");
+    })
+    result.push(".\n");
+    return result.s;
+
+  },
+
+  dumpWeightsTop : function(toolmatches : Array<IMatch.IToolMatch>, options : any) {
+    var s = '';
+    toolmatches.forEach(function(oMatch,index) {
+      if ( index < options.top) {
+        s = s + "Toolmatch[" + index + "]...\n";
+        s = s + ToolMatch.dumpWeights(oMatch);
+      }
+    });
+    return s;
+  },
+
+  dumpWeights : function(toolmatch : IMatch.IToolMatch) {
+    var result = {
+      s : "",
+      push : function(s) { this.s = this.s + s; }
+    };
+
+  var requires = Object.keys(toolmatch.tool.requires).length;
+  var required = Object.keys(toolmatch.toolmatchresult.required).length;
+
+    var spurious = Object.keys(toolmatch.toolmatchresult.spurious).length;
+    var s =
+`**Result for tool: ${toolmatch.tool.name}
+ rank: ${toolmatch.rank}  (req:${required}/${requires}   ${spurious})
+`
+    result.push(s);
+    Object.keys(toolmatch.tool.requires).forEach(function(sRequires,index) {
+      result.push(`required: ${sRequires} -> `);
+      if (toolmatch.toolmatchresult.required[sRequires]) {
+        result.push('"' + toolmatch.toolmatchresult.required[sRequires].matchedString + '"');
+      } else {
+        result.push(`? missing!`);
+      }
+      result.push('\n');
+    });
+
+    Object.keys(toolmatch.tool.optional).forEach(function(sRequires,index) {
+      result.push(`optional : ${sRequires} -> `);
+      if (toolmatch.toolmatchresult.optional[sRequires]) {
+        result.push('"' + toolmatch.toolmatchresult.optional[sRequires].matchedString + '"');
+    } else {
+        result.push(`?`);
+      }
+      result.push('\n');
+    });
+    var oSentence = toolmatch.sentence;
+    oSentence.forEach(function(oWord, index) {
+      var sWord = `[${index}] : ${oWord.category} "${oWord.string}" => "${oWord.matchedString}"  (_r:${oWord._ranking}/${oWord.reinforce || ''}/${oWord.levenmatch || ''})`
       result.push(sWord + "\n");
     })
     result.push(".\n");

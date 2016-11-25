@@ -25,6 +25,8 @@ import * as IMatch from './ifmatch';
 
 import * as breakdown from './breakdown';
 
+const AnyObject = <any> Object;
+
 const debuglog = debug('inputFilter')
 
 import * as matchdata from './matchdata';
@@ -63,6 +65,18 @@ interface IMatchCount {
 
 type EnumRuleType = IFMatch.EnumRuleType
 
+const levenCutoff = 150;
+
+export function levenPenalty(i : number) : number {
+  // 0-> 1
+  // 1 -> 0.1
+  // 150 ->  0.8
+  if (i === 0) {
+    return 1;
+  }
+  // reverse may be better than linear
+  return  1 + i *(0.8-1)/150
+}
 
 function nonPrivateKeys(oA) {
   return Object.keys(oA).filter( key => {
@@ -119,9 +133,13 @@ export function compareContext(oA , oB, aKeyIgnore?) {
   }
 }
 
+function sortByRank(a :IFMatch.ICategorizedString, b : IFMatch.ICategorizedString) : number {
+  return -((a._ranking || 1.0) - (b._ranking || 1.0));
+}
 
 export function categorizeString(string : string, exact : boolean,  oRules : Array<IMatch.mRule>) : Array<IFMatch.ICategorizedString> {
   // simply apply all rules
+  debug("rules : " + JSON.stringify(oRules));
   var res : Array<IMatch.ICategorizedString> = []
   oRules.forEach(function(oRule) {
     switch(oRule.type) {
@@ -130,30 +148,32 @@ export function categorizeString(string : string, exact : boolean,  oRules : Arr
             res.push( {
               string: string,
               matchedString : oRule.matchedString,
-              category : oRule.category
+              category : oRule.category,
+              _ranking : oRule._ranking || 1.0
             })
           }
           if (!exact) {
             var levenmatch = calcDistance(oRule.word,string)
-            if (levenmatch < 150) {
+            if (levenmatch < levenCutoff) {
               res.push({
                 string: string,
                 matchedString : oRule.word,
                 category : oRule.category,
+                _ranking: (oRule._ranking || 1.0) * levenPenalty(levenmatch),
                 levenmatch : levenmatch
               })
             }
           }
           break;
       case IFMatch.EnumRuleType.REGEXP: {
-
         debuglog(JSON.stringify(" here regexp" + JSON.stringify(oRule,undefined,2)))
         var m = oRule.regexp.exec(string)
         if(m) {
             res.push( {
               string: string,
-                        matchedString : (oRule.matchIndex !== undefined && m[oRule.matchIndex]) || string,
-                        category : oRule.category
+              matchedString : (oRule.matchIndex !== undefined && m[oRule.matchIndex]) || string,
+              category : oRule.category,
+              _ranking : oRule._ranking || 1.0
             })
         }
       }
@@ -162,7 +182,8 @@ export function categorizeString(string : string, exact : boolean,  oRules : Arr
         throw new Error("unknown type" + JSON.stringify (oRule,undefined, 2))
     }
   });
-    return res;
+  res.sort(sortByRank);
+  return res;
 }
 /**
  *
@@ -188,15 +209,15 @@ export function matchWord(oRule : IRule, context : IFMatch.context, options ? : 
   var c : number = calcDistance(s2, s1);
    debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
   if(c < 150 ) {
-    var res = Object.assign({}, oRule.follows) as any;
-    res = Object.assign(res, context);
+    var res = AnyObject.assign({}, oRule.follows) as any;
+    res = AnyObject.assign(res, context);
     if (options.override) {
-      res = Object.assign(res, oRule.follows);
+      res = AnyObject.assign(res, oRule.follows);
     }
     // force key property
     // console.log(' objectcategory', res['systemObjectCategory']);
     res[oRule.key] = oRule.follows[oRule.key] || res[oRule.key];
-    res._weight = Object.assign({}, res._weight);
+    res._weight = AnyObject.assign({}, res._weight);
     res._weight[oRule.key] = c;
     Object.freeze(res);
     debuglog('Found one' + JSON.stringify(res,undefined,2));
@@ -221,10 +242,31 @@ export function extractArgsMap(match : Array<string> , argsMap : { [key : number
   return res;
 }
 
+export const RankWord = {
+  hasAbove : function (lst : Array<IFMatch.ICategorizedString>, border : number) : boolean {
+    return !lst.every(function(oMember) {
+      return (oMember._ranking < border);
+    });
+  },
 
+  takeFirstN : function (lst : Array<IFMatch.ICategorizedString>, n : number) : Array<IFMatch.ICategorizedString> {
+    return lst.filter(function(oMember,iIndex) {
+      var lastRanking = 1.0;
+      if ((iIndex < n) || oMember._ranking === lastRanking ) {
+        lastRanking = oMember._ranking;
+        return true;
+      }
+      return false;
+    });
+  },
+  takeAbove : function (lst : Array<IFMatch.ICategorizedString>, border : number) : Array<IFMatch.ICategorizedString> {
+    return lst.filter(function(oMember) {
+      return  (oMember._ranking >= border);
+    });
+  }
+};
 
 export function analyzeString(sString : string, aRules : Array<IMatch.mRule> ) {
-
   var cnt = 0;
   var fac = 1;
   var u = breakdown.breakdownString(sString);
@@ -235,11 +277,17 @@ export function analyzeString(sString : string, aRules : Array<IMatch.mRule> ) {
       var seenIt = words[sWordGroup];
       if (seenIt === undefined) {
         seenIt =  categorizeString(sWordGroup, true, aRules);
+        if (RankWord.hasAbove(seenIt, 0.8)) {
+          seenIt = RankWord.takeAbove(seenIt,0.8);
+        } else {
+          seenIt = categorizeString(sWordGroup, false, aRules);
+        }
+        seenIt = RankWord.takeFirstN(seenIt,5);
         words[sWordGroup] = seenIt;
       }
       cnt = cnt + seenIt.length;
       fac = fac * seenIt.length;
-      if(!seenIt) {
+      if(!seenIt || seenIt.length === 0) {
         throw new Error("Expecting at least one match for " + sWordGroup)
       }
       return seenIt;
@@ -291,22 +339,22 @@ export function expandMatchArr(deep : Array<Array<any>>) : Array<Array<any>> {
       //vecs is the vector of all so far seen variants up to k wgs.
       var nextBase = [];
       for(var l = 0; l < line[i][k].length; ++l ) { // for each variant
-        debuglog("vecs now" + JSON.stringify(vecs));
+        //debuglog("vecs now" + JSON.stringify(vecs));
         nvecs = []; //vecs.slice(); // copy the vec[i] base vector;
-        debuglog("vecs copied now" + JSON.stringify(nvecs));
+        //debuglog("vecs copied now" + JSON.stringify(nvecs));
         for(var u = 0; u < vecs.length; ++u) {
            nvecs[u] = vecs[u].slice(); //
-           debuglog("copied vecs["+ u+"]" + JSON.stringify(vecs[u]));
+          // debuglog("copied vecs["+ u+"]" + JSON.stringify(vecs[u]));
            nvecs[u].push(
              clone(line[i][k][l])); // push the lth variant
-           debuglog("now nvecs " + nvecs.length + " " + JSON.stringify(nvecs));
+          // debuglog("now nvecs " + nvecs.length + " " + JSON.stringify(nvecs));
         }
-        debuglog(" at     " + k + ":" + l + " nextbase >" + JSON.stringify(nextBase))
-        debuglog(" append " + k + ":" + l + " nvecs    >" + JSON.stringify(nvecs))
+     //   debuglog(" at     " + k + ":" + l + " nextbase >" + JSON.stringify(nextBase))
+     //   debuglog(" append " + k + ":" + l + " nvecs    >" + JSON.stringify(nvecs))
         nextBase = nextBase.concat(nvecs);
-        debuglog("  result " + k + ":" + l + " nvecs    >" + JSON.stringify(nextBase))
+     //   debuglog("  result " + k + ":" + l + " nvecs    >" + JSON.stringify(nextBase))
       } //constru
-      debuglog("now at " + k + ":" + l + " >" + JSON.stringify(nextBase))
+    //  debuglog("now at " + k + ":" + l + " >" + JSON.stringify(nextBase))
       vecs = nextBase;
     }
     debuglog("APPENDING TO RES" + i + ":" + l + " >" + JSON.stringify(nextBase))
@@ -319,7 +367,7 @@ export function expandMatchArr(deep : Array<Array<any>>) : Array<Array<any>> {
  * Weight factor to use on the a given word distance
  * of 0, 1, 2, 3 ....
  */
-const aDistWeight : Array<number>  = [0, 3, 1,  0.2];
+const aReinforceDistWeight : Array<number>  = [0.1, 0.1 , 0.05, 0.02];
 
 /**
  * Calculate a weight factor for a given distance and
@@ -329,9 +377,9 @@ const aDistWeight : Array<number>  = [0, 3, 1,  0.2];
  * @returns {number} a distance factor >= 1
  *  1.0 for no effect
  */
-export function distWeight(dist : number, category : string) : number {
+export function reinforceDistWeight(dist : number, category : string) : number {
   var abs = Math.abs(dist);
-  return 1.0 + (aDistWeight[abs] || 0);
+  return 1.0 + (aReinforceDistWeight[abs] || 0);
 }
 
 /**
@@ -356,17 +404,26 @@ export function reinForceSentence(oSentence) {
     var m = oCategoryMap[oWord.category] || [];
     m.forEach(function (oPosition : { pos : number }) {
       oWord.reinforce = oWord.reinforce || 1;
-      oWord.reinforce *= distWeight(iIndex - oPosition.pos, oWord.category);
+      var boost = reinforceDistWeight(iIndex - oPosition.pos, oWord.category);
+      oWord.reinforce *= boost;
+      oWord._ranking *= boost;
     });
   });
   return oSentence;
 }
 
-export function reinForce(aCategoryizedArray) {
-  aCategoryizedArray.forEach(function(oSentence) {
+
+import * as Sentence from './sentence';
+
+export function reinForce(aCategorizedArray) {
+  aCategorizedArray.forEach(function(oSentence) {
     reinForceSentence(oSentence);
   })
-  return aCategoryizedArray;
+  aCategorizedArray.sort(Sentence.cmpRankingProduct);
+  debuglog("after reinforce" +  aCategorizedArray.map(function(oSentence) {
+    return  Sentence.rankingProduct(oSentence)  + ":" + JSON.stringify(oSentence);
+  }).join("\n"));
+  return aCategorizedArray;
 }
 
 
@@ -397,15 +454,15 @@ export function matchRegExp(oRule : IRule, context : IFMatch.context, options ? 
   debuglog("match " + JSON.stringify(m));
 
   debuglog("extracted args " + JSON.stringify(oExtractedContext));
-  var res = Object.assign({}, oRule.follows) as any;
-  res = Object.assign(res, oExtractedContext);
-  res = Object.assign(res, context);
+  var res = AnyObject.assign({}, oRule.follows) as any;
+  res = AnyObject.assign(res, oExtractedContext);
+  res = AnyObject.assign(res, context);
   if (oExtractedContext[sKey] !== undefined) {
     res[sKey] = oExtractedContext[sKey];
   }
   if (options.override) {
-     res = Object.assign(res, oRule.follows);
-     res = Object.assign(res, oExtractedContext)
+     res = AnyObject.assign(res, oRule.follows);
+     res = AnyObject.assign(res, oExtractedContext)
   }
   Object.freeze(res);
   debuglog('Found one' + JSON.stringify(res,undefined,2));

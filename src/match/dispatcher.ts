@@ -7,6 +7,11 @@
 
 /// <reference path="../../lib/node-4.d.ts" />
 
+declare interface ObjectConstructor {
+    assign(target: any, ...sources: any[]): any;
+}
+
+var AnyObject = (<any>Object);
 
 import * as distance from '../utils/damerauLevenshtein';
 
@@ -44,11 +49,11 @@ const oWikis = matchdata.oWikis
     var dist = calcDistance(oMap[0].key.toLowerCase(), sKeyword)
     debuglog('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
     if (dist < 150) {
-      var o1 = Object.assign({}, oContext)
+      var o1 = (<any>Object).assign({}, oContext)
       var o2
-      o1.context = Object.assign({}, o1.context)
+      o1.context = (<any>Object).assign({}, o1.context)
       o2 = o1
-      o2.context = Object.assign(o1.context, oMap[0].context)
+      o2.context = (<any>Object).assign(o1.context, oMap[0].context)
       return o2
     }
     return null
@@ -309,8 +314,8 @@ const oWikis = matchdata.oWikis
 
         }
       }
-      oMerged.context = Object.assign({}, oMerged.context, aFiltered[0].context, oContext)
-      oMerged = Object.assign(oMerged, {
+      oMerged.context = AnyObject.assign({}, oMerged.context, aFiltered[0].context, oContext)
+      oMerged = AnyObject.assign(oMerged, {
         result: aFiltered[0].result
       })
 

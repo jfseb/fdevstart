@@ -58,7 +58,10 @@ export interface IToolMatch {
 export interface IWord {
   string : string,
   matchedString : string,
-  category? : string
+  category? : string,
+  _ranking? : number,
+  levenmatch? : number,
+  reinforce? : number
 }
 
 export type ISentence = Array<IWord>;
@@ -83,7 +86,8 @@ export interface mRule {
   regexp? : RegExp,
   matchedString? : string,
   matchIndex? : number,
-  category : string
+  category : string,
+  _ranking? : number
 }
 
 export interface ICategorizedString  {
@@ -92,6 +96,7 @@ export interface ICategorizedString  {
   category : string,
   breakdown? : Array<any>
   score? : number,
+  _ranking? : number,
   levenmatch? : number  // a distance ranking
 }
 

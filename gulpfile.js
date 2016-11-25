@@ -40,6 +40,61 @@ const babel = require('gulp-babel');
  * @output genDir
  */
 gulp.task('tsc', function () {
+  var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: true });
+  var tsResult = tsProject.src() // gulp.src('lib/*.ts')
+    .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+    .pipe(tsProject());
+
+  return tsResult.js
+//    .pipe(babel({
+//      comments: true,
+//      presets: ['es2015']
+//    }))
+    // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
+    .pipe(sourcemaps.write('.',{
+      sourceRoot : function(file) {
+        file.sourceMap.sources[0] = '/projects/nodejs/botbuilder/fdevstart/src/' + file.sourceMap.sources[0];
+        //console.log('here is************* file' + JSON.stringify(file, undefined, 2));
+        return 'ABC';
+      },
+      mapSources: function(src) {
+        console.log('here we remap' + src);
+        return '/projects/nodejs/botbuilder/fdevstart/' + src;
+      }}
+      )) // ,  { sourceRoot: './' } ))
+      // Now the sourcemaps are added to the .js file
+    .pipe(gulp.dest('gen'));
+});
+
+/**
+ * compile tsc (including srcmaps)
+ * @input srcDir
+ * @output genDir
+ */
+gulp.task('tscx', function () {
+  var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: true });
+  var tsResult = tsProject.src() // gulp.src('lib/*.ts')
+  //  .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+    .pipe(tsProject());
+
+  return tsResult
+//    .pipe(babel({
+//      comments: true,
+//      presets: ['es2015']
+//    }))
+    // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
+  //  .pipe(sourcemaps.write()) // ,  { sourceRoot: './' } ))
+      // Now the sourcemaps are added to the .js file
+    .pipe(gulp.dest('gen'));
+});
+
+
+/**
+ * compile tsc (including srcmaps)
+ * @input srcDir
+ * @output genDir
+ */
+gulp.task('tsc2', function () {
   var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false });
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
@@ -54,6 +109,7 @@ gulp.task('tsc', function () {
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('gen'));
 });
+
 
 var jsdoc = require('gulp-jsdoc3');
 

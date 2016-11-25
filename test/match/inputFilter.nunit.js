@@ -976,20 +976,51 @@ exports.testinputFilter = function (test) {
   test.done();
 };
 
-var ifr = inputFilterRules.getMRules();
+var ifr = inputFilterRules.getMRulesSample();
 
 exports.testCategorizeString = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('UV2', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(res, [
-    { string: 'UV2', matchedString: 'UV2', category: 'systemId' },
-    { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId' }
+    { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking : 1 },
+    { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking: 0.7 },
+    { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId', _ranking: 0.5 },
+    { string: 'UV2', matchedString: 'UV2', category: 'fiori catalog', _ranking: 0.5 }
   ], 'correct result');
   test.done();
 };
 
-exports.testCategorizeString2 = function (test) {
+exports.testCategorizeStringClient = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('120', false, ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+
+  test.deepEqual(res[0],
+    {
+      'string': '120',
+      'matchedString': '120',
+      'category': 'client',
+      _ranking : 0.8
+    }, 'what is this nr 2');
+  test.done();
+};
+
+exports.testCategorizeStringWiki = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('wiki', true, ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+  test.deepEqual(res, [
+ { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'tool', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'transaction', _ranking: 0.7 },
+    { string: 'wiki', matchedString: 'wiki', category: 'systemObjectId', _ranking: 0.5 },
+    { string: 'wiki', matchedString: 'wiki', category: 'fiori catalog', _ranking: 0.5 }
+  ], 'correct result');
+  test.done();
+};
+
+exports.testCategorizeStringExactNoMatch = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('NavTargetRes', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
@@ -998,13 +1029,57 @@ exports.testCategorizeString2 = function (test) {
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
-      'category': 'systemObjectId'
+      'category': 'systemObjectId',
+      _ranking : 0.5
+    },
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetRes',
+      'category': 'fiori catalog',
+      _ranking : 0.5
     }
   ], 'what is this nr 2');
   test.done();
 };
 
-exports.testCategorizeString4 = function (test) {
+
+exports.testCategorizeStringNonExactNoMatch = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('NavTargetRes', false, ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+
+  test.deepEqual(res, [
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetResolution',
+      'category': 'unit test',
+      _ranking : 1  * ab.levenPenalty(10),
+      levenmatch : 10
+    },
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetResolutionAdapter',
+      'category': 'unit test',
+      _ranking : 1 * ab.levenPenalty(17),
+      levenmatch : 17
+    },
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetRes',
+      'category': 'systemObjectId',
+      _ranking : 0.5
+    },
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetRes',
+      'category': 'fiori catalog',
+      _ranking : 0.5
+    }
+  ], 'what is this nr 2');
+  test.done();
+};
+
+exports.testCategorizeStringExactMatch = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('NavTargetResolution', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
@@ -1013,18 +1088,26 @@ exports.testCategorizeString4 = function (test) {
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
-      'category': 'unit test'
+      'category': 'unit test',
+      _ranking : 1,
     },
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
-      'category': 'systemObjectId'
+      'category': 'systemObjectId',
+      _ranking : 0.5
+    },
+    {
+      'string': 'NavTargetResolution',
+      'matchedString': 'NavTargetResolution',
+      'category': 'fiori catalog',
+      _ranking : 0.5
     }
-  ], 'what is this nr 4');
+  ], ' exact match');
   test.done();
 };
 
-exports.testCategorizeStringDistance = function (test) {
+exports.testCategorizeStringDistanceNavTarget = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('NavTargetResolu', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
@@ -1032,26 +1115,29 @@ exports.testCategorizeStringDistance = function (test) {
   test.deepEqual(res, [
     {
       'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolutionAdapter',
-      'category': 'unit test',
-      'levenmatch': 14
-    },
-    {
-      'string': 'NavTargetResolu',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
+      _ranking : 1*ab.levenPenalty(7),
       'levenmatch': 7
     },
     {
       'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolutionCDMBlackbox',
+      'matchedString': 'NavTargetResolutionAdapter',
       'category': 'unit test',
-      'levenmatch': 18
+      _ranking : ab.levenPenalty(14),
+      'levenmatch': 14
     },
     {
       'string': 'NavTargetResolu',
       'matchedString': 'NavTargetResolu',
-      'category': 'systemObjectId'
+      'category': 'systemObjectId',
+      _ranking : 0.5,
+    },
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolu',
+      'category': 'fiori catalog',
+      _ranking : 0.5
     }
   ], 'what is this 3');
   test.done();
@@ -1106,6 +1192,48 @@ var sampleRules = [
   }
 ];
 
+
+exports.testAnalyzeStringUV2Client120 = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.analyzeString('UV2 client 120', ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+
+  test.deepEqual(res, [ [ [ { string: 'UV2 client 120',
+    matchedString: 'UV2 client 120',
+    category: 'systemObjectId',
+    _ranking: 0.5 } ] ],
+    [ [ { string: 'UV2',
+      matchedString: 'UV2',
+      category: 'systemId',
+      _ranking: 1 } ],
+      [ { string: 'client 120',
+        matchedString: 'client 120',
+        category: 'systemObjectId',
+        _ranking: 0.5 } ] ],
+    [ [ { string: 'UV2 client',
+      matchedString: 'UV2 client',
+      category: 'systemObjectId',
+      _ranking: 0.5 } ],
+      [ { string: '120',
+        matchedString: '120',
+        category: 'client',
+        _ranking: 0.8 } ] ],
+    [ [ { string: 'UV2',
+      matchedString: 'UV2',
+      category: 'systemId',
+      _ranking: 1 } ],
+      [ { string: 'client',
+        matchedString: 'client',
+        category: 'category',
+        _ranking: 1 } ],
+      [ { string: '120',
+        matchedString: '120',
+        category: 'client',
+        _ranking: 0.8 } ] ]
+  ], 'correct res');
+  test.done();
+};
+
 exports.testCategorizeStringDistance = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.analyzeString('cat1 and ab', sampleRules);
@@ -1113,22 +1241,23 @@ exports.testCategorizeStringDistance = function (test) {
 
   test.deepEqual(res, [ [ [ { string: 'cat1 and ab',
     matchedString: 'cat1 and ab',
-    category: 'unknown' } ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' },
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown' } ],
+    category: 'unknown',
+    _ranking : 1 } ] ],
+    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' , _ranking : 1},
+      { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking : 1 } ],
       [ { string: 'and ab',
         matchedString: 'and ab',
-        category: 'unknown' } ] ],
+        category: 'unknown' , _ranking : 1} ] ],
     [ [ { string: 'cat1 and',
       matchedString: 'cat1 and',
-      category: 'unknown' } ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' },
-      { string: 'ab', matchedString: 'ab', category: 'unknown' } ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' },
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown' } ],
-    [ { string: 'and', matchedString: 'and', category: 'unknown' } ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' },
-      { string: 'ab', matchedString: 'ab', category: 'unknown' } ] ] ], ' correct result ');
+      category: 'unknown' , _ranking : 1} ],
+      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' , _ranking : 1},
+      { string: 'ab', matchedString: 'ab', category: 'unknown' , _ranking : 1} ] ],
+    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category', _ranking : 1 },
+      { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking : 1 } ],
+    [ { string: 'and', matchedString: 'and', category: 'unknown', _ranking : 1 } ],
+      [ { string: 'ab', matchedString: 'ab', category: 'CAT1', _ranking : 1 },
+      { string: 'ab', matchedString: 'ab', category: 'unknown', _ranking : 1 } ] ] ], ' correct result ');
   test.done();
 };
 
@@ -1240,33 +1369,41 @@ exports.testreinforceSentence = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
 
   var sentence = [
-    { string: 'wiki', matchedString: 'wiki', category: 'category' },
-    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'cat', matchedString: 'catalog', category: 'category' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'wiki', matchedString: 'wiki', category: 'category' }
+    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1},
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category' , _ranking : 1},
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 }
   ];
 
   var res = ab.reinForceSentence(sentence);
 
-  test.deepEqual(res,
-    [ { string: 'wiki', matchedString: 'wiki', category: 'category' },
+
+  var resline = [
+    {
+      string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1 },
     { string: 'My wiki',
       matchedString: 'My wiki',
       category: 'wiki',
-      reinforce: 4 },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'cat', matchedString: 'catalog', category: 'category' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
+      _ranking : 1.1,
+      reinforce: 1.1 },
+    { string: 'in', matchedString: 'in', category: 'filler' ,   _ranking : 1},
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
     { string: 'My next wiki',
       matchedString: 'My next wiki',
       category: 'wiki',
-      reinforce: 2 },
-  { string: 'in', matchedString: 'in', category: 'filler' },
-  { string: 'wiki', matchedString: 'wiki', category: 'category' } ], 'correct reinforced string');
+      _ranking : 1.05,
+      reinforce: 1.05
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1}
+  ];
+
+  test.deepEqual(res,resline, 'correct reinforced string');
   test.done();
 };
 
@@ -1274,38 +1411,43 @@ exports.testreinforceSentence = function (test) {
 
 exports.testreinforce = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-
   var sentence = [
-    { string: 'wiki', matchedString: 'wiki', category: 'category' },
-    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'cat', matchedString: 'catalog', category: 'category' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'wiki', matchedString: 'wiki', category: 'category' }
+    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1},
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category' , _ranking : 1},
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 }
+  ];
+
+
+  var resline = [
+    {
+      string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1 },
+    { string: 'My wiki',
+      matchedString: 'My wiki',
+      category: 'wiki',
+      _ranking : 1.1,
+      reinforce: 1.1 },
+    { string: 'in', matchedString: 'in', category: 'filler' ,   _ranking : 1},
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking : 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'My next wiki',
+      matchedString: 'My next wiki',
+      category: 'wiki',
+      _ranking : 1.05,
+      reinforce: 1.05
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1}
   ];
 
   var u = [sentence,
     utils.cloneDeep(sentence),
     utils.cloneDeep(sentence)];
 
-
-  var resline = [ { string: 'wiki', matchedString: 'wiki', category: 'category' },
-    {
-      string: 'My wiki',
-      matchedString: 'My wiki',
-      category: 'wiki',
-      reinforce: 4 },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'cat', matchedString: 'catalog', category: 'category' },
-    { string: 'in', matchedString: 'in', category: 'filler' },
-    { string: 'My next wiki',
-      matchedString: 'My next wiki',
-      category: 'wiki',
-      reinforce: 2 },
-  { string: 'in', matchedString: 'in', category: 'filler' },
-  { string: 'wiki', matchedString: 'wiki', category: 'category' } ];
 
 
   var res = ab.reinForce(u);
