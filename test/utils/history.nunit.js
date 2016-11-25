@@ -135,7 +135,22 @@ exports.testPushSameBackHitBorder = function (test) {
   test.done()
 }
 
-exports.testPushSameBackHitBorder = function (test) {
+exports.testPushdefaultempty = function (test) {
+  // test.expect(3)
+  var u
+  u = new History({ length: 10,
+    default: 'defaultfwd'
+  })
+  u.push('defaultfwd')
+  u.push('e 2')
+  u.push('e 2')
+  test.equal(u.backward(), 'defaultfwd', 'backward 4')
+  test.equal(u.backward(), 'defaultfwd', 'backward 3')
+  test.equal(u.backward(), 'defaultfwd', 'backward 2')
+  test.done()
+}
+
+exports.testPushNonSameBackHitBorder = function (test) {
   // test.expect(3)
   var u
   u = new History({ length: 10,
