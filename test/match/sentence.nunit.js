@@ -25,6 +25,7 @@ const oSentence = [
       {'matchedString' : '120', 'category' : 'client'}
 ];
 
+
 exports.testFindWordByCategory = function (test) {
   // prepare
   // act
@@ -41,5 +42,21 @@ exports.testFindWordByCategoryNotFound = function (test) {
   const res = sentence.findWordByCategory(oSentence, 'notthese');
   // check
   test.deepEqual(res, {});
+  test.done();
+};
+
+
+exports.testRankingGeometricMean = function(test) {
+  test.equal(sentence.rankingGeometricMean( [{_ranking : 1 }, { _ranking : 1}] ), 1, 'correct 1');
+  test.equal(sentence.rankingGeometricMean( [{_ranking : 0.5 }, { _ranking : 0.5}] ), 0.5, 'correct 2');
+  test.equal(sentence.rankingGeometricMean( [] ), 1, 'correct 2');
+  test.equal(sentence.rankingGeometricMean( [{_ranking : 0.8 }] ), 0.8, 'correct 3');
+  test.equal(sentence.rankingGeometricMean( [{_ranking : 0.5 }, { _ranking : 1.0}] ), Math.pow(0.5,0.5), 'correct 5');
+
+  test.done();
+};
+
+exports.testCmpRanking = function(test) {
+  test.ok(sentence.cmpRankingProduct([{ _ranking : 0.5},{ _ranking : 0.5 }] , [ { _ranking : 0.4}]) < 0, ' 2nd is weaker');
   test.done();
 };

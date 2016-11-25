@@ -13,6 +13,62 @@ function cleanseString(sString) {
     return sString;
 }
 exports.cleanseString = cleanseString;
+var regexpRemoveDouble = new RegExp(/^\"(\".*\")\"$/);
+var striptail = new RegExp(/^\"([^\"]+)"$/);
+function trimQuoted(sString) {
+    var skipUntil = 0;
+    var stripped = sString;
+    var m = regexpRemoveDouble.exec(sString);
+    while (m) {
+        stripped = m[1];
+        m = regexpRemoveDouble.exec(stripped);
+    }
+    debuglog("stripped " + stripped);
+    m = striptail.exec(stripped);
+    if (m) {
+        return m[1];
+    }
+    return sString;
+}
+exports.trimQuoted = trimQuoted;
+function trimQuotedSpaced(sString) {
+    var skipUntil = 0;
+    sString = sString.replace(/^"\s+/g, '"');
+    sString = sString.replace(/\s+\"$/g, '"');
+    return sString;
+}
+exports.trimQuotedSpaced = trimQuotedSpaced;
+function recombineQuoted(aArr) {
+    var skipUntil = 0;
+    aArr = aArr.map(function (s, index) {
+        if (index < skipUntil) {
+            debuglog("skipping >" + s + "<");
+            return undefined;
+        }
+        if (/^"/.exec(s)) {
+            var i = index;
+            while (i < aArr.length && (!/"$/.exec(aArr[i]) || (index === i && s === '"'))) {
+                i = i + 1;
+            }
+            if (i === aArr.length) {
+                debuglog("Unterminated quoted string");
+                return s;
+            }
+            else {
+                skipUntil = i + 1;
+                var res = aArr.slice(index, i + 1).join(" ");
+            }
+            return res;
+        }
+        return s;
+    }).filter(function (s) {
+        return s !== undefined;
+    }).map(function (s) {
+        return trimQuotedSpaced(s);
+    });
+    return aArr;
+}
+exports.recombineQuoted = recombineQuoted;
 /**
  *@param {string} sString , e.g. "a b c"
  *@return {Array<Array<String>>} broken down array, e.g.
@@ -20,6 +76,7 @@ exports.cleanseString = cleanseString;
  */
 function breakdownString(sString) {
     var u = sString.split(" ");
+    u = recombineQuoted(u);
     var k = 0;
     if (u.length === 0) {
         return [[]];
@@ -44,7 +101,11 @@ function breakdownString(sString) {
         debuglog(JSON.stringify(r2));
         w = r1.concat(r2);
     }
-    return w;
+    return w.map(function (oMap) {
+        return oMap.map(function (sWord) {
+            return trimQuoted(sWord);
+        });
+    });
 }
 exports.breakdownString = breakdownString;
 

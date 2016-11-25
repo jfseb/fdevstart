@@ -17,8 +17,6 @@ import * as debug from 'debug';
 import * as IMatch from './ifmatch';
 
 import * as utils from '../utils/utils';
-
-
 import * as Sentence from './sentence';
 import * as OpsWord from './word';
 

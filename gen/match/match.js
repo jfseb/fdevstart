@@ -9,7 +9,54 @@
 "use strict";
 var debug = require('debug');
 var debuglog = debug('match');
+function weakenByN(a, n) {
+    return 1.0 + (a - 1.0) / n;
+}
+function calcGeometricMeansOfRanking(oSet) {
+    var keys = Object.keys(oSet);
+    if (!keys.length) {
+        return 1.0;
+    }
+    var factor = Object.keys(oSet).reduce(function (prev, sCategory) {
+        return prev *= oSet[sCategory]._ranking;
+    }, 1.0);
+    return Math.pow(factor, 1 / keys.length);
+}
+/**
+ * Calculate a number to rank a matched tool
+ *
+ *
+ */
 function rankToolMatch(a) {
+    var missing = Object.keys(a.missing || {}).length;
+    var required = Object.keys(a.required || {}).length;
+    var optional = Object.keys(a.optional || {}).length;
+    var spurious = Object.keys(a.spurious || {}).length;
+    var matching = required + optional;
+    debuglog("caluclating rank of " + JSON.stringify(a));
+    var rankingRequired = calcGeometricMeansOfRanking(a.required);
+    var rankingOptional = calcGeometricMeansOfRanking(a.optional);
+    // 1.1 for every optional;
+    //  0.9 for every spurious
+    //  for every required
+    var spuriousDeprec = Math.pow(0.9, Object.keys(a.spurious).length);
+    // 0.8 for every missing;
+    var missingDeprec = Math.pow(0.8, Object.keys(a.missing).length);
+    // 1.1 for toolmentiond
+    if (a.toolmentioned) {
+        res *= 1.1;
+    }
+    var res = missingDeprec * spuriousDeprec * (weakenByN(rankingRequired * rankingOptional, 10));
+    //  var res =  matching * 100 - 30 * missing  -  10* spurious + factor;
+    debuglog("result is " + res);
+    return res;
+}
+exports.rankToolMatch = rankToolMatch;
+;
+/**
+ * Calculate a number
+ */
+function rankToolMatchA(a) {
     var missing = Object.keys(a.missing || {}).length;
     var required = Object.keys(a.required || {}).length;
     var optional = Object.keys(a.optional || {}).length;
@@ -26,7 +73,7 @@ function rankToolMatch(a) {
     debuglog("result is " + factor + " res" + res);
     return res;
 }
-exports.rankToolMatch = rankToolMatch;
+exports.rankToolMatchA = rankToolMatchA;
 ;
 exports.ToolMatch = {
     rankResult: function (a) {
@@ -134,6 +181,20 @@ exports.ToolMatch = {
         });
         result.push(".\n");
         return result.s;
+    }
+};
+exports.Result = {
+    getEntity: function (match, key) {
+        if (!match.toolmatchresult) {
+            return undefined;
+        }
+        if (match.toolmatchresult.required[key]) {
+            return match.toolmatchresult.required[key];
+        }
+        if (match.toolmatchresult.optional[key]) {
+            return match.toolmatchresult.optional[key];
+        }
+        return undefined;
     }
 };
 

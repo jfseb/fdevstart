@@ -33,6 +33,7 @@
         "src/match/breakdown.ts",
         "src/match/dispatcher.ts",
         "src/match/inputFilterRules.ts",
+        "src/match/algol.ts",
         "src/match/inputFilter.ts",
         "src/match/matchdata.ts",
         "src/match/analyze.ts",

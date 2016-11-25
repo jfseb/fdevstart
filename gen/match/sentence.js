@@ -24,10 +24,20 @@ function findWordByCategory(oSentence, sCategory) {
     return res;
 }
 exports.findWordByCategory = findWordByCategory;
-function rankingProduct(oSentence) {
-    return oSentence.reduce(function (prev, oWord) {
+function rankingGeometricMean(oSentence) {
+    var length = oSentence.length;
+    if (length === 0) {
+        return 1.0;
+    }
+    var prod = oSentence.reduce(function (prev, oWord) {
         return prev * (oWord._ranking || 1.0);
     }, 1.0);
+    // TODO: find somethign faster ;-)
+    return Math.pow(prod, 1 / length);
+}
+exports.rankingGeometricMean = rankingGeometricMean;
+function rankingProduct(oSentence) {
+    return rankingGeometricMean(oSentence);
 }
 exports.rankingProduct = rankingProduct;
 function cmpRankingProduct(a, b) {

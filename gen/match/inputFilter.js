@@ -19,6 +19,7 @@
 var distance = require('../utils/damerauLevenshtein');
 var debug = require('debug');
 var utils = require('../utils/utils');
+var Algol = require('./algol');
 var breakdown = require('./breakdown');
 var AnyObject = Object;
 var debuglog = debug('inputFilter');
@@ -37,7 +38,7 @@ function calcDistance(sText1, sText2) {
     return a0 * 500 / sText2.length + a;
 }
 var IFMatch = require('../match/ifmatch');
-var levenCutoff = 150;
+var levenCutoff = Algol.Cutoff_LevenShtein;
 function levenPenalty(i) {
     // 0-> 1
     // 1 -> 0.1
@@ -233,6 +234,22 @@ exports.RankWord = {
         });
     }
 };
+function categorizeWordWithRankCutoff(sWordGroup, aRules) {
+    var seenIt = categorizeString(sWordGroup, true, aRules);
+    if (exports.RankWord.hasAbove(seenIt, 0.8)) {
+        seenIt = exports.RankWord.takeAbove(seenIt, 0.8);
+    }
+    else {
+        seenIt = categorizeString(sWordGroup, false, aRules);
+    }
+    seenIt = exports.RankWord.takeFirstN(seenIt, Algol.Top_N_WordCategorizations);
+    return seenIt;
+}
+exports.categorizeWordWithRankCutoff = categorizeWordWithRankCutoff;
+/**
+ * Given a  string, break it down into components,
+ * then categorizeWords
+ */
 function analyzeString(sString, aRules) {
     var cnt = 0;
     var fac = 1;
@@ -243,14 +260,7 @@ function analyzeString(sString, aRules) {
         return aArr.map(function (sWordGroup) {
             var seenIt = words[sWordGroup];
             if (seenIt === undefined) {
-                seenIt = categorizeString(sWordGroup, true, aRules);
-                if (exports.RankWord.hasAbove(seenIt, 0.8)) {
-                    seenIt = exports.RankWord.takeAbove(seenIt, 0.8);
-                }
-                else {
-                    seenIt = categorizeString(sWordGroup, false, aRules);
-                }
-                seenIt = exports.RankWord.takeFirstN(seenIt, 5);
+                seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
                 words[sWordGroup] = seenIt;
             }
             cnt = cnt + seenIt.length;
@@ -324,11 +334,6 @@ function expandMatchArr(deep) {
 }
 exports.expandMatchArr = expandMatchArr;
 /**
- * Weight factor to use on the a given word distance
- * of 0, 1, 2, 3 ....
- */
-var aReinforceDistWeight = [0.1, 0.1, 0.05, 0.02];
-/**
  * Calculate a weight factor for a given distance and
  * category
  * @param {integer} dist distance in words
@@ -338,7 +343,7 @@ var aReinforceDistWeight = [0.1, 0.1, 0.05, 0.02];
  */
 function reinforceDistWeight(dist, category) {
     var abs = Math.abs(dist);
-    return 1.0 + (aReinforceDistWeight[abs] || 0);
+    return 1.0 + (Algol.aReinforceDistWeight[abs] || 0);
 }
 exports.reinforceDistWeight = reinforceDistWeight;
 /**

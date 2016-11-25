@@ -75,6 +75,9 @@ exports.testCloneDeepPrimitive = function (test) {
   var a = new Date();
   test.deepEqual(utils.cloneDeep({ a : a}), { a : a }, 'undefined');
   test.deepEqual(utils.cloneDeep({ a : {}}), { a : {} }, 'undefined');
+  test.deepEqual(utils.cloneDeep(new String('abc')), new String('abc'), 'undefined');
+  test.deepEqual(utils.cloneDeep(JSON.parse(JSON.stringify({}))), {}, 'undefined');
+
   test.done();
 };
 

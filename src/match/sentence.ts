@@ -33,10 +33,20 @@ export function findWordByCategory(oSentence, sCategory : string) : { word : IMa
     return res;
 }
 
-export function rankingProduct(oSentence: IMatch.ISentence) : number {
-  return oSentence.reduce(function(prev, oWord) {
+export function rankingGeometricMean(oSentence : IMatch.ISentence) : number {
+  const length = oSentence.length;
+  if(length === 0) {
+    return 1.0;
+  }
+  var prod =  oSentence.reduce(function(prev, oWord) {
     return prev * (oWord._ranking || 1.0);
-  },1.0)
+  },1.0);
+  // TODO: find somethign faster ;-)
+  return Math.pow(prod, 1/length);
+}
+
+export function rankingProduct(oSentence: IMatch.ISentence) : number {
+  return rankingGeometricMean(oSentence);
 }
 
 export function cmpRankingProduct(a : IMatch.ISentence, b : IMatch.ISentence) {
