@@ -66,6 +66,7 @@ gulp.task('tsc', function () {
     .pipe(gulp.dest('gen'));
 });
 
+
 /**
  * compile tsc (including srcmaps)
  * @input srcDir
@@ -74,18 +75,18 @@ gulp.task('tsc', function () {
 gulp.task('tscx', function () {
   var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: true });
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
-  //  .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+    .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(tsProject());
 
   return tsResult
-//    .pipe(babel({
-//      comments: true,
-//      presets: ['es2015']
-//    }))
+       .pipe(babel({
+         comments: true,
+         presets: ['es2015']
+       }))
     // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
-  //  .pipe(sourcemaps.write()) // ,  { sourceRoot: './' } ))
+      .pipe(sourcemaps.write()) // ,  { sourceRoot: './' } ))
       // Now the sourcemaps are added to the .js file
-    .pipe(gulp.dest('gen'));
+    .pipe(gulp.dest('gen2'));
 });
 
 
@@ -107,7 +108,7 @@ gulp.task('tsc2', function () {
     }))
     // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-    .pipe(gulp.dest('gen'));
+    .pipe(gulp.dest('gen2'));
 });
 
 
@@ -170,6 +171,21 @@ gulp.task('babel', ['tsc'], function () {
     }))
     .pipe(gulp.dest('gen'));
 });
+
+// compile standard sources with babel,
+// as the coverage input requires this
+//
+gulp.task('babel2', ['tsc2'], function () {
+  // Add the newer pipe to pass through newer images only
+  return gulp.src([imgSrc])
+    .pipe(newer(imgDest))
+    .pipe(babel({
+      comments: true,
+      presets: ['es2015']
+    }))
+    .pipe(gulp.dest('gen2'));
+});
+
 
 var nodeunit = require('gulp-nodeunit');
 var env = require('gulp-env');
@@ -274,6 +290,6 @@ gulp.task('graphviz', function () {
 // gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test']);
+gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test', 'babel2', 'tsc2']);
 
 gulp.task('allhome', ['default', 'graphviz']);
