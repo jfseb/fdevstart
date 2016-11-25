@@ -56,6 +56,7 @@ export interface IToolMatch {
 }
 
 export interface IWord {
+  string : string,
   matchedString : string,
   category? : string
 }

@@ -1,6 +1,3 @@
-/// <reference path="../../lib/node-4.d.ts" />
-
-
 /**
  * the input filter stage preprocesses a current context
  *
@@ -13,9 +10,11 @@
  *  Simple rules like  Intent
  *
  *
- * @module
+ * @module jfseb.fdevstart.inputFilter
  * @file inputFilter.ts
+ * @copyright (c) 2016 Gerd Forstmann
  */
+/// <reference path="../../lib/node-4.d.ts" />
 import * as distance from '../utils/damerauLevenshtein';
 
 import * as debug from 'debug';
@@ -238,8 +237,8 @@ export function analyzeString(sString : string, aRules : Array<IMatch.mRule> ) {
         seenIt =  categorizeString(sWordGroup, true, aRules);
         words[sWordGroup] = seenIt;
       }
-        cnt = cnt + seenIt.length;
-        fac = fac * seenIt.length;
+      cnt = cnt + seenIt.length;
+      fac = fac * seenIt.length;
       if(!seenIt) {
         throw new Error("Expecting at least one match for " + sWordGroup)
       }
@@ -338,8 +337,9 @@ export function distWeight(dist : number, category : string) : number {
 /**
  * Given a sentence, extact categories
  */
-export function extractCategoryMap(oSentence) : { [key : string] : Array<{ pos : number}> } {
+export function extractCategoryMap(oSentence : Array<IFMatch.IWord>) : { [key : string] : Array<{ pos : number}> } {
   var res = {};
+  debuglog('extractCategoryMap ' + JSON.stringify(oSentence));
   oSentence.forEach(function(oWord, iIndex) {
     if (oWord.category === IFMatch.CAT_CATEGORY) {
       res[oWord.matchedString] = res[oWord.matchedString] || [];
@@ -369,6 +369,8 @@ export function reinForce(aCategoryizedArray) {
   return aCategoryizedArray;
 }
 
+
+/// below may no longer be used
 
 export function matchRegExp(oRule : IRule, context : IFMatch.context, options ? : IMatchOptions) {
   if (context[oRule.key] === undefined) {

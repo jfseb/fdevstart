@@ -64,8 +64,6 @@ type fnComp<T> = (a : T,b : T) => boolean;
 
 export const ArrayUtils = {
 
-
-
   indexOf : function<T>(oMember : T, aArr : Array<T>, fnComp : fnComp<T> ) : number {
     fnComp = fnComp || function (a:T, b:T) { return a === b };
     var resIndex = -1;
