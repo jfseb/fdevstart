@@ -6,7 +6,7 @@
  */
 
 
-import * as InputFilter from './InputFilter';
+import * as InputFilter from './inputFilter';
 
 import * as debug from 'debug';
 
@@ -18,7 +18,7 @@ import * as IMatch from './ifmatch';
 
 import * as Toolmatcher from './toolmatcher';
 
-import * as Sentence from './Sentence';
+import * as Sentence from './sentence';
 
 export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools: Array<IMatch.ITool>) {
   if (sString.length === 0) {
