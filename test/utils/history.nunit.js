@@ -1,4 +1,3 @@
-
 var process = require('process')
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen'
 
@@ -115,22 +114,48 @@ exports.testPushUndefined = function (test) {
 exports.testPushSameBackHitBorder = function (test) {
   // test.expect(3)
   var u
-  u = new History({ length: 3,
+  u = new History({ length: 10,
     default: 'defaultfwd'
   })
   u.push('e 1')
   u.push('e 2')
+  u.push('e 3')
+  u.push('e 1')
+  u.push('e 2')
+  test.equal(u.backward(), 'e 2', 'backward 4')
+  test.equal(u.backward(), 'e 1', 'backward 3')
+  test.equal(u.backward(), 'e 3', 'backward 2')
+  test.equal(u.backward(), 'e 2', 'backward 2A')
+  test.equal(u.get(), 'e 2', 'get ok')
+  u.push('e 2')
+  test.equal(u.backward(), 'e 2', 'backward 2B')
+  test.equal(u.backward(), 'e 1', 'backward 2c')
+  test.equal(u.backward(), 'e 1', 'backward 2')
+  test.equal(u.forward(), 'e 2', 'backward 3')
+  test.done()
+}
+
+exports.testPushSameBackHitBorder = function (test) {
+  // test.expect(3)
+  var u
+  u = new History({ length: 10,
+    default: 'defaultfwd'
+  })
+  u.push('e 1')
   u.push('e 2')
   u.push('e 3')
-  u.push('e 4')
-  test.equal(u.backward(), 'e 4', 'backward 4')
-  test.equal(u.backward(), 'e 3', 'backward 3')
-  test.equal(u.backward(), 'e 2', 'backward 2')
+  u.push('e 1')
+  u.push('e 2')
+  test.equal(u.backward(), 'e 2', 'backward 4')
+  test.equal(u.backward(), 'e 1', 'backward 3')
+  test.equal(u.backward(), 'e 3', 'backward 2')
+  test.equal(u.get(), 'e 3', 'get ok')
+  u.push('e 3')
+  test.equal(u.backward(), 'e 3', 'backward 2B')
   test.equal(u.backward(), 'e 2', 'backward 2A')
-  test.equal(u.backward(), 'e 2', 'backward 2B')
-  test.equal(u.backward(), 'e 2', 'backward 2c')
-  test.equal(u.backward(), 'e 2', 'backward 2')
-  test.equal(u.forward(), 'e 3', 'backward 3')
+  test.equal(u.backward(), 'e 1', 'backward 2c')
+  test.equal(u.backward(), 'e 1', 'backward 2')
+  test.equal(u.forward(), 'e 2', 'backward 3')
   test.done()
 }
 

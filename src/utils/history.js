@@ -63,7 +63,8 @@ History.prototype.push = function (oNext) {
   }
   this._state = 'pushed'
   if (oNext === this.get()) {
-    if (this._data._length) {
+    if (this._data.length) {
+      debug('this.data leng' + this._data[this._data.length - 1])
       if (oNext !== this._data[this._data.length - 1]) {
         this._data.push(oNext)
         this._shiftIfNeeded()
