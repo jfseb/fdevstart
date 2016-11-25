@@ -32,36 +32,6 @@ import * as matchdata from './matchdata';
     return a0 * 500 / sText2.length + a
   }
 
-  function fnFindMatch (sKeyword, oContext : IFMatch.context, oMap) {
-    // return a better context if there is a match
-    oMap.sort(function (oEntry1, oEntry2) {
-      var u1 = calcDistance(oEntry1.key.toLowerCase(), sKeyword)
-      var u2 = calcDistance(oEntry2.key.toLowerCase(), sKeyword)
-      return u1 - u2
-    })
-    // later: in case of conflicts, ask,
-    // now:
-    var dist = calcDistance(oMap[0].key.toLowerCase(), sKeyword)
-    debuglog('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
-    if (dist < 150) {
-      var o1 = Object.assign({}, oContext) as any
-      var o2
-      o1.context = Object.assign({}, o1.context)
-      o2 = o1
-      o2.context = Object.assign(o1.context, oMap[0].context)
-      return o2
-    }
-    return null
-  }
-
-  /**
-   * a function to match a unit test using levenshtein distances
-   * @public
-   */
-  function fnFindUnitTest (ssystemObjectId, oContext) {
-    return fnFindMatch(ssystemObjectId, oContext, oUnitTests)
-  }
-
 import * as IFMatch from '../match/ifmatch';
 
 export const  enum EnumRuleType {
@@ -383,29 +353,3 @@ export function applyRulesPickFirst(context : IFMatch.context) : IFMatch.context
 export function decideOnReQuery( context : IFMatch.context) : Array<IFMatch.context> {
   return []
 }
-
-
-  function nrMatches (aObject, oContext) {
-    return Object.keys(aObject).reduce(function (prev, key) {
-      if (Object.prototype.hasOwnProperty.call(oContext, key)) {
-        prev = prev + 1
-      }
-      return prev
-    }, 0)
-  }
-
-  function nrNoMatches (aObject, oContext) {
-    var noMatchA = Object.keys(aObject).reduce(function (prev, key) {
-      if (!Object.prototype.hasOwnProperty.call(oContext, key)) {
-        prev = prev + 1
-      }
-      return prev
-    }, 0)
-    var noMatchB = Object.keys(oContext).reduce(function (prev, key) {
-      if (!Object.prototype.hasOwnProperty.call(aObject, key)) {
-        prev = prev + 1
-      }
-      return prev
-    }, 0)
-    return noMatchA + noMatchB
-  }
