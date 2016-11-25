@@ -5,11 +5,11 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-var InputFilter = require('./InputFilter');
+var InputFilter = require('./inputFilter');
 var debug = require('debug');
 var debuglog = debug('analyze');
 var Toolmatcher = require('./toolmatcher');
-var Sentence = require('./Sentence');
+var Sentence = require('./sentence');
 function analyzeAll(sString, aRules, aTools) {
     if (sString.length === 0) {
         return [];
