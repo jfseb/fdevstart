@@ -77,6 +77,15 @@ export interface IRule {
   follows : context
 }
 
+export interface IntentRule {
+  type : EnumRuleType,
+  regexp : RegExp,
+  argsMap : { [key: string] : number}  // a map of regexp match group -> context key
+  // e.g. /([a-z0-9]{3,3})CLNT([\d{3,3}])/
+  //      { 1 : "systemId", 2 : "client" }
+  follows? : context
+}
+
 /**
  * A rule matching a single string
  */

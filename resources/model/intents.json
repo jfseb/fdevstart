@@ -1,0 +1,41 @@
+{
+  "ShowMe": [
+    "start <A>",
+    "show me <A1>",
+    "start me <A1>",
+    "display <A1>"
+  ],
+  "WhatIs": [
+    "what is the <category> for <A1>",
+    "what is the <category> in <A1>",
+    "what is the <category> of <A1>",
+    "what is the <category> using <A1>",
+    "who is the <category> of <A1>",
+    "which <category>is related to<A1>",
+    "what is the<category>related to<A1>",
+    "in which <category>is <A1>",
+    "gimme <category>for <A1>",
+    "give me the<category> for <A1>",
+    "give me the <XXXX> from <A1>",
+    "can you ((tell|give)) me the <category> ((for)|(in)) <A1>",
+    [
+      "^what ((was)|(is)) the (.*) ((of)|(for)|(given)) (.*)$",
+      {
+        "category": 4,
+        "A1": 9
+      }
+    ],
+    "tell me the <category> of <A1>"
+  ],
+  "Help": [
+    "Help",
+    "What can i do?",
+    "Talk to me"
+  ],
+  "Exit": [
+    "Quit",
+    "Leave",
+    "Exit",
+    "Abandon"
+  ]
+}

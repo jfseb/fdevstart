@@ -20,8 +20,8 @@
     "ui": "electron .",
     "instrument": "jscoverage gen/ gen_cov/",
     "instrumentGULP": "gulp instrument",
-    "testcovWIN": "set FSD_COVERAGE=1 && nodeunit test/match test/utils test/graph --reporter=lcov >info.lcov",
-    "testcov": "export FSD_COVERAGE=1 && nodeunit test/match test/utils test/graph --reporter=lcov | coveralls",
+    "testcovWIN": "set FSD_COVERAGE=1 && nodeunit test/match test/bot test/utils test/graph --reporter=lcov >info.lcov",
+    "testcov": "export FSD_COVERAGE=1 && nodeunit test/match test/bot test/utils test/graph --reporter=lcov | coveralls",
     "tocoveralls": "cat info.lcov | coveralls",
     "tocoveralls2": "cat info.lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"

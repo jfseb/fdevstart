@@ -30,6 +30,8 @@
         "src/match/ifmatch.ts",
         "src/constants.ts",
         "src/exec/exec.ts",
+        "src/bot/plainrecognizer.ts",
+        "src/bot/dumbdialog.ts",
         "src/match/breakdown.ts",
         "src/match/dispatcher.ts",
         "src/match/inputFilterRules.ts",
