@@ -84,7 +84,6 @@ exports.test_matchWordAliasDifferentCat = function (test) {
     abc: 'ABC'
   }
   var res = fn(oRuleWord, oContext)
-  console.log(JSON.stringify(res))
   test.deepEqual(res,
     {
       systemObjectId: 'ClientSideTargetResolution',
@@ -94,6 +93,22 @@ exports.test_matchWordAliasDifferentCat = function (test) {
         'systemObjectId': 0
       }
     }, ' incorrect result')
+  test.done()
+}
+
+
+exports.test_matchWordAliasDifferentCat = function (test) {
+  const fn = inputFilter.matchWord
+  // test.expect(3)
+
+  var oContext = {
+    systemObjectId: 'WAy of the page',
+    systemObjectCategory: 'xunit',
+    abc: 'ABC'
+  }
+  var res = fn(oRuleWord, oContext)
+  test.deepEqual(res,
+   undefined, ' incorrect result')
   test.done()
 }
 
