@@ -3,6 +3,16 @@
 // based on: http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance
 // and:  http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
 
+
+/**
+ * Distance of strings algorithm
+ * @module fsdevstart.utils.damerauLevenshtein
+ */
+
+/**
+ * a function calculating distance between two strings
+ * @public
+ */
 export function levenshtein (a : string, b : string) {
   var i : number
   var j : number

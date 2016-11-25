@@ -45,7 +45,7 @@ gulp.task('tsc', function () {
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(tsProject())
 
-    // ts({
+  // ts({
     // ...
     // }))
 
@@ -82,7 +82,7 @@ var imgDest = 'gen'
 // compile standard sources with babel,
 // as the coverage input requires this
 //
-gulp.task('babel', function () {
+gulp.task('babel', ['tsc'], function () {
   // Add the newer pipe to pass through newer images only
   return gulp.src([imgSrc, 'gen_tsc/**/*.js'])
     .pipe(newer(imgDest))
@@ -114,14 +114,15 @@ gulp.task('testcov', function () {
     })).pipe(gulp.dest('./cov/lcov.info'))
 })
 
-gulp.task('test', function () {
+gulp.task('test', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
       // reporter: 'lcov',
       // reporterOptions: {
       //  output: 'testcov'
       // }
-    })).pipe(gulp.dest('./out/lcov.info'))
+    })).on('error', function (err) { console.log('This is weird: ' + err.message) })
+   .pipe(gulp.dest('./out/lcov.info'))
 })
 //    .pipe(gulp.dest('./cov')) // default file name: src-cov.js
 // })
@@ -131,7 +132,7 @@ gulp.task('test', function () {
 
 var standard = require('gulp-standard')
 
-gulp.task('standard', function () {
+gulp.task('standard', ['babel'], function () {
   return gulp.src(['src/**/*.js', 'test/**/*.js', 'gulpfile.js'])
     .pipe(standard())
     .pipe(standard.reporter('default', {
@@ -151,4 +152,4 @@ gulp.task('coveralls', function () {
 gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'instrument', 'doc'])
+gulp.task('default', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'test'])

@@ -1,0 +1,22 @@
+
+
+Amend 
+
+   Given entityset, perform a 
+    "Best match" on each entity, yielding
+	   ranked alternative representations 
+	   and potentially a type 
+	   
+	 key :  { Word /Synonym /Regex 
+	   / Extractionrule } -> { prop TrueWord , 
+	                           Category: XX  }
+	   
+	If the Category is already present, it's highly preferred
+	(or even filtered) matching categories. 
+
+Problem: how to treat generic words which we don't know, 
+like UV2, UVX	 -> Regex, Extrationrule   UV2CLNT000 -> SystemId UV2, client: 000
+	   
+
+
+This yields a [set of] ( uncategorized properties)	   

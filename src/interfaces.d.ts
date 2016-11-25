@@ -1,3 +1,38 @@
+
+import * as cons from 'constants';
+//import { ResponseCode } from 'constants';
+
+export const enum ResponseCode {
+  NOMATCH = 0,
+  EXEC,
+  QUERY
+}
+
+
+/**
+ * Defines the interface for an analysis
+ * reponse
+ */
+export interface IResponse {
+  rating : number,
+  type : ResponseCode,
+  type2 : number, // ResponseCode,
+  context : { [key:string] :string},
+  text : string,
+  action : IAction,
+  prompts : { [key :string ] : { text : string, description : any }; }
+}
+
+export const enum EnumActionType {
+  STARTURL,
+  STARTCMDLINE
+}
+
+interface IAction {
+  data : any,
+  type : EnumActionType
+}
+
 /* Defines the interface of the structure of a task */
 interface ITodo {
   id: string,

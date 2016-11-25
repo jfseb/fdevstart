@@ -3,7 +3,137 @@ var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
 
 var debug = require('debug')('dispatcher.nunit')
 
-const dispatcher = require(root + '/match/dispatcher.js').dispatcher
+const inputFilter = require(root + '/match/inputFilter.js')
+
+const dispatcher = inputFilter.inputFilter
+
+exports.test_matchWord = function (test) {
+  const fn = inputFilter.matchWord
+
+  // test.expect(3)
+  test.deepEqual(fn({
+    key: 'NoTPresent'
+  },
+    {
+      systemObjectId: 'ClientSideTragetResol',
+      systemObjectCategory: 'unit'
+    }),
+    undefined, 'not applicable to irrelevant key')
+  test.done()
+}
+
+exports.test_matchWordAlias = function (test) {
+  const fn = inputFilter.matchWord
+  // test.expect(3)
+  test.deepEqual(fn({
+    key: 'systemObjectId',
+    word: 'CSTR',
+    follows: {
+      systemObjectId: 'ClientSideTargetResolution',
+      systemObjectCategory: 'unit'
+    }
+  },
+    {
+      systemObjectId: 'CSTR',
+      systemObjectCategory: 'unit'
+    }),
+    undefined, 'not applicable to irrelevant key')
+  test.done()
+}
+
+var oRuleWord = {
+  type: 'word',
+  key: 'systemObjectId',
+  word: 'cstr',
+  follows: {
+    systemObjectId: 'ClientSideTargetResolution',
+    systemObjectCategory: 'unit'
+  }
+}
+
+exports.test_matchWordAlias = function (test) {
+  const fn = inputFilter.matchWord
+  // test.expect(3)
+
+  var oContext = {
+    systemObjectId: 'CSTR',
+    systemObjectCategory: 'unit',
+    abc: 'ABC'
+  }
+  var res = fn(oRuleWord, oContext)
+  console.log(JSON.stringify(res))
+  test.deepEqual(res,
+    {
+      systemObjectId: 'ClientSideTargetResolution',
+      systemObjectCategory: 'unit',
+      abc: 'ABC',
+      _weight: {
+        'systemObjectId': 0
+      }
+    }, ' incorrect result')
+  test.done()
+}
+
+exports.test_matchWordAliasDifferentCat = function (test) {
+  const fn = inputFilter.matchWord
+  // test.expect(3)
+
+  var oContext = {
+    systemObjectId: 'CSTR',
+    systemObjectCategory: 'xunit',
+    abc: 'ABC'
+  }
+  var res = fn(oRuleWord, oContext)
+  console.log(JSON.stringify(res))
+  test.deepEqual(res,
+    {
+      systemObjectId: 'ClientSideTargetResolution',
+      systemObjectCategory: 'xunit',
+      abc: 'ABC',
+      _weight: {
+        'systemObjectId': 0
+      }
+    }, ' incorrect result')
+  test.done()
+}
+
+exports.test_matchRegexp = function (test) {
+  const fn = inputFilter.matchWord
+  // test.expect(3)
+
+  var oContext = {
+    systemObjectId: 'CSTR',
+    systemObjectCategory: 'xunit',
+    abc: 'ABC'
+  }
+  var res = fn(oRuleWord, oContext)
+  console.log(JSON.stringify(res))
+  test.deepEqual(res,
+    {
+      systemObjectId: 'ClientSideTargetResolution',
+      systemObjectCategory: 'xunit',
+      abc: 'ABC',
+      _weight: {
+        'systemObjectId': 0
+      }
+    }, ' incorrect result')
+  test.done()
+}
+
+exports.testInputFilter2 = function (test) {
+  const fn = inputFilter.augmentContext
+  // test.expect(3)
+  test.deepEqual(fn({
+    systemObjectId: 'ClientSideTragetResol',
+    systemObjectCategory: 'unit'
+  }, [
+    {
+      type: 1
+    }
+  ]),
+    undefined, 'return undefined')
+  test.done()
+}
 
 exports.testReplacePattern = function (test) {
   const fn = dispatcher._test.sameOrStar
