@@ -157,6 +157,7 @@ var newer = require('gulp-newer');
 
 var imgSrc = 'src/**/*.js';
 var imgDest = 'gen';
+var imgDest2 = 'gen2';
 
 // compile standard sources with babel,
 // as the coverage input requires this
@@ -178,7 +179,7 @@ gulp.task('babel', ['tsc'], function () {
 gulp.task('babel2', ['tsc2'], function () {
   // Add the newer pipe to pass through newer images only
   return gulp.src([imgSrc])
-    .pipe(newer(imgDest))
+    .pipe(newer(imgDest2))
     .pipe(babel({
       comments: true,
       presets: ['es2015']
