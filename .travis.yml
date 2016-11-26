@@ -17,7 +17,7 @@ node_js:
  - "6"
  - "node"
 # - "4"   does not support sourcemaps
-after_script:
-  - npm run instrument
-  - npm run testcov
-  - jscoverage gen/match/inputFilterRules.js gen_cov/xinputFilterRules.js
+# after_script:
+#  - npm run instrument
+#  - npm run testcov
+#  - jscoverage gen/match/inputFilterRules.js gen_cov/xinputFilterRules.js
