@@ -66,10 +66,28 @@ gulp.task('doc', function (cb) {
     .pipe(jsdoc(cb))
 })
 
+gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
+  return gulp.src([
+    genDir + '/match/inputFilterRules.js'
+  ], { 'base': genDir })
+    .pipe(gulp.dest('gen_cov'))
+})
+
 var instrument = require('gulp-instrument')
 
-gulp.task('instrument', ['tsc', 'babel'], function () {
-  return gulp.src([genDir + '/**/*.js'])
+gulp.task('instrument', ['tsc', 'babel', 'copyInputFilterRules'], function () {
+  return gulp.src([
+    genDir + '/match/data.js',
+    genDir + '/match/dispatcher.js',
+    genDir + '/match/ifmatch.js',
+    genDir + '/match/inputFilter.js',
+    // genDir + '/match/inputFilterRules.js',
+    genDir + '/match/matchData.js',
+    //  genDir + '/match/inputFilterRules.js',
+    genDir + '/utils/*.js',
+    genDir + '/exec/*.js'],
+    { 'base': genDir
+    })
     .pipe(instrument())
     .pipe(gulp.dest('gen_cov'))
 })

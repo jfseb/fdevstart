@@ -13,7 +13,6 @@ before_script:
   - npm ls babel
   - gulp default
   - cat gen/match/inputFilterRules.js
-  - jscoverage gen/match/inputFilterRules.js gen_cov/match/inputFilterRules.js
   - gulp instrument
 node_js:
  - "6"
@@ -22,3 +21,4 @@ node_js:
 after_script:
   - npm run instrument
   - npm run testcov
+  - jscoverage gen/match/inputFilterRules.js gen_cov/xinputFilterRules.js
