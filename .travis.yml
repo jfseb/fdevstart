@@ -1,19 +1,18 @@
 language: node_js
 before_script:
-  - npm install
   - npm i -g typescript typings
   - npm i jscoverage
   - npm i jscoverage --save-dev
   - typings install
   - typings install debug
   - tsc
-  - npm ls jscoverage
-  - npm ls tsc
-  - npm ls typescript
-  - npm ls babel
+#  - npm ls jscoverage
+#  - npm ls tsc
+#  - npm ls typescript
+#  - npm ls babel
   - gulp default
   - cat gen/match/inputFilterRules.js
-  - gulp instrument
+#  - gulp instrument
 node_js:
  - "6"
  - "node"
