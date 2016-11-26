@@ -4,6 +4,7 @@ before_script:
   - typings install
   - typings install debug
   - tsc
+  - npm -ls jscoverage
   - gulp default
   - gulp instrument
 node_js:
