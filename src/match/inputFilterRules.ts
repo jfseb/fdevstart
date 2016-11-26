@@ -66,9 +66,10 @@ export const oRuleMap = {
         follows: {}
     }
   ],
-  "systemObjectId" : [
+};
 
-  ].concat([
+
+var systemObjectId = [
     // alphabetic order please
     'test-resources/sap/ushell/qunit/adapters/cdm/ClientSideTargetResolutionAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/CommonDataModelAdapter.qunit.html',
@@ -207,10 +208,11 @@ export const oRuleMap = {
         systemObjectId : sString
       }
     }
-  }) // map
-  ).concat([
+  }); // map
+
+
+var systemObjectId2 = [
  // wiki aliases, this is an old legacy foramt
- //
       {
       key: 'Support page',
       res : 'CA-UI2-INT-FE support',
@@ -242,9 +244,12 @@ export const oRuleMap = {
       }
     };
   }
-  ) // map
-  ) // concat
-  .concat([
+  ); // map
+
+
+systemObjectId = systemObjectId.concat(systemObjectId2 as any);
+
+systemObjectId = systemObjectId.concat([
      {
       type : inputFilter.EnumRuleType.REGEXP,
       key : "systemObjectId",
@@ -253,10 +258,8 @@ export const oRuleMap = {
         _ranking : 0.9
       }
     }
-  ]).concat([
+  ] as any)
 
+oRuleMap["systemObjectId"] = systemObjectId;
 
-
-  ])
-};
-
+exports.oRuleMap = oRuleMap;
