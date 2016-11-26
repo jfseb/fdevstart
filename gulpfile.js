@@ -104,7 +104,8 @@ gulp.task('testcov', function () {
   const envs = env.set({
     DO_COVERAGE: '1'
   })
-  gulp.src(['./**/covleven.js'])
+  // the file does not matter
+  gulp.src(['./**/match/dispatcher.nunit.js'])
     .pipe(envs)
     .pipe(nodeunit({
       reporter: 'lcov',
@@ -113,6 +114,7 @@ gulp.task('testcov', function () {
       }
     })).pipe(gulp.dest('./cov/lcov.info'))
 })
+
 
 gulp.task('test', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
