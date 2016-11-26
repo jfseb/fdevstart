@@ -1,5 +1,7 @@
 node_modules
 docs
+gen_tsc
 info.lcov
 gen_cov
 sensitive
+# we check in gen for coveralls source references

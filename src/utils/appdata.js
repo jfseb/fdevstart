@@ -52,6 +52,15 @@
     return this.data[sKey]
   }
 
+  function getFileAndDir (sAppName, sFileName) {
+    var dir = getUserHome() + path.sep + sAppName
+    var fileName = dir + path.sep + sFileName
+    return {
+      dir: dir,
+      fileName: fileName
+    }
+  }
+
   /**
    * Constructor for file persistence handle,
    * uses user home directory + <sAppName> + / + sFileName for persitence
@@ -64,7 +73,7 @@
     logger.log('Dest' + sAppName)
     this.dir = getUserHome() + path.sep + sAppName
     this.fileName = this.dir + path.sep + sFileName
-    this.filename = process.env['USERDATA']
+    this.filename = process.env['USERDATA'] || this.filename
     this.data = {}
     if (!fs.existsSync(this.dir)) {
       fs.mkdirSync(this.dir)
@@ -128,6 +137,9 @@
 
   module.exports = {
     AppData: AppData,
-    PersistenceHandle: PersistenceHandle
+    PersistenceHandle: PersistenceHandle,
+    _test: {
+      getFileAndDir: getFileAndDir
+    }
   }
 }())
