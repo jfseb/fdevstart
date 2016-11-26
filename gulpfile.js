@@ -185,7 +185,6 @@ gulp.task('coveralls', function () {
     .pipe(coveralls())
 })
 
-
 gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
