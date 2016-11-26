@@ -10,6 +10,7 @@ before_script:
 #  - npm ls tsc
 #  - npm ls typescript
 #  - npm ls babel
+  - export DO_COVERAGE=0
   - gulp default
   - cat gen/match/inputFilterRules.js
 #  - gulp instrument

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "setup": "typings install debug && gulp default",
-    "test": "gulp test",
+    "test": "export DO_COVERAGE=0 && gulp test",
     "testOld": "./node_modules/.bin/nodeunit test/match test/utils && standard",
     "startConsole": "node console_app.js",
     "run": "nodeunit",
