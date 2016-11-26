@@ -159,7 +159,6 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html',
     'test-resources/sap/ushell/qunit/services/NavTargetResolutionCDMBlackbox.qunit.html',
 
-    /*
     'test-resources/sap/ushell/qunit/services/Notifications.qunit.html',
     'test-resources/sap/ushell/qunit/services/Personalization.qunit.html',
     'test-resources/sap/ushell/qunit/services/PluginManager.qunit.html',
@@ -214,7 +213,6 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/ui/tile/StaticTile.qunit.html',
     'test-resources/sap/ushell/qunit/ui/tile/TileBase.qunit.html',
     'test-resources/sap/ushell/qunit/ui5service/ShellUIService.qunit.html'
-    */
   ];
 
 var aregex = /\/([^/]*).qunit.html/;
