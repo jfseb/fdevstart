@@ -11,6 +11,7 @@ before_script:
   - npm ls typescript
   - npm ls babel
   - gulp default
+  - cat gen/match/inputFilterRules.js
   - gulp instrument
 node_js:
  - "6"
