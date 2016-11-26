@@ -5,7 +5,7 @@ import * as inputFilter from './inputFilter';
 
 export const oKeyOrder : Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
 
-
+ /* @covignore */
 export function getRuleMap () {
 
 
