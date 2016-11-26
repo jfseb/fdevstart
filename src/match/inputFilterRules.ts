@@ -5,9 +5,8 @@ import * as inputFilter from './inputFilter';
 
 export const oKeyOrder : Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
 
-export const oRuleMap = {
 
-  "systemObjectCategory": [
+var systemObjectCategory = [
     {
       type : inputFilter.EnumRuleType.WORD,
       key : "systemObjectCategory",
@@ -24,7 +23,9 @@ export const oRuleMap = {
         systemObjectCategory : "unit test"
       }
     }
-  ].concat([ ["unit test", "unit"],
+  ];
+
+var systemObjectCategory2 = [ ["unit test", "unit"],
        ["wiki", "web page"],
        ["fiori catalog", "flp catalog", "catalog"],
        ["fiori group", "flp group", "group"],
@@ -42,8 +43,14 @@ export const oRuleMap = {
               }
             };
      });
-   }).reduce(function(a,b) { return a.concat(b);  },[])
-  ) // concat
+   });
+   systemObjectCategory2 = systemObjectCategory2.reduce(function(a,b) { return a.concat(b);  },[]) as any;
+
+var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as any)
+
+export const oRuleMap = {
+
+  "systemObjectCategory": systemObjectCategory
    ,
   "systemId" : [
    {
@@ -69,7 +76,8 @@ export const oRuleMap = {
 };
 
 
-var systemObjectId = [
+var UnitTestList =
+[
     // alphabetic order please
     'test-resources/sap/ushell/qunit/adapters/cdm/ClientSideTargetResolutionAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/CommonDataModelAdapter.qunit.html',
@@ -197,7 +205,9 @@ var systemObjectId = [
     'test-resources/sap/ushell/qunit/ui/tile/StaticTile.qunit.html',
     'test-resources/sap/ushell/qunit/ui/tile/TileBase.qunit.html',
     'test-resources/sap/ushell/qunit/ui5service/ShellUIService.qunit.html'
-  ].map(function (sEntry) {
+  ];
+
+var systemObjectId = UnitTestList.map(function (sEntry) {
     var sString = sEntry.match('/([^/]*).qunit.html')[1]
     return {
       key : "systemObjectId",
