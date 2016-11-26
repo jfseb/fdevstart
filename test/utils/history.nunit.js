@@ -78,6 +78,62 @@ exports.testBackHitBorder = function (test) {
   test.done()
 }
 
+exports.testPushUndefined = function (test) {
+  test.expect(11)
+  var u
+  u = new History({ length: 3,
+    default: 'defaultfwd'
+  })
+  u.push('e 1')
+  try {
+    u.push(null)
+    test.ok(false, 'not here')
+  } catch (e) {
+    test.ok(true, 'got here')
+  }
+  u.push('e 2')
+  try {
+    u.push(undefined)
+    test.ok(false, 'not here')
+  } catch (e) {
+    test.ok(true, 'got here')
+  }
+  u.push('e 3')
+  u.push('e 4')
+  test.equal(u.backward(), 'e 4', 'backward 4')
+  test.equal(u.backward(), 'e 3', 'backward 3')
+  test.equal(u.backward(), 'e 2', 'backward 2')
+  test.equal(u.backward(), 'e 2', 'backward 2A')
+  test.equal(u.backward(), 'e 2', 'backward 2B')
+  test.equal(u.backward(), 'e 2', 'backward 2c')
+  test.equal(u.backward(), 'e 2', 'backward 2')
+  test.equal(u.forward(), 'e 3', 'backward 3')
+  test.ok(true, 'nr 3')
+  test.done()
+}
+
+exports.testPushSameBackHitBorder = function (test) {
+  // test.expect(3)
+  var u
+  u = new History({ length: 3,
+    default: 'defaultfwd'
+  })
+  u.push('e 1')
+  u.push('e 2')
+  u.push('e 2')
+  u.push('e 3')
+  u.push('e 4')
+  test.equal(u.backward(), 'e 4', 'backward 4')
+  test.equal(u.backward(), 'e 3', 'backward 3')
+  test.equal(u.backward(), 'e 2', 'backward 2')
+  test.equal(u.backward(), 'e 2', 'backward 2A')
+  test.equal(u.backward(), 'e 2', 'backward 2B')
+  test.equal(u.backward(), 'e 2', 'backward 2c')
+  test.equal(u.backward(), 'e 2', 'backward 2')
+  test.equal(u.forward(), 'e 3', 'backward 3')
+  test.done()
+}
+
 exports.testRetpushOld = function (test) {
   // test.expect(3)
   var u

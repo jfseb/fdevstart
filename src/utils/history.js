@@ -108,13 +108,13 @@ History.prototype.save = function () {
     })
   }
 }
-
+/*
 History.prototype.set = function (oCurrent) {
   if (oCurrent !== this.get()) {
     this._current = oCurrent
   }
 }
-
+*/
 History.prototype.backward = function () {
   if (this._data.length === 0) {
     return this.get()
