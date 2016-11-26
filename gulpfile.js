@@ -74,7 +74,7 @@ gulp.task('instrument', ['tsc', 'babel'], function () {
     .pipe(gulp.dest('gen_cov'))
 })
 
-gulp.task('instrument', ['tsc', 'babel'], function () {
+gulp.task('instrument2', ['tsc', 'babel'], function () {
   return gulp.src([genDir + '/**/*.js'])
     .pipe(instrument())
     .pipe(gulp.dest('gen_cov'))
