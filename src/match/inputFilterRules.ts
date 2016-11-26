@@ -2,6 +2,9 @@
 
 import * as inputFilter from './inputFilter';
 
+
+var oKeyOrder = ["systemObjectCategory", "systemId", "systemObjectId"];
+
 var oRuleMap = {
 
   "systemObjectCategory": [

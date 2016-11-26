@@ -129,7 +129,7 @@ exports.testPersistenceNoJSON = function (test) {
   },
     function (err) {
       if (err) {
-        console.log('cannot open file for writing!')
+        // console.log('cannot open file for writing!')
         test.ok(false, 'error preparing test')
         test.done()
         return
@@ -154,24 +154,32 @@ exports.testPersistenceNoJSON = function (test) {
  * Unit test for sth
  */
 exports.testPersistenceNoDir = function (test) {
-  test.expect(2)
+  test.expect(3)
   // prepare
+  var u = new AppData.PersistenceHandle('_Test4', 'File1')
+  // console.log('got handle')
+  // creates dir, must be first!
   var dirf = AppData._test.getFileAndDir('_Test4', 'File1')
   try {
     rmDir(dirf.dir)
-  } catch (e) {}
-
+  } catch (e) {
+    debug(' trouble removing ' + dirf.dir + ' ' + e.message)
+  }
+  // console.log('removed')
   // act
-  var u = new AppData.PersistenceHandle('_Test4', 'File1')
   u.save({
     a: 444
   }, function (err) {
+    // console.log('saved')
     if (err) {
+      test.ok(false, ' no error')
       debug('got an error' + err)
+      test.done()
       throw err
     }
     var k = new AppData.PersistenceHandle('_Test4', 'File1')
     k.load(function (err, sData) {
+      test.ok(true, 'could save and read')
       test.equal(err, undefined, 'no error')
       test.deepEqual(sData, {a: 444}, 'correct data read')
       test.done()

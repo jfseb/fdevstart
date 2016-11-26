@@ -105,15 +105,18 @@
         that.writeFile(that.fileName, data, cb)
       } else if (err.code === 'ENOENT') {
         // file does not exist
-        fs.mkdir(this.dir, (err) => {
+        logger.log('creating dir ....')
+        fs.mkdir(that.dir, (err) => {
           if (err) {
+            // console.log('more errors')
             cb(err)
           }
+          // console.log(' writing file')
           that.writeFile(that.fileName, data, cb)
         }
         )
       } else {
-        console.log('Some other error: ', err.code)
+        // console.log('Some other error: ', err.code)
         cb(err)
       }
     })
