@@ -31,7 +31,7 @@ var systemObjectCategory = [
 var systemObjectCategory2 = [ ["unit test", "unit"],
        ["wiki", "web page"],
        ["fiori catalog", "flp catalog", "catalog"],
- /*     ["fiori group", "flp group", "group"], */
+       ["fiori group", "flp group", "group"],
        ["flp", "fiori launchpad", "lauchpage", "launchpad"],
        ["flpd"]
    ].map(function(aArr) {
