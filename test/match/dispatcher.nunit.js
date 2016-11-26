@@ -37,6 +37,7 @@ exports.testNrMatches1 = function (test) {
   test.equal(fut({abc: 'def', hij: 1}, {hij: 4}), 1, 'ok')
   test.done()
 }
+
 exports.testNrMatches2 = function (test) {
   var fut = dispatcher._test.nrMatches
   test.equal(fut({abc: 'def', hij: 1}, {hijs: 4}), 0, 'ok')

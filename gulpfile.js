@@ -117,13 +117,25 @@ gulp.task('testcov', function () {
 gulp.task('test', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
-      // reporter: 'lcov',
-      // reporterOptions: {
-      //  output: 'testcov'
-      // }
+      reporter: 'minimal'
+    // reporterOptions: {
+    //  output: 'testcov'
+    // }
     })).on('error', function (err) { console.log('This is weird: ' + err.message) })
-   .pipe(gulp.dest('./out/lcov.info'))
+    .pipe(gulp.dest('./out/lcov.info'))
 })
+
+gulp.task('testmin', ['tsc', 'babel'], function () {
+  gulp.src(['test/**/*.js'])
+    .pipe(nodeunit({
+      reporter: 'minimal'
+    // reporterOptions: {
+    //  output: 'testcov'
+    // }
+    })).on('error', function (err) { console.log('This is weird: ' + err.message) })
+    .pipe(gulp.dest('./out/lcov.info'))
+})
+
 //    .pipe(gulp.dest('./cov')) // default file name: src-cov.js
 // })
 

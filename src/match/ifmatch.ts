@@ -15,7 +15,7 @@ export interface IPromptDescription {
   required : boolean
 }
 
-export type context = { [key:string] :string};
+export type context = { [key:string] :string };
 
 /**
  * Defines the interface for an analysis
