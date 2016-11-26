@@ -270,6 +270,13 @@ var systemObjectId2 = [
 
   systemObjectId = systemObjectId.concat([
      {
+      type : inputFilter.EnumRuleType.WORD,
+      key : "systemObjectId",
+      word: "flpd",
+      follows : {
+      }
+    },
+     {
       type : inputFilter.EnumRuleType.REGEXP,
       key : "systemObjectId",
       regexp : /\S+/i,

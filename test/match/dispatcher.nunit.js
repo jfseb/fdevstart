@@ -346,7 +346,7 @@ exports.test_filterShowEntityFLPD = function (test) {
 
   test.deepEqual(aMerged, {
     context: {
-      _ranking: 0.9,
+      _weight: { systemObjectId: 0 },
       systemObjectId: 'flpd',
       client: '120',
       systemId: 'uv2',
