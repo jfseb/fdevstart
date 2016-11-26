@@ -84,7 +84,7 @@ var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as 
 var UnitTestList =
 [
     // alphabetic order please
-   /*
+
     'test-resources/sap/ushell/qunit/adapters/cdm/ClientSideTargetResolutionAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/CommonDataModelAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/LaunchPageAdapter.qunit.html',
@@ -141,7 +141,7 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/renderers/fiori2/RendererExtensions.qunit.html',
     'test-resources/sap/ushell/qunit/renderers/fiori2/Shell.qunit.html',
     'test-resources/sap/ushell/qunit/renderers/fiori2/UIActions.qunit.html',
-*/
+
     'test-resources/sap/ushell/qunit/services/AppConfiguration.qunit.html',
     'test-resources/sap/ushell/qunit/services/AppContext.qunit.html',
     'test-resources/sap/ushell/qunit/services/AppLifeCycle.qunit.html',
