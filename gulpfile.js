@@ -115,7 +115,6 @@ gulp.task('testcov', function () {
     })).pipe(gulp.dest('./cov/lcov.info'))
 })
 
-
 gulp.task('test', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
