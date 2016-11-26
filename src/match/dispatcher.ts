@@ -16,68 +16,10 @@ import { exec } from 'child_process';
 import * as matchdata from './matchdata';
 
 const oUnitTests = matchdata.oUnitTests
-
-  var oWikis = [
-    {
-      key: 'FCC ABAP Alignment',
-      context: {
-        systemObjectId: 'UI2 Support page',
-        path: '/unifiedshell/display/FCC+ABAP+Alignment'
-      }
-    },
-    {
-      key: 'UI2 test links',
-      context: {
-        systemObjectId: 'UI2 test links',
-        path: 'wiki/display/unifiedshell/Adaption+to+UI5+QUnit+Test+Runner'
-      }
-    },
-    {
-      key: 'Support schedule',
-      context: {
-        systemObjectId: 'TIP Core UI Integration support',
-        path: 'wiki/display/TIPCoreUII/Support'
-      }
-    },
-    {
-      key: 'UII Support schedule',
-      context: {
-        systemObjectId: 'TIP Core UI Integration support',
-        path: 'wiki/display/TIPCoreUII/Support'
-      }
-    },
-    {
-      key: 'Support page',
-      context: {
-        systemObjectId: 'CA-UI2-INT-FE support',
-        path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
-      }
-    },
-    {
-      key: 'UI2 Support page',
-      context: {
-        systemObjectId: 'CA-UI2-INT-FE support',
-        path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
-      }
-    },
-    {
-      key: 'Backend Sprint Reviews',
-      context: {
-        systemObjectId: 'Backend Sprint Review',
-        path: 'wiki/display/UICEI/Tact+Overviews'
-      }
-    },
-    {
-      key: 'UI5 patch schedule',
-      context: {
-        systemObjectId: 'UI5 UI2 Pach plan',
-        path: 'wiki/pages/viewpage.action?pageId=1679623157'
-      }
-    }
-  ]
+const oWikis = matchdata.oWikis
 
   function calcDistance (sText1, sText2) {
-    // console.log("length2" + sText1 + " - " + sText2)
+    debuglog("length2" + sText1 + " - " + sText2)
     var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
     var a = distance.levenshtein(sText1.toLowerCase(), sText2)
     return a0 * 500 / sText2.length + a
@@ -85,6 +27,7 @@ const oUnitTests = matchdata.oUnitTests
 
   function fnFindMatch (sKeyword, oContext, oMap) {
     // return a better context if there is a match
+    // sKeyword = sKeyword.toLowerCase();
     oMap.sort(function (oEntry1, oEntry2) {
       var u1 = calcDistance(oEntry1.key.toLowerCase(), sKeyword)
       var u2 = calcDistance(oEntry2.key.toLowerCase(), sKeyword)

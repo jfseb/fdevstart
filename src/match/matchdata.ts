@@ -181,7 +181,7 @@
     }
   }))
 
-  var oWikis = [
+export const oWikis = [
     {
       key: 'FCC ABAP Alignment',
       context: {
@@ -211,9 +211,16 @@
       }
     },
     {
-      key: 'Support page',
+      key: 'CA-UI2-INT-FE support',
       context: {
         systemObjectId: 'CA-UI2-INT-FE support',
+        path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
+      }
+    },
+    {
+      key: 'ca-ui2-int-fe support',
+      context: {
+        systemObjectId: 'ca-ui2-int-fe support',
         path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
       }
     },

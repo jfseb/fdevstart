@@ -386,6 +386,29 @@ exports.test_filterShowEntityUnitTestSthNull = function (test) {
   test.done()
 }
 
+exports.test_filterShowEntityWiki = function (test) {
+  var fut = dispatcher._test.filterShowEntity
+  var aMerged = fut({
+    systemObjectCategory: 'wiki',
+    systemObjectId: 'UI2 Support pages'
+  }, dispatcher._test._aShowEntityActions)
+
+  test.deepEqual(aMerged, {
+    context: {
+      systemObjectCategory: 'wiki',
+      _weight: { systemObjectCategory: 0, systemObjectId: 517 / 17 },
+      //   systemId: undefined,
+      systemObjectId: 'CA-UI2-INT-FE support',
+      path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
+    },
+    result: {
+      type: 'URL',
+      pattern: 'https://wiki.wdf.sap.corp/{path}'
+    }
+  }, 'wiki resolved')
+  test.done()
+}
+
 var aShowEntityActionsBest = [
   {
     context: {

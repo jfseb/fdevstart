@@ -258,8 +258,8 @@ var systemObjectId2 = [
       key : "systemObjectId",
       type : inputFilter.EnumRuleType.WORD,
       follows: {
-        sytemObjectCategory : "wiki",
-        systemObjectId : (oEntry.res || oEntry.key)
+        systemObjectCategory : "wiki",
+        systemObjectId : (oEntry.res || oEntry.key).toLowerCase()
       }
     };
   }
