@@ -5,6 +5,9 @@ before_script:
   - typings install debug
   - tsc
   - npm -ls jscoverage
+  - npm -ls tsc
+  - npm -ls typescript
+  - npm -ls babel
   - gulp default
   - gulp instrument
 node_js:
