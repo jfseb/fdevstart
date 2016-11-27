@@ -673,6 +673,62 @@ exports.test_matchWordAliasOverrideDifferent = function (test) {
   test.done()
 }
 
+exports.test_ruleLevenBeforeFallback = function (test) {
+  // prepare
+  // there a
+  var aRules = [
+    {
+      word: 'somewhatfar',
+      key: 'keyA',
+      type: enumRULETYPEWORD,
+      follows: {
+        'keyA': 'somewhatfar',
+        'keyB': 'System3'
+      }
+    },
+    {
+      word: 'somewhatclose',
+      key: 'keyA',
+      type: enumRULETYPEWORD,
+      follows: {
+        'keyA': 'somewhatclose',
+        'keyB': 'System2'
+      }
+    },
+    {
+      regexp: /^.*$/,
+      key: 'keyA',
+      type: enumRULETYPEREGEXP,
+      follows: {
+        _ranking: 0.9
+      }
+    }
+  ]
+  var oContext = {
+    keyA: 'somewhatcl'
+  }
+  // act
+  var res = ab.augmentContext(oContext, aRules)
+  // test
+  test.ok(res.length >= 1, 'found at least one')
+  debuglog(' =================>' + JSON.stringify(res, undefined, 2))
+  test.deepEqual(res[0].keyA, 'somewhatclose', 'category propagated')
+  test.deepEqual(res[0].keyB, 'System2', 'category picked')
+
+  oContext = {
+    keyA: 'gibts gar nicht'
+  }
+  // act
+  res = ab.augmentContext(oContext, aRules)
+  // test
+  test.ok(res.length >= 1, 'found at least one')
+  debuglog(' =================>' + JSON.stringify(res, undefined, 2))
+  test.deepEqual(res[0].keyA, 'gibts gar nicht', 'result propagated')
+  test.deepEqual(res[0].keyB, undefined, 'category picked')
+  test.done()
+// test.deepEqual(res[1].keyB, 'CategoryC', 'category respected')
+}
+
 exports.test_extractArgsMap = function (test) {
   var res = ab.extractArgsMap(['A', 'B', 'C'], { 2: 'X2', 1: 'X1' })
   test.deepEqual(res,
@@ -1188,27 +1244,6 @@ exports.test_filterShowEntityMoreContext = function (test) {
       pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client=120'
     }
   }, 'ok')
-  test.done()
-}
-
-exports.test_filterShowEntityUnitTest = function (test) {
-  var fut = dispatcher._test.filterShowEntity
-  var aMerged = fut({
-    systemObjectCategory: 'unit',
-    systemObjectId: 'NavTargetResolution'
-  }, dispatcher._test._aShowEntityActions)
-
-  test.deepEqual(aMerged, {
-    context: {
-      systemObjectCategory: 'unit',
-      systemObjectId: 'NavTargetResolution',
-      path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
-    },
-    result: {
-      type: 'URL',
-      pattern: 'http://localhost:8080/{path}'
-    }
-  }, 'unit test resolved')
   test.done()
 }
 

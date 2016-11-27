@@ -170,7 +170,7 @@ const oUnitTests = matchdata.oUnitTests
       context: {
         systemId: 'uv2',
         client: '120',
-        systemObjectCategory: 'catalog',
+        systemObjectCategory: 'fiori catalog',
         systemObjectId: /.*/,
         systemtype: 'ABAPFES',
         tool: 'FLPD'
@@ -183,6 +183,16 @@ const oUnitTests = matchdata.oUnitTests
     {
       context: {
         systemObjectCategory: 'unit',
+        systemObjectId: fnFindUnitTest
+      },
+      result: {
+        type: 'URL',
+        pattern: 'http://localhost:8080/{path}'
+      }
+    },
+     {
+      context: {
+        systemObjectCategory: 'unit test',
         systemObjectId: fnFindUnitTest
       },
       result: {
@@ -298,7 +308,8 @@ const oUnitTests = matchdata.oUnitTests
       ((s2 instanceof RegExp) && s2.exec(s1) !== null) ||
       ((typeof s2 === 'function' && s1) && s2(s1, oEntity))
   }
-  function filterShowEntity (oContext, aShowEntity) {
+
+  function filterShowEntityOld (oContext, aShowEntity) {
     var aFiltered
     Object.keys(oContext).forEach(function (sKey) {
       if (oContext[sKey] === null) {
@@ -364,6 +375,23 @@ const oUnitTests = matchdata.oUnitTests
       return oMerged
     }
     return null
+  }
+
+
+import * as inputFilter from './inputFilter';
+
+  function filterShowEntity (oContext, aShowEntityActions) {
+    Object.keys(oContext).forEach(function (sKey) {
+      if (oContext[sKey] === null) {
+        delete oContext[sKey]
+      }
+    })
+    var res = inputFilter.applyRulesPickFirst(oContext);
+    if (!res) {
+      return undefined
+    }
+    debuglog("** after filter rules" + JSON.stringify(res, undefined, 2))
+    return filterShowEntityOld(res,aShowEntityActions);
   }
 
   function execShowEntity (oEntity) {

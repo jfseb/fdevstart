@@ -24,17 +24,46 @@ export const oRuleMap = {
         systemObjectCategory : "unit test"
       }
     }
-  ],
+  ].concat([ ["unit test", "unit"],
+       ["wiki", "web page"],
+       ["fiori catalog", "flp catalog", "catalog"],
+       ["fiori group", "flp group", "group"],
+       ["flp", "fiori launchpad", "lauchpage", "launchpad"]
+   ].map(function(aArr) {
+     // console.log(JSON.stringify(aArr));
+     var bestSynonym = aArr[0];
+     return aArr.map(function(sEntry) {
+        return {
+              type : inputFilter.EnumRuleType.WORD,
+              key : "systemObjectCategory",
+              word : sEntry,
+              follows : {
+                systemObjectCategory : bestSynonym
+              }
+            };
+     });
+   }).reduce(function(a,b) { return a.concat(b);  },[])
+  ) // concat
+   ,
   "systemId" : [
-   { regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
+   {
+      regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
       key: 'systemId',
       argsMap: {
         1: 'systemId',
         2: 'client'
       },
       type: inputFilter.EnumRuleType.REGEXP,
-      follows: {
-      }
+      follows: {}
+    },
+    {
+      regexp: /^([a-z0-9_]{3,3})/i,
+      key: 'systemId',
+        argsMap: {
+          1: 'systemId'
+        },
+        type: inputFilter.EnumRuleType.REGEXP,
+        follows: {}
     }
   ],
   "systemObjectId" : [
@@ -219,12 +248,15 @@ export const oRuleMap = {
      {
       type : inputFilter.EnumRuleType.REGEXP,
       key : "systemObjectId",
-      regexp : /#[A-Z0-9a-z_]+-[A-Za-z0-9_]+(\?\S+)/i,
-      argsMap : { 0 : "intent" },
+      regexp : /\S+/i,
       follows : {
-        systemObjectCategory : "intent"
+        _ranking : 0.9
       }
     }
+  ]).concat([
+
+
+
   ])
 };
 

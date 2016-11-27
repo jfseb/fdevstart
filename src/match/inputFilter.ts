@@ -246,8 +246,15 @@ export function matchRegExp(oRule : IRule, context : IFMatch.context, options ? 
 }
 
 export function sortByWeight(sKey : string, oContextA : IFMatch.context, oContextB : IFMatch.context)  : number{
-  debuglog('sorting: ' + sKey + 'invoked with' + JSON.stringify(oContextA,undefined,2)+
-   " vs \n" + JSON.stringify(oContextB,undefined,2));
+  debuglog('sorting: ' + sKey + 'invoked with\n 1:' + JSON.stringify(oContextA,undefined,2)+
+   " vs \n 2:" + JSON.stringify(oContextB,undefined,2));
+  var rankingA : number =  parseFloat(oContextA["_ranking"] || "1");
+  var rankingB : number  = parseFloat(oContextB["_ranking"] || "1");
+  if (rankingA !== rankingB) {
+    debuglog(" rankin delta" + 100*(rankingB - rankingA));
+    return 100*(rankingB - rankingA)
+  }
+
   var weightA = oContextA["_weight"] && oContextA["_weight"][sKey]  || 0;
   var weightB = oContextB["_weight"] && oContextB["_weight"][sKey]  || 0;
   return +(weightA - weightB);
@@ -353,6 +360,12 @@ export function applyRules(context : IFMatch.context) : Array<IFMatch.context> {
     bestN = takeTopN(bestNext);
   });
   return bestN
+}
+
+
+export function applyRulesPickFirst(context : IFMatch.context) : IFMatch.context {
+  var r = applyRules(context);
+  return r && r[0];
 }
 
 /**

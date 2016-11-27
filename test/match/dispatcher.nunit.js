@@ -192,7 +192,7 @@ exports.test_fnFindUnitTest = function (test) {
 
 var aShowEntityActions = [{
   context: {
-    systemId: 'UV2',
+    systemId: 'uv2',
     client: '120',
     systemtype: 'ABAPFES',
     tool: 'FLP'
@@ -204,9 +204,9 @@ var aShowEntityActions = [{
 },
   {
     context: {
-      systemId: 'UV2',
+      systemId: 'uv2',
       client: /^\d{3,3}$/,
-      systemObjectCategory: 'CATALOG',
+      systemObjectCategory: 'fiori catalog',
       systemObjectId: /.*/,
       systemtype: 'ABAPFES',
       tool: 'FLPD'
@@ -232,18 +232,20 @@ exports.test_filterShowEntity = function (test) {
   debug('Here dispatcher' + JSON.stringify(dispatcher))
   var fut = dispatcher._test.filterShowEntity
   var aMerged = fut({
-    systemId: 'UV2',
+    systemId: 'uv2',
     client: '120',
-    systemObjectCategory: 'CATALOG',
+    systemObjectCategory: 'catalog',
     systemObjectId: 'SAP_BC',
     tool: 'FLP'
   }, aShowEntityActions)
 
   test.deepEqual(aMerged, {
     context: {
-      systemId: 'UV2',
+      _ranking: 0.9,
+      _weight: { systemObjectCategory: 0 },
+      systemId: 'uv2',
       client: '120',
-      systemObjectCategory: 'CATALOG',
+      systemObjectCategory: 'fiori catalog',
       systemObjectId: 'SAP_BC',
       systemtype: 'ABAPFES',
       tool: 'FLP'
@@ -269,13 +271,15 @@ exports.test_filterShowEntityMoreContext = function (test) {
 
   test.deepEqual(aMerged, {
     context: {
-      systemId: 'UV2',
+      systemId: 'uv2',
       client: '120',
       andThis: '100',
-      systemObjectCategory: 'CATALOG',
+      systemObjectCategory: 'fiori catalog',
       systemObjectId: 'SAP_BC',
       systemtype: 'ABAPFES',
-      tool: 'FLPD'
+      tool: 'FLPD',
+      _ranking: 0.9,
+      _weight: { systemObjectCategory: 0 }
     },
     result: {
       type: 'URL',
@@ -285,16 +289,42 @@ exports.test_filterShowEntityMoreContext = function (test) {
   test.done()
 }
 
-exports.test_filterShowEntityUnitTest = function (test) {
+exports.test_filterShowEntityUnitTestX = function (test) {
+  var fut = dispatcher._test.filterShowEntity
+  var aMerged = fut({
+    systemObjectCategory: 'unit test',
+    systemObjectId: 'NavTargetResolution'
+  }, dispatcher._test._aShowEntityActions)
+  test.deepEqual(aMerged, {
+    context: {
+      _weight: {
+        systemObjectCategory: 0, systemObjectId: 0
+      },
+      systemObjectCategory: 'unit test',
+      systemObjectId: 'NavTargetResolution',
+      path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
+    },
+    result: {
+      type: 'URL',
+      pattern: 'http://localhost:8080/{path}'
+    }
+  }, 'unit test resolved')
+  test.done()
+}
+
+exports.test_filterShowEntityUnitSloppy = function (test) {
   var fut = dispatcher._test.filterShowEntity
   var aMerged = fut({
     systemObjectCategory: 'unit',
-    systemObjectId: 'NavTargetResolution'
+    systemObjectId: 'NavTargetResol'
   }, dispatcher._test._aShowEntityActions)
 
   test.deepEqual(aMerged, {
     context: {
-      systemObjectCategory: 'unit',
+      _weight: {
+        systemObjectCategory: 0, systemObjectId: 5
+      },
+      systemObjectCategory: 'unit test',
       systemObjectId: 'NavTargetResolution',
       path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
     },
@@ -316,29 +346,9 @@ exports.test_filterShowEntityUnitTestSthNull = function (test) {
 
   test.deepEqual(aMerged, {
     context: {
-      systemObjectCategory: 'unit',
-      systemId: undefined,
-      systemObjectId: 'NavTargetResolution',
-      path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
-    },
-    result: {
-      type: 'URL',
-      pattern: 'http://localhost:8080/{path}'
-    }
-  }, 'unit test resolved')
-  test.done()
-}
-
-exports.test_filterShowEntityUnitTest = function (test) {
-  var fut = dispatcher._test.filterShowEntity
-  var aMerged = fut({
-    systemObjectCategory: 'unit',
-    systemObjectId: 'NavTargetResol'
-  }, dispatcher._test._aShowEntityActions)
-
-  test.deepEqual(aMerged, {
-    context: {
-      systemObjectCategory: 'unit',
+      systemObjectCategory: 'unit test',
+      _weight: { systemObjectCategory: 0, systemObjectId: 0 },
+      //   systemId: undefined,
       systemObjectId: 'NavTargetResolution',
       path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
     },
@@ -353,7 +363,7 @@ exports.test_filterShowEntityUnitTest = function (test) {
 var aShowEntityActionsBest = [
   {
     context: {
-      systemId: 'UV2',
+      systemId: 'uv2',
       A: 'A'
     },
     result: {
@@ -362,20 +372,20 @@ var aShowEntityActionsBest = [
   },
   {
     context: {
-      systemId: 'UV2',
-      A: 'A',
-      B: 'B',
-      'E': 'E'
+      systemId: 'uv2',
+      A: 'a',
+      B: 'b',
+      'E': 'e'
     },
     result: {
-      type: 'E'
+      type: 'e'
     }
   },
   {
     context: {
-      systemId: 'UV2',
-      A: 'A',
-      B: 'B'
+      systemId: 'uv2',
+      A: 'a',
+      B: 'b'
     },
     result: {
       type: 'Best'
@@ -383,13 +393,13 @@ var aShowEntityActionsBest = [
   },
   {
     context: {
-      systemId: 'UV2',
-      A: 'A',
-      B: 'B',
-      C: 'C'
+      systemId: 'uv2',
+      A: 'a',
+      B: 'b',
+      C: 'c'
     },
     result: {
-      type: 'C'
+      type: 'c'
     }
   }
 
@@ -398,16 +408,16 @@ var aShowEntityActionsBest = [
 exports.testFilterShowEntityBetterMatch = function (test) {
   var fut = dispatcher._test.filterShowEntity
   var aMerged = fut({
-    systemId: 'UV2',
-    A: 'A',
-    B: 'B'
+    systemId: 'uv2',
+    A: 'a',
+    B: 'b'
   }, aShowEntityActionsBest)
 
   test.deepEqual(aMerged, {
     context: {
-      systemId: 'UV2',
-      A: 'A',
-      B: 'B'
+      systemId: 'uv2',
+      A: 'a',
+      B: 'b'
     },
     result: {
       type: 'Best'
