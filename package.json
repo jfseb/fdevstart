@@ -12,15 +12,15 @@
   },
   "scripts": {
     "setup": "typings install debug && gulp default",
-    "test": "export DO_COVERAGE=0 && gulp test",
+    "test": "export FSD_COVERAGE && gulp test",
     "testOld": "./node_modules/.bin/nodeunit test/match test/utils && standard",
     "startConsole": "node console_app.js",
     "run": "nodeunit",
     "start": "electron .",
     "ui": "electron .",
     "instrument": "gulp instrument",
-    "testcovWIN": "set DO_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov >info.lcov",
-    "testcov": "export DO_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov | coveralls",
+    "testcovWIN": "set FSD_COVERAGE=1 && set FSDEVSTART_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov >info.lcov",
+    "testcov": "export FSD_COVERAGE=1 && export FSDEVSTART_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov | coveralls",
     "tocoveralls": "cat info.lcov | coveralls",
     "tocoveralls2": "cat info.lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"

@@ -126,7 +126,8 @@ var env = require('gulp-env')
  */
 gulp.task('testcov', function () {
   const envs = env.set({
-    DO_COVERAGE: '1'
+    FSD_COVERAGE: '1',
+    FSDEVSTART_COVERAGE: '1'
   })
   // the file does not matter
   gulp.src(['./**/match/dispatcher.nunit.js'])
@@ -188,4 +189,4 @@ gulp.task('coveralls', function () {
 gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test'])
+gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'instrument', 'test'])

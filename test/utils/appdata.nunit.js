@@ -1,7 +1,7 @@
 /*! copyright gerd forstmann, all rights reserved */
 var debug = require('debug')('appdata.nunit')
 var process = require('process')
-var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen'
 
 var AppData = require(root + '/utils/appdata.js')
 

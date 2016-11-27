@@ -1,5 +1,5 @@
 var process = require('process')
-var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
+var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen'
 
 var debuglog = require('debug')('inputFilter.nunit')
 
