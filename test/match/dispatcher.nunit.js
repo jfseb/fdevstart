@@ -336,7 +336,6 @@ exports.test_filterShowEntityUnitSloppy = function (test) {
   test.done()
 }
 
-
 exports.test_filterShowEntityFLPD = function (test) {
   var fut = dispatcher._test.filterShowEntity
   var aMerged = fut({
@@ -351,18 +350,17 @@ exports.test_filterShowEntityFLPD = function (test) {
       systemObjectId: 'flpd',
       client: '120',
       systemId: 'uv2',
-      systemtype: 'ABAPFES',
-      //pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}'
-      //path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
+      systemtype: 'ABAPFES'
+    // pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}'
+    // path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
     },
     result: {
       type: 'URL',
       pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/sap/arsrvc_upb_admn/main.html?sap-client={client}'
-     }
+    }
   }, 'tool flpd resolved')
   test.done()
 }
-
 
 exports.test_filterShowEntityUnitTestSthNull = function (test) {
   var fut = dispatcher._test.filterShowEntity
