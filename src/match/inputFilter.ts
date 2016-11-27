@@ -5,6 +5,14 @@
  * the input filter stage preprocesses a current context
  *
  * It a) combines multi-segment arguments into one context members
+ * It b) attempts to augment the context by additional qualifications
+ *           (Mid term generating Alternatives, e.g.
+ *                 ClientSideTargetResolution -> unit test?
+ *                 ClientSideTargetResolution -> source ?
+ *           )
+ *  Simple rules like  Intent
+ *
+ *
  * @module
  * @file inputFilter.ts
  */
@@ -172,7 +180,7 @@ export function matchWord(oRule : IRule, context : IFMatch.context, options ? : 
     // force key property
     // console.log(' objectcategory', res['systemObjectCategory']);
     res[oRule.key] = oRule.follows[oRule.key] || res[oRule.key];
-    res._weight = res._weight || {};
+    res._weight = Object.assign({}, res._weight);
     res._weight[oRule.key] = c;
     Object.freeze(res);
     debuglog('Found one' + JSON.stringify(res,undefined,2));
@@ -300,6 +308,58 @@ var options1 : IMatchOptions = {
     aRes = augmentContext1(context, aRules, options2);
   }
   return aRes;
+}
+
+export function insertOrdered(result : Array<IFMatch.context>, iInsertedMember : IFMatch.context, limit : number) : Array<IFMatch.context> {
+  // TODO: use some weight
+  if (result.length < limit) {
+    result.push(iInsertedMember)
+  }
+  return result;
+}
+
+
+export function takeTopN(arr : Array<Array<IFMatch.context>>): Array<IFMatch.context> {
+  var u = arr.filter(function(innerArr) { return innerArr.length > 0})
+
+  var res =[];
+  // shift out the top ones
+  u = u.map(function(iArr) {
+    var top = iArr.shift();
+    res = insertOrdered(res,top,5)
+    return iArr
+  }).filter(function(innerArr: Array<IFMatch.context>) : boolean { return innerArr.length > 0});
+  // as Array<Array<IFMatch.context>>
+  return res;
+}
+
+import * as inputFilterRules from './inputFilterRules';
+
+export function applyRules(context : IFMatch.context) : Array<IFMatch.context> {
+  var bestN : Array<IFMatch.context> = [context];
+  inputFilterRules.oKeyOrder.forEach(function (sKey : string) {
+     var bestNext: Array<Array<IFMatch.context>> = [];
+     bestN.forEach(function(oContext : IFMatch.context) {
+       if (oContext[sKey]) {
+          debuglog('** applying rules for ' + sKey)
+          var res = augmentContext(oContext, inputFilterRules.oRuleMap[sKey] || [])
+          debuglog('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2))
+          bestNext.push(res || [])
+       } else {
+         // rule not relevant
+         bestNext.push([oContext]);
+       }
+    })
+    bestN = takeTopN(bestNext);
+  });
+  return bestN
+}
+
+/**
+ * Decide whether to requery for a contet
+ */
+export function decideOnReQuery( context : IFMatch.context) : Array<IFMatch.context> {
+  return []
 }
 
 

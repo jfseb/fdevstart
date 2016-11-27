@@ -3,9 +3,9 @@
 import * as inputFilter from './inputFilter';
 
 
-var oKeyOrder = ["systemObjectCategory", "systemId", "systemObjectId"];
+export const oKeyOrder : Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
 
-var oRuleMap = {
+export const oRuleMap = {
 
   "systemObjectCategory": [
     {
@@ -38,6 +38,7 @@ var oRuleMap = {
     }
   ],
   "systemObjectId" : [
+
   ].concat([
     // alphabetic order please
     'test-resources/sap/ushell/qunit/adapters/cdm/ClientSideTargetResolutionAdapter.qunit.html',
@@ -174,6 +175,7 @@ var oRuleMap = {
       type : inputFilter.EnumRuleType.WORD,
       follows: {
         systemObjectCategory: "unit test",
+        systemObjectId : sString
       }
     }
   }) // map
@@ -207,11 +209,22 @@ var oRuleMap = {
       type : inputFilter.EnumRuleType.WORD,
       follows: {
         sytemObjectCategory : "wiki",
-        systemObjectId : (oEntry.key || oEntry.res)
+        systemObjectId : (oEntry.res || oEntry.key)
       }
     };
   }
   ) // map
   ) // concat
+  .concat([
+     {
+      type : inputFilter.EnumRuleType.REGEXP,
+      key : "systemObjectId",
+      regexp : /#[A-Z0-9a-z_]+-[A-Za-z0-9_]+(\?\S+)/i,
+      argsMap : { 0 : "intent" },
+      follows : {
+        systemObjectCategory : "intent"
+      }
+    }
+  ])
 };
 

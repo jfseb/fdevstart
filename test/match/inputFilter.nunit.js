@@ -3,86 +3,86 @@ var root = (process.env.DO_COVERAGE) ? '../../gen_cov' : '../../gen'
 
 var debuglog = require('debug')('inputFilter.nunit')
 
-const inputFilter2 = require(root + '/match/inputFilter.js')
+const inputFilter = require(root + '/match/inputFilter.js')
 
-const dispatcher = inputFilter2.ab
-const ab = inputFilter2
+const dispatcher = inputFilter.ab
+const ab = inputFilter
 
 exports.testcountAinB = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1}, {hijs: 4}), 0, 'ok')
   test.done()
 }
 
 exports.testcountAinBOne = function (test) {
-  //  console.log(JSON.stringify(inputFilter2, undefined, 2) + "yyyyyyyyyyyyyyyy")
-  var fut = inputFilter2.countAinB
+  //  console.log(JSON.stringify(inputFilter, undefined, 2) + "yyyyyyyyyyyyyyyy")
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1}, {hij: 2}), 1, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareEQ = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1}, {hij: 1}, function (s1, s2) { return s1 && (s1 === s2) }), 1, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareFN = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1, klm: 'U'}, {hij: 1, klm: 'U'},
     function (s1, s2) { return s1 && s1 === s2 }), 2, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareMult1 = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1, klm: undefined}, {hij: 1, klm: 'U'},
     function (s1, s2) { return s1 && s1 === s2 }), 1, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareMult = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
     function (s1, s2) { return s1 !== undefined && s1 === s2 }), 2, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareIgnore = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
     function (s1, s2) { return s1 !== undefined && s1 === s2 }, 'klm'), 1, 'ok')
   test.done()
 }
 
 exports.testcountAinBCompareIgnore2 = function (test) {
-  var fut = inputFilter2.countAinB
+  var fut = inputFilter.countAinB
   test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
     function (s1, s2) { return (s1 !== undefined) && (s1 === s2) }, ['klm', 'hij']), 0, 'ok')
   test.done()
 }
 
 exports.testspuriouAnotInB = function (test) {
-  var fut = inputFilter2.spuriousAnotInB
+  var fut = inputFilter.spuriousAnotInB
   test.deepEqual(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0}, ['klm', 'hij']), 1, 'ok')
   test.done()
 }
 
 exports.testspuriouAnotInBIgnore = function (test) {
-  var fut = inputFilter2.spuriousAnotInB
+  var fut = inputFilter.spuriousAnotInB
   test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0}, ['abc', ' klm', 'hij']), 0, 'ok')
   test.done()
 }
 
 exports.testspuriouAnotInBIgnore2 = function (test) {
-  var fut = inputFilter2.spuriousAnotInB
+  var fut = inputFilter.spuriousAnotInB
   test.equal(fut({abc: 'def', 'u': 1, hij: 1, klm: 0}, {c: 3, hij: 1, klm: 0},
     ['abc', ' klm', 'hij']), 1, 'ok')
   test.done()
 }
 
 exports.testcompareContext = function (test) {
-  var fut = inputFilter2.compareContext
+  var fut = inputFilter.compareContext
   var a = {abc: 'def', hij: 1, klm: 0, ff: 'B'}
   var b = {hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2}
   test.deepEqual(fut(a, b),
@@ -96,7 +96,7 @@ exports.testcompareContext = function (test) {
 }
 
 exports.testcompareContextIgnorePrivate = function (test) {
-  var fut = inputFilter2.compareContext
+  var fut = inputFilter.compareContext
   var a = {abc: 'def', _a: 1, _b: 3, hij: 1, klm: 0, ff: 'B'}
   var b = {hij: 1, _a: 1, _c: 3, _b: 4, klm: 0, ff: 'A', e: 1, c: 0, h: 2}
   test.deepEqual(fut(a, b),
@@ -110,7 +110,7 @@ exports.testcompareContextIgnorePrivate = function (test) {
 }
 
 exports.testcompareContextIgnore = function (test) {
-  var fut = inputFilter2.compareContext
+  var fut = inputFilter.compareContext
   var a = {abc: 'def', hij: 1, klm: 0, ff: 'B'}
   var b = {hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2}
   test.deepEqual(fut(a, b, ['abc']),
@@ -124,7 +124,7 @@ exports.testcompareContextIgnore = function (test) {
 }
 
 exports.test_matchWord = function (test) {
-  const fn = inputFilter2.matchWord
+  const fn = inputFilter.matchWord
 
   // test.expect(3)
   test.deepEqual(fn({
@@ -139,7 +139,7 @@ exports.test_matchWord = function (test) {
 }
 
 exports.test_matchWordAlias = function (test) {
-  const fn = inputFilter2.matchWord
+  const fn = inputFilter.matchWord
   // test.expect(3)
   test.deepEqual(fn({
     key: 'systemObjectId',
@@ -158,7 +158,7 @@ exports.test_matchWordAlias = function (test) {
 }
 
 exports.test_matchWordAliasMatchOthersTrue = function (test) {
-  const fn = inputFilter2.matchWord
+  const fn = inputFilter.matchWord
   // test.expect(3)
   var oRule = {
     key: 'systemObjectId',
@@ -179,7 +179,7 @@ exports.test_matchWordAliasMatchOthersTrue = function (test) {
 }
 
 exports.test_matchWordAliasMatchOthersFalse = function (test) {
-  const fn = inputFilter2.matchWord
+  const fn = inputFilter.matchWord
   // test.expect(3)
   var oRule = {
     key: 'systemObjectId',
@@ -209,7 +209,7 @@ exports.test_matchWordAliasMatchOthersFalse = function (test) {
 }
 
 exports.test_matchWordAliasMatchOthersFalseOverride = function (test) {
-  const fn = inputFilter2.matchWord
+  const fn = inputFilter.matchWord
   // test.expect(3)
   var oRule = {
     key: 'systemObjectId',
@@ -869,7 +869,35 @@ exports.test_matchSthElse = function (test) {
   test.done()
 }
 
-exports.testInputFilter2 = function (test) {
+exports.test_applyRules = function (test) {
+  // prepare
+  var oContext = {
+    'systemObjectId': 'ClientsideTrgetRes'
+  }
+  // act
+  var res = ab.applyRules(oContext)
+  // test
+  debuglog('The end result : ' + JSON.stringify(res, undefined, 2))
+  test.deepEqual(res[0].systemObjectId, 'ClientSideTargetResolution', ' typo corrected')
+  test.deepEqual(res[0].systemObjectCategory, 'unit test', 'category determined ok')
+  test.done()
+}
+
+exports.test_applyRulesWithCategory = function (test) {
+  // prepare
+  var oContext = {
+    'systemObjectId': 'ClientsideTrgetRes',
+    'systemObjectCategory': 'unit'
+  }
+  // act
+  var res = ab.applyRules(oContext)
+  // test
+  test.deepEqual(res[0].systemObjectId, 'ClientSideTargetResolution', ' typo corrected')
+  test.deepEqual(res[0].systemObjectCategory, 'unit test', 'category determined ok')
+  test.done()
+}
+
+exports.testinputFilter = function (test) {
   const fn = ab.augmentContext
   // test.expect(3)
   test.deepEqual(fn({
