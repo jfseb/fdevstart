@@ -74,6 +74,12 @@ gulp.task('instrument', ['tsc', 'babel'], function () {
     .pipe(gulp.dest('gen_cov'))
 })
 
+gulp.task('instrument', ['tsc', 'babel'], function () {
+  return gulp.src([genDir + '/**/*.js'])
+    .pipe(instrument())
+    .pipe(gulp.dest('gen_cov'))
+})
+
 var newer = require('gulp-newer')
 
 var imgSrc = 'src/**/*.js'
@@ -165,4 +171,4 @@ gulp.task('coveralls', function () {
 gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'test'])
+gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test'])
