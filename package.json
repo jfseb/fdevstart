@@ -18,9 +18,9 @@
     "run": "nodeunit",
     "start": "electron .",
     "ui": "electron .",
-    "instrument": "xgulp instrument",
-    "testcovWIN": "set FSD_COVERAGE=1 && set FSDEVSTART_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov >info.lcov",
-    "testcov": "export FSD_COVERAGE=1 && export FSDEVSTART_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov | coveralls",
+    "instrument": "gulp instrument",
+    "testcovWIN": "set FSD_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov >info.lcov",
+    "testcov": "export FSD_COVERAGE=1 && nodeunit test/match test/utils --reporter=lcov | coveralls",
     "tocoveralls": "cat info.lcov | coveralls",
     "tocoveralls2": "cat info.lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"
