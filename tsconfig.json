@@ -28,10 +28,10 @@
         "src/utils/damerauLevenshtein.ts",
         "src/match/ifmatch.ts",
         "src/constants.ts",
+        "src/match/inputFilterRules.ts",
         "src/exec/exec.ts",
         "src/interfaces.d.ts",
         "src/match/matchdata.ts",
-        "src/match/inputFilterRules.ts",
         "src/match/dispatcher.ts",
         "src/match/inputFilter.ts"
     ],

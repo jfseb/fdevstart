@@ -31,8 +31,9 @@ var systemObjectCategory = [
 var systemObjectCategory2 = [ ["unit test", "unit"],
        ["wiki", "web page"],
        ["fiori catalog", "flp catalog", "catalog"],
-       ["fiori group", "flp group", "group"],
-       ["flp", "fiori launchpad", "lauchpage", "launchpad"]
+ /*     ["fiori group", "flp group", "group"], */
+       ["flp", "fiori launchpad", "lauchpage", "launchpad"],
+       ["flpd"]
    ].map(function(aArr) {
      // console.log(JSON.stringify(aArr));
      var bestSynonym = aArr[0];
@@ -83,6 +84,7 @@ var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as 
 var UnitTestList =
 [
     // alphabetic order please
+   /*
     'test-resources/sap/ushell/qunit/adapters/cdm/ClientSideTargetResolutionAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/CommonDataModelAdapter.qunit.html',
     'test-resources/sap/ushell/qunit/adapters/cdm/LaunchPageAdapter.qunit.html',
@@ -139,7 +141,7 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/renderers/fiori2/RendererExtensions.qunit.html',
     'test-resources/sap/ushell/qunit/renderers/fiori2/Shell.qunit.html',
     'test-resources/sap/ushell/qunit/renderers/fiori2/UIActions.qunit.html',
-
+*/
     'test-resources/sap/ushell/qunit/services/AppConfiguration.qunit.html',
     'test-resources/sap/ushell/qunit/services/AppContext.qunit.html',
     'test-resources/sap/ushell/qunit/services/AppLifeCycle.qunit.html',
@@ -156,12 +158,15 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/services/Message.qunit.html',
     'test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html',
     'test-resources/sap/ushell/qunit/services/NavTargetResolutionCDMBlackbox.qunit.html',
+
+    /*
     'test-resources/sap/ushell/qunit/services/Notifications.qunit.html',
     'test-resources/sap/ushell/qunit/services/Personalization.qunit.html',
     'test-resources/sap/ushell/qunit/services/PluginManager.qunit.html',
     'test-resources/sap/ushell/qunit/services/ReferenceResolver.qunit.html',
     'test-resources/sap/ushell/qunit/services/ShellNavigation.History.qunit.html',
     'test-resources/sap/ushell/qunit/services/ShellNavigation.qunit.html',
+
     'test-resources/sap/ushell/qunit/services/SupportTicket.qunit.html',
     'test-resources/sap/ushell/qunit/services/URLParsing.qunit.html',
     'test-resources/sap/ushell/qunit/services/URLShortening.qunit.html',
@@ -209,10 +214,12 @@ var UnitTestList =
     'test-resources/sap/ushell/qunit/ui/tile/StaticTile.qunit.html',
     'test-resources/sap/ushell/qunit/ui/tile/TileBase.qunit.html',
     'test-resources/sap/ushell/qunit/ui5service/ShellUIService.qunit.html'
+    */
   ];
 
+var aregex = /\/([^/]*).qunit.html/;
 var systemObjectId = UnitTestList.map(function (sEntry) {
-    var sString = sEntry.match('/([^/]*).qunit.html')[1]
+    var sString = aregex.exec(sEntry)[1]; //.match('/([^/]*).qunit.html')[1]
     return {
       key : "systemObjectId",
       word: sString,

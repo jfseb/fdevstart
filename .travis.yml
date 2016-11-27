@@ -3,12 +3,9 @@ before_script:
   - npm i -g typescript typings
   - typings install
   - typings install debug
-  - npm uninstall jscoverage
-#  - tsc
-#  - cat gen/match/inputFilterRules.js
+  - tsc
   - unset FSD_COVERAGE
-  - cat ~/build/jfseb/fdevstart/gulpfile.js
-  - gulp default
+  - gulp
 #  - gulp instrument
 node_js:
  - "6"

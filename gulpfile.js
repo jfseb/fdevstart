@@ -45,10 +45,6 @@ gulp.task('tsc', function () {
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(tsProject())
 
-  // ts({
-    // ...
-    // }))
-
   return tsResult.js
     .pipe(babel({
       comments: true,
@@ -73,6 +69,7 @@ gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
     .pipe(gulp.dest('gen_cov'))
 })
 
+/*
 var instrument = require('gulp-instrument')
 
 gulp.task('instrumentx', ['tsc', 'babel', 'copyInputFilterRules'], function () {
@@ -93,10 +90,11 @@ gulp.task('instrumentx', ['tsc', 'babel', 'copyInputFilterRules'], function () {
 })
 
 gulp.task('instrument', ['tsc', 'babel'], function () {
-  return gulp.src([genDir + '/**/*.js'])
+  return gulp.src([genDir + '/**REMOVEME/*.js'])
     .pipe(instrument())
     .pipe(gulp.dest('gen_cov'))
 })
+*/
 
 var newer = require('gulp-newer')
 
