@@ -342,6 +342,15 @@ export function takeTopN(arr : Array<Array<IFMatch.context>>): Array<IFMatch.con
 
 import * as inputFilterRules from './inputFilterRules';
 
+var rm;
+
+function getRMOnce() {
+  if (!rm) {
+    rm = inputFilterRules.getRuleMap()
+  }
+  return rm;
+}
+
 export function applyRules(context : IFMatch.context) : Array<IFMatch.context> {
   var bestN : Array<IFMatch.context> = [context];
   inputFilterRules.oKeyOrder.forEach(function (sKey : string) {
@@ -349,7 +358,7 @@ export function applyRules(context : IFMatch.context) : Array<IFMatch.context> {
      bestN.forEach(function(oContext : IFMatch.context) {
        if (oContext[sKey]) {
           debuglog('** applying rules for ' + sKey)
-          var res = augmentContext(oContext, inputFilterRules.oRuleMap[sKey] || [])
+          var res = augmentContext(oContext, getRMOnce()[sKey] || [])
           debuglog('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2))
           bestNext.push(res || [])
        } else {

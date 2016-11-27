@@ -3,13 +3,10 @@ before_script:
   - npm i -g typescript typings
   - typings install
   - typings install debug
-  - tsc
-#  - npm ls jscoverage
-#  - npm ls tsc
-#  - npm ls typescript
-#  - npm ls babel
+#  - tsc
+#  - cat gen/match/inputFilterRules.js
+  - unset FSD_COVERAGE
   - gulp default
-  - cat gen/match/inputFilterRules.js
 #  - gulp instrument
 node_js:
  - "6"

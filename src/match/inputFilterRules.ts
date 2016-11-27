@@ -6,6 +6,9 @@ import * as inputFilter from './inputFilter';
 export const oKeyOrder : Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
 
 
+export function getRuleMap () {
+
+
 var systemObjectCategory = [
     {
       type : inputFilter.EnumRuleType.WORD,
@@ -48,7 +51,7 @@ var systemObjectCategory2 = [ ["unit test", "unit"],
 
 var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as any)
 
-export const oRuleMap = {
+ var oRuleMap = {
 
   "systemObjectCategory": systemObjectCategory
    ,
@@ -74,6 +77,7 @@ export const oRuleMap = {
     }
   ],
 };
+
 
 
 var UnitTestList =
@@ -257,9 +261,9 @@ var systemObjectId2 = [
   ); // map
 
 
-systemObjectId = systemObjectId.concat(systemObjectId2 as any);
+  systemObjectId = systemObjectId.concat(systemObjectId2 as any);
 
-systemObjectId = systemObjectId.concat([
+  systemObjectId = systemObjectId.concat([
      {
       type : inputFilter.EnumRuleType.REGEXP,
       key : "systemObjectId",
@@ -270,6 +274,11 @@ systemObjectId = systemObjectId.concat([
     }
   ] as any)
 
-oRuleMap["systemObjectId"] = systemObjectId;
+  oRuleMap["systemObjectId"] = systemObjectId;
 
-exports.oRuleMap = oRuleMap;
+  return oRuleMap;
+
+}
+
+
+
