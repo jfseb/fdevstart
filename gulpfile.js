@@ -75,7 +75,7 @@ gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
 
 var instrument = require('gulp-instrument')
 
-gulp.task('instrument', ['tsc', 'babel', 'copyInputFilterRules'], function () {
+gulp.task('instrumentx', ['tsc', 'babel', 'copyInputFilterRules'], function () {
   return gulp.src([
     genDir + '/match/data.js',
     genDir + '/match/dispatcher.js',
@@ -92,7 +92,7 @@ gulp.task('instrument', ['tsc', 'babel', 'copyInputFilterRules'], function () {
     .pipe(gulp.dest('gen_cov'))
 })
 
-gulp.task('instrument2', ['tsc', 'babel'], function () {
+gulp.task('instrument', ['tsc', 'babel'], function () {
   return gulp.src([genDir + '/**/*.js'])
     .pipe(instrument())
     .pipe(gulp.dest('gen_cov'))
@@ -189,4 +189,4 @@ gulp.task('coveralls', function () {
 gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'instrument', 'test'])
+gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test'])
