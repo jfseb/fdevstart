@@ -19,7 +19,7 @@ exports.testBreakdown = function (test) {
   test.done()
 }
 
-exports.testBreaddown2 = function (test) {
+exports.testBreakdown2 = function (test) {
   const res = breakdown.breakdownString('system a b')
   // test.expect(3)
   test.deepEqual(res,

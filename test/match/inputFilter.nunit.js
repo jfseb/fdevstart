@@ -1049,3 +1049,20 @@ exports.testCategorizeStringDistance = function (test) {
   ], 'what is this 3')
   test.done()
 }
+
+exports.testCategorizeStringBadRule = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  test.expect(2)
+  try {
+    ab.categorizeString('NavTargetResolu', false,
+      [ {
+        type: -123,
+        word: 'walk this way'
+      } ])
+    test.ok(false, 'do not get here')
+  } catch (e) {
+    test.ok(e.message.indexOf('walk this way') >= 0)
+    test.ok(true, 'got exception')
+  }
+  test.done()
+}
