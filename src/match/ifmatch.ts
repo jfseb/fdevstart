@@ -15,6 +15,43 @@ export interface IPromptDescription {
   required : boolean
 }
 
+export const  enum EnumRuleType {
+  WORD ,
+  REGEXP
+}
+
+export interface IRule {
+  type : EnumRuleType,
+  key : string,
+  word? : string,
+  regexp? : RegExp,
+  argsMap? : { [key:number] : string}  // a map of regexp match group -> context key
+  // e.g. /([a-z0-9]{3,3})CLNT([\d{3,3}])/
+  //      { 1 : "systemId", 2 : "client" }
+  follows : context
+}
+
+/**
+ * A rule matching a single string
+ */
+export interface mRule {
+  type : EnumRuleType,
+  word? : string,
+  regexp? : RegExp,
+  matchedString? : string,
+  matchIndex? : number,
+  category : string
+}
+
+export interface ICategorizedString  {
+  string : string,
+  matchedString : string,
+  category : string,
+  breakdown? : Array<any>
+  score? : number,
+  levenmatch? : number  // a distance ranking
+}
+
 export type context = { [key:string] :string };
 
 /**

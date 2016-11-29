@@ -20,11 +20,19 @@ import * as distance from '../utils/damerauLevenshtein';
 
 import * as debug from 'debug';
 
+import * as IMatch from './ifmatch';
+
 const debuglog = debug('inputFilter')
 
 import * as matchdata from './matchdata';
   var oUnitTests = matchdata.oUnitTests
 
+  /**
+   * @param sText {string} the text to match to NavTargetResolution
+   * @param sText2 {string} the query text, e.g. NavTarget
+   *
+   * @return the distance, note that is is *not* symmetric!
+   */
   function calcDistance (sText1 : string, sText2 : string) : number {
     // console.log("length2" + sText1 + " - " + sText2)
     var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
@@ -34,21 +42,8 @@ import * as matchdata from './matchdata';
 
 import * as IFMatch from '../match/ifmatch';
 
-export const  enum EnumRuleType {
-  WORD ,
-  REGEXP
-}
+type IRule = IFMatch.IRule
 
-interface IRule {
-  type : EnumRuleType,
-  key : string,
-  word? : string,
-  regexp? : RegExp,
-  argsMap? : { [key:number] : string}  // a map of regexp match group -> context key
-  // e.g. /([a-z0-9]{3,3})CLNT([\d{3,3}])/
-  //      { 1 : "systemId", 2 : "client" }
-  follows : IFMatch.context
-}
 
 interface IMatchOptions {
   matchothers? : boolean,
@@ -62,6 +57,9 @@ interface IMatchCount {
   spuriousR : number
   spuriousL : number
 }
+
+type EnumRuleType = IFMatch.EnumRuleType
+
 
 function nonPrivateKeys(oA) {
   return Object.keys(oA).filter( key => {
@@ -118,6 +116,51 @@ export function compareContext(oA , oB, aKeyIgnore?) {
   }
 }
 
+
+export function categorizeString(string : string, exact : boolean,  oRules : Array<IMatch.mRule>) {
+  // simply apply all rules
+  var res : Array<IMatch.ICategorizedString> = []
+  oRules.forEach(function(oRule) {
+    switch(oRule.type) {
+      case IFMatch.EnumRuleType.WORD :
+          if ( exact && oRule.word === string) {
+            res.push( {
+              string: string,
+              matchedString : oRule.matchedString,
+              category : oRule.category
+            })
+          }
+          if (!exact) {
+            var levenmatch = calcDistance(oRule.word,string)
+            if (levenmatch < 150) {
+              res.push({
+                string: string,
+                matchedString : oRule.word,
+                category : oRule.category,
+                levenmatch : levenmatch
+              })
+            }
+          }
+          break;
+      case IFMatch.EnumRuleType.REGEXP: {
+
+        debuglog(JSON.stringify(" here regexp" + JSON.stringify(oRule,undefined,2)))
+        var m = oRule.regexp.exec(string)
+        if(m) {
+            res.push( {
+              string: string,
+                        matchedString : (oRule.matchIndex !== undefined && m[oRule.matchIndex]) || string,
+                        category : oRule.category
+            })
+        }
+      }
+      break;
+      default:
+        throw new Error("unknown type" + JSON.stringify (oRule,undefined, 2))
+    }
+  });
+    return res;
+}
 /**
  *
  * Options may be {
@@ -250,9 +293,9 @@ export function augmentContext1( context : IFMatch.context, oRules : Array<IRule
   var res = oRules.map(function(oRule) {
     // is this rule applicable
     switch(oRule.type) {
-      case EnumRuleType.WORD:
+      case IFMatch.EnumRuleType.WORD:
         return matchWord(oRule, context, options)
-      case EnumRuleType.REGEXP:
+      case IFMatch.EnumRuleType.REGEXP:
         return matchRegExp(oRule, context, options);
    //   case "Extraction":
    //     return matchExtraction(oRule,context);

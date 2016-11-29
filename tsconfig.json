@@ -29,6 +29,7 @@
         "src/match/ifmatch.ts",
         "src/constants.ts",
         "src/match/inputFilterRules.ts",
+        "src/match/breakdown.ts",
         "src/exec/exec.ts",
         "src/interfaces.d.ts",
         "src/match/matchdata.ts",

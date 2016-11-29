@@ -4,7 +4,6 @@
 import * as distance from '../utils/damerauLevenshtein';
 
 import * as debug from 'debug';
-
 const debuglog = debug('dispatcher')
 
 import { exec } from 'child_process';

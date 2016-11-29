@@ -5,6 +5,8 @@ var debuglog = require('debug')('inputFilter.nunit')
 
 const inputFilter = require(root + '/match/inputFilter.js')
 
+const inputFilterRules = require(root + '/match/inputFilterRules.js')
+
 const ab = inputFilter
 
 exports.testcountAinB = function (test) {
@@ -964,5 +966,86 @@ exports.testinputFilter = function (test) {
     }
   ]),
     [], 'return undefined')
+  test.done()
+}
+
+var ifr = inputFilterRules.getMRules()
+
+exports.testCategorizeString = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('UV2', true, ifr)
+  debuglog('res > ' + JSON.stringify(res, undefined, 2))
+  test.deepEqual(res, [
+    { string: 'UV2', matchedString: 'UV2', category: 'systemId' },
+    { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId' }
+  ], 'correct result')
+  test.done()
+}
+
+exports.testCategorizeString2 = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('NavTargetRes', true, ifr)
+  debuglog('res > ' + JSON.stringify(res, undefined, 2))
+
+  test.deepEqual(res, [
+    {
+      'string': 'NavTargetRes',
+      'matchedString': 'NavTargetRes',
+      'category': 'systemObjectId'
+    }
+  ], 'what is this nr 2')
+  test.done()
+}
+
+exports.testCategorizeString4 = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('NavTargetResolution', true, ifr)
+  debuglog('res > ' + JSON.stringify(res, undefined, 2))
+
+  test.deepEqual(res, [
+    {
+      'string': 'NavTargetResolution',
+      'matchedString': 'NavTargetResolution',
+      'category': 'unit test'
+    },
+    {
+      'string': 'NavTargetResolution',
+      'matchedString': 'NavTargetResolution',
+      'category': 'systemObjectId'
+    }
+  ], 'what is this nr 4')
+  test.done()
+}
+
+exports.testCategorizeStringDistance = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('NavTargetResolu', false, ifr)
+  debuglog('res > ' + JSON.stringify(res, undefined, 2))
+
+  test.deepEqual(res, [
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolutionAdapter',
+      'category': 'unit test',
+      'levenmatch': 14
+    },
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolution',
+      'category': 'unit test',
+      'levenmatch': 7
+    },
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolutionCDMBlackbox',
+      'category': 'unit test',
+      'levenmatch': 18
+    },
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolu',
+      'category': 'systemObjectId'
+    }
+  ], 'what is this 3')
   test.done()
 }
