@@ -14,25 +14,25 @@ var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap : false })
 // })
 // *
 
-var gulp = require('gulp')
+var gulp = require('gulp');
 
-var ts = require('gulp-typescript')
-var sourcemaps = require('gulp-sourcemaps')
+var ts = require('gulp-typescript');
+var sourcemaps = require('gulp-sourcemaps');
 
 /**
  * Directory containing generated sources which still contain
  * JSDOC etc.
  */
-var genDir = 'gen'
-var srcDir = 'src'
-var testDir = 'test'
+var genDir = 'gen';
+var srcDir = 'src';
+var testDir = 'test';
 
 gulp.task('watch', function () {
   gulp.watch([srcDir + '/**/*.js', testDir + '/**/*.js', srcDir + '/**/*.ts', 'gulpfile.js'],
-    ['tsc', 'babel', 'test', 'standard'])
-})
+    ['tsc', 'babel', 'test', 'standard']);
+});
 
-const babel = require('gulp-babel')
+const babel = require('gulp-babel');
 
 /**
  * compile tsc (including srcmaps)
@@ -40,10 +40,10 @@ const babel = require('gulp-babel')
  * @output genDir
  */
 gulp.task('tsc', function () {
-  var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false })
+  var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false });
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
-    .pipe(tsProject())
+    .pipe(tsProject());
 
   return tsResult.js
     .pipe(babel({
@@ -52,22 +52,22 @@ gulp.task('tsc', function () {
     }))
     // .pipe( ... ) // You can use other plugins that also support gulp-sourcemaps
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-    .pipe(gulp.dest('gen'))
-})
+    .pipe(gulp.dest('gen'));
+});
 
-var jsdoc = require('gulp-jsdoc3')
+var jsdoc = require('gulp-jsdoc3');
 
 gulp.task('doc', function (cb) {
-  gulp.src([srcDir + '/**/*.js', 'README.md', './gen/**/*.js'], {read: false})
-    .pipe(jsdoc(cb))
-})
+  gulp.src([srcDir + '/**/*.js', 'README.md', './gen/**/*.js'], { read: false })
+    .pipe(jsdoc(cb));
+});
 
 gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
   return gulp.src([
     genDir + '/match/inputFilterRules.js'
   ], { 'base': genDir })
-    .pipe(gulp.dest('gen_cov'))
-})
+    .pipe(gulp.dest('gen_cov'));
+});
 
 /*
 var instrument = require('gulp-instrument')
@@ -96,10 +96,10 @@ gulp.task('instrument', ['tsc', 'babel'], function () {
 })
 */
 
-var newer = require('gulp-newer')
+var newer = require('gulp-newer');
 
-var imgSrc = 'src/**/*.js'
-var imgDest = 'gen'
+var imgSrc = 'src/**/*.js';
+var imgDest = 'gen';
 
 // compile standard sources with babel,
 // as the coverage input requires this
@@ -112,11 +112,11 @@ gulp.task('babel', ['tsc'], function () {
       comments: true,
       presets: ['es2015']
     }))
-    .pipe(gulp.dest('gen'))
-})
+    .pipe(gulp.dest('gen'));
+});
 
-var nodeunit = require('gulp-nodeunit')
-var env = require('gulp-env')
+var nodeunit = require('gulp-nodeunit');
+var env = require('gulp-env');
 
 /**
  * This does not work, as we are somehow unable to
@@ -126,7 +126,7 @@ gulp.task('testcov', function () {
   const envs = env.set({
     FSD_COVERAGE: '1',
     FSDEVSTART_COVERAGE: '1'
-  })
+  });
   // the file does not matter
   gulp.src(['./**/match/dispatcher.nunit.js'])
     .pipe(envs)
@@ -135,30 +135,30 @@ gulp.task('testcov', function () {
       reporterOptions: {
         output: 'testcov'
       }
-    })).pipe(gulp.dest('./cov/lcov.info'))
-})
+    })).pipe(gulp.dest('./cov/lcov.info'));
+});
 
 gulp.task('test', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
       reporter: 'minimal'
-    // reporterOptions: {
-    //  output: 'testcov'
-    // }
-    })).on('error', function (err) { console.log('This is weird: ' + err.message) })
-    .pipe(gulp.dest('./out/lcov.info'))
-})
+      // reporterOptions: {
+      //  output: 'testcov'
+      // }
+    })).on('error', function (err) { console.log('This is weird: ' + err.message); })
+    .pipe(gulp.dest('./out/lcov.info'));
+});
 
 gulp.task('testmin', ['tsc', 'babel'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
       reporter: 'minimal'
-    // reporterOptions: {
-    //  output: 'testcov'
-    // }
-    })).on('error', function (err) { console.log('This is weird: ' + err.message) })
-    .pipe(gulp.dest('./out/lcov.info'))
-})
+      // reporterOptions: {
+      //  output: 'testcov'
+      // }
+    })).on('error', function (err) { console.log('This is weird: ' + err.message); })
+    .pipe(gulp.dest('./out/lcov.info'));
+});
 
 //    .pipe(gulp.dest('./cov')) // default file name: src-cov.js
 // })
@@ -166,25 +166,46 @@ gulp.task('testmin', ['tsc', 'babel'], function () {
 // shoudl be replaced by ESLINT and a typescript output
 // compliant config
 
-var standard = require('gulp-standard')
+/*
+var standard = require('gulp-standard');
 
 gulp.task('standard', ['babel'], function () {
-  return gulp.src(['src/**/*.js', 'test/**/*.js', 'gulpfile.js'])
-    .pipe(standard())
-    .pipe(standard.reporter('default', {
-      breakOnError: true,
-      quiet: true
-    }))
-})
+  return gulp.src(['src/*  * /*.js', 'test/* * / *.js', 'gulpfile.js'])
+  .pipe(standard())
+  .pipe(standard.reporter('default', {
+    breakOnError: true,
+    quiet: true
+  }));
+});
+*/
 
-var coveralls = require('gulp-coveralls')
+const eslint = require('gulp-eslint');
+
+gulp.task('standard', () => {
+  // ESLint ignores files with "node_modules" paths.
+  // So, it's best to have gulp ignore the directory as well.
+  // Also, Be sure to return the stream from the task;
+  // Otherwise, the task may end before the stream has finished.
+  return gulp.src(['src/**/*.js', 'test/**/*.js', 'gulpfile.js'])
+    // eslint() attaches the lint output to the "eslint" property
+    // of the file object so it can be used by other modules.
+    .pipe(eslint())
+    // eslint.format() outputs the lint results to the console.
+    // Alternatively use eslint.formatEach() (see Docs).
+    .pipe(eslint.format())
+    // To have the process exit with an error code (1) on
+    // lint error, return the stream and pipe to failAfterError last.
+    .pipe(eslint.failAfterError());
+});
+
+var coveralls = require('gulp-coveralls');
 
 gulp.task('coveralls', function () {
   gulp.src('testcov/**/lcov.info')
-    .pipe(coveralls())
-})
+    .pipe(coveralls());
+});
 
 // gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test'])
+gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test']);

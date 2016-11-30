@@ -4,6 +4,8 @@
  */
 'use strict';
 
+/*global process:true*/
+
 var bb = require('botbuilder');
 var Message = bb.Message;
 var HTMLConnector = function () {
@@ -80,24 +82,26 @@ function renderAttachment(a) {
   switch (a.contentType) {
     case 'application/vnd.microsoft.card.hero':
     case 'application/vnd.microsoft.card.thumbnail':
-      var tc = a.content;
-      if (tc.title) {
-        if (tc.title.length <= 40) {
-          line('=', 60, tc.title);
-        } else {
-          line('=', 60);
-          wrap(tc.title, 60, 3);
+      {
+        var tc = a.content;
+        if (tc.title) {
+          if (tc.title.length <= 40) {
+            line('=', 60, tc.title);
+          } else {
+            line('=', 60);
+            wrap(tc.title, 60, 3);
+          }
         }
+        if (tc.subtitle) {
+          wrap(tc.subtitle, 60, 3);
+        }
+        if (tc.text) {
+          wrap(tc.text, 60, 3);
+        }
+        renderImages(tc.images);
+        renderButtons(tc.buttons);
+        break;
       }
-      if (tc.subtitle) {
-        wrap(tc.subtitle, 60, 3);
-      }
-      if (tc.text) {
-        wrap(tc.text, 60, 3);
-      }
-      renderImages(tc.images);
-      renderButtons(tc.buttons);
-      break;
     case 'application/vnd.microsoft.card.signin':
     case 'application/vnd.microsoft.card.receipt':
     default:

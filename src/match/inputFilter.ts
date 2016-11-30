@@ -22,6 +22,8 @@ import * as debug from 'debug';
 
 import * as IMatch from './ifmatch';
 
+import * as breakdown from './breakdown';
+
 const debuglog = debug('inputFilter')
 
 import * as matchdata from './matchdata';
@@ -117,7 +119,7 @@ export function compareContext(oA , oB, aKeyIgnore?) {
 }
 
 
-export function categorizeString(string : string, exact : boolean,  oRules : Array<IMatch.mRule>) {
+export function categorizeString(string : string, exact : boolean,  oRules : Array<IMatch.mRule>) : Array<IFMatch.ICategorizedString> {
   // simply apply all rules
   var res : Array<IMatch.ICategorizedString> = []
   oRules.forEach(function(oRule) {
@@ -215,6 +217,97 @@ export function extractArgsMap(match : Array<string> , argsMap : { [key : number
       }
     }
   );
+  return res;
+}
+
+
+
+export function analyzeString(sString : string, aRules : Array<IMatch.mRule> ) {
+
+  var cnt = 0;
+  var fac = 1;
+  var u = breakdown.breakdownString(sString);
+  debuglog("here breakdown" + JSON.stringify(u));
+  var words = {} as  { [key: string]:  Array<IFMatch.ICategorizedString>};
+  var res = u.map(function(aArr) {
+    return aArr.map(function (sWordGroup : string) {
+      var seenIt = words[sWordGroup];
+      if (seenIt === undefined) {
+        seenIt =  categorizeString(sWordGroup, true, aRules);
+        words[sWordGroup] = seenIt;
+      }
+        cnt = cnt + seenIt.length;
+        fac = fac * seenIt.length;
+      if(!seenIt) {
+        throw new Error("Expecting at least one match for " + sWordGroup)
+      }
+      return seenIt;
+    });
+  })
+  debuglog(" sentences " + u.length + " matches " + cnt + " fac: " + fac);
+  return res;
+}
+
+/*
+[ [a,b], [c,d]]
+
+00 a
+01 b
+10 c
+11 d
+12 c
+*/
+
+
+// we can replicate the tail or the head,
+// we replicate the tail as it is smaller.
+
+// [a,b,c ]
+
+export function expandMatchArr(deep : Array<Array<any>>) : Array<Array<any>> {
+  var a = [];
+  var line = [];
+  debuglog(JSON.stringify(deep));
+  deep.forEach(function(uBreakDownLine, iIndex : number) {
+    line[iIndex] = [];
+    uBreakDownLine.forEach(function(aWordGroup , wgIndex: number) {
+      line[iIndex][wgIndex] = [];
+      aWordGroup.forEach(function (oWordVariant, iWVIndex : number) {
+        line[iIndex][wgIndex][iWVIndex] = oWordVariant;
+      });
+    });
+  })
+  debuglog(JSON.stringify(line));
+  var res = [];
+  var nvecs = [];
+  for(var i = 0; i < line.length; ++i) {
+    var vecs = [[]];
+    var nvecs =[];
+    var rvec = [];
+    for(var k = 0; k < line[i].length; ++k) { // wordgroup k
+      //vecs is the vector of all so far seen variants up to k wgs.
+      var nextBase = [];
+      for(var l = 0; l < line[i][k].length; ++l ) { // for each variant
+        debuglog("vecs now" + JSON.stringify(vecs));
+        nvecs = []; //vecs.slice(); // copy the vec[i] base vector;
+        debuglog("vecs copied now" + JSON.stringify(nvecs));
+        for(var u = 0; u < vecs.length; ++u) {
+           nvecs[u] = vecs[u].slice(); //
+           debuglog("copied vecs["+ u+"]" + JSON.stringify(vecs[u]));
+           nvecs[u].push(line[i][k][l]); // push the lth variant
+           debuglog("now nvecs " + nvecs.length + " " + JSON.stringify(nvecs));
+        }
+        debuglog(" at     " + k + ":" + l + " nextbase >" + JSON.stringify(nextBase))
+        debuglog(" append " + k + ":" + l + " nvecs    >" + JSON.stringify(nvecs))
+        nextBase = nextBase.concat(nvecs);
+        debuglog("  result " + k + ":" + l + " nvecs    >" + JSON.stringify(nextBase))
+      } //constru
+      debuglog("now at " + k + ":" + l + " >" + JSON.stringify(nextBase))
+      vecs = nextBase;
+    }
+    debuglog("APPENDING TO RES" + i + ":" + l + " >" + JSON.stringify(nextBase))
+    res = res.concat(vecs);
+  }
   return res;
 }
 

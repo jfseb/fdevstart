@@ -10,7 +10,9 @@ export function cleanseString(sString : string) : string {
     return sString
 }
 /**
- *
+ *@param {string} sString , e.g. "a b c"
+ *@return {Array<Array<String>>} broken down array, e.g.
+ *[["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
  */
 export function breakdownString(sString: string) : Array<Array<String>> {
     var u = sString.split(" ");

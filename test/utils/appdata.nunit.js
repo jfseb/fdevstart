@@ -1,124 +1,114 @@
 /*! copyright gerd forstmann, all rights reserved */
-var debug = require('debug')('appdata.nunit')
-var process = require('process')
-var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen'
+var debug = require('debug')('appdata.nunit');
+var process = require('process');
+var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
-var AppData = require(root + '/utils/appdata.js')
+var AppData = require(root + '/utils/appdata.js');
 
-exports.testCtor = function (test) {
-  // test.expect(3)
-  var u = new AppData('_Test1', 'File1')
-  test.deepEqual(typeof u, 'object', 'is object')
-  test.done()
-}
-
-exports.testCtor = function (test) {
-  // test.expect(3)
-  var u
-  var k
-  u = new AppData.AppData('_Test2', 'File1')
-  u.setProperty('key1', {
-    a: 42
-  })
-
-  k = new AppData.AppData('_Test2', 'File1')
-  test.deepEqual(k.getProperty('key1').a, 42)
-  test.done()
-}
 
 /**
  * Unit test for sth
  */
 exports.testPersistence = function (test) {
-  test.expect(2)
-  var u
-  u = new AppData.PersistenceHandle('_Test3', 'File1')
+  test.expect(2);
+  var u;
+  u = new AppData.PersistenceHandle('_Test3', 'File1');
   u.save({
     a: 1
   }, function (err) {
     if (err) {
-      debug('got an error' + err)
-      throw err
+      debug('got an error' + err);
+      throw err;
     }
-    var k = new AppData.PersistenceHandle('_Test3', 'File1')
+    var k = new AppData.PersistenceHandle('_Test3', 'File1');
     k.load(function (err, sData) {
-      test.equal(err, undefined, 'no error')
-      test.deepEqual(sData, {a: 1}, 'correct data read')
-      test.done()
-    })
-  })
-}
+      test.equal(err, undefined, 'no error');
+      test.deepEqual(sData, { a: 1 }, 'correct data read');
+      test.done();
+    });
+  });
+};
 
-var fs = require('fs')
+var fs = require('fs');
 
-function rmDir (dirPath) {
+function rmDir(dirPath) {
   try {
-    var files = fs.readdirSync(dirPath)
-  } catch (e) { return }
+    var files = fs.readdirSync(dirPath);
+  } catch (e) { return; }
   if (files.length > 0) {
     for (var i = 0; i < files.length; i++) {
-      var filePath = dirPath + '/' + files[i]
+      var filePath = dirPath + '/' + files[i];
       if (fs.statSync(filePath).isFile()) {
-        fs.unlinkSync(filePath)
+        fs.unlinkSync(filePath);
       } else {
-        rmDir(filePath)
+        rmDir(filePath);
       }
     }
   }
-  fs.rmdirSync(dirPath)
+  fs.rmdirSync(dirPath);
 }
 
 exports.testPersistenceNoDirOnSave = function (test) {
-  test.expect(2)
-  var dirf = AppData._test.getFileAndDir('_Test4a', 'File1')
+  test.expect(2);
+  var dirf = AppData._test.getFileAndDir('_Test4a', 'File1');
   try {
-    rmDir(dirf.dir)
-  } catch (e) {}
+    rmDir(dirf.dir);
+  } catch (e) {
+    /* empty */
+    // emtpy
+    // debug("could not remove file");
+  }
 
-  var u = new AppData.PersistenceHandle('_Test4a', 'File1')
+  var u = new AppData.PersistenceHandle('_Test4a', 'File1');
   u.save({
     a: 1
   }, function (err) {
     if (err) {
-      debug('error on save bad' + err)
-      test.ok(true, 'got here!')
-      test.done()
+      debug('error on save bad' + err);
+      test.ok(true, 'got here!');
+      test.done();
     }
-    var k = new AppData.PersistenceHandle('_Test4a', 'File1')
+    var k = new AppData.PersistenceHandle('_Test4a', 'File1');
     k.load(function (err, sData) {
-      test.equal(err, undefined, 'no error')
-      test.deepEqual(sData, {a: 1}, 'correct data read')
-      test.done()
-    })
-  })
-}
+      test.equal(err, undefined, 'no error');
+      test.deepEqual(sData, { a: 1 }, 'correct data read');
+      test.done();
+    });
+  });
+};
+
+/*eslint no-unused-vars: ["error", { "caughtErrors": "none" }]*/
 
 exports.testPersistenceNoDirOnRead = function (test) {
-  test.expect(1)
-  var dirf = AppData._test.getFileAndDir('_Test4b', 'File1')
+  test.expect(1);
+  var dirf = AppData._test.getFileAndDir('_Test4b', 'File1');
   try {
-    rmDir(dirf.dir)
-  } catch (e) {}
-  debug('got past file removal')
-  var u = new AppData.PersistenceHandle('_Test4b', 'File1')
+    rmDir(dirf.dir);
+  } catch (e) {
+    /*empty */
+  }
+  debug('got past file removal');
+  var u = new AppData.PersistenceHandle('_Test4b', 'File1');
+  /*eslint-disable no-unused-vars*/
   u.load(function (err, sData) {
     if (err) {
-      debug('got an error' + err)
-      test.ok(true, 'loading impossible')
-      test.done()
-      return
+      debug('got an error' + err);
+      test.ok(true, 'loading impossible');
+      test.done();
+      return;
     }
-    test.ok(false, ' should not get here')
-    test.done()
-  })
-}
+    test.ok(false, ' should not get here');
+    test.ok(sData, 'not zero');
+    test.done();
+  });
+};
 
 exports.testPersistenceNoJSON = function (test) {
-  test.expect(1)
-  var dirf = AppData._test.getFileAndDir('_Test3x', 'FileA.json')
+  test.expect(1);
+  var dirf = AppData._test.getFileAndDir('_Test3x', 'FileA.json');
   try {
     if (!fs.existsSync(dirf.dir)) {
-      fs.mkdirSync(dirf.dir)
+      fs.mkdirSync(dirf.dir);
     }
   } catch (e) {
     // ok, hope not present
@@ -130,40 +120,40 @@ exports.testPersistenceNoJSON = function (test) {
     function (err) {
       if (err) {
         // console.log('cannot open file for writing!')
-        test.ok(false, 'error preparing test')
-        test.done()
-        return
+        test.ok(false, 'error preparing test');
+        test.done();
+        return;
       }
       // console.log('wrote file!')
-      var u = new AppData.PersistenceHandle('_Test3x', 'FileA.json')
+      var u = new AppData.PersistenceHandle('_Test3x', 'FileA.json');
       u.load(function (err, sData) {
         if (err) {
-          test.ok(true, 'cannot load')
-          test.done()
-          return
+          test.ok(true, 'cannot load');
+          test.done();
+          return;
         }
-        test.ok(false, 'got here')
-        test.equal(err, undefined, 'no error')
-        test.deepEqual(sData, {}, 'correct data read')
-        test.done()
-      })
-    })
-}
+        test.ok(false, 'got here');
+        test.equal(err, undefined, 'no error');
+        test.deepEqual(sData, {}, 'correct data read');
+        test.done();
+      });
+    });
+};
 
 /**
  * Unit test for sth
  */
 exports.testPersistenceNoDir = function (test) {
-  test.expect(3)
+  test.expect(3);
   // prepare
-  var u = new AppData.PersistenceHandle('_Test4', 'File1')
+  var u = new AppData.PersistenceHandle('_Test4', 'File1');
   // console.log('got handle')
   // creates dir, must be first!
-  var dirf = AppData._test.getFileAndDir('_Test4', 'File1')
+  var dirf = AppData._test.getFileAndDir('_Test4', 'File1');
   try {
-    rmDir(dirf.dir)
+    rmDir(dirf.dir);
   } catch (e) {
-    debug(' trouble removing ' + dirf.dir + ' ' + e.message)
+    debug(' trouble removing ' + dirf.dir + ' ' + e.message);
   }
   // console.log('removed')
   // act
@@ -172,20 +162,20 @@ exports.testPersistenceNoDir = function (test) {
   }, function (err) {
     // console.log('saved')
     if (err) {
-      test.ok(false, ' no error')
-      debug('got an error' + err)
-      test.done()
-      throw err
+      test.ok(false, ' no error');
+      debug('got an error' + err);
+      test.done();
+      throw err;
     }
-    var k = new AppData.PersistenceHandle('_Test4', 'File1')
+    var k = new AppData.PersistenceHandle('_Test4', 'File1');
     k.load(function (err, sData) {
-      test.ok(true, 'could save and read')
-      test.equal(err, undefined, 'no error')
-      test.deepEqual(sData, {a: 444}, 'correct data read')
-      test.done()
-    })
-  })
-}
+      test.ok(true, 'could save and read');
+      test.equal(err, undefined, 'no error');
+      test.deepEqual(sData, { a: 444 }, 'correct data read');
+      test.done();
+    });
+  });
+};
 
 /**
  * Unit test for sth

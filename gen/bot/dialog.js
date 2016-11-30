@@ -217,7 +217,7 @@ function makeBot(connector) {
     }
   }]);
 
-  dialog.onDefault(builder.DialogAction.send("I'm sorry I didn't understand. I can only show start and ring"));
+  dialog.onDefault(builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring'));
 
   // Very simple alarm scheduler
   var alarms = {};
@@ -226,7 +226,7 @@ function makeBot(connector) {
     for (var key in alarms) {
       var alarm = alarms[key];
       if (now >= alarm.timestamp) {
-        var msg = new builder.Message().address(alarm.address).text("Here's your '%s' alarm.", alarm.title);
+        var msg = new builder.Message().address(alarm.address).text('Here\'s your \'%s\' alarm.', alarm.title);
         bot.send(msg);
         delete alarms[key];
       }
