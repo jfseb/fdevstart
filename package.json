@@ -92,7 +92,6 @@
     "nodeunit": "^0.10.2",
     "request-defaults": "^1.2.0",
     "textarea-autogrow": "^1.0.0",
-    "tsc": "^1.20150623.0",
     "typescript": "^2.0.10"
   }
 }

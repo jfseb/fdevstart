@@ -3,7 +3,6 @@ before_script:
   - npm i -g typescript typings
   - typings install
   - typings install debug
-  - tsc
   - unset FSD_COVERAGE
   - gulp
 #  - gulp instrument
@@ -12,6 +11,5 @@ node_js:
  - "node"
 # - "4"   does not support sourcemaps
 after_script:
-  - jscoverage gen/match/inputFilterRules.js xinputFilterRules.js
   - npm run instrument
   - npm run testcov
