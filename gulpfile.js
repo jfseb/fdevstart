@@ -23,7 +23,7 @@ var sourcemaps = require('gulp-sourcemaps');
  * Directory containing generated sources which still contain
  * JSDOC etc.
  */
-var genDir = 'gen';
+// var genDir = 'gen';
 var srcDir = 'src';
 var testDir = 'test';
 
@@ -62,12 +62,12 @@ gulp.task('doc', function (cb) {
     .pipe(jsdoc(cb));
 });
 
-gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
-  return gulp.src([
-    genDir + '/match/inputFilterRules.js'
-  ], { 'base': genDir })
-    .pipe(gulp.dest('gen_cov'));
-});
+// gulp.task('copyInputFilterRules', ['tsc', 'babel'], function () {
+//  return gulp.src([
+//    genDir + '/match/inputFilterRules.js'
+//  ], { 'base': genDir })
+//    .pipe(gulp.dest('gen_cov'));
+// });
 
 /*
 var instrument = require('gulp-instrument')

@@ -47,7 +47,9 @@
   "license": "MIT",
   "dependencies": {
     "botbuilder": "^3.4.4",
-    "debug": "^2.3.2"
+    "debug": "^2.3.2",
+    "level": "^1.5.0",
+    "levelgraph": "^1.3.1"
   },
   "bin": {
     "nodeunit": ".nodeunit/bin/nodeunit",
@@ -86,6 +88,7 @@
     "gulp-typescript": "^3.1.3",
     "gulp-watch": "^4.3.11",
     "jscoverage": "^0.6.0",
+    "levelgraph": "^1.3.1",
     "nodeunit": "^0.10.2",
     "request-defaults": "^1.2.0",
     "textarea-autogrow": "^1.0.0",

@@ -1,5 +1,8 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+
+    // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+    "editor.tabSize": 2,
     // The default end of line character.
     "files.eol": "\n",
     // Format a file on save. A formatter must be available, the file must not be auto-saved, and editor must not be shutting down.
