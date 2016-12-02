@@ -11,6 +11,11 @@
 
 /**
  * a function calculating distance between two strings
+ * according to the damerau Levenshtein algorithm
+ * (this algorithm, in contrast to plain levenshtein treats
+ * swapping of characters a distance 1  "word"  <-> "wrod )
+ * @param {string} a
+ * @param {string} b
  * @public
  */
 export function levenshtein (a : string, b : string) {

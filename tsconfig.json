@@ -25,16 +25,19 @@
     ],
     "files": [
         "typings/modules/debug/index.d.ts",
-        "src/utils/damerauLevenshtein.ts",
+        "src/interfaces.d.ts",
         "src/match/ifmatch.ts",
         "src/constants.ts",
-        "src/match/inputFilterRules.ts",
-        "src/match/breakdown.ts",
         "src/exec/exec.ts",
-        "src/interfaces.d.ts",
-        "src/match/matchdata.ts",
+        "src/match/breakdown.ts",
         "src/match/dispatcher.ts",
-        "src/match/inputFilter.ts"
+        "src/match/inputFilterRules.ts",
+        "src/match/inputFilter.ts",
+        "src/match/matchdata.ts",
+        "src/match/sentence.ts",
+        "src/match/toolmatcher.ts",
+        "src/utils/damerauLevenshtein.ts",
+        "src/utils/utils.ts"
     ],
     "exclude": []
 }

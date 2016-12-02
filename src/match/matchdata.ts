@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @module jfseb.fdevstart.matchdata
+ * @copyright (c) 2016 Gerd Forstmann
+ */
 
   export const oUnitTests = [
     {

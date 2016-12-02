@@ -49,7 +49,8 @@
     "botbuilder": "^3.4.4",
     "debug": "^2.3.2",
     "level": "^1.5.0",
-    "levelgraph": "^1.3.1"
+    "levelgraph": "^1.3.1",
+    "stream-to-array": "^2.3.0"
   },
   "bin": {
     "nodeunit": ".nodeunit/bin/nodeunit",

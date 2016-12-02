@@ -2,6 +2,12 @@
  * @file graph db files
  */
 
+/**
+ * graph algorithms using levelgraph
+ * @module fsdevstart.graph
+ */
+
+
 //const level = require('level');
 //const levelgraph = require('levelgraph');
 

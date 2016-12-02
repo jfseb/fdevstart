@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @module jfseb.fdevstart.breakdown
+ * @copyright (c) 2016 Gerd Forstmann
+ */
 
 import * as debug from 'debug';
 const debuglog = debug('dispatcher')

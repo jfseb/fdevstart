@@ -1,5 +1,6 @@
 /**
  * @file graph db files
+ * @copyright (c) 2016 Gerd Forstmann
  */
 
 const level = require('level');

@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @module jfseb.fdevstart.dispatcher
+ * @copyright (c) 2016 Gerd Forstmann
+ */
+
+
 /// <reference path="../../lib/node-4.d.ts" />
 
 

@@ -1,9 +1,16 @@
+/**
+ * @file inputFilter
+ * @copyright (c) 2016-2016 Gerd Forstmann
+ */
 var process = require('process');
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 var debuglog = require('debug')('inputFilter.nunit');
 
 const inputFilter = require(root + '/match/inputFilter.js');
+
+
+const utils = require(root + '/utils/utils.js');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
@@ -1201,5 +1208,109 @@ exports.testExpandMult = function (test) {
 // 1 +  2 x 1  + 1 x 2 + 2 x 1 x 2
   var res = ab.expandMatchArr(src);
   test.equal(res.length, 9, 'correct length');
+  test.done();
+};
+
+
+
+exports.testExtractCategory = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+
+  var sentence = [
+        { string: 'wiki', matchedString: 'wiki', category: 'category' },
+        { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
+        { string: 'cat', matchedString: 'catalog', category: 'category' },
+        { string: 'My cat', matchedString: 'My cat', category: 'wiki' },
+        { string: 'in', matchedString: 'in', category: 'filler' },
+        { string: 'wiki', matchedString: 'wiki', category: 'category' }
+  ];
+
+  var res = ab.extractCategoryMap(sentence);
+
+  test.deepEqual(res,
+    { 'wiki' : [ { pos : 0 }, { pos : 5}],
+      'catalog' : [{ pos : 2}]
+    }, 'correct map');
+  test.done();
+};
+
+
+
+exports.testreinforceSentence = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+
+  var sentence = [
+    { string: 'wiki', matchedString: 'wiki', category: 'category' },
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'cat', matchedString: 'catalog', category: 'category' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'wiki', matchedString: 'wiki', category: 'category' }
+  ];
+
+  var res = ab.reinForceSentence(sentence);
+
+  test.deepEqual(res,
+    [ { string: 'wiki', matchedString: 'wiki', category: 'category' },
+    { string: 'My wiki',
+      matchedString: 'My wiki',
+      category: 'wiki',
+      reinforce: 4 },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'cat', matchedString: 'catalog', category: 'category' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'My next wiki',
+      matchedString: 'My next wiki',
+      category: 'wiki',
+      reinforce: 2 },
+  { string: 'in', matchedString: 'in', category: 'filler' },
+  { string: 'wiki', matchedString: 'wiki', category: 'category' } ], 'correct reinforced string');
+  test.done();
+};
+
+
+
+exports.testreinforce = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+
+  var sentence = [
+    { string: 'wiki', matchedString: 'wiki', category: 'category' },
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'cat', matchedString: 'catalog', category: 'category' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'wiki', matchedString: 'wiki', category: 'category' }
+  ];
+
+  var u = [sentence,
+    utils.cloneDeep(sentence),
+    utils.cloneDeep(sentence)];
+
+
+  var resline = [ { string: 'wiki', matchedString: 'wiki', category: 'category' },
+    {
+      string: 'My wiki',
+      matchedString: 'My wiki',
+      category: 'wiki',
+      reinforce: 4 },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'cat', matchedString: 'catalog', category: 'category' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'My next wiki',
+      matchedString: 'My next wiki',
+      category: 'wiki',
+      reinforce: 2 },
+  { string: 'in', matchedString: 'in', category: 'filler' },
+  { string: 'wiki', matchedString: 'wiki', category: 'category' } ];
+
+
+  var res = ab.reinForce(u);
+  test.deepEqual(res[0],resline, 'line 0 ok');
+  test.deepEqual(res[1],resline, 'line 1 ok');
+  test.deepEqual(res[2],resline, 'line 2 ok');
   test.done();
 };

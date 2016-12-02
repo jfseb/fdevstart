@@ -6,6 +6,11 @@ export const enum EnumResponseCode {
   QUERY
 }
 
+
+export const CAT_CATEGORY = "category";
+export const CAT_TOOL = "tool";
+
+
 export interface IPromptDescription {
   description : string,
   type : string,
@@ -19,6 +24,33 @@ export const  enum EnumRuleType {
   WORD ,
   REGEXP
 }
+
+/**
+ * @interface ITool
+ *
+ * var oTool = { 'name' : 'FLPD',
+ *   'requires' : { 'systemId' : {}, 'client' :{}},
+ *   'optional' : { 'catalog' : {}, 'group' :{}}
+ * };
+*/
+export interface ITool {
+  name : string,
+  requires : { [key : string] : Object},
+  optional? : { [key : string] : Object },
+}
+
+export interface IToolMatchResult {
+  required : { [key : string] : IWord},
+  missing :  { [key : string] : number},
+  optional? : { [key : string] : IWord },
+}
+
+export interface IWord {
+  matchedString : string,
+  category? : string
+}
+
+export type ISentence = Array<IWord>;
 
 export interface IRule {
   type : EnumRuleType,

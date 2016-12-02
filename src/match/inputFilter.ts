@@ -20,6 +20,8 @@ import * as distance from '../utils/damerauLevenshtein';
 
 import * as debug from 'debug';
 
+import * as utils from '../utils/utils';
+
 import * as IMatch from './ifmatch';
 
 import * as breakdown from './breakdown';
@@ -258,58 +260,8 @@ export function analyzeString(sString : string, aRules : Array<IMatch.mRule> ) {
 12 c
 */
 
-// courtesy of
-// http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
 
-function clone(item) {
-    if (!item) { return item; } // null, undefined values check
-
-    var types = [ Number, String, Boolean ],
-        result;
-
-    // normalizing primitives if someone did new String('aaa'), or new Number('444');
-    types.forEach(function(type) {
-        if (item instanceof type) {
-            result = type( item );
-        }
-    });
-
-    if (typeof result == "undefined") {
-        if (Object.prototype.toString.call( item ) === "[object Array]") {
-            result = [];
-            item.forEach(function(child, index, array) {
-                result[index] = clone( child );
-            });
-        } else if (typeof item == "object") {
-            // testing that this is DOM
-            if (item.nodeType && typeof item.cloneNode == "function") {
-                var result = item.cloneNode( true );
-            } else if (!item.prototype) { // check that this is a literal
-                if (item instanceof Date) {
-                    result = new Date(item);
-                } else {
-                    // it is an object literal
-                    result = {};
-                    for (var i in item) {
-                        result[i] = clone( item[i] );
-                    }
-                }
-            } else {
-                // depending what you would like here,
-             //   // just keep the reference, or create new object
-             //   if (false && item.constructor) {
-                    // would not advice to do that, reason? Read below
-            //        result = new item.constructor();
-            //    } else {
-                    result = item;
-           //     }
-            }
-       } else {
-            result = item;
-        }
-    }
-    return result;
-}
+const clone = utils.cloneDeep;
 
 // we can replicate the tail or the head,
 // we replicate the tail as it is smaller.
@@ -363,6 +315,60 @@ export function expandMatchArr(deep : Array<Array<any>>) : Array<Array<any>> {
   }
   return res;
 }
+
+/**
+ * Weight factor to use on the a given word distance
+ * of 0, 1, 2, 3 ....
+ */
+const aDistWeight : Array<number>  = [0, 3, 1,  0.2];
+
+/**
+ * Calculate a weight factor for a given distance and
+ * category
+ * @param {integer} dist distance in words
+ * @param {string} category category to use
+ * @returns {number} a distance factor >= 1
+ *  1.0 for no effect
+ */
+export function distWeight(dist : number, category : string) : number {
+  var abs = Math.abs(dist);
+  return 1.0 + (aDistWeight[abs] || 0);
+}
+
+/**
+ * Given a sentence, extact categories
+ */
+export function extractCategoryMap(oSentence) : { [key : string] : Array<{ pos : number}> } {
+  var res = {};
+  oSentence.forEach(function(oWord, iIndex) {
+    if (oWord.category === IFMatch.CAT_CATEGORY) {
+      res[oWord.matchedString] = res[oWord.matchedString] || [];
+      res[oWord.matchedString].push({ pos : iIndex });
+    }
+  });
+  utils.deepFreeze(res);
+  return res;
+}
+
+export function reinForceSentence(oSentence) {
+  var oCategoryMap = extractCategoryMap(oSentence);
+  oSentence.forEach(function(oWord, iIndex) {
+    var m = oCategoryMap[oWord.category] || [];
+    m.forEach(function (oPosition : { pos : number }) {
+      oWord.reinforce = oWord.reinforce || 1;
+      oWord.reinforce *= distWeight(iIndex - oPosition.pos, oWord.category);
+    });
+  });
+  return oSentence;
+}
+
+export function reinForce(aCategoryizedArray) {
+  aCategoryizedArray.forEach(function(oSentence) {
+    reinForceSentence(oSentence);
+  })
+  return aCategoryizedArray;
+}
+
 
 export function matchRegExp(oRule : IRule, context : IFMatch.context, options ? : IMatchOptions) {
   if (context[oRule.key] === undefined) {

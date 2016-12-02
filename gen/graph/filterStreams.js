@@ -10,6 +10,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @file graph db files
+ * @copyright (c) 2016 Gerd Forstmann
  */
 
 var level = require('level');
