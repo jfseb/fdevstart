@@ -71,6 +71,13 @@ exports.testCloneDeepPrimitive = function (test) {
   test.equal(utils.cloneDeep(null), null, 'undefined');
   test.deepEqual(utils.cloneDeep({ a: undefined}), {a: undefined}, 'object with empty property');
   test.deepEqual(utils.cloneDeep([1,2,'a']), [1,2,'a'], 'undefined');
+  test.deepEqual(utils.cloneDeep({ a : String('1')}), { a : '1'}, 'undefined');
+
+  var a = new Date();
+  test.deepEqual(utils.cloneDeep({ a : a}), { a : a }, 'undefined');
+
+  test.deepEqual(utils.cloneDeep({ a : {}}), { a : {} }, 'undefined');
+
   test.done();
 };
 
