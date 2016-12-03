@@ -14,39 +14,91 @@
 
 import * as debug from 'debug';
 
-import * as Sentence from './sentence';
+import * as IMatch from './ifmatch';
 
 import * as utils from '../utils/utils';
 
-import * as IMatch from './ifmatch';
+
+import * as Sentence from './sentence';
+import * as OpsWord from './word';
+
+const Word = OpsWord.Word;
+const Category = OpsWord.Category;
 
 const debuglog = debug('toolmatcher');
 
-export function matchTool(oSentence : IMatch.ISentence, oTool : IMatch.ITool) : IMatch.IToolMatchResult {
-  var used = {} as any;
-  var required = {} as any;
-  var matched = {} as any;
-  Object.keys(oTool.requires).forEach(function(sCategory : string) {
-    let { word , index } = Sentence.findWordByCategory(oSentence, sCategory);
-    matched[word as any] = "required";
-    used[index] = 1;
-    required[sCategory] = 1;
+export function matchTool(oSentence: IMatch.ISentence, oTool: IMatch.ITool): IMatch.IToolMatchResult {
+  var used = {} as { [key: number]: number };
+  var required = {} as { [key: string]: IMatch.IWord };
+  var optional = {} as { [key: string]: IMatch.IWord };
+  var matched = {} as { [key: string]: string };
+  var spurious = {} as { [key: string]: number };
+  var toolmentioned = [] as Array<IMatch.IWord>;
+  Object.keys(oTool.requires || {}).forEach(function (sCategory: string) {
+    let { word, index } = Sentence.findWordByCategory(oSentence, sCategory);
+    if (word) {
+      matched[word as any] = "required";
+      used[index] = 1;
+      required[sCategory] = word;
+    }
   });
-  Object.keys(oTool.optional).forEach(function(sCategory : string) {
-    var  { word , index } = Sentence.findWordByCategory(oSentence, sCategory);
-    matched[word as any] = "optional";
-    used[index] = 1;
-    required[sCategory] = 1;
+  Object.keys(oTool.optional || {}).forEach(function (sCategory: string) {
+    var { word, index } = Sentence.findWordByCategory(oSentence, sCategory);
+    if (word) {
+      matched[word as any] = "optional";
+      used[index] = 1;
+      optional[sCategory] = word;
+    }
   });
-  var missing = utils.ArrayUtils.setMinus(Object.keys(oTool.requires),Object.keys(required)).reduce(
-    function(map, sKey) {
-    map[sKey] = 1;
-    return map;
-  },{})
+
+  oSentence.forEach(function (oWord, index) {
+    if (!used[index] && !Word.isFiller(oWord) && !Word.isCategory(oWord)) {
+      debuglog("have spurious word" + JSON.stringify(oWord));
+      spurious[oWord.matchedString] = 1;
+    }
+    if (!used[index] && oWord.category === Category.CAT_TOOL && oWord.matchedString === oTool.name ) {
+      toolmentioned.push(oWord);
+    }
+  });
+  debuglog('satisfied : ' + Object.keys(oTool.requires).join(";"));
+  debuglog('required  : ' + Object.keys(oTool.requires).join(";"));
+  var missing = utils.ArrayUtils.setMinus(Object.keys(oTool.requires), Object.keys(required)).reduce(
+    function (map, sKey) {
+      map[sKey] = 1;
+      return map;
+    }, {})
 
   return {
-    required : required,
-    missing : {},
-    optional : {}
+    required: required,
+    missing: missing,
+    optional: optional,
+    spurious: spurious,
+    toolmentioned : toolmentioned
   }
+}
+
+import * as match from './match';
+
+const ToolMatch = match.ToolMatch;
+
+export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+  //var stream = new streamutils.MatchStream();
+  var result = [];
+  aTool.forEach(function (oTool) {
+    aSentences.forEach(function (oSentence) {
+      var toolmatchresult = matchTool(oSentence, oTool);
+      var toolmatch = {
+        toolmatchresult: toolmatchresult,
+        sentence: oSentence,
+        tool : oTool,
+        rank : 0
+      };
+      toolmatch.rank = ToolMatch.rankResult(toolmatch.toolmatchresult);
+      if (ToolMatch.isAnyMatch(toolmatch)) {
+        result.push(toolmatch);
+      }
+    })
+  });
+  result.sort(ToolMatch.compBetterMatch);
+  return result;
 }

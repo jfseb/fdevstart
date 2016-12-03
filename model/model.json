@@ -1,0 +1,126 @@
+{
+  "@context": {
+    "@vocab": "https://jfseb.org/fdevstart",
+    "prompt": null,
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "model": "https://jfseb.org/fdevstart/model",
+    "category": "http://jfseb.org/category",
+    "weight": {
+      "@id": {
+        "@id": "model:weight",
+        "@type": "xsd:integer"
+      }
+    },
+    //←Thismeansthat'name'isshorthandfor'http: //schema.org/name'
+    "image": {
+      "@id": "http://schema.org/image",
+      //      ←Thismeansthat'image'isshorthandfor'http: //schema.org/image'
+      "@type": "@id"
+    },
+    "isA": "https://jfseb.org/relation/isA",
+    "homepage": {
+      "@id": "http://schema.org/url",
+      "@type": "@id",
+      "wiki": {
+        "@id": "http://schema.org/url",
+        "@type": "@id"
+      }
+    },
+    "@graph": [
+      {
+        "relations": [
+          "isA",
+          "hasA",
+          "requires",
+          "optional"
+        ]
+      },
+      {
+        "@id": "model:intents",
+        "@reverse": {
+          "isA": [
+            "startA", "what is A for B", "explain"
+          ]
+        }
+      },
+      {
+        "@id": "model:tools",
+        "@reverse": {
+          "isA": [
+            [
+              "FLPD",
+              "WIKIURL",
+              "FLP"
+            ]
+          ]
+        }
+      },
+      {
+        "@id": "#FLPD",
+        "name": "FLPD",
+        "requires": [
+          "systemId",
+          "client"
+        ],
+        "optional": [
+          "fiori catalog",
+          "fiori group"
+        ]
+      },
+      {
+        "@id": "#FLPD",
+        "name": "FLPD",
+        "requires": [
+          "systemId",
+          "client"
+        ],
+        "optional": [
+          "fiori catalog",
+          "fiori group"
+        ]
+      },
+      {
+        "@id": "https://jfseb.org/modelterm/category",
+        "name": "category",
+        "categories": [
+          "wiki",
+          "wikispace",
+          "systemId",
+          "client"
+        ]
+      },
+      {
+        "@id": "https://jfseb.org/modelterm/tool",
+        "name": "tool",
+        "categories": [
+          "wiki",
+          "wikispace",
+          "systemId",
+          "client"
+        ]
+      },
+      {
+        "@id": "https://jfseb.org/modelsap/category#wiki",
+        "category": "wiki",
+        "prompt": {
+          "@value": "please provide a wiki name"
+        }
+      },
+      {
+        "@id": "https://jfseb.org/modelsap/category#wikispace",
+        "category": "wikispace",
+        "prompt": "please provide a wiki space"
+      },
+      {
+        "@id": "https://jfseb.org/modelsap/category#client",
+        "category": "client",
+        "prompt": "please provide a client",
+        "examples": {
+          "@list": [
+            "unified shell"
+          ]
+        }
+      }
+    ]
+  }
+}

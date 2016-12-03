@@ -34,7 +34,9 @@
         "src/match/inputFilterRules.ts",
         "src/match/inputFilter.ts",
         "src/match/matchdata.ts",
+        "src/match/match.ts",
         "src/match/sentence.ts",
+        "src/match/word.ts",
         "src/match/toolmatcher.ts",
         "src/utils/damerauLevenshtein.ts",
         "src/utils/utils.ts"

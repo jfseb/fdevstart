@@ -8,6 +8,7 @@ export const enum EnumResponseCode {
 
 
 export const CAT_CATEGORY = "category";
+export const CAT_FILLER = "filler";
 export const CAT_TOOL = "tool";
 
 
@@ -43,6 +44,15 @@ export interface IToolMatchResult {
   required : { [key : string] : IWord},
   missing :  { [key : string] : number},
   optional? : { [key : string] : IWord },
+  spurious :  { [key : string] : number},
+  toolmentioned : IWord[]
+}
+
+export interface IToolMatch {
+  toolmatchresult : IToolMatchResult,
+  sentence : ISentence,
+  tool: ITool,
+  rank : number
 }
 
 export interface IWord {

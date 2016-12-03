@@ -1,0 +1,1 @@
+e:\progs\GraphViz\bin\dot.exe -Tjpeg -O graph.gv

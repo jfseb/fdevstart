@@ -1,0 +1,79 @@
+digraph sdsu {
+	size="36,36";
+	node [color=yellow, style=filled];
+	FLPD FLP "BOM Editor", "WIKIURL" "UI5 Documentation", "UI5 Example", "STARTTA"
+	BCP
+	node [color=grey, style=filled];
+	node [fontname="Verdana", size="30,30"];
+	node [color=grey, style=filled];
+	graph [ fontname = "Arial",
+	  fontsize = 36,
+          style = "bold",
+          label = "\n Association\n 2016\n",
+	  ssize = "30,60" ];
+#	System Wiki Client "Fiori Catalog" "Fiori Group"
+#	Category -> Wiki
+#	Category -> TestCase;
+#	Category -> Example;
+
+# requires
+	{ edge [color="#ff0000:#FF0000"]
+		FLP -> System -> {SystemId Client}
+		FLPD -> System -> { SystemId Client}
+		STARTTA -> System -> { SystemId Client}
+		WIKIURL -> Wiki
+		"UI5 Documentation" -> "UI5 Class"
+		"UI5 Example" -> "UI5 Class"
+		"BOM Editor" -> "Fiori Application"
+	}
+	{ edge [color="#0000FF" label="one of" headlabel="1",taillabel="?"]
+		FLP -> { Intent "Fiori Catalog" "Fiori Group" }
+		FLPD -> { "Fiori Catalog" "Fiori Group" }
+		STARTTA -> Transaction
+		BCP -> { "BCP Ticket" "Internal Ticket" "Note" }
+	}
+	{ edge [color="#afafaf" label="alias for" headlabel="1",taillabel="1"]
+		"Fiori Application" -> Intent
+		FioriID -> "Fiori Application"
+		"Fiori Application" -> FioriID
+	}
+	Transaction -> "GenericId"
+	"Fiori Catalog" -> "GenericId"
+	"Fiori Group" -> "GenericId"
+
+	Category -> "UI5 Documentation";
+	Category -> "UI5 Class";
+	Category -> ReleaseVersion;
+	Category -> Client [ label = "SS(S)" ];
+	Category -> System [ label = "S($end)" ];
+	UI5Library -> "UI5 Class" [ headlabel="1..*"];
+	UI5Library -> "UI5 Version";
+	Version -> "UI5 Version";
+	Version -> ReleaseVersion;
+	"Fiori Application" -> ReleaseVersion
+	System -> ReleaseVersion;
+	Category -> Transaction;
+	Category -> FioriID
+	FioriApplicaton -> FioriID
+	Tool -> FLPD [ label = "SS(a)" ];
+	Tool -> FLP [ label = "S(A)" ];
+	Tool -> Wiki
+	Tool -> "UI5 Documentation"
+	Transaction -> Intent;
+	TransactionName -> Transaction [ label ="1"];
+	WDAApp -> Intent;
+	"Fiori Catalog" -> "Fiori Application"
+	"ODataService" -> "Fiori Application"
+	"UI5 Library" -> "BSP"
+	ODataService -> "Fiori Application" [ label = "S(a)" ];
+	"Support Component" -> "Fiori Application" [ label = "S(b)" ];
+	"BSP" -> "Fiori Application" [ label = "S(a)" ];
+	"Intent" -> "Fiori Application" [ label = "S(a)" ];
+	"Tool" -> "BOM Editor" [ label = "S(b)" ];
+	"Tool" -> "BOM Editor" [ label = "S(b)" ];
+	 "Intent" -> "FLP" [ label = "Tool" ];
+	 "Fiori Application" -> "BOM Editor" [ laben = "Tool" ]
+# complex aliases
+	SystemCategory -> Client
+
+}

@@ -1,0 +1,17 @@
+digraph finite_state_machine {
+#	rankdir=LR;
+	size="80,50"
+	node [shape = record];
+
+  node [shape=diamond,style=filled,color=lightgrey];
+	  satisfied
+	node [shape = record];
+	breakdown [label="{<f0> split | breakdown string | ['TA','SE3'],['TA SE3']}" ]
+	identify [label="{<f0> identify | <f1> | match against known words an patterns}"]
+	flatten [label="{<f0> flatten | <f1> | expand }" ]
+	breakdown -> identify -> flatten -> reinforce	-> maptool -> satisfied	-> prompt;
+	prompt -> prompt;
+	prompt -> execute;
+  prompt -> cancel;
+	satisfied -> execute -> done;
+}

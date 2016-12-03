@@ -198,6 +198,7 @@ gulp.task('standard', () => {
     .pipe(eslint.failAfterError());
 });
 
+// we don't use this'
 var coveralls = require('gulp-coveralls');
 
 gulp.task('coveralls', function () {
@@ -205,7 +206,18 @@ gulp.task('coveralls', function () {
     .pipe(coveralls());
 });
 
+
+
+var gulp_shell = require('gulp-shell');
+
+gulp.task('graphviz', function () {
+  gulp.src('model/*.gv')
+  .pipe(gulp_shell([ 'dot -O -Tjpeg <%= file.path %>']));
+});
+
 // gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
 gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test']);
+
+gulp.task('allhome', ['default', 'graphviz']);
