@@ -1,6 +1,6 @@
 {
   "ShowMe": [
-    "start <A>",
+    "start <A1>",
     "show me <A1>",
     "start me <A1>",
     "display <A1>"
@@ -37,5 +37,10 @@
     "Leave",
     "Exit",
     "Abandon"
+  ],
+  "Wrong": [
+    "Wrong",
+    "incorrect",
+    "Liar"
   ]
 }

@@ -266,7 +266,7 @@ function analyzeString(sString, aRules) {
             cnt = cnt + seenIt.length;
             fac = fac * seenIt.length;
             if (!seenIt || seenIt.length === 0) {
-                throw new Error("Expecting at least one match for " + sWordGroup);
+                throw new Error("Expecting at least one match for \"" + sWordGroup + "\"");
             }
             return seenIt;
         });

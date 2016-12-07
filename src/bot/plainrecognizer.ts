@@ -136,8 +136,6 @@ export function matchRegularExpression(text : string, oRule : IMatch.IntentRule)
   return res;
 }
 
-
-
 export function recognizeText(text : string, aRules : Array<IMatch.IntentRule>) : builder.IIntentRecognizerResult{
     var res = undefined;
     aRules.every(function (oRule) {
@@ -146,8 +144,6 @@ export function recognizeText(text : string, aRules : Array<IMatch.IntentRule>) 
     });
     return res;
 }
-
-
 
 export class RegExpRecognizer implements builder.IIntentRecognizer {
   oRules: { [key: string]: Array<IMatch.IntentRule> };
@@ -178,7 +174,7 @@ export class RegExpRecognizer implements builder.IIntentRecognizer {
       callback(undefined, res);
       return;
     }
-    console.log('recognizing nothing');
+    debuglog('recognizing nothing');
     u.intent = "None";
     u.score = 0.1;
     var e1 = {} as builder.IEntity;

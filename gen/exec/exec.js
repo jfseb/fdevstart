@@ -9,6 +9,7 @@ var debug = require('debug');
 var IFMatch = require('../match/ifmatch');
 var debuglog = debug('dispatcher');
 var child_process_1 = require('child_process');
+var Match = require('../match/match');
 (function (EnumResponseCode) {
     EnumResponseCode[EnumResponseCode["NOMATCH"] = 0] = "NOMATCH";
     EnumResponseCode[EnumResponseCode["EXEC"] = 1] = "EXEC";
@@ -99,8 +100,31 @@ function executeStartup(oResult, cb) {
         return s;
     }
 }
-module.exports = {
-    executeStartup: executeStartup
-};
+function expandParametersInURL(oMergedContextResult) {
+    var ptn = oMergedContextResult.result.pattern;
+    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
+        var regex = new RegExp('{' + sKey + '}', 'g');
+        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
+        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
+    });
+    return ptn;
+}
+function execTool(match) {
+    return "can execute" + match.tool.name + " " +
+        Match.ToolMatch.dumpNice(match);
+    // TODO invoke tool specific starter
+    /* if (oMergedContextResult.result.type === 'URL') {
+      var ptn = expandParametersInURL(oMergedContextResult)
+      startBrowser(ptn)
+      return ptn
+    } else {
+      var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
+      debuglog(s)
+      return s
+    }*/
+}
+exports.execTool = execTool;
+//  executeStartup: executeStartup
+//}
 
 //# sourceMappingURL=exec.js.map

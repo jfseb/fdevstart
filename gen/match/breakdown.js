@@ -7,9 +7,14 @@
 var debug = require('debug');
 var debuglog = debug('dispatcher');
 function cleanseString(sString) {
-    sString = sString.replace(/^\s+/, '');
-    sString = sString.replace(/\s+$/, '');
-    sString = sString.replace(/\s\s+/g, ' ');
+    var len = 0;
+    while (len !== sString.length) {
+        len = sString.length;
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/^\s+/, '');
+        sString = sString.replace(/\s+$/, '');
+    }
     return sString;
 }
 exports.cleanseString = cleanseString;
@@ -75,7 +80,8 @@ exports.recombineQuoted = recombineQuoted;
  *[["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
  */
 function breakdownString(sString) {
-    var u = sString.split(" ");
+    var rString = cleanseString(sString);
+    var u = rString.split(" ");
     u = recombineQuoted(u);
     var k = 0;
     if (u.length === 0) {

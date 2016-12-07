@@ -63,7 +63,6 @@ var MakeAxArrayTransformer = function (_Transform) {
 }(Transform);
 
 /*
-
 var relations = [
     [ 'Tool' ,'is', 'FLP' , {weight: 0}],
     [ 'Tool' ,'is', 'FLPD' , {weight : 0}],

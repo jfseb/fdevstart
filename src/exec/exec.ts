@@ -15,6 +15,9 @@ const debuglog = debug('dispatcher')
 
 import { exec } from 'child_process';
 
+import * as IMatch from '../match/ifmatch';
+import * as Match from '../match/match';
+
 
 export const enum EnumResponseCode {
   NOMATCH = 0,
@@ -111,6 +114,33 @@ function executeStartup (oResult: IFMatch.IResponse, cb: (err : any, a : IFMatch
   }
 }
 
-module.exports = {
-  executeStartup: executeStartup
-}
+
+  function expandParametersInURL (oMergedContextResult) {
+    var ptn = oMergedContextResult.result.pattern
+    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
+      var regex = new RegExp('{' + sKey + '}', 'g')
+      ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
+      ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
+    })
+    return ptn
+  }
+
+export function execTool(match: IMatch.IToolMatch) : string {
+    return "can execute" + match.tool.name + " " +
+    Match.ToolMatch.dumpNice(match);
+
+    // TODO invoke tool specific starter
+    /* if (oMergedContextResult.result.type === 'URL') {
+      var ptn = expandParametersInURL(oMergedContextResult)
+      startBrowser(ptn)
+      return ptn
+    } else {
+      var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
+      debuglog(s)
+      return s
+    }*/
+  }
+
+
+//  executeStartup: executeStartup
+//}

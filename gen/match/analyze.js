@@ -32,5 +32,42 @@ function analyzeAll(sString, aRules, aTools) {
     }
 }
 exports.analyzeAll = analyzeAll;
+function isComplete(match) {
+    return match && match.rank > 0.6 &&
+        Object.keys(match.toolmatchresult.missing || {}).length === 0;
+}
+exports.isComplete = isComplete;
+function getPrompt(match) {
+    if (!match) {
+        return;
+    }
+    if (match.rank > 0.6) {
+        return undefined;
+    }
+    if (Object.keys(match.toolmatchresult.missing).length) {
+        var missing = Object.keys(match.toolmatchresult.missing)[0];
+        return {
+            category: missing,
+            text: 'Please provide a missing "' + missing + '"?'
+        };
+    }
+    return undefined;
+}
+exports.getPrompt = getPrompt;
+function setPrompt(match, prompt, response) {
+    if (!match) {
+        return;
+    }
+    if (response.toLowerCase() !== 'cancel' && response.toLowerCase() !== 'abort') {
+        var u = {};
+        u.category = prompt.category;
+        u._ranking = 1.0;
+        u.matchedString = response;
+        /// TODO test whether this can be valid at all?
+        match.toolmatchresult.required[prompt.category] = u;
+        delete match.toolmatchresult.missing[prompt.category];
+    }
+}
+exports.setPrompt = setPrompt;
 
 //# sourceMappingURL=analyze.js.map

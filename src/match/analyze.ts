@@ -41,3 +41,44 @@ export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools:
     return matchedTools;
   }
 }
+
+export function isComplete(match :  IMatch.IToolMatch) {
+  return match && match.rank > 0.6 &&
+    Object.keys(match.toolmatchresult.missing ||{}).length === 0
+}
+
+export function getPrompt(match :  IMatch.IToolMatch) {
+  if(!match) {
+      return;
+  }
+  if (match.rank > 0.6 ) {
+    return undefined;
+  }
+  if(Object.keys(match.toolmatchresult.missing).length ) {
+    var missing = Object.keys(match.toolmatchresult.missing)[0];
+    return {
+      category : missing,
+      text : 'Please provide a missing "' + missing + '"?'
+    }
+  }
+  return undefined;
+}
+
+
+export function setPrompt(match : IMatch.IToolMatch, prompt: IMatch.IPrompt,
+  response : string) {
+    if(!match) {
+      return;
+    }
+    if (response.toLowerCase() !== 'cancel' && response.toLowerCase() !== 'abort') {
+      var u = {} as IMatch.IWord;
+      u.category = prompt.category;
+      u._ranking = 1.0;
+      u.matchedString = response;
+      /// TODO test whether this can be valid at all?
+      match.toolmatchresult.required[prompt.category] = u;
+      delete match.toolmatchresult.missing[prompt.category];
+   }
+}
+
+

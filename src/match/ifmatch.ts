@@ -48,6 +48,11 @@ export interface IToolMatchResult {
   toolmentioned : IWord[]
 }
 
+export interface IPrompt {
+  text : string,
+  category : string
+}
+
 export interface IToolMatch {
   toolmatchresult : IToolMatchResult,
   sentence : ISentence,

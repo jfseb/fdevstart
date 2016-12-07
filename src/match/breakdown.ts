@@ -9,9 +9,14 @@ const debuglog = debug('dispatcher')
 
 
 export function cleanseString(sString : string) : string {
-    sString = sString.replace(/^\s+/,'');
-    sString = sString.replace(/\s+$/,'');
-    sString = sString.replace(/\s\s+/g, ' ');
+    var len = 0;
+    while ( len !== sString.length )  {
+        len = sString.length;
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/^\s+/,'');
+        sString = sString.replace(/\s+$/,'');
+    }
     return sString
 }
 
@@ -80,7 +85,8 @@ export function recombineQuoted(aArr : Array<string>) : Array<string> {
  *[["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
  */
 export function breakdownString(sString: string) : Array<Array<String>> {
-    var u = sString.split(" ");
+    var rString = cleanseString(sString);
+    var u = rString.split(" ");
     u = recombineQuoted(u);
     var k = 0;
     if(u.length === 0) {

@@ -80,7 +80,7 @@ import * as match from './match';
 
 const ToolMatch = match.ToolMatch;
 
-export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMatch.ITool>): IMatch.IToolMatch[] /* objectstream*/ {
   //var stream = new streamutils.MatchStream();
   var result = [];
   aTool.forEach(function (oTool) {
@@ -91,7 +91,7 @@ export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMa
         sentence: oSentence,
         tool : oTool,
         rank : 0
-      };
+      } as IMatch.IToolMatch;
       toolmatch.rank = ToolMatch.rankResult(toolmatch.toolmatchresult);
       if (ToolMatch.isAnyMatch(toolmatch)) {
         result.push(toolmatch);
