@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Start me up!</title>
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="socket.io/socket.io.js"></script>
+  <!-- Insert this line above script imports  -->
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <style>
+    textarea.ui-input-text.ui-textinput-autogrow {
+      overflow: hidden
+    }
+
+    body {
+      font-family: monospace;
+      font-size: 4mm;
+      -webkit-app-region: drag;
+      border-radius: 3mm;
+    }
+
+    body {
+      -webkit-margin-before: 0px;
+      margin: 0px;
+      padding: 0em;
+      border-radius: 1.5em;
+    }
+
+    li.common {
+      background-color: "red", text-color yellow;
+      padding-left: 0.2em;
+      padding-bottom: 0.1em;
+      padding-top: 0.1em;
+      padding-right: .2em;
+    }
+
+    li.response {
+      background-color: "red", text-color yellow;
+      padding-left: 2em;
+      padding-bottom: 0.1em;
+    }
+
+    li.request {
+      background-color: "red", text-color yellow;
+      padding-right: 2em;
+    }
+
+    div.common {
+      border-color: #bbbbbb;
+      box-sizing: border-box;
+      background-color: bisque;
+      width: 100%;
+      padding: .2em;
+      line-height: 1.1em;
+      overflow: hidden;
+      display: block;
+      margin: 0.1em;
+      background-clip: padding-box;
+      border-radius: 0.3em;
+      box-shadow: inset 0 1px 3px/*{global-box-shadow-size}*/
+      rgba(0, 0, 0, .2)/*{global-box-shadow-color}*/
+      ;
+    }
+
+    div.request {
+      border-color: #bbbbbb;
+      color: #333333;
+    }
+
+    div.response {
+      font-style: italic;
+      border-color: #000000;
+      color: #000000;
+      background-color: lightgrey;
+    }
+
+    textarea {
+      font-size: 15px;
+      box-sizing: border-box;
+      width: 100%;
+      padding: .4em;
+      line-height: 1.1em;
+      display: block;
+      margin: 0.1em;
+      background-clip: padding-box;
+      border-radius: 0.5em;
+      box-shadow: inset 0 1px 3px/*{global-box-shadow-size}*/
+      rgba(0, 0, 0, .2)/*{global-box-shadow-color}*/
+      ;
+    }
+
+    ul {
+      margin: 5px;
+      list-style: none;
+      -webkit-margin-before: 0.1em;
+      -webkit-margin-after: 0.1em;
+      -webkit-margin-start: 0px;
+      -webkit-margin-end: 0px;
+      -webkit-padding-start: 0px;
+    }
+
+    li {
+      padding: .1em .1em;
+      padding-top: 0.2em;
+      padding-right: 0.1em;
+      padding-bottom: 0.2em;
+      padding-left: 0.1em;
+      border-color: #dddddd;
+    }
+
+    .ui-xlistview>.ui-li-static {
+      padding: .01em 0.1em;
+      padding-left: 1em;
+    }
+
+    .ui-textinput-autogrow-resize {
+      -webkit-transition: height .25s;
+      -o-transition: height .25s;
+      -moz-transition: height .25s;
+      transition: height .25s
+    }
+
+    #header-wrap {
+      position: fixed;
+      height: 20px;
+      padding-top: 0.2em;
+      background-color: orange;
+      font-family: "Arial Black";
+      color: darkblue;
+      vertical-align: center;
+      text-align: center;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    #header-left {
+      position: fixed;
+      height: 20px;
+      padding-top: 0.2em;
+      background-color: orange;
+      font-family: "Arial Black";
+      color: darkblue;
+      vertical-align: center;
+      text-align: center;
+      top: 0;
+      left: 2px;
+      width: 18px;
+      z-index: 102;
+    }
+
+    #growme {
+      resize: none;
+      box-sizing: content-box;
+    }
+  </style>
+</head>
+
+<body style="line-height:1em; -webkit-app-region: drag;">
+  <!-- <div style="border-radius:20mm;background-color:blue">
+-->
+  <img title="Use context menu for operations" id="header-left" src="resources/ui/external.png" style="width:18px;height:18px"></img>
+  <div id="header-wrap" style="-webkit-app-region: drag">
+    fiori dev start!
+    </span>
+  </div>
+  <div style="margin-top:20px" data-theme="a">
+
+    <ul class="ui-listview" style="-webkit-app-region: no-drag" data-role="listview">
+      <!--
+  <li class="response">
+  <div class="common response">
+    thisi sthe way forward
+  </div>
+  </li>
+
+  <li class="request">
+  <div class="common request">
+   a request
+  </div>
+  </li>
+
+  <li class="common response">
+  <div class="common response">
+   a response
+  </div>
+  </li>
+
+
+  <li class="request">
+  <div class="common request">
+   a request
+  </div>
+  </li>
+-->
+      <li class="common response">
+        <div class="common response">
+          Indicate your query or wish...
+        </div>
+      </li>
+
+
+      <li data-icon="false" class="request"><textarea id="growme" rows="5" value="Abcdef" class="ui-input-textX">Start FLPD in UV2 client 120</textarea></li>
+
+    </ul>
+  </div>
+</body>
+<!-- index.html -->
+<script>
+</script>
+
+<script>
+    // You can also require other files to run in this process
+    //var hs = require('./gen/utils/history.js');
+    //var as = require('./gen/utils/appdata.js');
+    //var ad = new as.PersistenceHandle("fdevstart","history.json")
+  //  window.inputHistory = new hs({
+  //    length : 80,
+  //    save: ad.save.bind(ad),
+  //    load: ad.load.bind(ad)
+  //  });
+ </script>
+
+<script src="textareaag.js" ></script>
+
+
+
+<script>
+// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+// "Enter"
+// "ArrowUp"
+// "ArrowDown"
+
+var Autogrow = window.Autogrow;
+//require('./lib/textareaag.js');
+//Then initialize the magic:
+
+var textarea = document.getElementById('growme');
+var growingTextarea = new Autogrow(textarea);
+
+// keyup
+// change
+// paste
+function updateText(eText) {
+  var u = textarea.value;
+};
+
+
+function makeLi(value, sType) {
+  if(sType !== "request" && sType !== "response") {
+      throw new Error("illegal type")
+  }
+    var li = document.createElement("li");
+     var div = document.createElement("div");
+     li.appendChild(div);
+     li.classList.add("common");
+     li.classList.add(sType);
+     div.classList.add("common");
+     div.classList.add(sType);
+     div.innerText = value;
+     textarea.parentNode.parentNode.insertBefore(li,textarea.parentNode)
+     window.scrollTo(0,document.body.scrollHeight);
+}
+
+function makeResponse(sLine) {
+  makeLi(sLine,"response");
+}
+
+function makeRequest(sLine) {
+  makeLi(sLine,"request");
+}
+
+//htmlconnector.setAnswerHook(function(sLine) {
+//    makeResponse(sLine);
+//});
+
+
+textarea.addEventListener("change",updateText);
+textarea.addEventListener("paste",updateText);
+textarea.addEventListener("keyup",updateText);
+
+textarea.addEventListener("keydown",function(e) {
+  if (e.key === "F12") {
+    //remote.getCurrentWindow().webContents.toggleDevTools();
+  }
+  if (e.key === "Enter") {
+     var value = textarea.value;
+   //  inputHistory.push(value);
+     textarea.value = "";
+     var li = document.createElement("li");
+     var div = document.createElement("div");
+     li.appendChild(div);
+     li.classList.add("common");
+     li.classList.add("request");
+     div.classList.add("common");
+     div.classList.add("request");
+     div.innerText = value;
+     textarea.parentNode.parentNode.insertBefore(li,textarea.parentNode);
+     setTimeout(function() {
+         textarea.value = "";
+         htmlconnector.processMessage(value);
+     }, 10);
+ }
+ else
+ if ( e.key === "ArrowUp") {
+ //   inputHistory.backward();
+ //   textarea.value = inputHistory.get();
+ }
+ else
+ if ( e.key === "ArrowDown") {
+ //  var res = inputHistory.forward();
+//   textarea.value = inputHistory.get();
+ } else {
+
+
+ }
+  //alert("got a keypress" + JSON.stringify({ key : e.key}) + " x " + e.keyCode + " / " +
+  //(e.key === "ArrowUp" )
+  //);
+}, false);
+
+
+  </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(event) {
+  //do work
+    // WebSocket
+  var socket = io.connect();
+  socket.on('chat', function (data) {
+    makeResponse(data.text);
+    /*
+      var zeit = new Date(data.zeit);
+      $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+                // Name
+                $('<b>').text(typeof(data.name) != 'undefined' ? data.name + ': ' : ''),
+                // Text
+                $('<span>').text(data.text))
+        );
+        // nach unten scrollen
+      $('body').scrollTop($('body')[0].scrollHeight);
+
+  */
+    });
+    // Nachricht senden
+  function processMessage(sString){
+        // Eingabefelder auslesen
+      var name = "unkown";
+      var text = sString;
+      // send
+      socket.emit('chat', { name: name, text: text });
+    }
+    // bei einem Klick
+  window.htmlconnector = {
+    processMessage : processMessage
+  }
+});
+
+</script>
+
+</html>

@@ -11,12 +11,16 @@ var Message = bb.Message;
 var HTMLConnector = function () {
   function HTMLConnector(options) {
     this.replyCnt = 0;
+    this.answerHooks = {};
     this.user = options && options.user || 'user1';
     this.bot = options && options.bot || 'fdevstart';
-    this.conversationID = '' + Date.now();
+    //this.conversationID = options && options.conversationid || ('' + Date.now());
   }
 
-  HTMLConnector.prototype.setAnswerHook = function (answerHook) {
+  HTMLConnector.prototype.setAnswerHook = function (answerHook, id) {
+    if (id) {
+      this.answerHooks[id] = answerHook;
+    }
     this.answerHook = answerHook;
   };
   HTMLConnector.prototype.setQuitHook = function (quitHook) {
@@ -34,13 +38,13 @@ var HTMLConnector = function () {
     }
     return this;
   };
-  HTMLConnector.prototype.processMessage = function (line) {
+  HTMLConnector.prototype.processMessage = function (line, id) {
     if (this.handler) {
       var msg = new Message().address({
         channelId: 'console',
-        user: { id: this.user, name: this.user },
+        user: { id: id, name: this.user + 'id' },
         bot: { id: this.bot, name: this.bot },
-        conversation: { id: 'conv_' + this.conversationID }
+        conversation: { id: id }
       }).timestamp().text(line);
       this.handler([msg.toMessage()]);
     }
@@ -52,11 +56,19 @@ var HTMLConnector = function () {
   HTMLConnector.prototype.send = function (messages, done) {
     for (var i = 0; i < messages.length; i++) {
       if (this.replyCnt++ > 0) {
-        console.log();
+        console.log(' reply ');
       }
       var msg = messages[i];
       if (msg.text) {
-        this.answerHook(msg.text);
+        var command = undefined;
+        if (msg.entities && msg.entities[0] && msg.entities[0]) {
+          command = msg.entities[0];
+        }
+        if (msg.address && msg.address.conversation && msg.address.conversation.id && this.answerHooks[msg.address.conversation.id]) {
+          this.answerHooks[msg.address.conversation.id](msg.text, command, msg.address.conversation.id);
+        } else {
+          this.answerHook(msg.text, command, this.conversationID);
+        }
         log(msg.text);
       }
       if (msg.attachments && msg.attachments.length > 0) {
@@ -77,6 +89,7 @@ var HTMLConnector = function () {
   };
   return HTMLConnector;
 }();
+
 exports.HTMLConnector = HTMLConnector;
 function renderAttachment(a) {
   switch (a.contentType) {

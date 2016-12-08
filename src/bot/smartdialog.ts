@@ -137,7 +137,7 @@ class SimpleUpDownRecognizer implements builder.IIntentRecognizer {
 
     console.log("recognizing " + context.message.text);
     if (context.message.text.indexOf("down") >= 0) {
-      u.intent = "down";
+      u.intent = "intent.down";
       u.score = 0.9;
       var e1 = {} as builder.IEntity;
       e1.startIndex = "start ".length;
@@ -148,7 +148,7 @@ class SimpleUpDownRecognizer implements builder.IIntentRecognizer {
       return;
     }
     if (context.message.text.indexOf("up") >= 0) {
-      u.intent = "up";
+      u.intent = "intent.up";
       u.score = 0.9;
       var e1 = {} as builder.IEntity;
       e1.startIndex = "up".length;
@@ -201,7 +201,13 @@ function logQuery(session : builder.Session, intent : string, result? : Array<IM
           text : session.message.text,
           timestamp: session.message.timestamp,
           intent : intent,
-          res : result && result.length && Match.ToolMatch.dumpNice(result[0]) || "0"
+          res : result && result.length && Match.ToolMatch.dumpNice(result[0]) || "0",
+          conversationId : session.message.address
+             && session.message.address.conversation
+             && session.message.address.conversation.id || "",
+          userid : session.message.address
+             && session.message.address.user
+             && session.message.address.user.id || ""
         }), function(err, res) {
           if (err) {
             debuglog("logging failed " + err);
@@ -235,7 +241,6 @@ function makeBot(connector) {
 
   var dialogUpDown = new builder.IntentDialog({ recognizers: [new SimpleUpDownRecognizer()] });
 
-
   bot.dialog('/updown', dialogUpDown);
   dialogUpDown.onBegin(function (session) {
     session.send("Hi there, updown is waiting for you");
@@ -266,12 +271,16 @@ function makeBot(connector) {
       next();
     },
     function (session, results) {
-      session.endDialogWithResult({
-        response: { res: "down", u: session.dialogData.abc }
-      });
+      session.send("still going down?");
     }
   ]
   );
+  dialogUpDown.onDefault(function(session) {
+    logQuery(session, "onDefault");
+    session.send("You are trapped in a dialog which only understands up and down, one of them will get you out");
+    //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
+  });
+
 
   bot.dialog('/train', [
     function (session, args, next) {
@@ -343,7 +352,14 @@ function makeBot(connector) {
         builder.Prompts.text(session, prompt.text);
       } else {
         var best = result.length ? Match.ToolMatch.dumpNice(result[0]) : "<nothing>";
-        session.send('I did not understand this' + best);
+        //session.send('I did not understand this' + best);
+         var reply =
+      new builder.Message(session)
+          .text('I did not understand this' + best)
+          .addEntity({ url : "I don't know"});
+         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+        session.send(reply);
+
       }
 
       /*
