@@ -43,8 +43,8 @@ io.sockets.on('connection', function (socket) {
 // not now  htmlconnector.startConversation({ id : id } , function() {});
 
   connector.setAnswerHook(function (sAnswer, oCommand, sId) {
-    console.log('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
-    socket.emit('chat',{ time : new Date(),
+    debuglog('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
+    socket.emit('wosap',{ time : new Date(),
       name : 'unknown' ,
       command : oCommand,
       text : sAnswer
@@ -57,10 +57,10 @@ io.sockets.on('connection', function (socket) {
   socket.on('disconnect', () => {
     console.log('Client disconnected');  });
 	// der Client ist verbunden
-  socket.emit('chat', { time : new Date(), text: 'Indicate your query or wish:' });
+  socket.emit('wosap', { time : new Date(), text: 'Indicate your query or wish:' });
   console.log('got a message from ' + id);
 	// wenn ein Benutzer einen Text senden
-  socket.on('chat', function (data) {
+  socket.on('wosap', function (data) {
 		// so wird dieser Text an alle anderen Benutzer gesendet
     debuglog('another request from ' + id + ' ' + data.text);
     connector.processMessage(data.text, id);

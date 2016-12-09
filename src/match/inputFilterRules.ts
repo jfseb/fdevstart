@@ -7,81 +7,9 @@ import * as inputFilter from './ifmatch';
 
 export const oKeyOrder: Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
 
-/* @covignore */
-export function getRuleMap() {
+ var mUnitTestURLMap = {};
 
-
-  var systemObjectCategory = [
-    {
-      type: inputFilter.EnumRuleType.WORD,
-      key: "systemObjectCategory",
-      word: "unit test",
-      follows: {
-        systemObjectCategory: "unit test"
-      }
-    },
-    {
-      type: inputFilter.EnumRuleType.WORD,
-      key: "systemObjectCategory",
-      word: "unit",
-      follows: {
-        systemObjectCategory: "unit test"
-      }
-    }
-  ];
-  /* @covignore */
-  var systemObjectCategory2 = [["unit test", "unit"],
-  ["wiki", "web page"],
-  ["fiori catalog", "flp catalog", "catalog"],
-  ["fiori group", "flp group", "group"],
-  ["flp", "fiori launchpad", "lauchpage", "launchpad"],
-  ["flpd"]
-  ].map(function (aArr) {
-    // console.log(JSON.stringify(aArr));
-    var bestSynonym = aArr[0];
-    return aArr.map(function (sEntry) {
-      return {
-        type: inputFilter.EnumRuleType.WORD,
-        key: "systemObjectCategory",
-        word: sEntry,
-        follows: {
-          systemObjectCategory: bestSynonym
-        }
-      };
-    });
-  });
-  systemObjectCategory2 = systemObjectCategory2.reduce(function (a, b) { return a.concat(b); }, []) as any;
-
-  var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as any)
-
-  var oRuleMap = {
-
-    "systemObjectCategory": systemObjectCategory
-    ,
-    "systemId": [
-      {
-        regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
-        key: 'systemId',
-        argsMap: {
-          1: 'systemId',
-          2: 'client'
-        },
-        type: inputFilter.EnumRuleType.REGEXP,
-        follows: {}
-      },
-      {
-        regexp: /^([a-z0-9_]{3,3})$/i,
-        key: 'systemId',
-        argsMap: {
-          1: 'systemId'
-        },
-        type: inputFilter.EnumRuleType.REGEXP,
-        follows: {}
-      }
-    ],
-  };
-
-
+  var aregex = /\/([^/]*).qunit.html/;
 
   var UnitTestList =
     [
@@ -217,7 +145,98 @@ export function getRuleMap() {
       'test-resources/sap/ushell/qunit/ui5service/ShellUIService.qunit.html'
     ];
 
-  var aregex = /\/([^/]*).qunit.html/;
+
+ var mUnitTestWords = UnitTestList.map(function (sEntry) {
+    var sString = aregex.exec(sEntry)[1]; //.match('/([^/]*).qunit.html')[1]
+    //console.log("here is the test " + sString);
+    mUnitTestURLMap[sString] = "http://localhost:8080/sap/bc/" + sEntry;
+    return  {
+      category: "unit test",
+      matchedString: sString,
+      type: 0,
+      word: sString,
+      _ranking : 0.95
+    };
+});
+
+
+/* @covignore */
+export function getRuleMap() {
+
+
+  var systemObjectCategory = [
+    {
+      type: inputFilter.EnumRuleType.WORD,
+      key: "systemObjectCategory",
+      word: "unit test",
+      follows: {
+        systemObjectCategory: "unit test"
+      }
+    },
+    {
+      type: inputFilter.EnumRuleType.WORD,
+      key: "systemObjectCategory",
+      word: "unit",
+      follows: {
+        systemObjectCategory: "unit test"
+      }
+    }
+  ];
+  /* @covignore */
+  var systemObjectCategory2 = [["unit test", "unit"],
+  ["wiki", "web page"],
+  ["fiori catalog", "flp catalog", "catalog"],
+  ["fiori group", "flp group", "group"],
+  ["flp", "fiori launchpad", "lauchpage", "launchpad"],
+  ["flpd"]
+  ].map(function (aArr) {
+    // console.log(JSON.stringify(aArr));
+    var bestSynonym = aArr[0];
+    return aArr.map(function (sEntry) {
+      return {
+        type: inputFilter.EnumRuleType.WORD,
+        key: "systemObjectCategory",
+        word: sEntry,
+        follows: {
+          systemObjectCategory: bestSynonym
+        }
+      };
+    });
+  });
+  systemObjectCategory2 = systemObjectCategory2.reduce(function (a, b) { return a.concat(b); }, []) as any;
+
+  var systemObjectCategory = systemObjectCategory.concat(systemObjectCategory2 as any)
+
+  var oRuleMap = {
+
+    "systemObjectCategory": systemObjectCategory
+    ,
+    "systemId": [
+      {
+        regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
+        key: 'systemId',
+        argsMap: {
+          1: 'systemId',
+          2: 'client'
+        },
+        type: inputFilter.EnumRuleType.REGEXP,
+        follows: {}
+      },
+      {
+        regexp: /^([a-z0-9_]{3,3})$/i,
+        key: 'systemId',
+        argsMap: {
+          1: 'systemId'
+        },
+        type: inputFilter.EnumRuleType.REGEXP,
+        follows: {}
+      }
+    ],
+  };
+
+
+
+
   var systemObjectId = UnitTestList.map(function (sEntry) {
     var sString = aregex.exec(sEntry)[1]; //.match('/([^/]*).qunit.html')[1]
     return {
@@ -462,6 +481,25 @@ export function getMRulesSample(): Array<inputFilter.mRule> {
     },
   ]
   );
+  return mRules;
+}
+
+
+export function getUnitTestUrl(string : string) {
+  return mUnitTestURLMap[string];
+}
+
+export function getWikiUrl(string : string) {
+   // TODO
+  return mUnitTestURLMap[string];
+}
+
+
+
+export function getMRulesFull(): Array<inputFilter.mRule> {
+  var mRules =getMRulesSample();
+
+  mRules = mRules.concat(mUnitTestWords);
   return mRules;
 }
 

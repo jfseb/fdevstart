@@ -109,9 +109,42 @@ function expandParametersInURL(oMergedContextResult) {
     });
     return ptn;
 }
-function execTool(match) {
-    return "can execute" + match.tool.name + " " +
-        Match.ToolMatch.dumpNice(match);
+var inputFilterRules = require('../match/inputFilterRules');
+var toolExecutors = {
+    "xFLP": {},
+    "xFLPD": {},
+    "unit test": function (match) {
+        var unittest = match.toolmatchresult.required["unit test"].matchedString;
+        var url = inputFilterRules.getUnitTestUrl(unittest);
+        return {
+            text: "starting unit test \"" + unittest + "\"" + (url ? (' with url ' + url) : 'no url :-('),
+            action: { url: url }
+        };
+    },
+    "wiki": function (match) {
+        var wiki = match.toolmatchresult.required["wiki"].matchedString;
+        var url = inputFilterRules.getWikiUrl(wiki);
+        return {
+            text: "starting wiki " + wiki + (url ? (' with url ' + url) : 'no url :-('),
+            action: { url: url }
+        };
+    }
+};
+function execTool(match, bExplain) {
+    //
+    var exec = undefined;
+    if (toolExecutors[match.tool.name]) {
+        exec = toolExecutors[match.tool.name](match);
+    }
+    if (!exec) {
+        exec = {
+            text: "don't know how to execute " + match.tool.name + '\n'
+        };
+    }
+    if (bExplain) {
+        exec.text = exec.text + "\n" + Match.ToolMatch.dumpNice(match);
+    }
+    return exec;
     // TODO invoke tool specific starter
     /* if (oMergedContextResult.result.type === 'URL') {
       var ptn = expandParametersInURL(oMergedContextResult)

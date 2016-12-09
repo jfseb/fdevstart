@@ -3,5 +3,5 @@ docs
 gen_tsc
 info.lcov
 gen_cov
-sensitive
+sensitive/data.js
 # we check in gen for coveralls source references

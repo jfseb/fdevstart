@@ -37,12 +37,19 @@ var oToolWiki = { 'name' : 'wiki',
   'optional' : { 'wikipage' : {} }
 };
 
+
+var oToolUnitTest = { 'name' : 'unit test',
+  'requires' : { 'unit test' : {} },
+  optional : {}
+};
+
 var oToolWikiPage = { 'name' : 'WikiPage',
-  'requires' : { 'wikipage' : {} }
+  'requires' : { 'wikipage' : {} },
+  optoinal : {}
 };
 
 
-const tools = [oToolWiki, oToolTA, oToolFLPD, oToolWikiPage, oToolFLP];
+const tools = [oToolWiki, oToolTA, oToolUnitTest, oToolFLPD, oToolWikiPage, oToolFLP];
 
 export function getTools() {
   return tools;

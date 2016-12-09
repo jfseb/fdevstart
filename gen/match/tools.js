@@ -26,10 +26,15 @@ var oToolWiki = { 'name': 'wiki',
     'requires': { 'wiki': {} },
     'optional': { 'wikipage': {} }
 };
-var oToolWikiPage = { 'name': 'WikiPage',
-    'requires': { 'wikipage': {} }
+var oToolUnitTest = { 'name': 'unit test',
+    'requires': { 'unit test': {} },
+    optional: {}
 };
-var tools = [oToolWiki, oToolTA, oToolFLPD, oToolWikiPage, oToolFLP];
+var oToolWikiPage = { 'name': 'WikiPage',
+    'requires': { 'wikipage': {} },
+    optoinal: {}
+};
+var tools = [oToolWiki, oToolTA, oToolUnitTest, oToolFLPD, oToolWikiPage, oToolFLP];
 function getTools() {
     return tools;
 }

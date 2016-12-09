@@ -1,0 +1,9 @@
+[
+  {
+    "systemId" : "UV2",
+    "client" : "120",
+    "fiori intent" : "*",
+    "_urlpattern1" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client=<client>#<fiori intent>",
+    "_urlpattern2" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client=<client>"
+  }
+]

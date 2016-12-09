@@ -29,6 +29,7 @@
         "src/interfaces.d.ts",
         "src/match/ifmatch.ts",
         "src/constants.ts",
+        "src/model/model.ts",
         "src/exec/exec.ts",
         "src/bot/smartdialog.ts",
         "src/bot/plainrecognizer.ts",

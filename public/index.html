@@ -331,8 +331,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   //do work
     // WebSocket
   var socket = io.connect();
-  socket.on('chat', function (data) {
+  socket.on('wosap', function (data) {
     makeResponse(data.text);
+    if(data.command && data.command.url) {
+      window.open(data.command.url); // ,'_blank');
+    }
     /*
       var zeit = new Date(data.zeit);
       $('#content').append(
@@ -360,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       var name = "unkown";
       var text = sString;
       // send
-      socket.emit('chat', { name: name, text: text });
+      socket.emit('wosap', { name: name, text: text });
     }
     // bei einem Klick
   window.htmlconnector = {

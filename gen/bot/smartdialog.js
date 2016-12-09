@@ -10,16 +10,35 @@
  * @module jfseb.fdevstart.smartdialog
  * @copyright (c) 2016 Gerd Forstmann
  */
+//declare module 'elizabot' { };
 "use strict";
 var builder = require('botbuilder');
 var debug = require('debug');
 var Exec = require('../exec/exec');
 var Match = require('../match/match');
 var Analyze = require('../match/analyze');
+var elizabot = require('elizabot');
+//import * as elizabot from 'elizabot';
 var debuglog = debug('smartdialog');
 var PlainRecognizer = require('./plainrecognizer');
 //var builder = require('botbuilder');
 var dispatcher = require('../match/dispatcher.js').dispatcher;
+function getConversationId(session) {
+    return session.message &&
+        session.message.address &&
+        session.message.address.conversation.id;
+}
+var elizabots = {};
+function getElizaBot(id) {
+    if (!elizabots[id]) {
+        elizabots[id] = {
+            access: new Date(),
+            elizabot: new elizabot()
+        };
+    }
+    elizabots[id].access = new Date();
+    return elizabots[id].elizabot;
+}
 var Tools = require('../match/tools');
 var tools = Tools.getTools();
 var InputFilterRules = require('../match/inputFilterRules.js');
@@ -351,7 +370,14 @@ function makeBot(connector) {
                 Analyze.setPrompt(session.dialogData.result, session.dialogData.prompt, results.response);
             }
             if (Analyze.isComplete(session.dialogData.result)) {
-                session.send("starting  > " + Exec.execTool(session.dialogData.result));
+                //
+                //session.send("starting  > " +
+                var exec = Exec.execTool(session.dialogData.result);
+                var reply = new builder.Message(session)
+                    .text(exec.text)
+                    .addEntity(exec.action);
+                // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+                session.send(reply);
             }
             else {
                 if (session.dialogData.result) {
@@ -445,7 +471,11 @@ function makeBot(connector) {
     ]);
     dialog.onDefault(function (session) {
         logQuery(session, "onDefault");
-        session.send("I do not understand this at all");
+        var eliza = getElizaBot(getConversationId(session));
+        var reply = eliza.transform(session.message.text);
+        session.send(reply);
+        //new Eilzabot
+        //session.send("I do not understand this at all");
         //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
     });
     /*
