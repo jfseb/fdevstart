@@ -34,7 +34,6 @@ function calcGeometricMeansOfRanking(oSet) {
  *
  */
 export function rankToolMatch(a: IMatch.IToolMatchResult) : number {
-
   var missing = Object.keys(a.missing || {}).length;
   var required = Object.keys(a.required || {}).length;
   var optional = Object.keys(a.optional || {}) .length;
@@ -62,32 +61,6 @@ export function rankToolMatch(a: IMatch.IToolMatchResult) : number {
   debuglog("result is " + res);
   return res;
 };
-
-/**
- * Calculate a number
- */
-export function rankToolMatchA(a: IMatch.IToolMatchResult) : number {
-
-
-  var missing = Object.keys(a.missing || {}).length;
-  var required = Object.keys(a.required || {}).length;
-  var optional = Object.keys(a.optional || {}) .length;
-  var spurious = Object.keys(a.spurious || {}).length;
-  var matching = required + optional;
-  debuglog("caluclating rank of " + JSON.stringify(a));
-  var factor1 = Object.keys(a.required).reduce(function(prev, sCategory) {
-    return prev *= a.required[sCategory]._ranking;
-  },1.0);
- var factor = Object.keys(a.optional).reduce(function(prev, sCategory) {
-    return prev *= a.optional[sCategory]._ranking;
-  },factor1);
-
-
-  var res =  matching * 100 - 30 * missing  -  10* spurious + factor;
-  debuglog("result is " + factor+  " res" +res);
-  return res;
-};
-
 
 export const ToolMatch = {
   rankResult: function(a: IMatch.IToolMatchResult) : number {

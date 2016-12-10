@@ -53,28 +53,6 @@ function rankToolMatch(a) {
 }
 exports.rankToolMatch = rankToolMatch;
 ;
-/**
- * Calculate a number
- */
-function rankToolMatchA(a) {
-    var missing = Object.keys(a.missing || {}).length;
-    var required = Object.keys(a.required || {}).length;
-    var optional = Object.keys(a.optional || {}).length;
-    var spurious = Object.keys(a.spurious || {}).length;
-    var matching = required + optional;
-    debuglog("caluclating rank of " + JSON.stringify(a));
-    var factor1 = Object.keys(a.required).reduce(function (prev, sCategory) {
-        return prev *= a.required[sCategory]._ranking;
-    }, 1.0);
-    var factor = Object.keys(a.optional).reduce(function (prev, sCategory) {
-        return prev *= a.optional[sCategory]._ranking;
-    }, factor1);
-    var res = matching * 100 - 30 * missing - 10 * spurious + factor;
-    debuglog("result is " + factor + " res" + res);
-    return res;
-}
-exports.rankToolMatchA = rankToolMatchA;
-;
 exports.ToolMatch = {
     rankResult: function (a) {
         return rankToolMatch(a);
