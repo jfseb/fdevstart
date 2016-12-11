@@ -3,7 +3,8 @@
     "systemId" : "UV2",
     "client" : "120",
     "fiori intent" : "*",
-    "_urlpattern1" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client=<client>#<fiori intent>",
-    "_urlpattern2" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client=<client>"
+    "_urlpatternintent" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client={client}{fiori intent}",
+    "_text_urlpatternintent" : "Start Fiori Launchpad intent \"{fiori intent}\" in {systemId}CLNT{client} ",
+    "_urlpatternhome" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client={client}"
   }
 ]

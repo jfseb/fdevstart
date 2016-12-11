@@ -12,6 +12,7 @@ var debuglog = debug('dispatcher');
 var child_process_1 = require('child_process');
 //  var exec = require('child_process').exec
 //  var leven = require('../utils/damerauLevenshtein.js').levenshtein
+var exectemplate = require('../exec/exectemplate');
 //var leven = require('../utils/damerauLevenshtein.js')
 var matchdata = require('./matchdata');
 var oUnitTests = matchdata.oUnitTests;
@@ -175,11 +176,13 @@ function startBrowser(url) {
 //   N:\>"c:\Program Files (x86)\SAP\FrontEnd\SAPgui"\sapshcut.exe  -system=UV2 -client=120 -command=SE38 -type=Transaction -user=AUSER
 function expandParametersInURL(oMergedContextResult) {
     var ptn = oMergedContextResult.result.pattern;
-    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
-        var regex = new RegExp('{' + sKey + '}', 'g');
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
-    });
+    ptn = exectemplate.expandTemplate(oMergedContextResult.context, ptn);
+    /*    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
+          var regex = new RegExp('{' + sKey + '}', 'g')
+          ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
+          ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
+        })
+        */
     return ptn;
 }
 function executeStartup(oMergedContextResult) {

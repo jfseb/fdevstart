@@ -1,5 +1,5 @@
 "use strict";
-var inputFilter = require('./ifmatch');
+var IMatch = require('./ifmatch');
 exports.oKeyOrder = ["systemObjectCategory", "systemId", "systemObjectId"];
 var mUnitTestURLMap = {};
 var aregex = /\/([^/]*).qunit.html/;
@@ -266,6 +266,27 @@ function getRuleMap() {
 }
 exports.getRuleMap = getRuleMap;
 var mRuleArray;
+function cmpMRule(a, b) {
+    var r = a.category.localeCompare(b.category);
+    if (r) {
+        return r;
+    }
+    r = a.type - b.type;
+    if (r) {
+        return r;
+    }
+    if (a.matchedString && b.matchedString) {
+        r = a.matchedString.localeCompare(b.matchedString);
+        if (r) {
+            return r;
+        }
+    }
+    if (a.word && b.word) {
+        return a.word.localeCompare(b.word);
+    }
+    return (a._ranking || 1.0) - (b._ranking || 1.0);
+}
+exports.cmpMRule = cmpMRule;
 function getMRulesSample() {
     var mRules = [];
     mRules = mRules.concat([
@@ -429,7 +450,7 @@ function getMRulesSample() {
             _ranking: 0.9
         },
     ]);
-    return mRules;
+    return mRules.sort(cmpMRule);
 }
 exports.getMRulesSample = getMRulesSample;
 function getUnitTestUrl(string) {
@@ -444,7 +465,7 @@ exports.getWikiUrl = getWikiUrl;
 function getMRulesFull() {
     var mRules = getMRulesSample();
     mRules = mRules.concat(mUnitTestWords);
-    return mRules;
+    return mRules.sort(cmpMRule);
 }
 exports.getMRulesFull = getMRulesFull;
 function getMRulesOld() {

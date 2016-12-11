@@ -14,7 +14,6 @@
 "use strict";
 var builder = require('botbuilder');
 var debug = require('debug');
-var Exec = require('../exec/exec');
 var Match = require('../match/match');
 var Analyze = require('../match/analyze');
 var elizabot = require('elizabot');
@@ -39,10 +38,14 @@ function getElizaBot(id) {
     elizabots[id].access = new Date();
     return elizabots[id].elizabot;
 }
-var Tools = require('../match/tools');
-var tools = Tools.getTools();
-var InputFilterRules = require('../match/inputFilterRules.js');
-var mRules = InputFilterRules.getMRulesSample();
+var newFlow = true;
+var Model = require('../model/model');
+var ExecServer = require('../exec/execserver');
+var theModel = Model.loadModels();
+if (newFlow) {
+}
+else {
+}
 var SimpleRecognizer = (function () {
     function SimpleRecognizer() {
     }
@@ -298,7 +301,12 @@ function makeBot(connector) {
                   var ssystemObjectId = systemObjectId && systemObjectId.entity;
                   var sSystemObjectCategory = systemObjectCategory && systemObjectCategory.entity;
             */
-            var result = Analyze.analyzeAll(a1.entity, mRules, tools);
+            //if (newFlow) {
+            var result = Analyze.analyzeAll(a1.entity, theModel.mRules, theModel.tools);
+            // } else {
+            //  const result = Analyze.analyzeAll(a1.entity,
+            //     mRules, tools);
+            // }
             logQuery(session, 'ShowMe', result);
             // test.expect(3)
             //  test.deepEqual(result.weight, 120, 'correct weight');
@@ -372,7 +380,12 @@ function makeBot(connector) {
             if (Analyze.isComplete(session.dialogData.result)) {
                 //
                 //session.send("starting  > " +
-                var exec = Exec.execTool(session.dialogData.result);
+                //   if (newFlow) {
+                var exec = ExecServer.execTool(session.dialogData.result, theModel.records);
+                //         )
+                //} else {
+                //  var exec = Exec.execTool(session.dialogData.result as IMatch.IToolMatch);
+                //}
                 var reply = new builder.Message(session)
                     .text(exec.text)
                     .addEntity(exec.action);

@@ -14,6 +14,10 @@ import *  as IMatch from '../match/ifmatch';
 
 import * as Match from '../match/match';
 
+import * as InputFilterRules from '../match/inputFilterRules';
+
+import * as Tools from '../match/tools';
+
 import * as fs from 'fs';
 
 import * as process from 'process';
@@ -22,9 +26,9 @@ interface IModels {
     domains: string[],
     tools: IMatch.ITool[],
     category: string[],
-    mRules: IMatch.mRule[]
+    mRules: IMatch.mRule[],
+    records : any[];
 }
-
 
 interface IModel {
     domain: string,
@@ -38,30 +42,59 @@ interface IModel {
 
 function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>) {
     synonyms.forEach(function(syn) {
-        mRules.push({
+        var oRule =  {
             category: category,
             matchedString: synonymFor,
             type: IMatch.EnumRuleType.WORD,
             word: syn,
             _ranking: 0.95
-        });
+        };
+        debuglog("inserting synonym" + JSON.stringify(oRule));
+        insertRuleIfNotPresent(mRules,oRule);
+       });
+}
+
+function insertRuleIfNotPresent(mRules : Array<IMatch.mRule>, rule: IMatch.mRule) {
+    if (rule.type !== IMatch.EnumRuleType.WORD) {
+        mRules.push(rule);
+        return;
+    }
+    if((rule.word === undefined) || (rule.matchedString === undefined)) {
+        throw new Error('illegal rule' + JSON.stringify(rule,undefined,2));
+    }
+    var duplicates = mRules.filter(function(oEntry) {
+        return !InputFilterRules.cmpMRule(oEntry,rule);
     });
+    if(!duplicates.length) {
+        mRules.push(rule);
+    }
+    debuglog("Attempting to insert duplicate" + JSON.stringify(rule,undefined,2));
 }
 
 
 function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
     // read the data ->
     // data is processed into mRules directly,
-    var mdldata = fs.readFileSync('./sensitive/' + sModelName + ".data.json", 'utf-8');
+    const sFileName = ('./sensitive/' + sModelName + ".data.json");
+    var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function(oEntry) {
+
         if (!oEntry.tool) {
             oEntry.tool = oMdl.tool.name;
         }
+
+        oModel.records.push(oEntry);
+
         oMdl.wordindex.forEach(function(category) {
-            if (oMdlData[category] !== "*") {
-                var sString = oMdlData[category];
-                oModel.mRules.push(
+              if (oEntry[category] === undefined) {
+                debuglog("INCONSISTENT*> ModelData " + sFileName + " does not contain category "+ category+" of wordindex" + JSON.stringify(oEntry) + "")
+                return;
+            }
+            if (oEntry[category] !== "*") {
+                var sString = oEntry[category];
+                debuglog("pushing rule with "+ category + " -> " + sString);
+                insertRuleIfNotPresent(oModel.mRules,
                     {
                         category: category,
                         matchedString: sString,
@@ -115,7 +148,6 @@ function loadModel(sModelName: string, oModel: IModels) {
             }
         });
     }
-
     oModel.domains.push(oMdl.domain);
     oModel.tools.push(oMdl.tool);
     oModel.category = oModel.category.concat(oMdl.category);
@@ -133,7 +165,8 @@ export function loadModels() {
         domains: [],
         tools: [],
         category: [],
-        mRules: []
+        mRules: [],
+        records : []
     }
     var smdls = fs.readFileSync('./sensitive/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
@@ -143,7 +176,7 @@ export function loadModels() {
 
     // add the categories to the model:
     oModel.category.forEach(function(category) {
-        oModel.mRules.push({
+        insertRuleIfNotPresent(oModel.mRules,{
             category: "category",
             matchedString: category,
             type: IMatch.EnumRuleType.WORD,
@@ -151,77 +184,31 @@ export function loadModels() {
             _ranking: 0.95
         });
     });
+
+    //add a filler rule
+    var sfillers = fs.readFileSync('./sensitive/filler.json','utf-8');
+    var fillers = JSON.parse(sfillers);
+    var re = "^((" + fillers.join(")|(") + "))$";
+    oModel.mRules.push({
+      category: "filler",
+      type: IMatch.EnumRuleType.REGEXP,
+      regexp: new RegExp(re,"i"),
+      matchedString: "filler",
+      _ranking: 0.9
+    });
+/*
+    })
+        {
+      category: "filler",
+      type: 1,
+      regexp: /^((start)|(show)|(from)|(in))$/i,
+      matchedString: "filler",
+      _ranking: 0.9
+    },
+*/
+    oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
+    oModel.tools = oModel.tools.sort(Tools.cmpTools);
     return oModel;
 }
 
 
-
-function expandParametersInURL(oMergedContextResult) {
-    var ptn = oMergedContextResult.result.pattern
-    Object.keys(oMergedContextResult.context).forEach(function(sKey) {
-        var regex = new RegExp('{' + sKey + '}', 'g')
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
-    })
-    return ptn
-}
-
-
-import * as inputFilterRules from '../match/inputFilterRules';
-
-var toolExecutors = {
-    "xFLP": {},
-    "xFLPD": {},
-    "unit test": function(match: IMatch.IToolMatch) {
-        var unittest = match.toolmatchresult.required["unit test"].matchedString;
-        var url = inputFilterRules.getUnitTestUrl(unittest);
-        return {
-            text: "starting unit test \"" + unittest + "\"" + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        }
-    },
-    "wiki": function(match: IMatch.IToolMatch) {
-        var wiki = match.toolmatchresult.required["wiki"].matchedString;
-        var url = inputFilterRules.getWikiUrl(wiki);
-        return {
-            text: "starting wiki " + wiki + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        }
-    }
-};
-
-export function execTool(match: IMatch.IToolMatch, bExplain?: boolean): {
-    text: string,
-    action: any
-} {
-    //
-    var exec = undefined;
-    if (toolExecutors[match.tool.name]) {
-        exec = toolExecutors[match.tool.name](match);
-
-    }
-    if (!exec) {
-        exec = {
-            text: "don't know how to execute " + match.tool.name + '\n'
-        }
-    }
-    if (bExplain) {
-        exec.text = exec.text + "\n" + Match.ToolMatch.dumpNice(match);
-    }
-    return exec;
-
-    // TODO invoke tool specific starter
-    /* if (oMergedContextResult.result.type === 'URL') {
-      var ptn = expandParametersInURL(oMergedContextResult)
-      startBrowser(ptn)
-      return ptn
-    } else {
-      var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
-      debuglog(s)
-      return s
-    }*/
-}
-
-
-//  executeStartup: executeStartup
-//}

@@ -22,6 +22,7 @@ import { exec } from 'child_process';
 //  var exec = require('child_process').exec
 //  var leven = require('../utils/damerauLevenshtein.js').levenshtein
 
+import * as exectemplate from '../exec/exectemplate';
 
   //var leven = require('../utils/damerauLevenshtein.js')
 import * as matchdata from './matchdata';
@@ -198,11 +199,13 @@ const oWikis = matchdata.oWikis
 
   function expandParametersInURL (oMergedContextResult) {
     var ptn = oMergedContextResult.result.pattern
-    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
+    ptn = exectemplate.expandTemplate(oMergedContextResult.context, ptn);
+/*    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
       var regex = new RegExp('{' + sKey + '}', 'g')
       ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
       ptn = ptn.replace(regex, oMergedContextResult.context[sKey])
     })
+    */
     return ptn
   }
 

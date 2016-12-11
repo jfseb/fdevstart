@@ -26,11 +26,11 @@
     "sets" : {
       "intent": {
         "set" : ["systemId", "client", "fiori intent"],
-        "response" : "_urlpattern1"
+        "response" : "_urlpatternintent"
       },
       "none": {
         "set" : ["systemId", "client"],
-        "response" : "_urlpattern2"
+        "response" : "_urlpatternhome"
       }
     }
   }

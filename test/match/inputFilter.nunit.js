@@ -985,8 +985,8 @@ exports.testCategorizeString = function (test) {
   test.deepEqual(res, [
     { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking : 1 },
     { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking: 0.7 },
-    { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId', _ranking: 0.5 },
-    { string: 'UV2', matchedString: 'UV2', category: 'fiori catalog', _ranking: 0.5 }
+    { string: 'UV2', matchedString: 'UV2', category: 'fiori catalog', _ranking: 0.5 },
+    { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId', _ranking: 0.5 }
   ], 'correct result');
   test.done();
 };
@@ -1014,8 +1014,8 @@ exports.testCategorizeStringWiki = function (test) {
  { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 },
     { string: 'wiki', matchedString: 'wiki', category: 'tool', _ranking: 1 },
     { string: 'wiki', matchedString: 'wiki', category: 'transaction', _ranking: 0.7 },
-    { string: 'wiki', matchedString: 'wiki', category: 'systemObjectId', _ranking: 0.5 },
-    { string: 'wiki', matchedString: 'wiki', category: 'fiori catalog', _ranking: 0.5 }
+    { string: 'wiki', matchedString: 'wiki', category: 'fiori catalog', _ranking: 0.5 },
+    { string: 'wiki', matchedString: 'wiki', category: 'systemObjectId', _ranking: 0.5 }
   ], 'correct result');
   test.done();
 };
@@ -1029,13 +1029,13 @@ exports.testCategorizeStringExactNoMatch = function (test) {
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
-      'category': 'systemObjectId',
+      'category': 'fiori catalog',
       _ranking : 0.5
     },
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
-      'category': 'fiori catalog',
+      'category': 'systemObjectId',
       _ranking : 0.5
     }
   ], 'what is this nr 2');
@@ -1066,13 +1066,13 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
-      'category': 'systemObjectId',
+      'category': 'fiori catalog',
       _ranking : 0.5
     },
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
-      'category': 'fiori catalog',
+      'category': 'systemObjectId',
       _ranking : 0.5
     }
   ], 'what is this nr 2');
@@ -1094,13 +1094,13 @@ exports.testCategorizeStringExactMatch = function (test) {
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
-      'category': 'systemObjectId',
+      'category': 'fiori catalog',
       _ranking : 0.5
     },
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
-      'category': 'fiori catalog',
+      'category': 'systemObjectId',
       _ranking : 0.5
     }
   ], ' exact match');
@@ -1130,14 +1130,14 @@ exports.testCategorizeStringDistanceNavTarget = function (test) {
     {
       'string': 'NavTargetResolu',
       'matchedString': 'NavTargetResolu',
-      'category': 'systemObjectId',
-      _ranking : 0.5,
+      'category': 'fiori catalog',
+      _ranking : 0.5
     },
     {
       'string': 'NavTargetResolu',
       'matchedString': 'NavTargetResolu',
-      'category': 'fiori catalog',
-      _ranking : 0.5
+      'category': 'systemObjectId',
+      _ranking : 0.5,
     }
   ], 'what is this 3');
   test.done();
@@ -1192,7 +1192,6 @@ var sampleRules = [
   }
 ];
 
-
 exports.testAnalyzeStringUV2Client120 = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.analyzeString('UV2 client 120', ifr);
@@ -1233,6 +1232,61 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
   ], 'correct res');
   test.done();
 };
+
+var mRulesStrict = [
+  {
+    'category': 'category',
+    'matchedString': 'unit test',
+    'type': 0,
+    'word': 'unit test',
+    '_ranking': 0.95
+  },
+  {
+    'category': 'category',
+    'matchedString': 'wiki',
+    'type': 0,
+    'word': 'wiki',
+    '_ranking': 0.95
+  },
+  {
+    'category': 'client',
+    'matchedString': '120',
+    'type': 0,
+    'word': '120',
+    '_ranking': 0.95
+  }];
+
+exports.testAnalyzeStringNoGenerics1 = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.analyzeString('unit test 120', mRulesStrict);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+
+  test.deepEqual(res, [ [ [ { string: 'unit test',
+    matchedString: 'unit test',
+    category: 'category',
+    _ranking: 0.95 } ],
+    [ { string: '120',
+      matchedString: '120',
+      category: 'client',
+      _ranking: 0.95
+    } ]
+  ]
+  ], 'correct res');
+  test.done();
+};
+
+
+exports.testAnalyzeStringNoGenericEmpty = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.analyzeString('gar nix  test is 120', mRulesStrict);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+  test.deepEqual(res, [ ], 'correct res');
+  var res2 = ab.expandMatchArr(res);
+  test.deepEqual(res2, [ ], 'correct res');
+  test.done();
+};
+
+
 
 exports.testCategorizeStringDistance = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))

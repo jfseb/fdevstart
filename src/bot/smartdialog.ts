@@ -31,19 +31,19 @@ import * as PlainRecognizer from './plainrecognizer';
 var dispatcher = require('../match/dispatcher.js').dispatcher;
 
 
-function getConversationId(session : builder.Session) : string {
+function getConversationId(session: builder.Session): string {
   return session.message &&
-        session.message.address &&
-        session.message.address.conversation.id;
+    session.message.address &&
+    session.message.address.conversation.id;
 }
 
 var elizabots = {};
 
-function getElizaBot(id : string) {
+function getElizaBot(id: string) {
   if (!elizabots[id]) {
     elizabots[id] = {
-      access : new Date(),
-      elizabot : new elizabot()
+      access: new Date(),
+      elizabot: new elizabot()
     };
   }
   elizabots[id].access = new Date();
@@ -53,9 +53,20 @@ function getElizaBot(id : string) {
 import * as IMatch from '../match/ifmatch';
 import * as Tools from '../match/tools';
 
-const tools = Tools.getTools();
-const InputFilterRules = require('../match/inputFilterRules.js');
-const mRules = InputFilterRules.getMRulesSample();
+var newFlow = true;
+
+import * as Model from '../model/model';
+import * as ExecServer from '../exec/execserver';
+
+const theModel = Model.loadModels();
+if (newFlow) {
+
+} else {
+
+  //const tools = Tools.getTools();
+  //const InputFilterRules = require('../match/inputFilterRules.js');
+  //const mRules = InputFilterRules.getMRulesSample();
+}
 
 
 
@@ -217,24 +228,24 @@ var oRules = PlainRecognizer.parseRules(oJSON);
 // var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
 
 
-function logQuery(session : builder.Session, intent : string, result? : Array<IMatch.IToolMatch>) {
+function logQuery(session: builder.Session, intent: string, result?: Array<IMatch.IToolMatch>) {
 
-  fs.appendFile('./logs/showmequeries.txt',"\n" + JSON.stringify({
-          text : session.message.text,
-          timestamp: session.message.timestamp,
-          intent : intent,
-          res : result && result.length && Match.ToolMatch.dumpNice(result[0]) || "0",
-          conversationId : session.message.address
-             && session.message.address.conversation
-             && session.message.address.conversation.id || "",
-          userid : session.message.address
-             && session.message.address.user
-             && session.message.address.user.id || ""
-        }), function(err, res) {
-          if (err) {
-            debuglog("logging failed " + err);
-          }
-        });
+  fs.appendFile('./logs/showmequeries.txt', "\n" + JSON.stringify({
+    text: session.message.text,
+    timestamp: session.message.timestamp,
+    intent: intent,
+    res: result && result.length && Match.ToolMatch.dumpNice(result[0]) || "0",
+    conversationId: session.message.address
+    && session.message.address.conversation
+    && session.message.address.conversation.id || "",
+    userid: session.message.address
+    && session.message.address.user
+    && session.message.address.user.id || ""
+  }), function (err, res) {
+    if (err) {
+      debuglog("logging failed " + err);
+    }
+  });
 }
 
 /**
@@ -297,7 +308,7 @@ function makeBot(connector) {
     }
   ]
   );
-  dialogUpDown.onDefault(function(session) {
+  dialogUpDown.onDefault(function (session) {
     logQuery(session, "onDefault");
     session.send("You are trapped in a dialog which only understands up and down, one of them will get you out");
     //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
@@ -346,13 +357,19 @@ function makeBot(connector) {
             var ssystemObjectId = systemObjectId && systemObjectId.entity;
             var sSystemObjectCategory = systemObjectCategory && systemObjectCategory.entity;
       */
-
+    //if (newFlow) {
       const result = Analyze.analyzeAll(a1.entity,
-        mRules, tools);
-      logQuery(session,'ShowMe',result);
+          theModel.mRules, theModel.tools);
+
+     // } else {
+
+        //  const result = Analyze.analyzeAll(a1.entity,
+        //     mRules, tools);
+     // }
+      logQuery(session, 'ShowMe', result);
       // test.expect(3)
       //  test.deepEqual(result.weight, 120, 'correct weight');
-      if(!result || result.length === 0) {
+      if (!result || result.length === 0) {
         next();
       }
       // debuglog('result : ' + JSON.stringify(result, undefined, 2));
@@ -375,11 +392,11 @@ function makeBot(connector) {
       } else {
         var best = result.length ? Match.ToolMatch.dumpNice(result[0]) : "<nothing>";
         //session.send('I did not understand this' + best);
-         var reply =
-      new builder.Message(session)
-          .text('I did not understand this' + best)
-          .addEntity({ url : "I don't know"});
-         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+        var reply =
+          new builder.Message(session)
+            .text('I did not understand this' + best)
+            .addEntity({ url: "I don't know" });
+        // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
         session.send(reply);
 
       }
@@ -404,7 +421,7 @@ function makeBot(connector) {
     },
     function (session, results, next) {
       var result = session.dialogData.result;
-      if(!result || result.length === 0) {
+      if (!result || result.length === 0) {
         next();
       }
 
@@ -430,121 +447,127 @@ function makeBot(connector) {
       if (Analyze.isComplete(session.dialogData.result)) {
         //
         //session.send("starting  > " +
-        var exec = Exec.execTool(session.dialogData.result as IMatch.IToolMatch);
-        var reply = new builder.Message(session)
-          .text(exec.text)
-          .addEntity(exec.action);
-         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-        session.send(reply);
+     //   if (newFlow) {
+          const exec = ExecServer.execTool(session.dialogData.result as IMatch.IToolMatch, theModel.records);
+     //         )
+//} else {
+//  var exec = Exec.execTool(session.dialogData.result as IMatch.IToolMatch);
+//}
+
+var reply = new builder.Message(session)
+  .text(exec.text)
+  .addEntity(exec.action);
+// .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+session.send(reply);
 
       } else {
-        if (session.dialogData.result) {
-          session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
-            session.dialogData.result
-          ));
-        } else {
-          session.send("I did not get what you want");
-        }
-      }
+  if (session.dialogData.result) {
+    session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+      session.dialogData.result
+    ));
+  } else {
+    session.send("I did not get what you want");
+  }
+}
     },
   ]);
 
-  dialog.matches('Wrong', [
-    function (session, args, next) {
-      session.beginDialog('/updown', session.userData.count);
-    },
-    function (session, results, next) {
-      var alarm = session.dialogData.alarm;
-      session.send("back from wrong : " + JSON.stringify(results));
+dialog.matches('Wrong', [
+  function (session, args, next) {
+    session.beginDialog('/updown', session.userData.count);
+  },
+  function (session, results, next) {
+    var alarm = session.dialogData.alarm;
+    session.send("back from wrong : " + JSON.stringify(results));
+    next();
+  },
+  function (session, results) {
+    session.send('end of wrong');
+  }
+]);
+
+dialog.matches('Exit', [
+  function (session, args, next) {
+    console.log('exit :');
+    console.log('exit' + JSON.stringify(args.entities));
+    session.send("you are in a logic loop ");
+  }
+]);
+dialog.matches('Help', [
+  function (session, args, next) {
+    console.log('help :');
+    console.log('help');
+    session.send("I know about .... <categories>>");
+  }
+]);
+
+
+
+// Add intent handlers
+dialog.matches('train', [
+  function (session, args, next) {
+    console.log('train');
+    // Resolve and store any entities passed from LUIS.
+    var title = builder.EntityRecognizer.findEntity(args.entities, 'builtin.alarm.title');
+    var time = builder.EntityRecognizer.resolveTime(args.entities);
+    var alarm = session.dialogData.alarm = {
+      title: title ? title.entity : null,
+      timestamp: time ? time.getTime() : null
+    };
+    // Prompt for title
+    if (!alarm.title) {
+      builder.Prompts.text(session, 'What fact would you like to train?');
+    } else {
       next();
-    },
-    function (session, results) {
-      session.send('end of wrong');
     }
-  ]);
-
-  dialog.matches('Exit', [
-    function (session, args, next) {
-      console.log('exit :');
-      console.log('exit' + JSON.stringify(args.entities));
-      session.send("you are in a logic loop ");
+  },
+  function (session, results, next) {
+    var alarm = session.dialogData.alarm;
+    if (results.response) {
+      alarm.title = results.response;
     }
-  ]);
-  dialog.matches('Help', [
-    function (session, args, next) {
-      console.log('help :');
-      console.log('help');
-      session.send("I know about .... <categories>>");
+
+    // Prompt for time (title will be blank if the user said cancel)
+    if (alarm.title && !alarm.timestamp) {
+      builder.Prompts.time(session, 'What time would you like to set the alarm for?');
+    } else {
+      next();
     }
-  ]);
-
-
-
-  // Add intent handlers
-  dialog.matches('train', [
-    function (session, args, next) {
-      console.log('train');
-      // Resolve and store any entities passed from LUIS.
-      var title = builder.EntityRecognizer.findEntity(args.entities, 'builtin.alarm.title');
-      var time = builder.EntityRecognizer.resolveTime(args.entities);
-      var alarm = session.dialogData.alarm = {
-        title: title ? title.entity : null,
-        timestamp: time ? time.getTime() : null
-      };
-      // Prompt for title
-      if (!alarm.title) {
-        builder.Prompts.text(session, 'What fact would you like to train?');
-      } else {
-        next();
-      }
-    },
-    function (session, results, next) {
-      var alarm = session.dialogData.alarm;
-      if (results.response) {
-        alarm.title = results.response;
-      }
-
-      // Prompt for time (title will be blank if the user said cancel)
-      if (alarm.title && !alarm.timestamp) {
-        builder.Prompts.time(session, 'What time would you like to set the alarm for?');
-      } else {
-        next();
-      }
-    },
-    function (session, results) {
-      var alarm = session.dialogData.alarm;
-      if (results.response) {
-        var time = builder.EntityRecognizer.resolveTime([results.response]);
-        alarm.timestamp = time ? time.getTime() : null;
-      }
-      // Set the alarm (if title or timestamp is blank the user said cancel)
-      if (alarm.title && alarm.timestamp) {
-        // Save address of who to notify and write to scheduler.
-        alarm.address = session.message.address;
-        //alarms[alarm.title] = alarm;
-
-        // Send confirmation to user
-        var date = new Date(alarm.timestamp);
-        var isAM = date.getHours() < 12;
-        session.send('Creating alarm named "%s" for %d/%d/%d %d:%02d%s',
-          alarm.title,
-          date.getMonth() + 1, date.getDate(), date.getFullYear(),
-          isAM ? date.getHours() : date.getHours() - 12, date.getMinutes(), isAM ? 'am' : 'pm');
-      } else {
-        session.send('Ok... no problem.');
-      }
+  },
+  function (session, results) {
+    var alarm = session.dialogData.alarm;
+    if (results.response) {
+      var time = builder.EntityRecognizer.resolveTime([results.response]);
+      alarm.timestamp = time ? time.getTime() : null;
     }
-  ]);
+    // Set the alarm (if title or timestamp is blank the user said cancel)
+    if (alarm.title && alarm.timestamp) {
+      // Save address of who to notify and write to scheduler.
+      alarm.address = session.message.address;
+      //alarms[alarm.title] = alarm;
 
-  dialog.onDefault(function(session) {
-    logQuery(session, "onDefault");
-    var eliza = getElizaBot(getConversationId(session));
-    var reply = eliza.transform(session.message.text);
-    session.send(reply);
-    //new Eilzabot
-    //session.send("I do not understand this at all");
-    //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
-  });
+      // Send confirmation to user
+      var date = new Date(alarm.timestamp);
+      var isAM = date.getHours() < 12;
+      session.send('Creating alarm named "%s" for %d/%d/%d %d:%02d%s',
+        alarm.title,
+        date.getMonth() + 1, date.getDate(), date.getFullYear(),
+        isAM ? date.getHours() : date.getHours() - 12, date.getMinutes(), isAM ? 'am' : 'pm');
+    } else {
+      session.send('Ok... no problem.');
+    }
+  }
+]);
+
+dialog.onDefault(function (session) {
+  logQuery(session, "onDefault");
+  var eliza = getElizaBot(getConversationId(session));
+  var reply = eliza.transform(session.message.text);
+  session.send(reply);
+  //new Eilzabot
+  //session.send("I do not understand this at all");
+  //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
+});
 
   /*
   // Very simple alarm scheduler

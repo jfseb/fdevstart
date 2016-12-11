@@ -42,7 +42,12 @@ export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools:
   }
 }
 
+/**
+ * TODO: rework this to work correctly with sets
+ */
+
 export function isComplete(match :  IMatch.IToolMatch) {
+  // TODO -> analyze sets
   return match && match.rank > 0.6 &&
     Object.keys(match.toolmatchresult.missing ||{}).length === 0
 }

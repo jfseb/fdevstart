@@ -188,6 +188,27 @@ gulp.task('babel2', ['tsc2'], function () {
 });
 
 
+//const replace = require('gulp-replace');
+// compile standard sources with babel,
+// as the coverage input requires this
+//
+gulp.task('copyeliza', function () {
+  // Add the newer pipe to pass through newer images only
+  return gulp.src(['node_modules/elizabot/elizabot.js'])
+    //.pipe(replace(/elizadata.jsfoo(.{3})/g, '$1foo'))
+    .pipe(gulp.dest('gen/extern/elizabot'));
+});
+
+
+gulp.task('copyelizacov', function () {
+  // Add the newer pipe to pass through newer images only
+  return gulp.src(['node_modules/elizabot/elizabot.js'])
+  //  .pipe(replace(/elizadata.jsfoo(.{3})/g, '$1foo'))
+    .pipe(gulp.dest('gencov/extern/elizabot'));
+});
+
+
+
 var nodeunit = require('gulp-nodeunit');
 var env = require('gulp-env');
 
@@ -195,7 +216,7 @@ var env = require('gulp-env');
  * This does not work, as we are somehow unable to
  * redirect the lvoc reporter output to a file
  */
-gulp.task('testcov', function () {
+gulp.task('testcov', ['copyelizacov'], function () {
   const envs = env.set({
     FSD_COVERAGE: '1',
     FSDEVSTART_COVERAGE: '1'
@@ -211,7 +232,7 @@ gulp.task('testcov', function () {
     })).pipe(gulp.dest('./cov/lcov.info'));
 });
 
-gulp.task('test', ['tsc', 'babel'], function () {
+gulp.task('test', ['tsc', 'babel', 'copyeliza', 'copyelizacov'], function () {
   gulp.src(['test/**/*.js'])
     .pipe(nodeunit({
       reporter: 'minimal'

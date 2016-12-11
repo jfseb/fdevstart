@@ -2,6 +2,9 @@ node_modules
 docs
 gen_tsc
 info.lcov
+logs
+gen2
+gen3
 gen_cov
 sensitive/data.js
 # we check in gen for coveralls source references

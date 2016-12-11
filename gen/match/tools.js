@@ -10,35 +10,62 @@
  *
  */
 "use strict";
-var oToolFLPD = { 'name': 'FLPD',
+var oToolFLPD = {
+    'name': 'FLPD',
     'requires': { 'systemId': {}, 'client': {} },
     'optional': { 'fiori catalog': {}, 'fiori group': {} }
 };
-var oToolFLP = { 'name': 'FLP',
+var oToolFLP = {
+    'name': 'FLP',
     'requires': { 'systemId': {}, 'client': {} },
-    'optional': { 'intent': {} }
+    "optional": {
+        "fiori intent": {}
+    },
+    "sets": {
+        "intent": {
+            "set": [
+                "systemId",
+                "client",
+                "fiori intent"
+            ],
+            "response": "_urlpattern1"
+        },
+        "none": {
+            "set": [
+                "systemId",
+                "client"
+            ],
+            "response": "_urlpattern2"
+        }
+    }
 };
-var oToolTA = { 'name': 'StartTA',
+var oToolTA = {
+    'name': 'StartTA',
     'requires': { 'transaction': {}, 'systemId': {}, 'client': {} },
     'optional': {}
 };
-var oToolWiki = { 'name': 'wiki',
+var oToolWiki = {
+    'name': 'wiki',
     'requires': { 'wiki': {} },
     'optional': { 'wikipage': {} }
 };
-var oToolUnitTest = { 'name': 'unit test',
+var oToolUnitTest = {
+    'name': 'unit test',
     'requires': { 'unit test': {} },
     optional: {}
 };
-var oToolWikiPage = { 'name': 'WikiPage',
-    'requires': { 'wikipage': {} },
-    optoinal: {}
-};
-var tools = [oToolWiki, oToolTA, oToolUnitTest, oToolFLPD, oToolWikiPage, oToolFLP];
+var tools = [oToolWiki, oToolTA, oToolUnitTest, oToolFLPD, oToolFLP];
+function cmpTools(a, b) {
+    return a.name.localeCompare(b.name);
+}
+exports.cmpTools = cmpTools;
 function getTools() {
-    return tools;
+    return tools.sort(cmpTools);
 }
 exports.getTools = getTools;
 ;
+function findMatchingSet(a) {
+}
+exports.findMatchingSet = findMatchingSet;
 
 //# sourceMappingURL=tools.js.map

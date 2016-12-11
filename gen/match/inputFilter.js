@@ -17,6 +17,8 @@
  */
 /// <reference path="../../lib/node-4.d.ts" />
 var distance = require('../utils/damerauLevenshtein');
+var Logger = require('../utils/logger');
+var logger = Logger.logger('inputFilter');
 var debug = require('debug');
 var utils = require('../utils/utils');
 var Algol = require('./algol');
@@ -104,13 +106,30 @@ function compareContext(oA, oB, aKeyIgnore) {
 }
 exports.compareContext = compareContext;
 function sortByRank(a, b) {
-    return -((a._ranking || 1.0) - (b._ranking || 1.0));
+    var r = -((a._ranking || 1.0) - (b._ranking || 1.0));
+    if (r) {
+        return r;
+    }
+    if (a.category && b.category) {
+        r = a.category.localeCompare(b.category);
+        if (r) {
+            return r;
+        }
+    }
+    if (a.matchedString && b.matchedString) {
+        r = a.matchedString.localeCompare(b.matchedString);
+        if (r) {
+            return r;
+        }
+    }
+    return 0;
 }
 function categorizeString(string, exact, oRules) {
     // simply apply all rules
     debug("rules : " + JSON.stringify(oRules));
     var res = [];
     oRules.forEach(function (oRule) {
+        debuglog('attempting to match rule ' + JSON.stringify(oRule) + " to string \"" + string + "\"");
         switch (oRule.type) {
             case 0 /* WORD */:
                 if (exact && oRule.word === string) {
@@ -246,9 +265,38 @@ function categorizeWordWithRankCutoff(sWordGroup, aRules) {
     return seenIt;
 }
 exports.categorizeWordWithRankCutoff = categorizeWordWithRankCutoff;
+function filterRemovingUncategorizedSentence(oSentence) {
+    return oSentence.every(function (oWordGroup) {
+        return (oWordGroup.length > 0);
+    });
+}
+exports.filterRemovingUncategorizedSentence = filterRemovingUncategorizedSentence;
+function filterRemovingUncategorized(arr) {
+    return arr.filter(function (oSentence) {
+        return filterRemovingUncategorizedSentence(oSentence);
+    });
+}
+exports.filterRemovingUncategorized = filterRemovingUncategorized;
 /**
  * Given a  string, break it down into components,
+ * [['A', 'B'], ['A B']]
+ *
  * then categorizeWords
+ * returning
+ *
+ * [ [[ { category: 'systemId', word : 'A'},
+ *      { category: 'otherthing', word : 'A'}
+ *    ],
+ *    // result of B
+ *    [ { category: 'systemId', word : 'B'},
+ *      { category: 'otherthing', word : 'A'}
+ *      { category: 'anothertryp', word : 'B'}
+ *    ]
+ *   ],
+ * ]]]
+ *
+ *
+ *
  */
 function analyzeString(sString, aRules) {
     var cnt = 0;
@@ -261,16 +309,27 @@ function analyzeString(sString, aRules) {
             var seenIt = words[sWordGroup];
             if (seenIt === undefined) {
                 seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
-                words[sWordGroup] = seenIt;
+                if (seenIt === undefined)
+                    words[sWordGroup] = seenIt;
             }
             cnt = cnt + seenIt.length;
             fac = fac * seenIt.length;
             if (!seenIt || seenIt.length === 0) {
-                throw new Error("Expecting at least one match for \"" + sWordGroup + "\"");
+                logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
+                    + sString + "\"");
+                if (sWordGroup.indexOf(" ") <= 0) {
+                    debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
+                }
+                debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
+                if (!seenIt) {
+                    throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"");
+                }
+                return [];
             }
             return seenIt;
         });
     });
+    res = filterRemovingUncategorized(res);
     debuglog(" sentences " + u.length + " matches " + cnt + " fac: " + fac);
     return res;
 }

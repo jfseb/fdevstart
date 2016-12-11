@@ -7,34 +7,60 @@
 var debug = require('debug');
 var debuglog = debug('model');
 var IMatch = require('../match/ifmatch');
-var Match = require('../match/match');
+var InputFilterRules = require('../match/inputFilterRules');
+var Tools = require('../match/tools');
 var fs = require('fs');
 var process = require('process');
 ;
 function addSynonyms(synonyms, category, synonymFor, mRules) {
     synonyms.forEach(function (syn) {
-        mRules.push({
+        var oRule = {
             category: category,
             matchedString: synonymFor,
             type: 0 /* WORD */,
             word: syn,
             _ranking: 0.95
-        });
+        };
+        debuglog("inserting synonym" + JSON.stringify(oRule));
+        insertRuleIfNotPresent(mRules, oRule);
     });
+}
+function insertRuleIfNotPresent(mRules, rule) {
+    if (rule.type !== 0 /* WORD */) {
+        mRules.push(rule);
+        return;
+    }
+    if ((rule.word === undefined) || (rule.matchedString === undefined)) {
+        throw new Error('illegal rule' + JSON.stringify(rule, undefined, 2));
+    }
+    var duplicates = mRules.filter(function (oEntry) {
+        return !InputFilterRules.cmpMRule(oEntry, rule);
+    });
+    if (!duplicates.length) {
+        mRules.push(rule);
+    }
+    debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
 }
 function loadModelData(oMdl, sModelName, oModel) {
     // read the data ->
     // data is processed into mRules directly,
-    var mdldata = fs.readFileSync('./sensitive/' + sModelName + ".data.json", 'utf-8');
+    var sFileName = ('./sensitive/' + sModelName + ".data.json");
+    var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function (oEntry) {
         if (!oEntry.tool) {
             oEntry.tool = oMdl.tool.name;
         }
+        oModel.records.push(oEntry);
         oMdl.wordindex.forEach(function (category) {
-            if (oMdlData[category] !== "*") {
-                var sString = oMdlData[category];
-                oModel.mRules.push({
+            if (oEntry[category] === undefined) {
+                debuglog("INCONSISTENT*> ModelData " + sFileName + " does not contain category " + category + " of wordindex" + JSON.stringify(oEntry) + "");
+                return;
+            }
+            if (oEntry[category] !== "*") {
+                var sString = oEntry[category];
+                debuglog("pushing rule with " + category + " -> " + sString);
+                insertRuleIfNotPresent(oModel.mRules, {
                     category: category,
                     matchedString: sString,
                     type: 0 /* WORD */,
@@ -101,7 +127,8 @@ function loadModels() {
         domains: [],
         tools: [],
         category: [],
-        mRules: []
+        mRules: [],
+        records: []
     };
     var smdls = fs.readFileSync('./sensitive/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
@@ -110,7 +137,7 @@ function loadModels() {
     });
     // add the categories to the model:
     oModel.category.forEach(function (category) {
-        oModel.mRules.push({
+        insertRuleIfNotPresent(oModel.mRules, {
             category: "category",
             matchedString: category,
             type: 0 /* WORD */,
@@ -118,67 +145,31 @@ function loadModels() {
             _ranking: 0.95
         });
     });
+    //add a filler rule
+    var sfillers = fs.readFileSync('./sensitive/filler.json', 'utf-8');
+    var fillers = JSON.parse(sfillers);
+    var re = "^((" + fillers.join(")|(") + "))$";
+    oModel.mRules.push({
+        category: "filler",
+        type: 1 /* REGEXP */,
+        regexp: new RegExp(re, "i"),
+        matchedString: "filler",
+        _ranking: 0.9
+    });
+    /*
+        })
+            {
+          category: "filler",
+          type: 1,
+          regexp: /^((start)|(show)|(from)|(in))$/i,
+          matchedString: "filler",
+          _ranking: 0.9
+        },
+    */
+    oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
+    oModel.tools = oModel.tools.sort(Tools.cmpTools);
     return oModel;
 }
 exports.loadModels = loadModels;
-function expandParametersInURL(oMergedContextResult) {
-    var ptn = oMergedContextResult.result.pattern;
-    Object.keys(oMergedContextResult.context).forEach(function (sKey) {
-        var regex = new RegExp('{' + sKey + '}', 'g');
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
-        ptn = ptn.replace(regex, oMergedContextResult.context[sKey]);
-    });
-    return ptn;
-}
-var inputFilterRules = require('../match/inputFilterRules');
-var toolExecutors = {
-    "xFLP": {},
-    "xFLPD": {},
-    "unit test": function (match) {
-        var unittest = match.toolmatchresult.required["unit test"].matchedString;
-        var url = inputFilterRules.getUnitTestUrl(unittest);
-        return {
-            text: "starting unit test \"" + unittest + "\"" + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        };
-    },
-    "wiki": function (match) {
-        var wiki = match.toolmatchresult.required["wiki"].matchedString;
-        var url = inputFilterRules.getWikiUrl(wiki);
-        return {
-            text: "starting wiki " + wiki + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        };
-    }
-};
-function execTool(match, bExplain) {
-    //
-    var exec = undefined;
-    if (toolExecutors[match.tool.name]) {
-        exec = toolExecutors[match.tool.name](match);
-    }
-    if (!exec) {
-        exec = {
-            text: "don't know how to execute " + match.tool.name + '\n'
-        };
-    }
-    if (bExplain) {
-        exec.text = exec.text + "\n" + Match.ToolMatch.dumpNice(match);
-    }
-    return exec;
-    // TODO invoke tool specific starter
-    /* if (oMergedContextResult.result.type === 'URL') {
-      var ptn = expandParametersInURL(oMergedContextResult)
-      startBrowser(ptn)
-      return ptn
-    } else {
-      var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
-      debuglog(s)
-      return s
-    }*/
-}
-exports.execTool = execTool;
-//  executeStartup: executeStartup
-//}
 
 //# sourceMappingURL=model.js.map
