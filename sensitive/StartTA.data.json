@@ -1,9 +1,0 @@
-[
-  {
-    "systemId" : "UV2",
-    "client" : "120",
-    "transaction" : "SU01",
-    "_urlpattern1" : "http://genshortcut?system=UV2&sap-client=<client>#<fiori intent>",
-    "_urlpattern2" : "http://xxxxuv2/sap/fioriLaunchpad?sap-client=<client>"
-  }
-]
