@@ -271,6 +271,8 @@ function logQueryWhatIs(session: builder.Session, intent: string, result?: Array
     }
   });
 }
+
+var gwords = {};
 /**
  * Construct a bot
  * @param connector {Connector} the connector to use
@@ -363,7 +365,7 @@ function makeBot(connector) {
       console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
       const result = Analyze.analyzeAll(a1.entity,
-        theModel.mRules, theModel.tools);
+        theModel.mRules, theModel.tools, gwords);
       logQuery(session, 'ShowMe', result);
       // test.expect(3)
       //  test.deepEqual(result.weight, 120, 'correct weight');

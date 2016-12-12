@@ -11,7 +11,13 @@
  */
 export const Cutoff_LevenShtein : number = 150;
 
-
+/**
+ * Maximum amount of spaces permitted in a combined word
+ *
+ * Note that quoted words are never combined, and may exceed this limit,
+ * e.g.   A "q u o t e d" entry.
+ */
+export const MaxSpacesPerCombinedWord : number = 3;
 
 /**
  * Weight factor to use on the a given word distance

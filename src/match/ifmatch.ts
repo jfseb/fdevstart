@@ -127,10 +127,15 @@ export interface IntentRule {
 export interface mRule {
   type: EnumRuleType,
   word?: string,
+  lowercaseword? : string,
   regexp?: RegExp,
   matchedString?: string,
   matchIndex?: number,
   category: string,
+  /**
+   * only use an exact match
+   */
+  exactOnly? : boolean,
   _ranking?: number
 }
 

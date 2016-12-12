@@ -5,12 +5,19 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 
+"use strict";
 
 import * as InputFilter from './inputFilter';
 
 import * as debug from 'debug';
 
 const debuglog = debug('analyze');
+
+
+
+import * as logger from '../utils/logger';
+var perf = logger.perf('analyze');
+
 
 import * as utils from '../utils/utils';
 
@@ -20,23 +27,31 @@ import * as Toolmatcher from './toolmatcher';
 
 import * as Sentence from './sentence';
 
-export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools: Array<IMatch.ITool>) {
+export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools: Array<IMatch.ITool>, words? ) {
+  "use strict";
   if (sString.length === 0) {
     return [];
   } else {
-    var matched = InputFilter.analyzeString(sString, aRules);
+    perf('analyzeString');
+ //   InputFilter.resetCnt();
+    var matched = InputFilter.analyzeString(sString, aRules, words);
+    perf('analyzeString');
+ //   InputFilter.dumpCnt();
+    perf('expand');
     debuglog("After matched " + JSON.stringify(matched));
     var aSentences = InputFilter.expandMatchArr(matched);
     debuglog("after expand" + aSentences.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
     }).join("\n"));
+    perf('expand');
     var aSentencesReinforced = InputFilter.reinForce(aSentences);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
     debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
     }).join("\n"));
-
+   perf('matchTools');
     var matchedTools = Toolmatcher.matchTools(aSentences, aTools); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    perf('matchTools');
     debuglog(" matchedTools" + JSON.stringify(matchedTools, undefined, 2));
     return matchedTools;
   }

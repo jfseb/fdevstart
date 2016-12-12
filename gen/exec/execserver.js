@@ -10,27 +10,6 @@
 "use strict";
 var debug = require('debug');
 var debuglog = debug('execserver');
-var inputFilterRules = require('../match/inputFilterRules');
-var toolExecutors = {
-    "xFLP": {},
-    "xFLPD": {},
-    "unit test": function (match) {
-        var unittest = match.toolmatchresult.required["unit test"].matchedString;
-        var url = inputFilterRules.getUnitTestUrl(unittest);
-        return {
-            text: "starting unit test \"" + unittest + "\"" + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        };
-    },
-    "wiki": function (match) {
-        var wiki = match.toolmatchresult.required["wiki"].matchedString;
-        var url = inputFilterRules.getWikiUrl(wiki);
-        return {
-            text: "starting wiki " + wiki + (url ? (' with url ' + url) : 'no url :-('),
-            action: { url: url }
-        };
-    }
-};
 var Toolmatch = require('../match/toolmatch');
 var Exectemplate = require('./exectemplate');
 function noStar(a, b) {

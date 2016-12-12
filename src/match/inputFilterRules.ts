@@ -335,7 +335,7 @@ export function cmpMRule(a: IMatch.mRule, b: IMatch.mRule) {
   if (a.word && b.word) {
     return a.word.localeCompare(b.word)
   }
-  return ( a._ranking || 1.0 ) - (b._ranking || 1.0);
+  return (a._ranking || 1.0) - (b._ranking || 1.0);
 }
 
 export function getMRulesSample(): Array<IMatch.mRule> {
@@ -510,10 +510,18 @@ export function getMRulesSample(): Array<IMatch.mRule> {
   ]
   );
 
-
+  var mRules = assureLowerCaseWord(mRules);
   return mRules.sort(cmpMRule);
 }
 
+export function assureLowerCaseWord(mRules: Array<IMatch.mRule>) {
+  return mRules.map(function (oRule) {
+    if (oRule.type === IMatch.EnumRuleType.WORD) {
+      oRule.lowercaseword = oRule.word.toLowerCase();
+    }
+    return oRule;
+  });
+}
 
 export function getUnitTestUrl(string: string) {
   return mUnitTestURLMap[string];

@@ -30,7 +30,20 @@ exports.testModel = function (test) {
       'url',
       'wiki' ] , 'correct data read');
   test.done();
+};
 
+
+/**
+ * Unit test for sth
+ */
+exports.testModelCheckExactOnly = function (test) {
+  test.expect(1);
+  var u = Model.loadModels();
+  var res = u.mRules.filter(function(oRule) {
+    return oRule.exactOnly === true;
+  });
+  test.equal(res.length, 113 , 'correct flag applied');
+  test.done();
 };
 
 

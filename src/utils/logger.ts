@@ -19,6 +19,37 @@ interface ILogger {
   logIt?: (any) => void
 };
 
+
+var perfs = {} as {[key : string] : { name : string, last: number, first : number, on : {}}};
+
+
+function logPerf(sString) {
+  if(!this) {
+    return;
+  }
+  var label = 'perf' + this.name;
+  console.log('Perf' + this.name);
+  if(this.first === 0) {
+      this.first = Date.now();
+  } else {
+    console.log('Perf' + this.name + ' total ' + (Date.now() - this.first));
+  }
+  if( this.on[sString]) {
+     console.timeEnd(sString)
+     delete this.on[sString];
+  } else {
+      console.time(sString);
+      this.on[sString] = 1;
+  }
+}
+
+export function perf(string) {
+  if (debug('perf' + this.name).enabled ) {
+    perfs[string] = { name : string, last : 0, first: 0, on : {} };
+  }
+  return logPerf.bind(perfs[string]);
+}
+
 import * as fs from 'fs';
 
 var loggers = {} as { [key: string]: ILogger };

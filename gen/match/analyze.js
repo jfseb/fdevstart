@@ -8,25 +8,36 @@
 var InputFilter = require('./inputFilter');
 var debug = require('debug');
 var debuglog = debug('analyze');
+var logger = require('../utils/logger');
+var perf = logger.perf('analyze');
 var Toolmatcher = require('./toolmatcher');
 var Sentence = require('./sentence');
-function analyzeAll(sString, aRules, aTools) {
+function analyzeAll(sString, aRules, aTools, words) {
+    "use strict";
     if (sString.length === 0) {
         return [];
     }
     else {
-        var matched = InputFilter.analyzeString(sString, aRules);
+        perf('analyzeString');
+        //   InputFilter.resetCnt();
+        var matched = InputFilter.analyzeString(sString, aRules, words);
+        perf('analyzeString');
+        //   InputFilter.dumpCnt();
+        perf('expand');
         debuglog("After matched " + JSON.stringify(matched));
         var aSentences = InputFilter.expandMatchArr(matched);
         debuglog("after expand" + aSentences.map(function (oSentence) {
             return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
         }).join("\n"));
+        perf('expand');
         var aSentencesReinforced = InputFilter.reinForce(aSentences);
         //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
         debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
             return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
         }).join("\n"));
+        perf('matchTools');
         var matchedTools = Toolmatcher.matchTools(aSentences, aTools); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+        perf('matchTools');
         debuglog(" matchedTools" + JSON.stringify(matchedTools, undefined, 2));
         return matchedTools;
     }

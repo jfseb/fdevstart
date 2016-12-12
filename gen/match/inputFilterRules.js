@@ -457,9 +457,19 @@ function getMRulesSample() {
             _ranking: 0.9
         },
     ]);
+    var mRules = assureLowerCaseWord(mRules);
     return mRules.sort(cmpMRule);
 }
 exports.getMRulesSample = getMRulesSample;
+function assureLowerCaseWord(mRules) {
+    return mRules.map(function (oRule) {
+        if (oRule.type === 0 /* WORD */) {
+            oRule.lowercaseword = oRule.word.toLowerCase();
+        }
+        return oRule;
+    });
+}
+exports.assureLowerCaseWord = assureLowerCaseWord;
 function getUnitTestUrl(string) {
     return mUnitTestURLMap[string];
 }

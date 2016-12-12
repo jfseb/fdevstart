@@ -6,7 +6,11 @@
     "tool"
   ],
   "wordindex": [
-    "unit test"
+    "unit test",
+    "url"
+  ],
+  "exactmatch" : [
+    "url"
   ],
   "hidden": [
     "_urlpattern"

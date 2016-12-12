@@ -1053,16 +1053,16 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking : 1  * ab.levenPenalty(10),
-      levenmatch : 10
+      _ranking : 1  * ab.levenPenalty(7),
+      levenmatch : 7
     },
-    {
+  /*  {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetResolutionAdapter',
       'category': 'unit test',
       _ranking : 1 * ab.levenPenalty(17),
       levenmatch : 17
-    },
+    }, */
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
@@ -1109,16 +1109,60 @@ exports.testCategorizeStringExactMatch = function (test) {
 
 exports.testCategorizeStringDistanceNavTarget = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetResolu', false, ifr);
+  var res = ab.categorizeString('NavTargetResolut', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res, [
     {
+      'string': 'NavTargetResolut',
+      'matchedString': 'NavTargetResolution',
+      'category': 'unit test',
+      _ranking : 1*ab.levenPenalty(3),
+      'levenmatch': 3
+    },
+    /*
+    {
+      'string': 'NavTargetResolu',
+      'matchedString': 'NavTargetResolutionAdapter',
+      'category': 'unit test',
+      _ranking : ab.levenPenalty(14),
+      'levenmatch': 14
+    },*/
+    {
+      'string': 'NavTargetResolut',
+      'matchedString': 'NavTargetResolut',
+      'category': 'fiori catalog',
+      _ranking : 0.5
+    },
+    {
+      'string': 'NavTargetResolut',
+      'matchedString': 'NavTargetResolut',
+      'category': 'systemObjectId',
+      _ranking : 0.5,
+    }
+  ], 'what is this 3');
+  test.done();
+};
+
+
+exports.testCategorizeStringDistanceNavTargetInBetween = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.categorizeString('NavTargetResolutAdapt', false, ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+
+  test.deepEqual(res[0].matchedString , 'NavTargetResolution');
+  test.deepEqual(res[1].matchedString , 'NavTargetResolutionAdapter');
+  test.deepEqual(res.length, 4);
+
+/*
+
+  , [
+    {
       'string': 'NavTargetResolu',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking : 1*ab.levenPenalty(7),
-      'levenmatch': 7
+      _ranking : 1*ab.levenPenalty(4),
+      'levenmatch': 4
     },
     {
       'string': 'NavTargetResolu',
@@ -1140,8 +1184,12 @@ exports.testCategorizeStringDistanceNavTarget = function (test) {
       _ranking : 0.5,
     }
   ], 'what is this 3');
+
+  */
   test.done();
 };
+
+
 
 exports.testCategorizeStringBadRule = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
@@ -1160,7 +1208,7 @@ exports.testCategorizeStringBadRule = function (test) {
   test.done();
 };
 
-var sampleRules = [
+var sampleRules = inputFilterRules.assureLowerCaseWord([
   {
     type: 0,
     word: 'ab',
@@ -1190,7 +1238,7 @@ var sampleRules = [
     regexp: /^.*$/,
     category: 'unknown'
   }
-];
+]);
 
 exports.testAnalyzeStringUV2Client120 = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
@@ -1239,6 +1287,7 @@ var mRulesStrict = [
     'matchedString': 'unit test',
     'type': 0,
     'word': 'unit test',
+    'lowercaseword' : 'unit test',
     '_ranking': 0.95
   },
   {
@@ -1246,6 +1295,7 @@ var mRulesStrict = [
     'matchedString': 'wiki',
     'type': 0,
     'word': 'wiki',
+    'lowercaseword' : 'wiki',
     '_ranking': 0.95
   },
   {
@@ -1253,6 +1303,7 @@ var mRulesStrict = [
     'matchedString': '120',
     'type': 0,
     'word': '120',
+    'lowercaseword' : '120',
     '_ranking': 0.95
   }];
 

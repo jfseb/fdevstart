@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/public/index.html');
 });
 
-server.listen(8900); //conf.port);
+server.listen(42042); //conf.port);
 
 io.sockets.on('connection', function (socket) {
   var id = uuid.v4().toString(); // '' + Date.now();

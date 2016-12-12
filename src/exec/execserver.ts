@@ -25,27 +25,6 @@ import * as Match from '../match/match';
 import * as inputFilterRules from '../match/inputFilterRules';
 
 
-var toolExecutors = {
-  "xFLP": {},
-  "xFLPD": {},
-  "unit test": function (match: IFMatch.IToolMatch) {
-    var unittest = match.toolmatchresult.required["unit test"].matchedString;
-    var url = inputFilterRules.getUnitTestUrl(unittest);
-    return {
-      text: "starting unit test \"" + unittest + "\"" + (url ? (' with url ' + url) : 'no url :-('),
-      action: { url: url }
-    }
-  },
-  "wiki": function (match: IFMatch.IToolMatch) {
-    var wiki = match.toolmatchresult.required["wiki"].matchedString;
-    var url = inputFilterRules.getWikiUrl(wiki);
-    return {
-      text: "starting wiki " + wiki + (url ? (' with url ' + url) : 'no url :-('),
-      action: { url: url }
-    }
-  }
-};
-
 import * as Toolmatch from '../match/toolmatch';
 
 import * as Exectemplate from './exectemplate';

@@ -6,6 +6,8 @@
 "use strict";
 var debug = require('debug');
 var debuglog = debug('model');
+var logger = require('../utils/logger');
+var loadlog = logger.logger('modelload', '');
 var IMatch = require('../match/ifmatch');
 var InputFilterRules = require('../match/inputFilterRules');
 var Tools = require('../match/tools');
@@ -46,6 +48,12 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
         }
     }
     seenRules[r] = rule;
+    rule.lowercaseword = rule.word.toLowerCase();
+    if (rule.word === "") {
+        debuglog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
+        loadlog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
+        return;
+    }
     mRules.push(rule);
     return;
 }
@@ -68,13 +76,17 @@ function loadModelData(oMdl, sModelName, oModel) {
             if (oEntry[category] !== "*") {
                 var sString = oEntry[category];
                 debuglog("pushing rule with " + category + " -> " + sString);
-                insertRuleIfNotPresent(oModel.mRules, {
+                var oRule = {
                     category: category,
                     matchedString: sString,
                     type: 0 /* WORD */,
                     word: sString,
                     _ranking: 0.95
-                }, oModel.seenRules);
+                };
+                if (oMdl.exactmatch && oMdl.exactmatch.indexOf(category) >= 0) {
+                    oRule.exactOnly = true;
+                }
+                insertRuleIfNotPresent(oModel.mRules, oRule, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
                     addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
                 }
@@ -100,13 +112,13 @@ function loadModel(sModelName, oModel) {
     });
     // add the tool name as rule unless hidden
     if (!oMdl.toolhidden) {
-        oModel.mRules.push({
+        insertRuleIfNotPresent(oModel.mRules, {
             category: "tool",
             matchedString: oMdl.tool.name,
             type: 0 /* WORD */,
             word: oMdl.tool.name,
             _ranking: 0.95
-        });
+        }, oModel.seenRules);
     }
     ;
     if (oMdl.synonyms && oMdl.synonyms["tool"]) {
@@ -150,6 +162,7 @@ function loadModels() {
             matchedString: category,
             type: 0 /* WORD */,
             word: category,
+            lowercaseword: category.toLowerCase(),
             _ranking: 0.95
         }, oModel.seenRules);
     });

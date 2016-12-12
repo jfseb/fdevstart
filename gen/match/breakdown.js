@@ -74,13 +74,30 @@ function recombineQuoted(aArr) {
     return aArr;
 }
 exports.recombineQuoted = recombineQuoted;
+function isQuoted(sString) {
+    return !!/^".*"$/.exec(sString);
+}
+exports.isQuoted = isQuoted;
+function countSpaces(sString) {
+    var r = 0;
+    for (var i = 0; i < sString.length; ++i) {
+        if (sString.charAt(i) === ' ') {
+            r = r + 1;
+        }
+    }
+    return r;
+}
+exports.countSpaces = countSpaces;
 /**
  *@param {string} sString , e.g. "a b c"
  *@return {Array<Array<String>>} broken down array, e.g.
  *[["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
  */
-function breakdownString(sString) {
+function breakdownString(sString, spacesLimit) {
     var rString = cleanseString(sString);
+    if (spacesLimit === undefined) {
+        spacesLimit = -1;
+    }
     var u = rString.split(" ");
     u = recombineQuoted(u);
     var k = 0;
@@ -94,7 +111,20 @@ function breakdownString(sString) {
             debuglog(JSON.stringify(entry));
             var entry = entry.slice(0);
             debuglog(JSON.stringify(entry));
-            entry[entry.length - 1] = entry[entry.length - 1] + " " + u[k];
+            var preventry = entry[entry.length - 1];
+            // do not combine quoted strings!
+            if (preventry === null) {
+            }
+            else if (isQuoted(u[k]) || isQuoted(preventry)) {
+                entry[entry.length - 1] = null;
+            }
+            else {
+                var combined = preventry + " " + u[k];
+                if (spacesLimit > 0 && countSpaces(combined) > spacesLimit) {
+                    combined = null;
+                }
+                entry[entry.length - 1] = combined;
+            }
             return entry;
         });
         var r2 = w.map(function (entry) {
@@ -107,6 +137,11 @@ function breakdownString(sString) {
         debuglog(JSON.stringify(r2));
         w = r1.concat(r2);
     }
+    w = w.filter(function (oMap) {
+        return oMap.every(function (sWord) {
+            return sWord !== null;
+        });
+    });
     return w.map(function (oMap) {
         return oMap.map(function (sWord) {
             return trimQuoted(sWord);
