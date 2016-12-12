@@ -75,7 +75,7 @@ function sift4(s1, s2, maxOffset, maxDistance) {
     var l1 = s1.length;
     var l2 = s2.length;
     if (Math.abs(l1 - l2) > maxDistance) {
-        return 5000;
+        return 50000;
     }
     var c1 = 0; //cursor for string 1
     var c2 = 0; //cursor for string 2
