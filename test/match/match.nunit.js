@@ -9,23 +9,25 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 var debuglog = require('debug')('match.nunit');
 
-const match= require(root + '/match/match.js');
-const ToolMatch = match.ToolMatch;
+const Match = require(root + '/match/match.js');
+const ToolMatch = Match.ToolMatch;
 //const Category = OpsWord.Category;
 
 var oMatch1 = {
-  toolmatchresult : { spurious : {}, missing : {},
-    required : { 'a' : { _ranking : 0.4}, 'b' : { _ranking : 0.3}},
-    optional :{ 'b' : { _ranking : 0.5} }
+  toolmatchresult: {
+    spurious: {}, missing: {},
+    required: { 'a': { _ranking: 0.4 }, 'b': { _ranking: 0.3 } },
+    optional: { 'b': { _ranking: 0.5 } }
   }
 };
 var oMatch2 = {
-  toolmatchresult : { spurious : {}, missing : {'A' : { _ranking : 0.3}},
-    required : { 'a' : { _ranking : 0.4}, 'b' :{ _ranking : 0.3 }},
-    optional : {}
+  toolmatchresult: {
+    spurious: {}, missing: { 'A': { _ranking: 0.3 } },
+    required: { 'a': { _ranking: 0.4 }, 'b': { _ranking: 0.3 } },
+    optional: {}
   }
 };
-exports.testMatchCompare= function (test) {
+exports.testMatchCompare = function (test) {
   // prepare
 
   // act
@@ -39,7 +41,7 @@ exports.testRankResult = function (test) {
 
   // act
   // check
-  test.ok(ToolMatch.rankResult(oMatch1.toolmatchresult) > 0.91 ,'correct rank');
+  test.ok(ToolMatch.rankResult(oMatch1.toolmatchresult) > 0.91, 'correct rank');
   test.done();
 };
 
@@ -122,6 +124,74 @@ var oMatch3 = {
 
 
 
+exports.testMatchGetEntity = function (test) {
+
+
+  var oMatchX = {
+    'toolmatchresult': {
+      'required': {
+        'systemId': {
+          'string': 'U20',
+          'matchedString': 'U20',
+          'category': 'systemId'
+        }
+      },
+      'missing': {
+        'client': 1
+      },
+      'optional': {
+        'fiori client':
+        {
+          'string': 'ABC',
+          'matchedString': 'ABC',
+          'category': 'fiori client'
+
+        }
+      },
+      'spurious': {
+        'start catalog': 1,
+        'ABC in FLPD in UV2': 1,
+        'client': 1
+      },
+      'toolmentioned': []
+    },
+  };
+
+  var res = Match.Result.getEntity(oMatchX, 'systemId');
+  test.equal(res.matchedString, 'U20');
+  res = Match.Result.getEntity(oMatchX, 'fiori client');
+  test.equal(res.matchedString, 'ABC');
+
+  res = Match.Result.getEntity(oMatchX, 'not presnet');
+  test.equal(res, undefined);
+  res = Match.Result.getEntity({}, 'client');
+  test.equal(res, undefined);
+  test.done();
+};
+
+
+exports.testMatchdumpNiceTop = function (test) {
+
+  var res = ToolMatch.dumpNiceTop([oMatch3, oMatch3], { top: 2 });
+  test.equal(res.length > 0, true);
+  res = ToolMatch.dumpNiceTop([oMatch3, oMatch3], { top: 4 });
+  test.equal(res.length > 0, true);
+  res = ToolMatch.dumpNiceTop([oMatch3, oMatch3, oMatch3], { top: 2 });
+  test.equal(res.length > 0, true);
+  test.done();
+};
+
+exports.testMatchdumpNiceTop = function (test) {
+
+  var res = ToolMatch.dumpWeightsTop([oMatch3, oMatch3], { top: 2 });
+  test.equal(res.length > 0, true);
+  res = ToolMatch.dumpWeights(oMatch3, { top: 4 });
+  test.equal(res.length > 0, true);
+  test.done();
+};
+
+
+
 exports.testMatchdumpNice = function (test) {
   // prepare
 
@@ -131,7 +201,7 @@ exports.testMatchdumpNice = function (test) {
   debuglog('>\n' + res.toString('utf8'));
 
   var expected =
-`**Result for tool: FLPD
+    `**Result for tool: FLPD
  rank: 97
 required: systemId -> "120"
 required: client -> ? missing!
@@ -146,8 +216,8 @@ optional : group -> ?
   debuglog('>\n' + expected);
 
   var s = '';
-  for(var i = 0; i < res.length && i < expected.length; ++i) {
-    if(res.charAt(i) === expected.charAt(i)) {
+  for (var i = 0; i < res.length && i < expected.length; ++i) {
+    if (res.charAt(i) === expected.charAt(i)) {
       s = s + res.charAt(i);
     } else {
       s = s + `[${res.charAt(i)} <> ${expected.charAt(i)}]`;
@@ -155,7 +225,7 @@ optional : group -> ?
   }
   debuglog(s);
 
-  test.deepEqual(res,expected, ' dumped');
+  test.deepEqual(res, expected, ' dumped');
   test.done();
 };
 

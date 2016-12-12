@@ -8,6 +8,14 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 var Logger = require(root + '/utils/logger.js');
 
 
+exports.testPerf = function (test) {
+  var perf = Logger.perf('ABC');
+  perf('abc');
+  perf('abc');
+
+  test.equal(typeof perf, 'function');
+  test.done();
+};
 /**
  * Unit test for sth
  */
