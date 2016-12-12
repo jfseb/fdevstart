@@ -73,7 +73,7 @@ export function levenshteinDamerau (a : string, b : string) {
 
 
 export function levenshtein (a : string, b : string) {
-  //return sift4(a,b,5,5 + b.length / 2);
+  //return sift4(a,b,10,40); // + b.length / 2);
   return levenshteinDamerau(a,b);
 }
 //  Sift4 - common version
@@ -96,7 +96,7 @@ export function sift4(s1, s2, maxOffset, maxDistance) {
     var l1=s1.length;
     var l2=s2.length;
     if(Math.abs(l1 - l2) > maxDistance) {
-      return 500;
+      return 50000;
     }
 
     var c1 = 0;  //cursor for string 1
@@ -167,7 +167,7 @@ export function sift4(s1, s2, maxOffset, maxDistance) {
         if (maxDistance)
         {
             var temporaryDistance=Math.max(c1,c2)-lcss+trans;
-            if (temporaryDistance>=maxDistance) return 500; // Math.round(temporaryDistance);
+            if (temporaryDistance>=maxDistance) return 50000; // Math.round(temporaryDistance);
         }
         // this covers the case where the last match is on the last token in list, so that it can compute transpositions correctly
         if ((c1 >= l1) || (c2 >= l2)) {
