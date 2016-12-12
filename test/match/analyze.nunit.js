@@ -103,9 +103,6 @@ exports.testMatchTools = function (test) {
 };
 
 
-
-
-
 exports.testMatchNonsence = function (test) {
 
   const result = Analyze.analyzeAll('start garbage from hell',
