@@ -77,10 +77,11 @@ export function levenshtein (a : string, b : string) {
   return levenshteinDamerau(a,b);
 }
 //  Sift4 - common version
+// https://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html
 // online algorithm to compute the distance between two strings in O(n)
 // maxOffset is the number of characters to search for matching letters
 // maxDistance is the distance at which the algorithm should stop computing the value and just exit (the strings are too different anyway)
-function sift4(s1, s2, maxOffset, maxDistance) {
+export function sift4(s1, s2, maxOffset, maxDistance) {
     if (!s1||!s1.length) {
         if (!s2) {
             return 0;
@@ -94,7 +95,7 @@ function sift4(s1, s2, maxOffset, maxDistance) {
 
     var l1=s1.length;
     var l2=s2.length;
-    if(Math.abs(l1 - l2) > 5) {
+    if(Math.abs(l1 - l2) > maxDistance) {
       return 500;
     }
 

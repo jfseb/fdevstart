@@ -58,6 +58,7 @@ function levenshtein(a, b) {
 }
 exports.levenshtein = levenshtein;
 //  Sift4 - common version
+// https://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html
 // online algorithm to compute the distance between two strings in O(n)
 // maxOffset is the number of characters to search for matching letters
 // maxDistance is the distance at which the algorithm should stop computing the value and just exit (the strings are too different anyway)
@@ -73,7 +74,7 @@ function sift4(s1, s2, maxOffset, maxDistance) {
     }
     var l1 = s1.length;
     var l2 = s2.length;
-    if (Math.abs(l1 - l2) > 5) {
+    if (Math.abs(l1 - l2) > maxDistance) {
         return 500;
     }
     var c1 = 0; //cursor for string 1
@@ -157,5 +158,6 @@ function sift4(s1, s2, maxOffset, maxDistance) {
     lcss += local_cs;
     return Math.round(Math.max(l1, l2) - lcss + trans); //add the cost of transpositions to the final result
 }
+exports.sift4 = sift4;
 
 //# sourceMappingURL=damerauLevenshtein.js.map
