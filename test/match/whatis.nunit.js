@@ -19,7 +19,7 @@ const mRules = InputFilterRules.getMRulesSample();
 
 
 
-exports.testMatchAtool = function (test) {
+exports.testCmbByResult = function (test) {
   var aList = [
     {
       _ranking: 1.0,
@@ -57,6 +57,49 @@ exports.testMatchAtool = function (test) {
 };
 
 
+
+
+exports.testCmbByRankTied = function (test) {
+  var aList = [
+    {
+      _ranking: 1.0,
+      result: 'ABC',
+      record: { 'category': 'ccc' }
+    },
+    {
+      _ranking: 1.0,
+      result: 'ABC',
+      record: { 'category' : 'AAA', 'some': 'AAAA' }
+    },
+    {
+      _ranking: 1.0,
+      result: 'ABC',
+      record: { 'category': 'AAA', 'nosome': 'AAAA' }
+    },
+    {
+      _ranking: 1.0,
+      result: 'ABC',
+      record: { 'category': 'ZZZ' }
+    }
+  ];
+
+  var res = aList.sort(WhatIs.cmpByRanking);
+
+  test.deepEqual(res[0], {
+    result: 'ABC', _ranking: 1.0,
+    record: { 'category': 'AAA' , 'nosome' : 'AAAA' }
+  }, 'sort order');
+  test.deepEqual(res[1], {
+    result: 'ABC', _ranking: 1.0,
+    record: {
+      'category' : 'AAA',
+      'some':     'AAAA'
+    }
+  }, 'sort order 2nd');
+
+
+  test.done();
+};
 
 exports.testCategorize = function (test) {
   var res = WhatIs.analyzeCategory('unit test', mRules, 'what is unit test for abc');
@@ -115,7 +158,7 @@ exports.testResolveCategory = function (test) {
       _ranking: 1.1,
       reinforce: 1.1
     }],
-    category : 'url',
+    category: 'url',
     record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA' },
     result: 'com.sap.NTA',
     _ranking: 1.6500000000000001
@@ -129,14 +172,14 @@ var recordsNoAmb = [
   {
     'unit test': 'NavTargetResolution',
     'url': 'com.sap.NTA',
-    'systemId' : 'UV2',
-    'client' : '120'
+    'systemId': 'UV2',
+    'client': '120'
   },
   {
     'unit test': 'NavTargetResolution',
     'url': 'com.sap.NTA',
-    'systemId' : 'UV2',
-    'client' : '110'
+    'systemId': 'UV2',
+    'client': '110'
   },
   {
     'unit test': 'CrossApplcationNavigation',
@@ -169,8 +212,8 @@ exports.testResolveCategoryNoAmb = function (test) {
       _ranking: 1.1,
       reinforce: 1.1
     }],
-    category : 'url',
-    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA', 'systemId' : 'UV2', 'client' : '110' },
+    category: 'url',
+    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA', 'systemId': 'UV2', 'client': '110' },
     result: 'com.sap.NTA',
     _ranking: 1.6500000000000001
   }, 'unit test');
@@ -184,14 +227,14 @@ var recordsAmb = [
   {
     'unit test': 'NavTargetResolution',
     'url': 'com.sap.NTAUV2120',
-    'systemId' : 'UV2',
-    'client' : '120'
+    'systemId': 'UV2',
+    'client': '120'
   },
   {
     'unit test': 'NavTargetResolution',
     'url': 'com.sap.NTAUV2110',
-    'systemId' : 'UV2',
-    'client' : '110'
+    'systemId': 'UV2',
+    'client': '110'
   },
   {
     'unit test': 'CrossApplcationNavigation',
@@ -224,8 +267,8 @@ exports.testResolveCategoryAmb = function (test) {
       _ranking: 1.1,
       reinforce: 1.1
     }],
-    category : 'url',
-    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTAUV2120', 'systemId' : 'UV2', 'client' : '120' },
+    category: 'url',
+    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTAUV2120', 'systemId': 'UV2', 'client': '120' },
     result: 'com.sap.NTAUV2120',
     _ranking: 1.6500000000000001
   }, ' result 0');
@@ -244,13 +287,15 @@ exports.testResolveCategoryAmb = function (test) {
       _ranking: 1.1,
       reinforce: 1.1
     }],
-    category : 'url',
-    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTAUV2110', 'systemId' : 'UV2', 'client' : '110' },
+    category: 'url',
+    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTAUV2110', 'systemId': 'UV2', 'client': '110' },
     result: 'com.sap.NTAUV2110',
     _ranking: 1.6500000000000001
   }, 'result 2');
+  var dmp = WhatIs.dumpWeightsTop(res, { top: 3 });
   var indis = WhatIs.isIndiscriminateResult(res);
   test.equal(indis, 'Many comparable results, perhaps you want to specify a discriminating client', 'correct string');
+  test.equal(dmp.indexOf('category'), 32, 'correct dump');
   test.done();
 };
 

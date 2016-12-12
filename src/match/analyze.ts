@@ -56,7 +56,7 @@ export function getPrompt(match :  IMatch.IToolMatch) {
   if(!match) {
       return;
   }
-  if (match.rank > 0.6 ) {
+  if (match.rank < 0.6 ) {
     return undefined;
   }
   if(Object.keys(match.toolmatchresult.missing).length ) {

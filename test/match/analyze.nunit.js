@@ -62,6 +62,35 @@ exports.testMatchAtool = function (test) {
   test.done();
 };
 
+
+exports.testMatchIncomplete = function (test) {
+  const result  = Analyze.analyzeAll('start catalog ABC in flpd in UV2',
+    mRules,
+  tools);
+  debuglog('here result ' + JSON.stringify(result[0]));
+
+  test.equal(Analyze.isComplete(result[0]),false);
+
+  var p = Analyze.getPrompt(result[0]);
+  debuglog('here prompt ' + JSON.stringify(p));
+
+  test.deepEqual(p,
+    {
+      category : 'client',
+      text : 'Please provide a missing "' + 'client' + '"?'
+    }
+  );
+
+  Analyze.setPrompt(result[0],p,'120');
+  test.deepEqual(result[0].toolmatchresult.required['client'], {
+    category : 'client',
+    _ranking : 1.0,
+    matchedString : '120'
+  }, 'correct set prompt');
+  test.done();
+};
+
+
 exports.testMatchTools = function (test) {
   const result = Analyze.analyzeAll('start wiki UI2 Integration',
   mRules,tools);
@@ -77,6 +106,8 @@ exports.testMatchTools = function (test) {
   test.deepEqual(Result.getEntity(result[0], 'wiki').matchedString, 'UI2 Integration', 'correct tool picked');
   test.done();
 };
+
+
 
 
 

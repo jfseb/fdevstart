@@ -28,18 +28,19 @@ function cmpByRanking(a, b) {
         return cmp;
     }
     // are records different?
-    var res = Object.keys(a.result).sort().reduce(function (prev, sKey) {
+    var keys = Object.keys(a.record).concat(Object.keys(b.record)).sort();
+    var res = keys.reduce(function (prev, sKey) {
         if (prev) {
             return prev;
         }
-        if (b.result[sKey] !== a.result[sKey]) {
-            if (!b.result[sKey]) {
+        if (b.record[sKey] !== a.record[sKey]) {
+            if (!b.record[sKey]) {
                 return -1;
             }
-            if (!a.result[sKey]) {
+            if (!a.record[sKey]) {
                 return +1;
             }
-            return b.result[sKey].localeCompare(a.result[sKey]);
+            return a.record[sKey].localeCompare(b.record[sKey]);
         }
         return 0;
     }, 0);
@@ -205,46 +206,5 @@ function isIndiscriminateResult(results) {
     return undefined;
 }
 exports.isIndiscriminateResult = isIndiscriminateResult;
-/**
- * TODO: rework this to work correctly with sets
- */
-function isComplete(match) {
-    // TODO -> analyze sets
-    return match && match.rank > 0.6 &&
-        Object.keys(match.toolmatchresult.missing || {}).length === 0;
-}
-exports.isComplete = isComplete;
-function getPrompt(match) {
-    if (!match) {
-        return;
-    }
-    if (match.rank > 0.6) {
-        return undefined;
-    }
-    if (Object.keys(match.toolmatchresult.missing).length) {
-        var missing = Object.keys(match.toolmatchresult.missing)[0];
-        return {
-            category: missing,
-            text: 'Please provide a missing "' + missing + '"?'
-        };
-    }
-    return undefined;
-}
-exports.getPrompt = getPrompt;
-function setPrompt(match, prompt, response) {
-    if (!match) {
-        return;
-    }
-    if (response.toLowerCase() !== 'cancel' && response.toLowerCase() !== 'abort') {
-        var u = {};
-        u.category = prompt.category;
-        u._ranking = 1.0;
-        u.matchedString = response;
-        /// TODO test whether this can be valid at all?
-        match.toolmatchresult.required[prompt.category] = u;
-        delete match.toolmatchresult.missing[prompt.category];
-    }
-}
-exports.setPrompt = setPrompt;
 
 //# sourceMappingURL=whatis.js.map
