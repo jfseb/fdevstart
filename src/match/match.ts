@@ -18,14 +18,19 @@ function weakenByN(a : number, n : number) : number {
   return 1.0 + (a-1.0)/n;
 }
 
-function calcGeometricMeansOfRanking(oSet) {
+export function calcRankingProduct(oSet : { [key : string] : IMatch.IWord} ) : number {
+ var factor = Object.keys(oSet).reduce(function(prev, sCategory) {
+    return prev *= oSet[sCategory]._ranking;
+  },1.0);
+  return factor;
+}
+
+function calcGeometricMeansOfRanking(oSet : { [key : string] : IMatch.IWord}) {
   var keys = Object.keys(oSet);
   if(!keys.length) {
     return 1.0;
   }
-  var factor = Object.keys(oSet).reduce(function(prev, sCategory) {
-    return prev *= oSet[sCategory]._ranking;
-  },1.0);
+  var factor = calcRankingProduct(oSet);
   return Math.pow(factor, 1/keys.length);
 }
 /**

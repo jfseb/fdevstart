@@ -57,6 +57,7 @@ function cmpToolSet(sets : IMatch.IToolSets, a : string, b:string) {
 export function findMatchingSets(a : IMatch.IToolMatch ) : string[] {
   var matchingSets = Object.keys(a.tool.sets).filter(function(sSetKey) {
     var oSet = a.tool.sets[sSetKey];
+    debuglog('here the set for tool ' + a.tool.name + " " + JSON.stringify(oSet));
     return oSet.set.every(function(category : string) :boolean {
       var word = Sentence.findWordByCategory(a.sentence, category);
       var b = !!(word && (word.word !== undefined));

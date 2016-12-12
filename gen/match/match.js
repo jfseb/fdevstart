@@ -12,14 +12,19 @@ var debuglog = debug('match');
 function weakenByN(a, n) {
     return 1.0 + (a - 1.0) / n;
 }
+function calcRankingProduct(oSet) {
+    var factor = Object.keys(oSet).reduce(function (prev, sCategory) {
+        return prev *= oSet[sCategory]._ranking;
+    }, 1.0);
+    return factor;
+}
+exports.calcRankingProduct = calcRankingProduct;
 function calcGeometricMeansOfRanking(oSet) {
     var keys = Object.keys(oSet);
     if (!keys.length) {
         return 1.0;
     }
-    var factor = Object.keys(oSet).reduce(function (prev, sCategory) {
-        return prev *= oSet[sCategory]._ranking;
-    }, 1.0);
+    var factor = calcRankingProduct(oSet);
     return Math.pow(factor, 1 / keys.length);
 }
 /**

@@ -69,6 +69,10 @@ exports.elizaSynons = {
   'everyone': ['everybody', 'nobody', 'noone'],
   'family': ['mother', 'mom', 'father', 'dad', 'sister', 'brother', 'wife', 'children', 'child'],
   'happy': ['elated', 'glad', 'better'],
+  'male': ['female'],
+  'dumb': ['stupid','simple','smart','thick', 'moronic'],
+  'human': ['alive'],
+  'sexy': [ 'fat', 'thin','goodlooking', 'alive'],
   'sad': ['unhappy', 'depressed', 'sick']
 };
 
@@ -262,6 +266,12 @@ exports.elizaKeywords = [
     ]]
   ]],
   ['are', 0, [
+    ['* are you @human', [
+      'goto you'
+    ]],
+    ['* are you @sexy', [
+      'goto you'
+    ]],
     ['* are you *', [
       'Why are you interested in whether I am (2) or not ?',
       'Would you prefer if I weren\'t (2) ?',
@@ -390,9 +400,34 @@ exports.elizaKeywords = [
     ['* you remind me of *', [
       'goto alike'
     ]],
-    ['* you are male', [
-      'Why dou think my gender is important?',
-      'Does it please you to believe I am male ?'
+    ['* you are @male', [
+      'Why do you think my gender is important ?',
+      'Would you prefer me to be female ?',
+      'Would you prefer me to be male ?'
+    ]],
+    ['* are you @male', [
+      'Why do you think my gender is important ?',
+      'Would you prefer me to be female ?',
+      'Would you prefer me to be male ?'
+    ]],
+    ['* are you @dumb', [
+      'Why do you question my intelligence ?',
+      'Would you prefer to be smarter than me ?',
+      'Would you prefer to interact with someone smarter ?',
+      'Perhaps you are not asking the right questions ?'
+    ]],
+    ['* are you @human', [
+      'Why do you question my intelligence ?',
+      'Would you prefer to be smarter than me ?',
+      'Would you prefer me to be human ?',
+      'Would you prefer me to be a machine ?',
+      'Would you prefer to interact with someone smarter ?'
+    ]],
+    ['* are you @sexy', [
+      'Would you prefer me to be human ?',
+      'Why do you think my looks are important ?',
+      'Would you prefer me to be a machine ?',
+      'Would you prefer to interact with someone better looking ?'
     ]],
     ['* you are *', [
       'What makes you think I am (2) ?',

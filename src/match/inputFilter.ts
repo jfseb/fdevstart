@@ -142,17 +142,17 @@ export function compareContext(oA, oB, aKeyIgnore?) {
 }
 
 function sortByRank(a: IFMatch.ICategorizedString, b: IFMatch.ICategorizedString): number {
-  var r =-((a._ranking || 1.0) - (b._ranking || 1.0));
-  if(r) {
+  var r = -((a._ranking || 1.0) - (b._ranking || 1.0));
+  if (r) {
     return r;
   }
-  if(a.category && b.category) {
+  if (a.category && b.category) {
     r = a.category.localeCompare(b.category);
     if (r) {
       return r;
     }
   }
-  if(a.matchedString && b.matchedString) {
+  if (a.matchedString && b.matchedString) {
     r = a.matchedString.localeCompare(b.matchedString);
     if (r) {
       return r;
@@ -304,19 +304,42 @@ export function categorizeWordWithRankCutoff(sWordGroup: string, aRules: Array<I
 }
 
 
-export function filterRemovingUncategorizedSentence(oSentence : IFMatch.ICategorizedString[][]) : boolean {
-  return oSentence.every(function(oWordGroup) {
-      return (oWordGroup.length > 0);
+export function filterRemovingUncategorizedSentence(oSentence: IFMatch.ICategorizedString[][]): boolean {
+  return oSentence.every(function (oWordGroup) {
+    return (oWordGroup.length > 0);
   });
 }
 
 
 
-export function filterRemovingUncategorized(arr : IFMatch.ICategorizedString[][][]) : IFMatch.ICategorizedString[][][] {
-  return arr.filter(function(oSentence) {
+export function filterRemovingUncategorized(arr: IFMatch.ICategorizedString[][][]): IFMatch.ICategorizedString[][][] {
+  return arr.filter(function (oSentence) {
     return filterRemovingUncategorizedSentence(oSentence);
-   });
+  });
 }
+
+export function categorizeAWord(sWordGroup: string, aRules: Array<IMatch.mRule>, sString: string, words: { [key: string]: Array<IFMatch.ICategorizedString> }) {
+  var seenIt = words[sWordGroup];
+  if (seenIt === undefined) {
+    seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
+    if (seenIt === undefined)
+      words[sWordGroup] = seenIt;
+  }
+  if (!seenIt || seenIt.length === 0) {
+    logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
+      + sString + "\"");
+    if (sWordGroup.indexOf(" ") <= 0) {
+      debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
+    }
+    debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
+    if (!seenIt) {
+      throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"")
+    }
+    return [];
+  }
+  return seenIt;
+}
+
 
 /**
  * Given a  string, break it down into components,
@@ -347,26 +370,9 @@ export function analyzeString(sString: string, aRules: Array<IMatch.mRule>) {
   var words = {} as { [key: string]: Array<IFMatch.ICategorizedString> };
   var res = u.map(function (aArr) {
     return aArr.map(function (sWordGroup: string) {
-      var seenIt = words[sWordGroup];
-      if (seenIt === undefined) {
-        seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
-        if(seenIt === undefined)
-        words[sWordGroup] = seenIt;
-      }
+      var seenIt = categorizeAWord(sWordGroup, aRules, sString, words);
       cnt = cnt + seenIt.length;
       fac = fac * seenIt.length;
-      if (!seenIt || seenIt.length === 0) {
-        logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
-        + sString + "\"");
-        if(sWordGroup.indexOf(" ") <= 0) {
-          debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
-        }
-        debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
-        if(!seenIt) {
-          throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"")
-        }
-        return [];
-      }
       return seenIt;
     });
   });

@@ -50,6 +50,7 @@ function cmpToolSet(sets, a, b) {
 function findMatchingSets(a) {
     var matchingSets = Object.keys(a.tool.sets).filter(function (sSetKey) {
         var oSet = a.tool.sets[sSetKey];
+        debuglog('here the set for tool ' + a.tool.name + " " + JSON.stringify(oSet));
         return oSet.set.every(function (category) {
             var word = Sentence.findWordByCategory(a.sentence, category);
             var b = !!(word && (word.word !== undefined));

@@ -27,6 +27,7 @@ exports.testModel = function (test) {
       'tool',
       'transaction',
       'unit test',
+      'url',
       'wiki' ] , 'correct data read');
   test.done();
 
@@ -57,8 +58,6 @@ exports.testModel2 = function (test) {
 
   fs.writeFileSync('logs/model.all.json', JSON.stringify(u, undefined,2));
 
-
-
   test.equal(u.tools.length, 5, 'no error');
   test.deepEqual(u.category.sort(),
     [ 'client',
@@ -69,6 +68,7 @@ exports.testModel2 = function (test) {
       'tool',
       'transaction',
       'unit test',
+      'url',
       'wiki' ] , 'correct data read');
   test.done();
 

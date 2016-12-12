@@ -22,12 +22,16 @@ import * as fs from 'fs';
 
 import * as process from 'process';
 
+var modelPath = process.env["MODELPATH"] || "testmodel";
+
+
 interface IModels {
     domains: string[],
     tools: IMatch.ITool[],
     category: string[],
     mRules: IMatch.mRule[],
-    records : any[];
+    records : any[]
+    seenRules? : {[key : string] : IMatch.mRule }
 }
 
 interface IModel {
@@ -40,7 +44,7 @@ interface IModel {
     hidden: string[]
 };
 
-function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>) {
+function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>, seen : { [key:string] : IMatch.mRule}) {
     synonyms.forEach(function(syn) {
         var oRule =  {
             category: category,
@@ -50,11 +54,12 @@ function addSynonyms(synonyms: string[], category: string, synonymFor: string, m
             _ranking: 0.95
         };
         debuglog("inserting synonym" + JSON.stringify(oRule));
-        insertRuleIfNotPresent(mRules,oRule);
+        insertRuleIfNotPresent(mRules,oRule, seen);
        });
 }
 
-function insertRuleIfNotPresent(mRules : Array<IMatch.mRule>, rule: IMatch.mRule) {
+function insertRuleIfNotPresent(mRules : Array<IMatch.mRule>, rule: IMatch.mRule,
+seenRules : { [key : string] : IMatch.mRule}  ) {
     if (rule.type !== IMatch.EnumRuleType.WORD) {
         mRules.push(rule);
         return;
@@ -62,20 +67,26 @@ function insertRuleIfNotPresent(mRules : Array<IMatch.mRule>, rule: IMatch.mRule
     if((rule.word === undefined) || (rule.matchedString === undefined)) {
         throw new Error('illegal rule' + JSON.stringify(rule,undefined,2));
     }
-    var duplicates = mRules.filter(function(oEntry) {
+    var seenRules = seenRules || {};
+    var r = JSON.stringify(rule);
+    if(seenRules[r]) {
+        debuglog("Attempting to insert duplicate" + JSON.stringify(rule,undefined,2));
+        var duplicates = mRules.filter(function(oEntry) {
         return !InputFilterRules.cmpMRule(oEntry,rule);
-    });
-    if(!duplicates.length) {
-        mRules.push(rule);
+        });
+        if(duplicates.length > 0) {
+            return;
+        }
     }
-    debuglog("Attempting to insert duplicate" + JSON.stringify(rule,undefined,2));
+    seenRules[r] = rule;
+    mRules.push(rule);
+    return;
 }
-
 
 function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
     // read the data ->
     // data is processed into mRules directly,
-    const sFileName = ('./sensitive/' + sModelName + ".data.json");
+    const sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function(oEntry) {
@@ -101,9 +112,9 @@ function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
                         type: IMatch.EnumRuleType.WORD,
                         word: sString,
                         _ranking: 0.95
-                    });
+                    }, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
-                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules);
+                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
                 }
             }
         });
@@ -112,7 +123,7 @@ function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
 
 function loadModel(sModelName: string, oModel: IModels) {
     debuglog(" loading " + sModelName + " ....");
-    var mdl = fs.readFileSync('./sensitive/' + sModelName + ".model.json", 'utf-8');
+    var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl) as IModel;
 
     if (oModel.domains.indexOf(oMdl.domain)>= 0) {
@@ -139,12 +150,12 @@ function loadModel(sModelName: string, oModel: IModels) {
         });
     };
     if (oMdl.synonyms && oMdl.synonyms["tool"]) {
-        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules);
+        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules, oModel.seenRules);
     };
     if (oMdl.synonyms) {
         Object.keys(oMdl.synonyms).forEach(function(ssynkey) {
             if (oMdl.category.indexOf(ssynkey) >= 0 && ssynkey !== "tool") {
-                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules);
+                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
             }
         });
     }
@@ -168,7 +179,7 @@ export function loadModels() {
         mRules: [],
         records : []
     }
-    var smdls = fs.readFileSync('./sensitive/models.json', 'utf-8');
+    var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
     mdls.forEach(function(sModelName) {
         loadModel(sModelName, oModel)
@@ -182,11 +193,11 @@ export function loadModels() {
             type: IMatch.EnumRuleType.WORD,
             word: category,
             _ranking: 0.95
-        });
+        }, oModel.seenRules);
     });
 
     //add a filler rule
-    var sfillers = fs.readFileSync('./sensitive/filler.json','utf-8');
+    var sfillers = fs.readFileSync('./' + modelPath + '/filler.json','utf-8');
     var fillers = JSON.parse(sfillers);
     var re = "^((" + fillers.join(")|(") + "))$";
     oModel.mRules.push({
@@ -208,6 +219,7 @@ export function loadModels() {
 */
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
+    delete oModel.seenRules;
     return oModel;
 }
 

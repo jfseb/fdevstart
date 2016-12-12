@@ -277,6 +277,28 @@ function filterRemovingUncategorized(arr) {
     });
 }
 exports.filterRemovingUncategorized = filterRemovingUncategorized;
+function categorizeAWord(sWordGroup, aRules, sString, words) {
+    var seenIt = words[sWordGroup];
+    if (seenIt === undefined) {
+        seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
+        if (seenIt === undefined)
+            words[sWordGroup] = seenIt;
+    }
+    if (!seenIt || seenIt.length === 0) {
+        logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
+            + sString + "\"");
+        if (sWordGroup.indexOf(" ") <= 0) {
+            debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
+        }
+        debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
+        if (!seenIt) {
+            throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"");
+        }
+        return [];
+    }
+    return seenIt;
+}
+exports.categorizeAWord = categorizeAWord;
 /**
  * Given a  string, break it down into components,
  * [['A', 'B'], ['A B']]
@@ -306,26 +328,9 @@ function analyzeString(sString, aRules) {
     var words = {};
     var res = u.map(function (aArr) {
         return aArr.map(function (sWordGroup) {
-            var seenIt = words[sWordGroup];
-            if (seenIt === undefined) {
-                seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
-                if (seenIt === undefined)
-                    words[sWordGroup] = seenIt;
-            }
+            var seenIt = categorizeAWord(sWordGroup, aRules, sString, words);
             cnt = cnt + seenIt.length;
             fac = fac * seenIt.length;
-            if (!seenIt || seenIt.length === 0) {
-                logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
-                    + sString + "\"");
-                if (sWordGroup.indexOf(" ") <= 0) {
-                    debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
-                }
-                debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
-                if (!seenIt) {
-                    throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"");
-                }
-                return [];
-            }
             return seenIt;
         });
     });

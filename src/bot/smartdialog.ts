@@ -21,7 +21,9 @@ import * as Match from '../match/match';
 
 import * as Analyze from '../match/analyze';
 
-var elizabot = require('elizabot');
+import * as WhatIs from '../match/whatis';
+
+var elizabot = require('../extern/elizabot/elizabot');
 //import * as elizabot from 'elizabot';
 
 let debuglog = debug('smartdialog');
@@ -248,6 +250,27 @@ function logQuery(session: builder.Session, intent: string, result?: Array<IMatc
   });
 }
 
+
+
+function logQueryWhatIs(session: builder.Session, intent: string, result?: Array<IMatch.IWhatIsAnswer>) {
+
+  fs.appendFile('./logs/showmequeries.txt', "\n" + JSON.stringify({
+    text: session.message.text,
+    timestamp: session.message.timestamp,
+    intent: intent,
+    res: result && result.length && WhatIs.dumpNice(result[0]) || "0",
+    conversationId: session.message.address
+    && session.message.address.conversation
+    && session.message.address.conversation.id || "",
+    userid: session.message.address
+    && session.message.address.user
+    && session.message.address.user.id || ""
+  }), function (err, res) {
+    if (err) {
+      debuglog("logging failed " + err);
+    }
+  });
+}
 /**
  * Construct a bot
  * @param connector {Connector} the connector to use
@@ -339,33 +362,8 @@ function makeBot(connector) {
       debuglog("Show Entity");
       console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
-      /*
-            var client = builder.EntityRecognizer.findEntity(args.entities, 'client');
-            var systemObjectId = builder.EntityRecognizer.findEntity(combinedEntities, 'systemObjectId') ||
-              builder.EntityRecognizer.findEntity(combinedEntities, 'SystemObject') ||
-              builder.EntityRecognizer.findEntity(combinedEntities, 'builtin.number');
-            var systemObjectCategory = builder.EntityRecognizer.findEntity(args.entities, 'SystemObjectCategory');
-
-            session.dialogData.system = {
-              systemId: systemId,
-              client: client
-            };
-      */
-      /*
-            var sSystemId = systemId && systemId.entity;
-            var sClient = client && client.entity;
-            var ssystemObjectId = systemObjectId && systemObjectId.entity;
-            var sSystemObjectCategory = systemObjectCategory && systemObjectCategory.entity;
-      */
-    //if (newFlow) {
       const result = Analyze.analyzeAll(a1.entity,
-          theModel.mRules, theModel.tools);
-
-     // } else {
-
-        //  const result = Analyze.analyzeAll(a1.entity,
-        //     mRules, tools);
-     // }
+        theModel.mRules, theModel.tools);
       logQuery(session, 'ShowMe', result);
       // test.expect(3)
       //  test.deepEqual(result.weight, 120, 'correct weight');
@@ -379,7 +377,7 @@ function makeBot(connector) {
 
       if (Analyze.isComplete(result[0])) {
         session.dialogData.result = result[0];
-        session.send('Showing entity ...');
+        //    session.send('Showing entity ...');
         next();
       } else if (Analyze.getPrompt(result[0])) {
         var prompt = Analyze.getPrompt(result[0]);
@@ -398,26 +396,7 @@ function makeBot(connector) {
             .addEntity({ url: "I don't know" });
         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
         session.send(reply);
-
       }
-
-      /*
-            console.log('Show entities: ' + JSON.stringify(args.entities, undefined, 2));
-
-            // do the big analyis ...
-                  var u = dispatcher.execShowEntity({
-              systemId: sSystemId,
-              client: sClient,
-              tool: sTool,
-              systemObjectCategory: sSystemObjectCategory,
-              systemObjectId: ssystemObjectId
-            })
-      */
-
-      //  session.send('Showing entity ...');
-
-      //  console.log("show entity, Show session : " + JSON.stringify(session))
-      // console.log("Show entity : " + JSON.stringify(args.entities))
     },
     function (session, results, next) {
       var result = session.dialogData.result;
@@ -445,129 +424,165 @@ function makeBot(connector) {
           session.dialogData.prompt, results.response);
       }
       if (Analyze.isComplete(session.dialogData.result)) {
-        //
-        //session.send("starting  > " +
-     //   if (newFlow) {
-          const exec = ExecServer.execTool(session.dialogData.result as IMatch.IToolMatch, theModel.records);
-     //         )
-//} else {
-//  var exec = Exec.execTool(session.dialogData.result as IMatch.IToolMatch);
-//}
+        const exec = ExecServer.execTool(session.dialogData.result as IMatch.IToolMatch, theModel.records);
 
-var reply = new builder.Message(session)
-  .text(exec.text)
-  .addEntity(exec.action);
-// .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-session.send(reply);
+        var reply = new builder.Message(session)
+          .text(exec.text)
+          .addEntity(exec.action);
+        // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+        session.send(reply);
 
       } else {
-  if (session.dialogData.result) {
-    session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
-      session.dialogData.result
-    ));
-  } else {
-    session.send("I did not get what you want");
-  }
-}
+        if (session.dialogData.result) {
+          session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+            session.dialogData.result
+          ));
+        } else {
+          session.send("I did not get what you want");
+        }
+      }
     },
   ]);
 
-dialog.matches('Wrong', [
-  function (session, args, next) {
-    session.beginDialog('/updown', session.userData.count);
-  },
-  function (session, results, next) {
-    var alarm = session.dialogData.alarm;
-    session.send("back from wrong : " + JSON.stringify(results));
-    next();
-  },
-  function (session, results) {
-    session.send('end of wrong');
-  }
-]);
+  dialog.matches('WhatIs', [
+    function (session, args, next) {
+      var isCombinedIndex = {};
+      var oNewEntity;
+      // expecting entity A1
+      var message = session.message.text;
+      debuglog("WhatIs Entity");
+      console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
+      var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
+      var category = categoryEntity.entity;
+      var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
 
-dialog.matches('Exit', [
-  function (session, args, next) {
-    console.log('exit :');
-    console.log('exit' + JSON.stringify(args.entities));
-    session.send("you are in a logic loop ");
-  }
-]);
-dialog.matches('Help', [
-  function (session, args, next) {
-    console.log('help :');
-    console.log('help');
-    session.send("I know about .... <categories>>");
-  }
-]);
+      var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
+      if(!cat) {
+        session.send('I don\'t know anything about "' + category + '"');
+        next();
+      }
+      const result = WhatIs.resolveCategory(cat, a1.entity,
+        theModel.mRules, theModel.records);
+      logQueryWhatIs(session, 'WhatIs', result);
+      var indis = WhatIs.isIndiscriminateResult(result);
+      if (indis) {
+        session.send(indis);
+        next();
+        return;
+      }
+      if (!result || result.length === 0) {
+        session.send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"');
+        next();
+        return;
+      } else {
+        // debuglog('result : ' + JSON.stringify(result, undefined, 2));
+        debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
+        debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
+        // TODO cleansed sentence
+        session.send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n"); //  + JSON.stringify(result[0]));
+      }
+    }
+  ]);
 
 
 
-// Add intent handlers
-dialog.matches('train', [
-  function (session, args, next) {
-    console.log('train');
-    // Resolve and store any entities passed from LUIS.
-    var title = builder.EntityRecognizer.findEntity(args.entities, 'builtin.alarm.title');
-    var time = builder.EntityRecognizer.resolveTime(args.entities);
-    var alarm = session.dialogData.alarm = {
-      title: title ? title.entity : null,
-      timestamp: time ? time.getTime() : null
-    };
-    // Prompt for title
-    if (!alarm.title) {
-      builder.Prompts.text(session, 'What fact would you like to train?');
-    } else {
+
+  dialog.matches('Wrong', [
+    function (session, args, next) {
+      session.beginDialog('/updown', session.userData.count);
+    },
+    function (session, results, next) {
+      var alarm = session.dialogData.alarm;
+      session.send("back from wrong : " + JSON.stringify(results));
       next();
+    },
+    function (session, results) {
+      session.send('end of wrong');
     }
-  },
-  function (session, results, next) {
-    var alarm = session.dialogData.alarm;
-    if (results.response) {
-      alarm.title = results.response;
-    }
+  ]);
 
-    // Prompt for time (title will be blank if the user said cancel)
-    if (alarm.title && !alarm.timestamp) {
-      builder.Prompts.time(session, 'What time would you like to set the alarm for?');
-    } else {
-      next();
+  dialog.matches('Exit', [
+    function (session, args, next) {
+      console.log('exit :');
+      console.log('exit' + JSON.stringify(args.entities));
+      session.send("you are in a logic loop ");
     }
-  },
-  function (session, results) {
-    var alarm = session.dialogData.alarm;
-    if (results.response) {
-      var time = builder.EntityRecognizer.resolveTime([results.response]);
-      alarm.timestamp = time ? time.getTime() : null;
+  ]);
+  dialog.matches('Help', [
+    function (session, args, next) {
+      console.log('help :');
+      console.log('help');
+      session.send("I know about .... <categories>>");
     }
-    // Set the alarm (if title or timestamp is blank the user said cancel)
-    if (alarm.title && alarm.timestamp) {
-      // Save address of who to notify and write to scheduler.
-      alarm.address = session.message.address;
-      //alarms[alarm.title] = alarm;
+  ]);
 
-      // Send confirmation to user
-      var date = new Date(alarm.timestamp);
-      var isAM = date.getHours() < 12;
-      session.send('Creating alarm named "%s" for %d/%d/%d %d:%02d%s',
-        alarm.title,
-        date.getMonth() + 1, date.getDate(), date.getFullYear(),
-        isAM ? date.getHours() : date.getHours() - 12, date.getMinutes(), isAM ? 'am' : 'pm');
-    } else {
-      session.send('Ok... no problem.');
-    }
-  }
-]);
 
-dialog.onDefault(function (session) {
-  logQuery(session, "onDefault");
-  var eliza = getElizaBot(getConversationId(session));
-  var reply = eliza.transform(session.message.text);
-  session.send(reply);
-  //new Eilzabot
-  //session.send("I do not understand this at all");
-  //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
-});
+
+  // Add intent handlers
+  dialog.matches('train', [
+    function (session, args, next) {
+      console.log('train');
+      // Resolve and store any entities passed from LUIS.
+      var title = builder.EntityRecognizer.findEntity(args.entities, 'builtin.alarm.title');
+      var time = builder.EntityRecognizer.resolveTime(args.entities);
+      var alarm = session.dialogData.alarm = {
+        title: title ? title.entity : null,
+        timestamp: time ? time.getTime() : null
+      };
+      // Prompt for title
+      if (!alarm.title) {
+        builder.Prompts.text(session, 'What fact would you like to train?');
+      } else {
+        next();
+      }
+    },
+    function (session, results, next) {
+      var alarm = session.dialogData.alarm;
+      if (results.response) {
+        alarm.title = results.response;
+      }
+
+      // Prompt for time (title will be blank if the user said cancel)
+      if (alarm.title && !alarm.timestamp) {
+        builder.Prompts.time(session, 'What time would you like to set the alarm for?');
+      } else {
+        next();
+      }
+    },
+    function (session, results) {
+      var alarm = session.dialogData.alarm;
+      if (results.response) {
+        var time = builder.EntityRecognizer.resolveTime([results.response]);
+        alarm.timestamp = time ? time.getTime() : null;
+      }
+      // Set the alarm (if title or timestamp is blank the user said cancel)
+      if (alarm.title && alarm.timestamp) {
+        // Save address of who to notify and write to scheduler.
+        alarm.address = session.message.address;
+        //alarms[alarm.title] = alarm;
+
+        // Send confirmation to user
+        var date = new Date(alarm.timestamp);
+        var isAM = date.getHours() < 12;
+        session.send('Creating alarm named "%s" for %d/%d/%d %d:%02d%s',
+          alarm.title,
+          date.getMonth() + 1, date.getDate(), date.getFullYear(),
+          isAM ? date.getHours() : date.getHours() - 12, date.getMinutes(), isAM ? 'am' : 'pm');
+      } else {
+        session.send('Ok... no problem.');
+      }
+    }
+  ]);
+
+  dialog.onDefault(function (session) {
+    logQuery(session, "onDefault");
+    var eliza = getElizaBot(getConversationId(session));
+    var reply = eliza.transform(session.message.text);
+    session.send(reply);
+    //new Eilzabot
+    //session.send("I do not understand this at all");
+    //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
+  });
 
   /*
   // Very simple alarm scheduler

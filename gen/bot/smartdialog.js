@@ -16,7 +16,8 @@ var builder = require('botbuilder');
 var debug = require('debug');
 var Match = require('../match/match');
 var Analyze = require('../match/analyze');
-var elizabot = require('elizabot');
+var WhatIs = require('../match/whatis');
+var elizabot = require('../extern/elizabot/elizabot');
 //import * as elizabot from 'elizabot';
 var debuglog = debug('smartdialog');
 var PlainRecognizer = require('./plainrecognizer');
@@ -207,6 +208,24 @@ function logQuery(session, intent, result) {
         }
     });
 }
+function logQueryWhatIs(session, intent, result) {
+    fs.appendFile('./logs/showmequeries.txt', "\n" + JSON.stringify({
+        text: session.message.text,
+        timestamp: session.message.timestamp,
+        intent: intent,
+        res: result && result.length && WhatIs.dumpNice(result[0]) || "0",
+        conversationId: session.message.address
+            && session.message.address.conversation
+            && session.message.address.conversation.id || "",
+        userid: session.message.address
+            && session.message.address.user
+            && session.message.address.user.id || ""
+    }), function (err, res) {
+        if (err) {
+            debuglog("logging failed " + err);
+        }
+    });
+}
 /**
  * Construct a bot
  * @param connector {Connector} the connector to use
@@ -283,30 +302,7 @@ function makeBot(connector) {
             debuglog("Show Entity");
             console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
-            /*
-                  var client = builder.EntityRecognizer.findEntity(args.entities, 'client');
-                  var systemObjectId = builder.EntityRecognizer.findEntity(combinedEntities, 'systemObjectId') ||
-                    builder.EntityRecognizer.findEntity(combinedEntities, 'SystemObject') ||
-                    builder.EntityRecognizer.findEntity(combinedEntities, 'builtin.number');
-                  var systemObjectCategory = builder.EntityRecognizer.findEntity(args.entities, 'SystemObjectCategory');
-      
-                  session.dialogData.system = {
-                    systemId: systemId,
-                    client: client
-                  };
-            */
-            /*
-                  var sSystemId = systemId && systemId.entity;
-                  var sClient = client && client.entity;
-                  var ssystemObjectId = systemObjectId && systemObjectId.entity;
-                  var sSystemObjectCategory = systemObjectCategory && systemObjectCategory.entity;
-            */
-            //if (newFlow) {
             var result = Analyze.analyzeAll(a1.entity, theModel.mRules, theModel.tools);
-            // } else {
-            //  const result = Analyze.analyzeAll(a1.entity,
-            //     mRules, tools);
-            // }
             logQuery(session, 'ShowMe', result);
             // test.expect(3)
             //  test.deepEqual(result.weight, 120, 'correct weight');
@@ -318,7 +314,7 @@ function makeBot(connector) {
             debuglog('top : ' + Match.ToolMatch.dumpWeightsTop(result, { top: 3 }));
             if (Analyze.isComplete(result[0])) {
                 session.dialogData.result = result[0];
-                session.send('Showing entity ...');
+                //    session.send('Showing entity ...');
                 next();
             }
             else if (Analyze.getPrompt(result[0])) {
@@ -337,21 +333,6 @@ function makeBot(connector) {
                 // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
                 session.send(reply);
             }
-            /*
-                  console.log('Show entities: ' + JSON.stringify(args.entities, undefined, 2));
-      
-                  // do the big analyis ...
-                        var u = dispatcher.execShowEntity({
-                    systemId: sSystemId,
-                    client: sClient,
-                    tool: sTool,
-                    systemObjectCategory: sSystemObjectCategory,
-                    systemObjectId: ssystemObjectId
-                  })
-            */
-            //  session.send('Showing entity ...');
-            //  console.log("show entity, Show session : " + JSON.stringify(session))
-            // console.log("Show entity : " + JSON.stringify(args.entities))
         },
         function (session, results, next) {
             var result = session.dialogData.result;
@@ -378,14 +359,7 @@ function makeBot(connector) {
                 Analyze.setPrompt(session.dialogData.result, session.dialogData.prompt, results.response);
             }
             if (Analyze.isComplete(session.dialogData.result)) {
-                //
-                //session.send("starting  > " +
-                //   if (newFlow) {
                 var exec = ExecServer.execTool(session.dialogData.result, theModel.records);
-                //         )
-                //} else {
-                //  var exec = Exec.execTool(session.dialogData.result as IMatch.IToolMatch);
-                //}
                 var reply = new builder.Message(session)
                     .text(exec.text)
                     .addEntity(exec.action);
@@ -401,6 +375,44 @@ function makeBot(connector) {
                 }
             }
         },
+    ]);
+    dialog.matches('WhatIs', [
+        function (session, args, next) {
+            var isCombinedIndex = {};
+            var oNewEntity;
+            // expecting entity A1
+            var message = session.message.text;
+            debuglog("WhatIs Entity");
+            console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
+            var category = categoryEntity.entity;
+            var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
+            var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
+            if (!cat) {
+                session.send('I don\'t know anything about "' + category + '"');
+                next();
+            }
+            var result = WhatIs.resolveCategory(cat, a1.entity, theModel.mRules, theModel.records);
+            logQueryWhatIs(session, 'WhatIs', result);
+            var indis = WhatIs.isIndiscriminateResult(result);
+            if (indis) {
+                session.send(indis);
+                next();
+                return;
+            }
+            if (!result || result.length === 0) {
+                session.send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"');
+                next();
+                return;
+            }
+            else {
+                // debuglog('result : ' + JSON.stringify(result, undefined, 2));
+                debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
+                debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
+                // TODO cleansed sentence
+                session.send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n"); //  + JSON.stringify(result[0]));
+            }
+        }
     ]);
     dialog.matches('Wrong', [
         function (session, args, next) {

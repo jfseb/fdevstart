@@ -187,6 +187,7 @@ export function getRuleMap() {
   ["wiki", "web page"],
   ["fiori catalog", "flp catalog", "catalog"],
   ["fiori group", "flp group", "group"],
+  ["url"],
   ["flp", "fiori launchpad", "lauchpage", "launchpad"],
   ["flpd"]
   ].map(function (aArr) {
@@ -427,6 +428,12 @@ export function getMRulesSample(): Array<IMatch.mRule> {
       matchedString: "unit test",
       type: 0,
       word: "unit test",
+    },
+    {
+      category: "category",
+      matchedString: "url",
+      type: 0,
+      word: "url",
     },
     {
       category: "category",

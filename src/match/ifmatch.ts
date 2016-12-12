@@ -24,6 +24,14 @@ export interface IPromptDescription {
 export type IRecord = { [key : string] : string};
 
 
+export interface IWhatIsAnswer {
+  sentence: ISentence,
+  record : IRecord,
+  category : string,
+  result: string,
+  _ranking : number
+}
+
 export interface IMatchedSetRecord {
   setId : string,
   record : IRecord

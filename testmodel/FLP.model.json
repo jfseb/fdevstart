@@ -1,0 +1,37 @@
+{
+  "domain": "FioriFLP",
+  "category": [
+    "systemId",
+    "client",
+    "fiori intent",
+    "tool"
+  ],
+  "wordindex": [
+    "systemId","client"
+  ],
+  "hidden": [
+    "_urlpattern1",
+    "_urlpattern2",
+    "_urlpattern3"
+  ],
+  "tool": {
+    "name": "FLP",
+    "requires": {
+      "systemId": {},
+      "client": {}
+    },
+    "optional": {
+      "fiori intent": {}
+    },
+    "sets" : {
+      "intent": {
+        "set" : ["systemId", "client", "fiori intent"],
+        "response" : "_urlpatternintent"
+      },
+      "none": {
+        "set" : ["systemId", "client"],
+        "response" : "_urlpatternhome"
+      }
+    }
+  }
+}

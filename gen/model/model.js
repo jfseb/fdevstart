@@ -11,8 +11,9 @@ var InputFilterRules = require('../match/inputFilterRules');
 var Tools = require('../match/tools');
 var fs = require('fs');
 var process = require('process');
+var modelPath = process.env["MODELPATH"] || "testmodel";
 ;
-function addSynonyms(synonyms, category, synonymFor, mRules) {
+function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
             category: category,
@@ -22,10 +23,10 @@ function addSynonyms(synonyms, category, synonymFor, mRules) {
             _ranking: 0.95
         };
         debuglog("inserting synonym" + JSON.stringify(oRule));
-        insertRuleIfNotPresent(mRules, oRule);
+        insertRuleIfNotPresent(mRules, oRule, seen);
     });
 }
-function insertRuleIfNotPresent(mRules, rule) {
+function insertRuleIfNotPresent(mRules, rule, seenRules) {
     if (rule.type !== 0 /* WORD */) {
         mRules.push(rule);
         return;
@@ -33,18 +34,25 @@ function insertRuleIfNotPresent(mRules, rule) {
     if ((rule.word === undefined) || (rule.matchedString === undefined)) {
         throw new Error('illegal rule' + JSON.stringify(rule, undefined, 2));
     }
-    var duplicates = mRules.filter(function (oEntry) {
-        return !InputFilterRules.cmpMRule(oEntry, rule);
-    });
-    if (!duplicates.length) {
-        mRules.push(rule);
+    var seenRules = seenRules || {};
+    var r = JSON.stringify(rule);
+    if (seenRules[r]) {
+        debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
+        var duplicates = mRules.filter(function (oEntry) {
+            return !InputFilterRules.cmpMRule(oEntry, rule);
+        });
+        if (duplicates.length > 0) {
+            return;
+        }
     }
-    debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
+    seenRules[r] = rule;
+    mRules.push(rule);
+    return;
 }
 function loadModelData(oMdl, sModelName, oModel) {
     // read the data ->
     // data is processed into mRules directly,
-    var sFileName = ('./sensitive/' + sModelName + ".data.json");
+    var sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function (oEntry) {
@@ -66,9 +74,9 @@ function loadModelData(oMdl, sModelName, oModel) {
                     type: 0 /* WORD */,
                     word: sString,
                     _ranking: 0.95
-                });
+                }, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
-                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules);
+                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
                 }
             }
         });
@@ -76,7 +84,7 @@ function loadModelData(oMdl, sModelName, oModel) {
 }
 function loadModel(sModelName, oModel) {
     debuglog(" loading " + sModelName + " ....");
-    var mdl = fs.readFileSync('./sensitive/' + sModelName + ".model.json", 'utf-8');
+    var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl);
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
@@ -102,13 +110,13 @@ function loadModel(sModelName, oModel) {
     }
     ;
     if (oMdl.synonyms && oMdl.synonyms["tool"]) {
-        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules);
+        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules, oModel.seenRules);
     }
     ;
     if (oMdl.synonyms) {
         Object.keys(oMdl.synonyms).forEach(function (ssynkey) {
             if (oMdl.category.indexOf(ssynkey) >= 0 && ssynkey !== "tool") {
-                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules);
+                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
             }
         });
     }
@@ -130,7 +138,7 @@ function loadModels() {
         mRules: [],
         records: []
     };
-    var smdls = fs.readFileSync('./sensitive/models.json', 'utf-8');
+    var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
     mdls.forEach(function (sModelName) {
         loadModel(sModelName, oModel);
@@ -143,10 +151,10 @@ function loadModels() {
             type: 0 /* WORD */,
             word: category,
             _ranking: 0.95
-        });
+        }, oModel.seenRules);
     });
     //add a filler rule
-    var sfillers = fs.readFileSync('./sensitive/filler.json', 'utf-8');
+    var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
     var fillers = JSON.parse(sfillers);
     var re = "^((" + fillers.join(")|(") + "))$";
     oModel.mRules.push({
@@ -168,6 +176,7 @@ function loadModels() {
     */
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
+    delete oModel.seenRules;
     return oModel;
 }
 exports.loadModels = loadModels;
