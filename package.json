@@ -18,7 +18,7 @@
     "run": "nodeunit",
     "start": "electron .",
     "ui": "electron .",
-    "instrument": "jscoverage gen/ gen_cov/",
+    "instrument": "jscoverage gen2/ gen_cov/",
     "instrumentGULP": "gulp instrument",
     "testcovWIN": "set FSD_COVERAGE=1 && nodeunit test/match test/exec test/model test/bot test/utils test/graph --reporter=lcov >info.lcov",
     "testcovNoReporter": "export FSD_COVERAGE=1 && nodeunit test/match test/exec test/model test/bot test/utils test/graph ",
