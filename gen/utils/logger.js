@@ -35,10 +35,10 @@ function logIt(logger, arg) {
     fs.writeFileSync(filename, n, { encoding: 'utf-8', flag: 'a' });
 }
 function logger(name, flags) {
-    flags = flags || "a";
-    if (flags !== 'a' && flags !== '') {
+    if (flags !== 'a' && flags !== '' && flags !== undefined) {
         throw new Error('only a allowed as flags');
     }
+    flags = (flags === undefined) ? 'a' : flags;
     if (typeof name !== "string" || !/^[A-Za-z][A-Za-z0-9_]+$/.exec(name)) {
         throw new Error('Logger name must be at least two alphanumeric characters');
     }

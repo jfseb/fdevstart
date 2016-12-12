@@ -13,7 +13,7 @@ var Logger = require(root + '/utils/logger.js');
  */
 
 exports.testCTor = function (test) {
-  test.expect(5);
+  test.expect(8);
   try {
     Logger.logger('$');
     test.ok(false,true);
@@ -34,13 +34,37 @@ exports.testCTor = function (test) {
   }
 
   try {
+    // illegal argument
+    Logger.logger('ABCDEF','w');
+    test.ok(false,true,'wrong flag');
+  } catch (e) {
+    test.ok(true,true);
+  }
+
+
+  try {
     Logger.logger('AaBCD.def');
     test.ok(false,true);
   } catch (e) {
     test.ok(true,true);
   }
-  Logger.logger('AB');
+  var log = Logger.logger('AB');
+
+  try {
+    Logger.logger('AB','');
+    test.ok(false,true, 'differnt flag on 2nd invocation');
+  } catch (e) {
+    test.ok(true,true);
+  }
   Logger.logger('aBC');
+
+  try {
+    log(undefined);
+    test.ok(false,true);
+  } catch (e) {
+    test.ok(true,true);
+  }
+
   Logger.logger('ABC_abc0234');
   test.ok(true,true);
   test.done();
