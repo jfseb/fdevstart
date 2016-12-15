@@ -282,7 +282,7 @@ function isIndiscriminateResult(results) {
         if (discriminating.length) {
             return "Many comparable results, perhaps you want to specify a discriminating " + discriminating.join(',');
         }
-        return 'Your question does not have a specifci answer';
+        return 'Your question does not have a specific answer';
     }
     return undefined;
 }

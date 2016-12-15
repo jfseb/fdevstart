@@ -29,7 +29,9 @@
   ],
   "ListAll": [
     "List all <categories> (in|for) <insth>",
-    "List all <categories>"
+    "List all <categories>",
+    "List <categories> ((in)|(for)) <insth>",
+    "List <categories>"
   ],
   "Help": [
     "Help",

@@ -190,18 +190,19 @@ exports.test_fnFindUnitTest = function (test) {
   test.done();
 };
 
-var aShowEntityActions = [{
-  context: {
-    systemId: 'uv2',
-    client: '120',
-    systemtype: 'ABAPFES',
-    tool: 'FLP'
+var aShowEntityActions = [
+  {
+    context: {
+      systemId: 'uv2',
+      client: '120',
+      systemtype: 'ABAPFES',
+      tool: 'FLP'
+    },
+    result: {
+      type: 'URL',
+      pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client=120'
+    }
   },
-  result: {
-    type: 'URL',
-    pattern: 'https://ldciuv2.wdf.sap.corp:44355/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client=120'
-  }
-},
   {
     context: {
       systemId: 'uv2',

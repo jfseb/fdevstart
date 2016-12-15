@@ -504,19 +504,19 @@ function makeBot(connector) {
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
       if (category === "categories") {
         var res = theModel.category.join(";\n");
-        session.send("my categories are " + res);
+        session.send("my categories are ...\n" + res);
         return;
       }
       if (category === "domains") {
         var res = theModel.domains.join(";\n");
-        session.send("my domains are " + res);
+        session.send("my domains are ...\n" + res);
         return;
       }
       if (category === "tools") {
         var res = theModel.tools.map(function (oTool) {
           return oTool.name;
         }).join(";\n");
-        session.send("my tools are " + res);
+        session.send("my tools are ...\n" + res);
         return;
       }
       var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
@@ -526,7 +526,7 @@ function makeBot(connector) {
         return;
       }
       debuglog('category identified:' + cat);
-      if (a1.entity) {
+      if (a1 && a1.entity) {
         debuglog('got filter:' + a1.entity);
         var result1 = ListAll.listAllWithContext(cat, a1.entity,
           theModel.mRules, theModel.records);
@@ -539,7 +539,7 @@ function makeBot(connector) {
         debuglog('listall result:' + JSON.stringify(result1));
         var joinresults = ListAll.joinResults(result1);
         logQueryWhatIs(session, 'ListAll', result1);
-        session.send("the " + category + " for " + a1.entity + " are " + joinresults.join(";\n"));
+        session.send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n"));
         return;
       } else {
         // no entity, e.g. list all countries
@@ -549,7 +549,7 @@ function makeBot(connector) {
         if (result.length) {
           debuglog('listall result:' + JSON.stringify(result));
           var joinresults = ListAll.joinResults(result);
-          session.send("the " + category + " for " + a1.entity + " are " + joinresults.join(";\n"));
+          session.send("the " + category + " are ...\n" + joinresults.join(";\n"));
           return;
         } else {
           session.send("Found no data having \"" + cat + "\"");
@@ -558,8 +558,6 @@ function makeBot(connector) {
       }
     }
   ]);
-
-
 
 
   dialog.matches('Wrong', [
