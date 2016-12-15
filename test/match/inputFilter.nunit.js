@@ -18,83 +18,84 @@ const ab = inputFilter;
 
 exports.testcountAinB = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1}, {hijs: 4}), 0, 'ok');
+  test.equal(fut({ abc: 'def', hij: 1 }, { hijs: 4 }), 0, 'ok');
   test.done();
 };
 
 exports.testcountAinBOne = function (test) {
   //  console.log(JSON.stringify(inputFilter, undefined, 2) + "yyyyyyyyyyyyyyyy")
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1}, {hij: 2}), 1, 'ok');
+  test.equal(fut({ abc: 'def', hij: 1 }, { hij: 2 }), 1, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareEQ = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1}, {hij: 1}, function (s1, s2) { return s1 && (s1 === s2); }), 1, 'ok');
+  test.equal(fut({ abc: 'def', hij: 1 }, { hij: 1 }, function (s1, s2) { return s1 && (s1 === s2); }), 1, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareFN = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1, klm: 'U'}, {hij: 1, klm: 'U'},
+  test.equal(fut({ abc: 'def', hij: 1, klm: 'U' }, { hij: 1, klm: 'U' },
     function (s1, s2) { return s1 && s1 === s2; }), 2, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareMult1 = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1, klm: undefined}, {hij: 1, klm: 'U'},
+  test.equal(fut({ abc: 'def', hij: 1, klm: undefined }, { hij: 1, klm: 'U' },
     function (s1, s2) { return s1 && s1 === s2; }), 1, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareMult = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
+  test.equal(fut({ abc: 'def', hij: 1, klm: 0 }, { hij: 1, klm: 0 },
     function (s1, s2) { return s1 !== undefined && s1 === s2; }), 2, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareIgnore = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
+  test.equal(fut({ abc: 'def', hij: 1, klm: 0 }, { hij: 1, klm: 0 },
     function (s1, s2) { return s1 !== undefined && s1 === s2; }, 'klm'), 1, 'ok');
   test.done();
 };
 
 exports.testcountAinBCompareIgnore2 = function (test) {
   var fut = inputFilter.countAinB;
-  test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0},
+  test.equal(fut({ abc: 'def', hij: 1, klm: 0 }, { hij: 1, klm: 0 },
     function (s1, s2) { return (s1 !== undefined) && (s1 === s2); }, ['klm', 'hij']), 0, 'ok');
   test.done();
 };
 
 exports.testspuriouAnotInB = function (test) {
   var fut = inputFilter.spuriousAnotInB;
-  test.deepEqual(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0}, ['klm', 'hij']), 1, 'ok');
+  test.deepEqual(fut({ abc: 'def', hij: 1, klm: 0 }, { hij: 1, klm: 0 }, ['klm', 'hij']), 1, 'ok');
   test.done();
 };
 
 exports.testspuriouAnotInBIgnore = function (test) {
   var fut = inputFilter.spuriousAnotInB;
-  test.equal(fut({abc: 'def', hij: 1, klm: 0}, {hij: 1, klm: 0}, ['abc', ' klm', 'hij']), 0, 'ok');
+  test.equal(fut({ abc: 'def', hij: 1, klm: 0 }, { hij: 1, klm: 0 }, ['abc', ' klm', 'hij']), 0, 'ok');
   test.done();
 };
 
 exports.testspuriouAnotInBIgnore2 = function (test) {
   var fut = inputFilter.spuriousAnotInB;
-  test.equal(fut({abc: 'def', 'u': 1, hij: 1, klm: 0}, {c: 3, hij: 1, klm: 0},
+  test.equal(fut({ abc: 'def', 'u': 1, hij: 1, klm: 0 }, { c: 3, hij: 1, klm: 0 },
     ['abc', ' klm', 'hij']), 1, 'ok');
   test.done();
 };
 
 exports.testcompareContext = function (test) {
   var fut = inputFilter.compareContext;
-  var a = {abc: 'def', hij: 1, klm: 0, ff: 'B'};
-  var b = {hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2};
+  var a = { abc: 'def', hij: 1, klm: 0, ff: 'B' };
+  var b = { hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2 };
   test.deepEqual(fut(a, b),
-    { equal: 2,
+    {
+      equal: 2,
       different: 1,
       spuriousL: 1,
       spuriousR: 3
@@ -105,10 +106,11 @@ exports.testcompareContext = function (test) {
 
 exports.testcompareContextIgnorePrivate = function (test) {
   var fut = inputFilter.compareContext;
-  var a = {abc: 'def', _a: 1, _b: 3, hij: 1, klm: 0, ff: 'B'};
-  var b = {hij: 1, _a: 1, _c: 3, _b: 4, klm: 0, ff: 'A', e: 1, c: 0, h: 2};
+  var a = { abc: 'def', _a: 1, _b: 3, hij: 1, klm: 0, ff: 'B' };
+  var b = { hij: 1, _a: 1, _c: 3, _b: 4, klm: 0, ff: 'A', e: 1, c: 0, h: 2 };
   test.deepEqual(fut(a, b),
-    { equal: 2,
+    {
+      equal: 2,
       different: 1,
       spuriousL: 1,
       spuriousR: 3
@@ -119,10 +121,11 @@ exports.testcompareContextIgnorePrivate = function (test) {
 
 exports.testcompareContextIgnore = function (test) {
   var fut = inputFilter.compareContext;
-  var a = {abc: 'def', hij: 1, klm: 0, ff: 'B'};
-  var b = {hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2};
+  var a = { abc: 'def', hij: 1, klm: 0, ff: 'B' };
+  var b = { hij: 1, klm: 0, ff: 'A', e: 1, c: 0, h: 2 };
   test.deepEqual(fut(a, b, ['abc']),
-    { equal: 2,
+    {
+      equal: 2,
       different: 1,
       spuriousL: 0,
       spuriousR: 3
@@ -233,7 +236,8 @@ exports.test_matchWordAliasMatchOthersFalseOverride = function (test) {
     abc: 'ABC'
   };
   test.deepEqual(fn(oRule,
-    oValue, { matchothers: false,
+    oValue, {
+      matchothers: false,
       override: true
     }),
     {
@@ -316,7 +320,8 @@ const enumRULETYPEREGEXP = 1;
 exports.test_applyRulesEqualChoice = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -324,7 +329,8 @@ exports.test_applyRulesEqualChoice = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -350,7 +356,8 @@ exports.test_applyRulesEqualChoice = function (test) {
 exports.test_matchOthersTrue = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -358,7 +365,8 @@ exports.test_matchOthersTrue = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -382,7 +390,8 @@ exports.test_matchOthersTrue = function (test) {
 exports.test_matchOthersFalse = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -390,7 +399,8 @@ exports.test_matchOthersFalse = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -415,7 +425,8 @@ exports.test_matchOthersFalse = function (test) {
 exports.test_matchOthersFalseOverride = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -423,7 +434,8 @@ exports.test_matchOthersFalseOverride = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -448,7 +460,8 @@ exports.test_matchOthersFalseOverride = function (test) {
 exports.test_applyRules = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD, // WORD
       follows: {
@@ -456,7 +469,8 @@ exports.test_applyRules = function (test) {
         'keyB': 'CategoryC'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD, // WORD
       follows: {
@@ -481,7 +495,8 @@ exports.test_applyRules = function (test) {
 exports.test_applyRulesEqualChoice = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -489,7 +504,8 @@ exports.test_applyRulesEqualChoice = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -515,7 +531,8 @@ exports.test_applyRulesEqualChoice = function (test) {
 exports.test_applyRulesNotCategoryFit = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -523,7 +540,8 @@ exports.test_applyRulesNotCategoryFit = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -550,7 +568,8 @@ exports.test_applyRulesNotCategoryFit = function (test) {
 exports.test_applyRulesGoodFitInOtherCategory = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -558,7 +577,8 @@ exports.test_applyRulesGoodFitInOtherCategory = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valueb',
+    {
+      word: 'valueb',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -585,7 +605,8 @@ exports.test_applyRulesGoodFitInOtherCategory = function (test) {
 exports.test_applyRulesLevenBestFitCategory = function (test) {
   // prepare
   var aRules = [
-    { word: 'valuea',
+    {
+      word: 'valuea',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -593,7 +614,8 @@ exports.test_applyRulesLevenBestFitCategory = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valueabc',
+    {
+      word: 'valueabc',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -601,7 +623,8 @@ exports.test_applyRulesLevenBestFitCategory = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valueabcdefg',
+    {
+      word: 'valueabcdefg',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -609,7 +632,8 @@ exports.test_applyRulesLevenBestFitCategory = function (test) {
         'keyB': 'CategoryB'
       }
     },
-    { word: 'valueb',
+    {
+      word: 'valueb',
       key: 'keyA',
       type: enumRULETYPEWORD,
       follows: {
@@ -734,7 +758,7 @@ exports.test_ruleLevenBeforeFallback = function (test) {
   test.deepEqual(res[0].keyA, 'gibts gar nicht', 'result propagated');
   test.deepEqual(res[0].keyB, undefined, 'category picked');
   test.done();
-// test.deepEqual(res[1].keyB, 'CategoryC', 'category respected')
+  // test.deepEqual(res[1].keyB, 'CategoryC', 'category respected')
 };
 
 exports.test_extractArgsMap = function (test) {
@@ -746,7 +770,7 @@ exports.test_extractArgsMap = function (test) {
 exports.test_extractArgsMapUndef = function (test) {
   var res = ab.extractArgsMap(['A', 'B', 'C'], undefined);
   test.deepEqual(res,
-    { }, ' incorrect result');
+    {}, ' incorrect result');
   test.done();
 };
 exports.test_extractArgsMapEmptyMatch = function (test) {
@@ -802,7 +826,8 @@ exports.test_ruleRegexp = function (test) {
   // prepare
   // there a
   var aRules = [
-    { regexp: /^[a-z0-9_]{3,3}$/,
+    {
+      regexp: /^[a-z0-9_]{3,3}$/,
       key: 'keyA',
       type: enumRULETYPEREGEXP,
       follows: {
@@ -854,7 +879,8 @@ exports.test_ruleRegexpExtraction = function (test) {
   // prepare
   // there a
   var aRules = [
-    { regexp: /^([a-z0-9_]{3,3})clnt(\d{3,3})$/i,
+    {
+      regexp: /^([a-z0-9_]{3,3})clnt(\d{3,3})$/i,
       key: 'keyA',
       argsMap: {
         1: 'systemId',
@@ -885,7 +911,8 @@ exports.test_ruleRegexpExtractionReplacing = function (test) {
   // prepare
   // there a
   var aRules = [
-    { regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
+    {
+      regexp: /^([a-z0-9_]{3,3})CLNT(\d{3,3})$/i,
       key: 'systemId',
       argsMap: {
         1: 'systemId',
@@ -983,7 +1010,7 @@ exports.testCategorizeString = function (test) {
   var res = ab.categorizeString('UV2', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(res, [
-    { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking : 1 },
+    { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking: 1 },
     { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking: 0.7 },
     { string: 'UV2', matchedString: 'UV2', category: 'fiori catalog', _ranking: 0.5 },
     { string: 'UV2', matchedString: 'UV2', category: 'systemObjectId', _ranking: 0.5 }
@@ -1001,7 +1028,7 @@ exports.testCategorizeStringClient = function (test) {
       'string': '120',
       'matchedString': '120',
       'category': 'client',
-      _ranking : 0.8
+      _ranking: 0.8
     }, 'what is this nr 2');
   test.done();
 };
@@ -1011,7 +1038,7 @@ exports.testCategorizeStringWiki = function (test) {
   var res = ab.categorizeString('wiki', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(res, [
- { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 },
     { string: 'wiki', matchedString: 'wiki', category: 'tool', _ranking: 1 },
     { string: 'wiki', matchedString: 'wiki', category: 'transaction', _ranking: 0.7 },
     { string: 'wiki', matchedString: 'wiki', category: 'fiori catalog', _ranking: 0.5 },
@@ -1030,13 +1057,13 @@ exports.testCategorizeStringExactNoMatch = function (test) {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
       'category': 'fiori catalog',
-      _ranking : 0.5
+      _ranking: 0.5
     },
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
       'category': 'systemObjectId',
-      _ranking : 0.5
+      _ranking: 0.5
     }
   ], 'what is this nr 2');
   test.done();
@@ -1053,27 +1080,27 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking : 1  * ab.levenPenalty(7),
-      levenmatch : 7
+      _ranking: 1 * ab.levenPenalty(7),
+      levenmatch: 7
     },
-  /*  {
-      'string': 'NavTargetRes',
-      'matchedString': 'NavTargetResolutionAdapter',
-      'category': 'unit test',
-      _ranking : 1 * ab.levenPenalty(17),
-      levenmatch : 17
-    }, */
+    /*  {
+        'string': 'NavTargetRes',
+        'matchedString': 'NavTargetResolutionAdapter',
+        'category': 'unit test',
+        _ranking : 1 * ab.levenPenalty(17),
+        levenmatch : 17
+      }, */
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
       'category': 'fiori catalog',
-      _ranking : 0.5
+      _ranking: 0.5
     },
     {
       'string': 'NavTargetRes',
       'matchedString': 'NavTargetRes',
       'category': 'systemObjectId',
-      _ranking : 0.5
+      _ranking: 0.5
     }
   ], 'what is this nr 2');
   test.done();
@@ -1089,19 +1116,19 @@ exports.testCategorizeStringExactMatch = function (test) {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking : 1,
+      _ranking: 1,
     },
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
       'category': 'fiori catalog',
-      _ranking : 0.5
+      _ranking: 0.5
     },
     {
       'string': 'NavTargetResolution',
       'matchedString': 'NavTargetResolution',
       'category': 'systemObjectId',
-      _ranking : 0.5
+      _ranking: 0.5
     }
   ], ' exact match');
   test.done();
@@ -1117,7 +1144,7 @@ exports.testCategorizeStringDistanceNavTarget = function (test) {
       'string': 'NavTargetResolut',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking : 1*ab.levenPenalty(3),
+      _ranking: 1 * ab.levenPenalty(3),
       'levenmatch': 3
     },
     /*
@@ -1132,13 +1159,13 @@ exports.testCategorizeStringDistanceNavTarget = function (test) {
       'string': 'NavTargetResolut',
       'matchedString': 'NavTargetResolut',
       'category': 'fiori catalog',
-      _ranking : 0.5
+      _ranking: 0.5
     },
     {
       'string': 'NavTargetResolut',
       'matchedString': 'NavTargetResolut',
       'category': 'systemObjectId',
-      _ranking : 0.5,
+      _ranking: 0.5,
     }
   ], 'what is this 3');
   test.done();
@@ -1150,42 +1177,42 @@ exports.testCategorizeStringDistanceNavTargetInBetween = function (test) {
   var res = ab.categorizeString('NavTargetResolutAdapt', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res[0].matchedString , 'NavTargetResolution');
-  test.deepEqual(res[1].matchedString , 'NavTargetResolutionAdapter');
+  test.deepEqual(res[0].matchedString, 'NavTargetResolution');
+  test.deepEqual(res[1].matchedString, 'NavTargetResolutionAdapter');
   test.deepEqual(res.length, 4);
 
-/*
+  /*
 
-  , [
-    {
-      'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolution',
-      'category': 'unit test',
-      _ranking : 1*ab.levenPenalty(4),
-      'levenmatch': 4
-    },
-    {
-      'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolutionAdapter',
-      'category': 'unit test',
-      _ranking : ab.levenPenalty(14),
-      'levenmatch': 14
-    },
-    {
-      'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolu',
-      'category': 'fiori catalog',
-      _ranking : 0.5
-    },
-    {
-      'string': 'NavTargetResolu',
-      'matchedString': 'NavTargetResolu',
-      'category': 'systemObjectId',
-      _ranking : 0.5,
-    }
-  ], 'what is this 3');
+    , [
+      {
+        'string': 'NavTargetResolu',
+        'matchedString': 'NavTargetResolution',
+        'category': 'unit test',
+        _ranking : 1*ab.levenPenalty(4),
+        'levenmatch': 4
+      },
+      {
+        'string': 'NavTargetResolu',
+        'matchedString': 'NavTargetResolutionAdapter',
+        'category': 'unit test',
+        _ranking : ab.levenPenalty(14),
+        'levenmatch': 14
+      },
+      {
+        'string': 'NavTargetResolu',
+        'matchedString': 'NavTargetResolu',
+        'category': 'fiori catalog',
+        _ranking : 0.5
+      },
+      {
+        'string': 'NavTargetResolu',
+        'matchedString': 'NavTargetResolu',
+        'category': 'systemObjectId',
+        _ranking : 0.5,
+      }
+    ], 'what is this 3');
 
-  */
+    */
   test.done();
 };
 
@@ -1196,10 +1223,10 @@ exports.testCategorizeStringBadRule = function (test) {
   test.expect(2);
   try {
     ab.categorizeString('NavTargetResolu', false,
-      [ {
+      [{
         type: -123,
         word: 'walk this way'
-      } ]);
+      }]);
     test.ok(false, 'do not get here');
   } catch (e) {
     test.ok(e.message.indexOf('walk this way') >= 0);
@@ -1245,38 +1272,59 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
   var res = ab.analyzeString('UV2 client 120', ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [ [ [ { string: 'UV2 client 120',
-    matchedString: 'UV2 client 120',
-    category: 'systemObjectId',
-    _ranking: 0.5 } ] ],
-    [ [ { string: 'UV2',
+  test.deepEqual(res, [
+    [
+      [
+        {
+          string: 'UV2 client 120',
+          matchedString: 'UV2 client 120',
+          category: 'systemObjectId',
+          _ranking: 0.5
+        }
+      ]
+    ],
+    [[{
+      string: 'UV2',
       matchedString: 'UV2',
       category: 'systemId',
-      _ranking: 1 } ],
-      [ { string: 'client 120',
+      _ranking: 1
+    }],
+      [{
+        string: 'client 120',
         matchedString: 'client 120',
         category: 'systemObjectId',
-        _ranking: 0.5 } ] ],
-    [ [ { string: 'UV2 client',
+        _ranking: 0.5
+      }]],
+    [[{
+      string: 'UV2 client',
       matchedString: 'UV2 client',
       category: 'systemObjectId',
-      _ranking: 0.5 } ],
-      [ { string: '120',
+      _ranking: 0.5
+    }],
+      [{
+        string: '120',
         matchedString: '120',
         category: 'client',
-        _ranking: 0.8 } ] ],
-    [ [ { string: 'UV2',
+        _ranking: 0.8
+      }]],
+    [[{
+      string: 'UV2',
       matchedString: 'UV2',
       category: 'systemId',
-      _ranking: 1 } ],
-      [ { string: 'client',
+      _ranking: 1
+    }],
+      [{
+        string: 'client',
         matchedString: 'client',
         category: 'category',
-        _ranking: 1 } ],
-      [ { string: '120',
+        _ranking: 1
+      }],
+      [{
+        string: '120',
         matchedString: '120',
         category: 'client',
-        _ranking: 0.8 } ] ]
+        _ranking: 0.8
+      }]]
   ], 'correct res');
   test.done();
 };
@@ -1287,7 +1335,7 @@ var mRulesStrict = [
     'matchedString': 'unit test',
     'type': 0,
     'word': 'unit test',
-    'lowercaseword' : 'unit test',
+    'lowercaseword': 'unit test',
     '_ranking': 0.95
   },
   {
@@ -1295,7 +1343,7 @@ var mRulesStrict = [
     'matchedString': 'wiki',
     'type': 0,
     'word': 'wiki',
-    'lowercaseword' : 'wiki',
+    'lowercaseword': 'wiki',
     '_ranking': 0.95
   },
   {
@@ -1303,7 +1351,7 @@ var mRulesStrict = [
     'matchedString': '120',
     'type': 0,
     'word': '120',
-    'lowercaseword' : '120',
+    'lowercaseword': '120',
     '_ranking': 0.95
   }];
 
@@ -1312,15 +1360,18 @@ exports.testAnalyzeStringNoGenerics1 = function (test) {
   var res = ab.analyzeString('unit test 120', mRulesStrict);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [ [ [ { string: 'unit test',
+  test.deepEqual(res, [[[{
+    string: 'unit test',
     matchedString: 'unit test',
     category: 'category',
-    _ranking: 0.95 } ],
-    [ { string: '120',
+    _ranking: 0.95
+  }],
+    [{
+      string: '120',
       matchedString: '120',
       category: 'client',
       _ranking: 0.95
-    } ]
+    }]
   ]
   ], 'correct res');
   test.done();
@@ -1331,9 +1382,9 @@ exports.testAnalyzeStringNoGenericEmpty = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.analyzeString('gar nix  test is 120', mRulesStrict);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
-  test.deepEqual(res, [ ], 'correct res');
+  test.deepEqual(res, [], 'correct res');
   var res2 = ab.expandMatchArr(res);
-  test.deepEqual(res2, [ ], 'correct res');
+  test.deepEqual(res2, [], 'correct res');
   test.done();
 };
 
@@ -1344,25 +1395,31 @@ exports.testCategorizeStringDistance = function (test) {
   var res = ab.analyzeString('cat1 and ab', sampleRules);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [ [ [ { string: 'cat1 and ab',
+  test.deepEqual(res, [[[{
+    string: 'cat1 and ab',
     matchedString: 'cat1 and ab',
     category: 'unknown',
-    _ranking : 1 } ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' , _ranking : 1},
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking : 1 } ],
-      [ { string: 'and ab',
+    _ranking: 1
+  }]],
+    [[{ string: 'cat1', matchedString: 'CAT2', category: 'category', _ranking: 1 },
+  { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking: 1 }],
+      [{
+        string: 'and ab',
         matchedString: 'and ab',
-        category: 'unknown' , _ranking : 1} ] ],
-    [ [ { string: 'cat1 and',
+        category: 'unknown', _ranking: 1
+      }]],
+    [[{
+      string: 'cat1 and',
       matchedString: 'cat1 and',
-      category: 'unknown' , _ranking : 1} ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' , _ranking : 1},
-      { string: 'ab', matchedString: 'ab', category: 'unknown' , _ranking : 1} ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category', _ranking : 1 },
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking : 1 } ],
-    [ { string: 'and', matchedString: 'and', category: 'unknown', _ranking : 1 } ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1', _ranking : 1 },
-      { string: 'ab', matchedString: 'ab', category: 'unknown', _ranking : 1 } ] ] ], ' correct result ');
+      category: 'unknown', _ranking: 1
+    }],
+      [{ string: 'ab', matchedString: 'ab', category: 'CAT1', _ranking: 1 },
+  { string: 'ab', matchedString: 'ab', category: 'unknown', _ranking: 1 }]],
+    [[{ string: 'cat1', matchedString: 'CAT2', category: 'category', _ranking: 1 },
+  { string: 'cat1', matchedString: 'cat1', category: 'unknown', _ranking: 1 }],
+  [{ string: 'and', matchedString: 'and', category: 'unknown', _ranking: 1 }],
+      [{ string: 'ab', matchedString: 'ab', category: 'CAT1', _ranking: 1 },
+  { string: 'ab', matchedString: 'ab', category: 'unknown', _ranking: 1 }]]], ' correct result ');
   test.done();
 };
 
@@ -1370,20 +1427,20 @@ exports.testCategorizeStringDistance = function (test) {
 
 exports.testExpand0 = function (test) {
   test.ok(1);
-  var src = [ [
-    [ { string : 'a', a : 1},
-      { string : 'b', a : 1} ],
-    [ { string : '1', a : 1},
-      { string : '2', a : 1},
-      { string : '3', a : 1} ]
-  ] ];
+  var src = [[
+    [{ string: 'a', a: 1 },
+    { string: 'b', a: 1 }],
+    [{ string: '1', a: 1 },
+    { string: '2', a: 1 },
+    { string: '3', a: 1 }]
+  ]];
   var res = ab.expandMatchArr(src);
-  test.deepEqual(res,[ [ { string: 'a', a: 1 }, { string: '1', a: 1 } ],
-  [ { string: 'b', a: 1 }, { string: '1', a: 1 } ],
-  [ { string: 'a', a: 1 }, { string: '2', a: 1 } ],
-  [ { string: 'b', a: 1 }, { string: '2', a: 1 } ],
-  [ { string: 'a', a: 1 }, { string: '3', a: 1 } ],
-  [ { string: 'b', a: 1 }, { string: '3', a: 1 } ] ], 'correct result');
+  test.deepEqual(res, [[{ string: 'a', a: 1 }, { string: '1', a: 1 }],
+  [{ string: 'b', a: 1 }, { string: '1', a: 1 }],
+  [{ string: 'a', a: 1 }, { string: '2', a: 1 }],
+  [{ string: 'b', a: 1 }, { string: '2', a: 1 }],
+  [{ string: 'a', a: 1 }, { string: '3', a: 1 }],
+  [{ string: 'b', a: 1 }, { string: '3', a: 1 }]], 'correct result');
 
   test.done();
 };
@@ -1393,27 +1450,29 @@ exports.testExpand0 = function (test) {
 exports.testExpand1 = function (test) {
   test.ok(1);
 
-  var src = [ [ [ { string : 'cat1 and ab', a : 1} ] ],
-    [ [ {'string': 'cat1', b1 : 1},
-       { 'string': 'cat1', b1 : 2}
+  var src = [[[{ string: 'cat1 and ab', a: 1 }]],
+    [[{ 'string': 'cat1', b1: 1 },
+  { 'string': 'cat1', b1: 2 }
     ],
-      [ { string: 'and ab',
-        b2 : 1 } ] ],
-    [ [ { string: 'cat1 and'  } ],
-      [ { string: 'ab', c21 : 1 },
-        { string: 'ab',  c21 : 2 },
-        { string: 'ab', c21 : 3 }
+      [{
+        string: 'and ab',
+        b2: 1
+      }]],
+    [[{ string: 'cat1 and' }],
+      [{ string: 'ab', c21: 1 },
+  { string: 'ab', c21: 2 },
+  { string: 'ab', c21: 3 }
       ]
     ]
   ];
 
   var res = ab.expandMatchArr(src);
-  test.deepEqual(res,[ [ { string: 'cat1 and ab', a: 1 } ],
-  [ { string: 'cat1', b1: 1 }, { string: 'and ab', b2: 1 } ],
-  [ { string: 'cat1', b1: 2 }, { string: 'and ab', b2: 1 } ],
-  [ { string: 'cat1 and' }, { string: 'ab', c21: 1 } ],
-  [ { string: 'cat1 and' }, { string: 'ab', c21: 2 } ],
-  [ { string: 'cat1 and' }, { string: 'ab', c21: 3 } ] ], 'correct result');
+  test.deepEqual(res, [[{ string: 'cat1 and ab', a: 1 }],
+  [{ string: 'cat1', b1: 1 }, { string: 'and ab', b2: 1 }],
+  [{ string: 'cat1', b1: 2 }, { string: 'and ab', b2: 1 }],
+  [{ string: 'cat1 and' }, { string: 'ab', c21: 1 }],
+  [{ string: 'cat1 and' }, { string: 'ab', c21: 2 }],
+  [{ string: 'cat1 and' }, { string: 'ab', c21: 3 }]], 'correct result');
 
   test.done();
 };
@@ -1421,25 +1480,31 @@ exports.testExpand1 = function (test) {
 exports.testExpandMult = function (test) {
   test.ok(1);
 
-  var src = [ [ [ { string: 'cat1 and ab',
+  var src = [[[{
+    string: 'cat1 and ab',
     matchedString: 'cat1 and ab',
-    category: 'unknown' } ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' },
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown' } ],
-      [ { string: 'and ab',
+    category: 'unknown'
+  }]],
+    [[{ string: 'cat1', matchedString: 'CAT2', category: 'category' },
+  { string: 'cat1', matchedString: 'cat1', category: 'unknown' }],
+      [{
+        string: 'and ab',
         matchedString: 'and ab',
-        category: 'unknown' } ] ],
-    [ [ { string: 'cat1 and',
+        category: 'unknown'
+      }]],
+    [[{
+      string: 'cat1 and',
       matchedString: 'cat1 and',
-      category: 'unknown' } ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' },
-      { string: 'ab', matchedString: 'ab', category: 'unknown' } ] ],
-    [ [ { string: 'cat1', matchedString: 'CAT2', category: 'category' },
-      { string: 'cat1', matchedString: 'cat1', category: 'unknown' } ],
-    [ { string: 'and', matchedString: 'and', category: 'unknown' } ],
-      [ { string: 'ab', matchedString: 'ab', category: 'CAT1' },
-      { string: 'ab', matchedString: 'ab', category: 'unknown' } ] ] ];
-// 1 +  2 x 1  + 1 x 2 + 2 x 1 x 2
+      category: 'unknown'
+    }],
+      [{ string: 'ab', matchedString: 'ab', category: 'CAT1' },
+  { string: 'ab', matchedString: 'ab', category: 'unknown' }]],
+    [[{ string: 'cat1', matchedString: 'CAT2', category: 'category' },
+  { string: 'cat1', matchedString: 'cat1', category: 'unknown' }],
+  [{ string: 'and', matchedString: 'and', category: 'unknown' }],
+      [{ string: 'ab', matchedString: 'ab', category: 'CAT1' },
+  { string: 'ab', matchedString: 'ab', category: 'unknown' }]]];
+  // 1 +  2 x 1  + 1 x 2 + 2 x 1 x 2
   var res = ab.expandMatchArr(src);
   test.equal(res.length, 9, 'correct length');
   test.done();
@@ -1451,19 +1516,20 @@ exports.testExtractCategory = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
 
   var sentence = [
-        { string: 'wiki', matchedString: 'wiki', category: 'category' },
-        { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
-        { string: 'cat', matchedString: 'catalog', category: 'category' },
-        { string: 'My cat', matchedString: 'My cat', category: 'wiki' },
-        { string: 'in', matchedString: 'in', category: 'filler' },
-        { string: 'wiki', matchedString: 'wiki', category: 'category' }
+    { string: 'wiki', matchedString: 'wiki', category: 'category' },
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki' },
+    { string: 'cat', matchedString: 'catalog', category: 'category' },
+    { string: 'My cat', matchedString: 'My cat', category: 'wiki' },
+    { string: 'in', matchedString: 'in', category: 'filler' },
+    { string: 'wiki', matchedString: 'wiki', category: 'category' }
   ];
 
   var res = ab.extractCategoryMap(sentence);
 
   test.deepEqual(res,
-    { 'wiki' : [ { pos : 0 }, { pos : 5}],
-      'catalog' : [{ pos : 2}]
+    {
+      'wiki': [{ pos: 0 }, { pos: 5 }],
+      'catalog': [{ pos: 2 }]
     }, 'correct map');
   test.done();
 };
@@ -1474,14 +1540,14 @@ exports.testreinforceSentence = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
 
   var sentence = [
-    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1},
-    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'cat', matchedString: 'catalog', category: 'category' , _ranking : 1},
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 }
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 },
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
   ];
 
   var res = ab.reinForceSentence(sentence);
@@ -1489,26 +1555,30 @@ exports.testreinforceSentence = function (test) {
 
   var resline = [
     {
-      string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1 },
-    { string: 'My wiki',
+      string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1
+    },
+    {
+      string: 'My wiki',
       matchedString: 'My wiki',
       category: 'wiki',
-      _ranking : 1.1,
-      reinforce: 1.1 },
-    { string: 'in', matchedString: 'in', category: 'filler' ,   _ranking : 1},
-    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'My next wiki',
+      _ranking: 1.1,
+      reinforce: 1.1
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    {
+      string: 'My next wiki',
       matchedString: 'My next wiki',
       category: 'wiki',
-      _ranking : 1.05,
+      _ranking: 1.05,
       reinforce: 1.05
     },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1}
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
   ];
 
-  test.deepEqual(res,resline, 'correct reinforced string');
+  test.deepEqual(res, resline, 'correct reinforced string');
   test.done();
 };
 
@@ -1517,36 +1587,40 @@ exports.testreinforceSentence = function (test) {
 exports.testreinforce = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var sentence = [
-    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1},
-    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'cat', matchedString: 'catalog', category: 'category' , _ranking : 1},
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking : 1 }
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 },
+    { string: 'My wiki', matchedString: 'My wiki', category: 'wiki', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
   ];
 
 
   var resline = [
     {
-      string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1 },
-    { string: 'My wiki',
+      string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1
+    },
+    {
+      string: 'My wiki',
       matchedString: 'My wiki',
       category: 'wiki',
-      _ranking : 1.1,
-      reinforce: 1.1 },
-    { string: 'in', matchedString: 'in', category: 'filler' ,   _ranking : 1},
-    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking : 1 },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'My next wiki',
+      _ranking: 1.1,
+      reinforce: 1.1
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    {
+      string: 'My next wiki',
       matchedString: 'My next wiki',
       category: 'wiki',
-      _ranking : 1.05,
+      _ranking: 1.05,
       reinforce: 1.05
     },
-    { string: 'in', matchedString: 'in', category: 'filler', _ranking : 1 },
-    { string: 'wiki', matchedString: 'wiki', category: 'category' , _ranking : 1}
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
   ];
 
   var u = [sentence,
@@ -1556,8 +1630,8 @@ exports.testreinforce = function (test) {
 
 
   var res = ab.reinForce(u);
-  test.deepEqual(res[0],resline, 'line 0 ok');
-  test.deepEqual(res[1],resline, 'line 1 ok');
-  test.deepEqual(res[2],resline, 'line 2 ok');
+  test.deepEqual(res[0], resline, 'line 0 ok');
+  test.deepEqual(res[1], resline, 'line 1 ok');
+  test.deepEqual(res[2], resline, 'line 2 ok');
   test.done();
 };
