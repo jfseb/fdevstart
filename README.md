@@ -57,3 +57,11 @@ Currently the test folder is not compiled, but contains directly es6 modules
 gulp, gulp-watch
 
 
+
+
+##Models
+
+the formulated questions are in
+
+resources/model/intents.json
+

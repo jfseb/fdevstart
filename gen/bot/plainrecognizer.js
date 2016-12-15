@@ -1,5 +1,8 @@
 /**
  * @copyright (c) 2016 Gerd Forstmann
+ * @file plainrecognizer.ts
+ *
+ * A recognizer parametrized by regex expressions
  */
 "use strict";
 var debug = require('debug');

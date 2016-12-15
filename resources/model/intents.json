@@ -27,6 +27,10 @@
     ],
     "tell me the <category> of <A1>"
   ],
+  "ListAll": [
+    "List all <categories> (in|for) <insth>",
+    "List all <categories>"
+  ],
   "Help": [
     "Help",
     "What can i do?",

@@ -104,11 +104,79 @@ function calcRanking(matched, mismatched, relevantCount) {
     return Math.pow(factor2 * factor, 1 / (lenMisMatched + lenMatched));
 }
 exports.calcRanking = calcRanking;
-function matchRecords(aSentences, category, records) {
+function calcRankingHavingCategory(matched, hasCategory, mismatched, relevantCount) {
+    var lenMatched = Object.keys(matched).length;
+    var factor = Match.calcRankingProduct(matched);
+    factor *= Math.pow(1.5, lenMatched);
+    var lenHasCategory = Object.keys(hasCategory).length;
+    var factorH = Math.pow(1.2, lenHasCategory);
+    var lenMisMatched = Object.keys(mismatched).length;
+    var factor2 = Match.calcRankingProduct(mismatched);
+    factor2 *= Math.pow(0.4, lenMisMatched);
+    return Math.pow(factor2 * factorH * factor, 1 / (lenMisMatched + lenHasCategory + lenMatched));
+}
+exports.calcRankingHavingCategory = calcRankingHavingCategory;
+/**
+ * list all top level rankings
+ */
+function matchRecordsHavingContext(aSentences, category, records) {
+    debuglog(JSON.stringify(records, undefined, 2));
     var relevantRecords = records.filter(function (record) {
-        return !!record[category];
+        return (record[category] !== undefined) && (record[category] !== null);
     });
     var res = [];
+    debuglog("relevant records nr:" + relevantRecords.length);
+    debuglog("sentences are : " + JSON.stringify(aSentences, undefined, 2));
+    relevantRecords.forEach(function (record) {
+        aSentences.forEach(function (oSentence) {
+            // count matches in record which are *not* the category
+            var mismatched = {};
+            var matched = {};
+            var hasCategory = {};
+            aSentences.forEach(function (aSentence) {
+                var mismatched = {};
+                var matched = {};
+                var cntRelevantWords = 0;
+                aSentence.forEach(function (oWord) {
+                    if (!Word.Word.isFiller(oWord)) {
+                        cntRelevantWords = cntRelevantWords + 1;
+                        if (oWord.category && (record[oWord.category] !== undefined)) {
+                            if (oWord.matchedString === record[oWord.category]) {
+                                matched[oWord.category] = oWord;
+                            }
+                            else {
+                                mismatched[oWord.category] = oWord;
+                            }
+                        }
+                        else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
+                            hasCategory[oWord.matchedString] = 1;
+                        }
+                    }
+                });
+                if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
+                    res.push({
+                        sentence: aSentence,
+                        record: record,
+                        category: category,
+                        result: record[category],
+                        _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
+                    });
+                }
+            });
+        });
+    });
+    res.sort(cmpByResultThenRanking);
+    res = filterRetainTopRankedResult(res);
+    return res;
+}
+exports.matchRecordsHavingContext = matchRecordsHavingContext;
+function matchRecords(aSentences, category, records) {
+    debuglog(JSON.stringify(records, undefined, 2));
+    var relevantRecords = records.filter(function (record) {
+        return (record[category] !== undefined) && (record[category] !== null);
+    });
+    var res = [];
+    debuglog("relevant records nr:" + relevantRecords.length);
     relevantRecords.forEach(function (record) {
         aSentences.forEach(function (oSentence) {
             // count matches in record which are *not* the category
@@ -167,7 +235,7 @@ function resolveCategory(category, contextQueryString, aRules, records) {
     }
     else {
         var matched = InputFilter.analyzeString(contextQueryString, aRules);
-        debuglog("After matched " + JSON.stringify(matched));
+        debuglog("after matched " + JSON.stringify(matched));
         var aSentences = InputFilter.expandMatchArr(matched);
         debuglog("after expand" + aSentences.map(function (oSentence) {
             return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
@@ -178,11 +246,24 @@ function resolveCategory(category, contextQueryString, aRules, records) {
             return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
         }).join("\n"));
         var matchedAnswers = matchRecords(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
-        debuglog(" matchedTools" + JSON.stringify(matchedAnswers, undefined, 2));
+        debuglog(" matchedAnswers" + JSON.stringify(matchedAnswers, undefined, 2));
         return matchedAnswers;
     }
 }
 exports.resolveCategory = resolveCategory;
+function filterOnlyTopRanked(results) {
+    var res = results.filter(function (result) {
+        if (result._ranking === results[0]._ranking) {
+            return true;
+        }
+        if (result._ranking >= results[0]._ranking) {
+            throw new Error("List to filter must be ordered");
+        }
+        return false;
+    });
+    return res;
+}
+exports.filterOnlyTopRanked = filterOnlyTopRanked;
 function isIndiscriminateResult(results) {
     var cnt = results.reduce(function (prev, result) {
         if (result._ranking === results[0]._ranking) {

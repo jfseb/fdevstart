@@ -17,6 +17,7 @@ var debug = require('debug');
 var Match = require('../match/match');
 var Analyze = require('../match/analyze');
 var WhatIs = require('../match/whatis');
+var ListAll = require('../match/listall');
 var elizabot = require('../extern/elizabot/elizabot');
 //import * as elizabot from 'elizabot';
 var debuglog = debug('smartdialog');
@@ -383,27 +384,30 @@ function makeBot(connector) {
             var oNewEntity;
             // expecting entity A1
             var message = session.message.text;
-            debuglog("WhatIs Entity");
-            console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            debuglog("WhatIs Entities");
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
             var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
             var category = categoryEntity.entity;
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
             var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
             if (!cat) {
                 session.send('I don\'t know anything about "' + category + '"');
-                next();
+                // next();
+                return;
             }
+            debuglog('category identified:' + cat);
             var result = WhatIs.resolveCategory(cat, a1.entity, theModel.mRules, theModel.records);
+            debuglog('whatis result:' + JSON.stringify(result));
             logQueryWhatIs(session, 'WhatIs', result);
             var indis = WhatIs.isIndiscriminateResult(result);
             if (indis) {
                 session.send(indis);
-                next();
+                // next();
                 return;
             }
             if (!result || result.length === 0) {
                 session.send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"');
-                next();
+                // next();
                 return;
             }
             else {
@@ -412,6 +416,73 @@ function makeBot(connector) {
                 debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
                 // TODO cleansed sentence
                 session.send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n"); //  + JSON.stringify(result[0]));
+            }
+        }
+    ]);
+    dialog.matches('ListAll', [
+        function (session, args, next) {
+            var isCombinedIndex = {};
+            var oNewEntity;
+            // expecting entity A1
+            var message = session.message.text;
+            debuglog("Intent : ListAll");
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
+            var category = categoryEntity.entity;
+            var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
+            if (category === "categories") {
+                var res = theModel.category.join(";\n");
+                session.send("my categories are " + res);
+                return;
+            }
+            if (category === "domains") {
+                var res = theModel.domains.join(";\n");
+                session.send("my domains are " + res);
+                return;
+            }
+            if (category === "tools") {
+                var res = theModel.tools.map(function (oTool) {
+                    return oTool.name;
+                }).join(";\n");
+                session.send("my tools are " + res);
+                return;
+            }
+            var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
+            if (!cat) {
+                session.send('I don\'t know anything about "' + category + '"');
+                // next();
+                return;
+            }
+            debuglog('category identified:' + cat);
+            if (a1.entity) {
+                debuglog('got filter:' + a1.entity);
+                var result1 = ListAll.listAllWithContext(cat, a1.entity, theModel.mRules, theModel.records);
+                // TODO classifying the string twice is a terrible waste
+                if (!result1.length) {
+                    debuglog('going for having');
+                    result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.mRules, theModel.records);
+                }
+                debuglog('listall result:' + JSON.stringify(result1));
+                var joinresults = ListAll.joinResults(result1);
+                logQueryWhatIs(session, 'ListAll', result1);
+                session.send("the " + category + " for " + a1.entity + " are " + joinresults.join(";\n"));
+                return;
+            }
+            else {
+                // no entity, e.g. list all countries
+                //
+                var result = ListAll.listAllHavingContext(cat, cat, theModel.mRules, theModel.records);
+                logQueryWhatIs(session, 'ListAll', result);
+                if (result.length) {
+                    debuglog('listall result:' + JSON.stringify(result));
+                    var joinresults = ListAll.joinResults(result);
+                    session.send("the " + category + " for " + a1.entity + " are " + joinresults.join(";\n"));
+                    return;
+                }
+                else {
+                    session.send("Found no data having \"" + cat + "\"");
+                    return;
+                }
             }
         }
     ]);

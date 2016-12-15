@@ -49,6 +49,7 @@
         "src/match/tools.ts",
         "src/match/toolmatcher.ts",
         "src/match/whatis.ts",
+        "src/match/listall.ts",
         "src/match/word.ts",
         "src/utils/logger.ts",
         "src/utils/damerauLevenshtein.ts",

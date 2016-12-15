@@ -113,6 +113,22 @@ exports.elizaKeywords = [
       'It did not bother me.  Please continue.'
     ]]
   ]],
+  ['help', 0, [
+    ['* me *', [
+      'You can ask me to explain about categories.',
+      'You can ask me how to formulate questions.',
+      'You can ask me how to formulate commands.'
+    ]],
+    ['* i help you *', [
+      'You can train me.',
+      'If you ask the right questions, i may help you to (2)',
+      'talking to you may make me smarter.',
+      'keep on asking, either me or the NSA may get some value out of it.',
+      'every communication over the internet makes the machine world smarter.',
+      'if every communication over the internet makes the machine world smarter.',
+      'It did not bother me.  Please continue.'
+    ]]
+  ]],
   ['apologise', 0, [
     ['*', [
       'goto sorry'
@@ -516,9 +532,11 @@ exports.elizaKeywords = [
       'Does that question interest you ?',
       'What is it you really want to know ?',
       'Are such questions much on your mind ?',
+      'Why not ask something relevant like \"What is the element name of element number 110"',
       'What answer would please you most ?',
       'What do you think ?',
       'What comes to mind when you ask that ?',
+      'Why not ask something relevant like \"What is the element name of element number 110"',
       'Have you asked such questions before ?',
       'Have you asked anyone else ?'
     ]]

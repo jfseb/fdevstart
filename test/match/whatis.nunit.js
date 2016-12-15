@@ -299,3 +299,22 @@ exports.testResolveCategoryAmb = function (test) {
   test.done();
 };
 
+var aResults = [{ _ranking : 1}, {_ranking : 1}, { _ranking : 0.7} ];
+exports.testFilterOnlyTopRanked = function(test) {
+  var res = WhatIs.filterOnlyTopRanked(aResults);
+  test.equal(res.length, 2);
+  test.done();
+};
+
+var aResultsMisOrdered = [{ _ranking : 1}, {_ranking : 1}, { _ranking : 1.2 } ];
+exports.testFilterOnlyTopRankedThrows = function(test) {
+  test.expect(1);
+  try {
+    WhatIs.filterOnlyTopRanked(aResultsMisOrdered);
+    test.equal(1,0);
+  } catch (e) {
+    /*empty*/
+    test.equal(1,1);
+  }
+  test.done();
+};

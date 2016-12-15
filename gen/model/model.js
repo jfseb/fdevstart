@@ -64,7 +64,7 @@ function loadModelData(oMdl, sModelName, oModel) {
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function (oEntry) {
-        if (!oEntry.tool) {
+        if (!oEntry.tool && oMdl.tool.name) {
             oEntry.tool = oMdl.tool.name;
         }
         oModel.records.push(oEntry);
@@ -104,14 +104,14 @@ function loadModel(sModelName, oModel) {
     }
     // extract tools an add to tools:
     oModel.tools.filter(function (oEntry) {
-        if (oEntry.name === oMdl.tool.name) {
+        if (oEntry.name === (oMdl.tool && oMdl.tool.name)) {
             console.log("Tool " + oMdl.tool.name + " already present when loading " + sModelName);
             //throw new Error('Domain already loaded?');
             process.exit(-1);
         }
     });
     // add the tool name as rule unless hidden
-    if (!oMdl.toolhidden) {
+    if (!oMdl.toolhidden && oMdl.tool && oMdl.tool.name) {
         insertRuleIfNotPresent(oModel.mRules, {
             category: "tool",
             matchedString: oMdl.tool.name,
@@ -133,7 +133,9 @@ function loadModel(sModelName, oModel) {
         });
     }
     oModel.domains.push(oMdl.domain);
-    oModel.tools.push(oMdl.tool);
+    if (oMdl.tool.name) {
+        oModel.tools.push(oMdl.tool);
+    }
     oModel.category = oModel.category.concat(oMdl.category);
     oModel.category.sort();
     oModel.category = oModel.category.filter(function (string, index) {

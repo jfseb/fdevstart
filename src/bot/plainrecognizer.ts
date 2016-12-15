@@ -1,6 +1,9 @@
 
 /**
  * @copyright (c) 2016 Gerd Forstmann
+ * @file plainrecognizer.ts
+ *
+ * A recognizer parametrized by regex expressions
  */
 
 import * as builder from 'botbuilder';
