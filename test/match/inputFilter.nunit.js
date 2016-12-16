@@ -2,6 +2,10 @@
  * @file inputFilter
  * @copyright (c) 2016-2016 Gerd Forstmann
  */
+
+
+/* eslint-disable */
+
 var process = require('process');
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
