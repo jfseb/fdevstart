@@ -302,7 +302,7 @@ textarea.addEventListener("keydown",function(e) {
      textarea.parentNode.parentNode.insertBefore(li,textarea.parentNode);
      setTimeout(function() {
          textarea.value = "";
-         htmlconnector.processMessage(value);
+         htmlconnector.processMessage(value.substring(0,140));
      }, 10);
  }
  else
