@@ -1283,48 +1283,68 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
         }
       ]
     ],
-    [[{
-      string: 'UV2',
-      matchedString: 'UV2',
-      category: 'systemId',
-      _ranking: 1
-    }],
-      [{
-        string: 'client 120',
-        matchedString: 'client 120',
-        category: 'systemObjectId',
-        _ranking: 0.5
-      }]],
-    [[{
-      string: 'UV2 client',
-      matchedString: 'UV2 client',
-      category: 'systemObjectId',
-      _ranking: 0.5
-    }],
-      [{
-        string: '120',
-        matchedString: '120',
-        category: 'client',
-        _ranking: 0.8
-      }]],
-    [[{
-      string: 'UV2',
-      matchedString: 'UV2',
-      category: 'systemId',
-      _ranking: 1
-    }],
-      [{
-        string: 'client',
-        matchedString: 'client',
-        category: 'category',
-        _ranking: 1
-      }],
-      [{
-        string: '120',
-        matchedString: '120',
-        category: 'client',
-        _ranking: 0.8
-      }]]
+    [
+      [
+        {
+          string: 'UV2',
+          matchedString: 'UV2',
+          category: 'systemId',
+          _ranking: 1
+        }
+      ],
+      [
+        {
+          string: 'client 120',
+          matchedString: 'client 120',
+          category: 'systemObjectId',
+          _ranking: 0.5
+        }
+      ]
+    ],
+    [
+      [
+        {
+          string: 'UV2 client',
+          matchedString: 'UV2 client',
+          category: 'systemObjectId',
+          _ranking: 0.5
+        }
+      ],
+      [
+        {
+          string: '120',
+          matchedString: '120',
+          category: 'client',
+          _ranking: 0.8
+        }
+      ]
+    ],
+    [
+      [
+        {
+          string: 'UV2',
+          matchedString: 'UV2',
+          category: 'systemId',
+          _ranking: 1
+        }
+      ],
+      [
+        {
+          string: 'client',
+          matchedString: 'client',
+          category: 'category',
+          _ranking: 1
+        }
+      ],
+      [
+        {
+          string: '120',
+          matchedString: '120',
+          category: 'client',
+          _ranking: 0.8
+        }
+      ]
+    ]
   ], 'correct res');
   test.done();
 };
