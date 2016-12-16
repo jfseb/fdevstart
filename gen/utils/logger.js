@@ -11,7 +11,7 @@ var debuglog = debug('logger');
 ;
 var perfs = {};
 function logPerf(sString) {
-    if (!this) {
+    if (!this || !this.enabled) {
         return;
     }
     var label = 'perf' + this.name;
@@ -32,8 +32,9 @@ function logPerf(sString) {
     }
 }
 function perf(string) {
-    if (debug('perf' + this.name).enabled) {
-        perfs[string] = { name: string, last: 0, first: 0, on: {} };
+    perfs[string] = { name: string, last: 0, first: 0, on: {}, enabled: false };
+    if (debug('perf' + string).enabled) {
+        perfs[string].enabled = true;
     }
     return logPerf.bind(perfs[string]);
 }

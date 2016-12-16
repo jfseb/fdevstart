@@ -20,11 +20,11 @@ interface ILogger {
 };
 
 
-var perfs = {} as {[key : string] : { name : string, last: number, first : number, on : {}}};
+var perfs = {} as {[key : string] : { enabled : boolean, name : string, last: number, first : number, on : {}}};
 
 
 function logPerf(sString) {
-  if(!this) {
+  if(!this || !this.enabled) {
     return;
   }
   var label = 'perf' + this.name;
@@ -44,8 +44,9 @@ function logPerf(sString) {
 }
 
 export function perf(string) {
-  if (debug('perf' + this.name).enabled ) {
-    perfs[string] = { name : string, last : 0, first: 0, on : {} };
+  perfs[string] = { name : string, last : 0, first: 0, on : {}, enabled : false };
+  if (debug('perf' + string).enabled )
+  { perfs[string].enabled = true;
   }
   return logPerf.bind(perfs[string]);
 }
