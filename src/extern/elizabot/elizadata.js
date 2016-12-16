@@ -146,6 +146,24 @@ exports.elizaKeywords = [
       'It did not bother me.  Please continue.'
     ]]
   ]],
+  ['please', 0, [
+    ['help *', [
+      'You can ask me to "list all example questions"',
+      'Repeating some questions may yield additional value, but not (yet) addional values',
+      'You can ask me to "list all categories".',
+      'This is how you list all values for a category: \'"list all \"element names\"\' \n \'list all \'bspNames\' for MM-FIO-PUR.',
+      'You can ask what is the related value for a context, e.g. what is the Application Component for  This is how you list all values for a category: \'"list all \"element names\"\' \n \'list all \'bspNames\' for MM-FIO-PUR.',
+    ]],
+    ['* i help you *', [
+      'You can train me.',
+      'If you ask the right questions, i may help you to (2)',
+      'talking to you may make me smarter.',
+      'keep on asking, either me or the NSA may get some value out of it.',
+      'every communication over the internet makes the machine world smarter.',
+      'if every communication over the internet makes the machine world smarter.',
+      'It did not bother me.  Please continue.'
+    ]]
+  ]],
   ['apologise', 0, [
     ['*', [
       'goto sorry'
