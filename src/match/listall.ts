@@ -39,17 +39,6 @@ export function matchRecordHavingCategory(category: string, records: Array<IMatc
   return relevantRecords;
 }
 
-export function analyzeCategory(categoryword : string , aRules: Array<IMatch.mRule>, wholesentence: string): string {
-  var cats = InputFilter.categorizeAWord(categoryword, aRules, wholesentence, {});
-  // TODO qualify
-  cats = cats.filter(function(cat) {
-    return cat.category === 'category';
-  })
-  if (cats.length) {
-    return cats[0].matchedString;
-  }
-}
-
 // const result = WhatIs.resolveCategory(cat, a1.entity,
 //   theModel.mRules, theModel.tools, theModel.records);
 

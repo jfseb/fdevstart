@@ -41,6 +41,11 @@ var records = [
 exports.testListAllWithContext = function (test) {
   var res = ListAll.listAllWithContext('url', 'unit test NavTargetResolution',
     mRules, records);
+
+  test.deepEqual(ListAll.formatDistinctFromWhatIfResult([]), '');
+  var res3 = ListAll.joinResults(res);
+  test.deepEqual(res3, ['com.sap.NTA' ]);
+
   var res2 = ListAll.formatDistinctFromWhatIfResult(res);
 
   test.deepEqual(res2, '"com.sap.NTA"');
