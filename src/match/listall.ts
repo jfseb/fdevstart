@@ -8,7 +8,7 @@
 
 import * as InputFilter from './inputFilter';
 
-import * as Algol from './Algol';
+import * as Algol from './algol';
 import * as debug from 'debug';
 
 const debuglog = debug('whatis');
