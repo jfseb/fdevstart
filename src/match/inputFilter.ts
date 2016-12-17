@@ -54,6 +54,9 @@ function calcDistance(sText1: string, sText2: string): number {
     return 50000;
   }
   var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
+  if(debuglog.enabled) {
+    debuglog("distance" + a0 + "stripped>" + sText1.substring(0,sText2.length) + "<>" + sText2+ "<");
+  }
   if(a0 * 50 > 15 * sText2.length) {
       return 50000;
   }
@@ -245,13 +248,17 @@ export function matchWord(oRule: IRule, context: IFMatch.context, options?: IMat
   var s2 = oRule.word.toLowerCase();
   options = options || {}
   var delta = compareContext(context, oRule.follows, oRule.key)
-  debuglog(JSON.stringify(delta));
-  debuglog(JSON.stringify(options));
+  if(debuglog.enabled) {
+    debuglog(JSON.stringify(delta));
+    debuglog(JSON.stringify(options));
+  }
   if (options.matchothers && (delta.different > 0)) {
     return undefined
   }
   var c: number = calcDistance(s2, s1);
-  debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
+  if(debuglog.enabled) {
+    debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
+  }
   if (c < 150) {
     var res = AnyObject.assign({}, oRule.follows) as any;
     res = AnyObject.assign(res, context);
@@ -264,7 +271,9 @@ export function matchWord(oRule: IRule, context: IFMatch.context, options?: IMat
     res._weight = AnyObject.assign({}, res._weight);
     res._weight[oRule.key] = c;
     Object.freeze(res);
-    debuglog('Found one' + JSON.stringify(res, undefined, 2));
+    if ( debuglog.enabled) {
+      debuglog('Found one' + JSON.stringify(res, undefined, 2));
+    }
     return res;
   }
   return undefined;
@@ -333,7 +342,7 @@ export function resetCnt() {
 export function categorizeWordWithRankCutoff(sWordGroup: string, aRules: Array<IFMatch.mRule>): Array<IFMatch.ICategorizedString> {
   var seenIt = categorizeString(sWordGroup, true, aRules);
   //totalCnt += 1;
- // exactLen += seenIt.length;
+  // exactLen += seenIt.length;
   if (RankWord.hasAbove(seenIt, 0.8)) {
     seenIt = RankWord.takeAbove(seenIt, 0.8);
    // exactCnt += 1;
@@ -569,9 +578,11 @@ export function reinForce(aCategorizedArray) {
     reinForceSentence(oSentence);
   })
   aCategorizedArray.sort(Sentence.cmpRankingProduct);
-  debuglog("after reinforce" + aCategorizedArray.map(function (oSentence) {
-    return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-  }).join("\n"));
+  if(debuglog.enabled) {
+    debuglog("after reinforce" + aCategorizedArray.map(function (oSentence) {
+      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+    }).join("\n"));
+  }
   return aCategorizedArray;
 }
 
@@ -587,22 +598,27 @@ export function matchRegExp(oRule: IRule, context: IFMatch.context, options?: IM
   var reg = oRule.regexp;
 
   var m = reg.exec(s1);
-  debuglog("applying regexp: " + s1 + " " + JSON.stringify(m));
+  if(debuglog.enabled) {
+    debuglog("applying regexp: " + s1 + " " + JSON.stringify(m));
+  }
   if (!m) {
     return undefined;
   }
   options = options || {}
   var delta = compareContext(context, oRule.follows, oRule.key)
-  debuglog(JSON.stringify(delta));
-  debuglog(JSON.stringify(options));
+  if (debuglog.enabled) {
+    debuglog(JSON.stringify(delta));
+    debuglog(JSON.stringify(options));
+  }
   if (options.matchothers && (delta.different > 0)) {
     return undefined
   }
   var oExtractedContext = extractArgsMap(m, oRule.argsMap);
-  debuglog("extracted args " + JSON.stringify(oRule.argsMap));
-  debuglog("match " + JSON.stringify(m));
-
-  debuglog("extracted args " + JSON.stringify(oExtractedContext));
+  if (debuglog.enabled) {
+    debuglog("extracted args " + JSON.stringify(oRule.argsMap));
+    debuglog("match " + JSON.stringify(m));
+    debuglog("extracted args " + JSON.stringify(oExtractedContext));
+  }
   var res = AnyObject.assign({}, oRule.follows) as any;
   res = AnyObject.assign(res, oExtractedContext);
   res = AnyObject.assign(res, context);
@@ -619,12 +635,16 @@ export function matchRegExp(oRule: IRule, context: IFMatch.context, options?: IM
 }
 
 export function sortByWeight(sKey: string, oContextA: IFMatch.context, oContextB: IFMatch.context): number {
-  debuglog('sorting: ' + sKey + 'invoked with\n 1:' + JSON.stringify(oContextA, undefined, 2) +
+  if (debuglog.enabled) {
+    debuglog('sorting: ' + sKey + 'invoked with\n 1:' + JSON.stringify(oContextA, undefined, 2) +
     " vs \n 2:" + JSON.stringify(oContextB, undefined, 2));
+  }
   var rankingA: number = parseFloat(oContextA["_ranking"] || "1");
   var rankingB: number = parseFloat(oContextB["_ranking"] || "1");
   if (rankingA !== rankingB) {
-    debuglog(" rankin delta" + 100 * (rankingB - rankingA));
+    if(debuglog.enabled) {
+      debuglog(" rankin delta" + 100 * (rankingB - rankingA));
+    }
     return 100 * (rankingB - rankingA)
   }
 

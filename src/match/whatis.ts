@@ -11,6 +11,7 @@ import * as InputFilter from './inputFilter';
 import * as debug from 'debug';
 
 const debuglog = debug('whatis');
+const perflog = debug('perf');
 
 import * as utils from '../utils/utils';
 
@@ -38,21 +39,21 @@ export function cmpByRanking(a: IMatch.IWhatIsAnswer, b: IMatch.IWhatIsAnswer) {
     return cmp;
   }
   cmp = a.result.localeCompare(b.result);
-  if(cmp) {
+  if (cmp) {
     return cmp;
   }
 
   // are records different?
   var keys = Object.keys(a.record).concat(Object.keys(b.record)).sort();
-  var res = keys.reduce(function(prev, sKey) {
-    if(prev) {
+  var res = keys.reduce(function (prev, sKey) {
+    if (prev) {
       return prev;
     }
-    if(b.record[sKey] !== a.record[sKey]) {
-      if(!b.record[sKey]) {
+    if (b.record[sKey] !== a.record[sKey]) {
+      if (!b.record[sKey]) {
         return -1;
       }
-      if(!a.record[sKey]) {
+      if (!a.record[sKey]) {
         return +1;
       }
       return a.record[sKey].localeCompare(b.record[sKey]);
@@ -130,8 +131,16 @@ export function calcRanking(matched: { [key: string]: IMatch.IWord },
   return Math.pow(factor2 * factor, 1 / (lenMisMatched + lenMatched));
 }
 
+export function calcRankingSimple(matched: number,
+  mismatched: number,
+  relevantCount: number): number {
+  var factor = Math.pow(1.5, matched);
+  var factor2 = Math.pow(0.4, mismatched);
+  return Math.pow(factor2 * factor, 1 / (mismatched + matched));
+}
+
 export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord },
-  hasCategory : {[key : string] : number},
+  hasCategory: { [key: string]: number },
   mismatched: { [key: string]: IMatch.IWord }, relevantCount: number): number {
 
 
@@ -140,7 +149,7 @@ export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord
   factor *= Math.pow(1.5, lenMatched);
 
   var lenHasCategory = Object.keys(hasCategory).length;
-  var factorH = Math.pow(1.2,lenHasCategory);
+  var factorH = Math.pow(1.2, lenHasCategory);
 
   var lenMisMatched = Object.keys(mismatched).length;
   var factor2 = Match.calcRankingProduct(mismatched);
@@ -155,50 +164,46 @@ export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord
 export function matchRecordsHavingContext(
   aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>)
   : Array<IMatch.IWhatIsAnswer> {
-  debuglog(JSON.stringify(records,undefined,2));
+  debuglog(JSON.stringify(records, undefined, 2));
   var relevantRecords = records.filter(function (record: IMatch.IRecord) {
     return (record[category] !== undefined) && (record[category] !== null);
   });
   var res = [];
   debuglog("relevant records nr:" + relevantRecords.length);
-    debuglog("sentences are : " + JSON.stringify(aSentences,undefined,2));
+  debuglog("sentences are : " + JSON.stringify(aSentences, undefined, 2));
   relevantRecords.forEach(function (record) {
-    aSentences.forEach(function (oSentence) {
-      // count matches in record which are *not* the category
-      var mismatched = {}
-      var matched = {};
+    // count matches in record which are *not* the category
+    aSentences.forEach(function (aSentence) {
       var hasCategory = {};
-      aSentences.forEach(function (aSentence) {
-        var mismatched = {};
-        var matched = {};
-        var cntRelevantWords = 0;
-        aSentence.forEach(function (oWord) {
-          if (!Word.Word.isFiller(oWord)) {
-            cntRelevantWords = cntRelevantWords + 1;
-            if (oWord.category && (record[oWord.category] !== undefined)) {
-              if (oWord.matchedString === record[oWord.category]) {
-                matched[oWord.category] = oWord;
-              }
-              else {
-                mismatched[oWord.category] = oWord;
-              }
+      var mismatched = {};
+      var matched = {};
+      var cntRelevantWords = 0;
+      aSentence.forEach(function (oWord) {
+        if (!Word.Word.isFiller(oWord)) {
+          cntRelevantWords = cntRelevantWords + 1;
+          if (oWord.category && (record[oWord.category] !== undefined)) {
+            if (oWord.matchedString === record[oWord.category]) {
+              matched[oWord.category] = oWord;
             }
-            else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
-                hasCategory[oWord.matchedString] = 1;
+            else {
+              mismatched[oWord.category] = oWord;
             }
           }
-        });
-        if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
-          res.push({
-            sentence: aSentence,
-            record : record,
-            category : category,
-            result: record[category],
-            _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
-          });
+          else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
+            hasCategory[oWord.matchedString] = 1;
+          }
         }
-      })
-    });
+      });
+      if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
+        res.push({
+          sentence: aSentence,
+          record: record,
+          category: category,
+          result: record[category],
+          _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
+        });
+      }
+    })
   });
   res.sort(cmpByResultThenRanking);
   res = filterRetainTopRankedResult(res);
@@ -207,54 +212,108 @@ export function matchRecordsHavingContext(
 
 export function matchRecords(aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>)
   : Array<IMatch.IWhatIsAnswer> {
-  debuglog(JSON.stringify(records,undefined,2));
+  if (debuglog.enabled) {
+    debuglog(JSON.stringify(records, undefined, 2));
+  }
   var relevantRecords = records.filter(function (record: IMatch.IRecord) {
     return (record[category] !== undefined) && (record[category] !== null);
   });
   var res = [];
   debuglog("relevant records nr:" + relevantRecords.length);
   relevantRecords.forEach(function (record) {
-    aSentences.forEach(function (oSentence) {
+    aSentences.forEach(function (aSentence) {
       // count matches in record which are *not* the category
       var mismatched = {}
       var matched = {};
-      aSentences.forEach(function (aSentence) {
-        var mismatched = {};
-        var matched = {};
-        var cntRelevantWords = 0;
-        aSentence.forEach(function (oWord) {
-          if (!Word.Word.isFiller(oWord)) {
-            cntRelevantWords = cntRelevantWords + 1;
-            if (oWord.category && (record[oWord.category] !== undefined)) {
-              if (oWord.matchedString === record[oWord.category]) {
-                matched[oWord.category] = oWord;
-              } else {
-                mismatched[oWord.category] = oWord;
-              }
+      var cntRelevantWords = 0;
+      aSentence.forEach(function (oWord) {
+        if (!Word.Word.isFiller(oWord)) {
+          cntRelevantWords = cntRelevantWords + 1;
+          if (oWord.category && (record[oWord.category] !== undefined)) {
+            if (oWord.matchedString === record[oWord.category]) {
+              matched[oWord.category] = oWord;
+            } else {
+              mismatched[oWord.category] = oWord;
             }
           }
-        });
-        if (Object.keys(matched).length > Object.keys(mismatched).length) {
-          res.push({
-            sentence: aSentence,
-            record : record,
-            category : category,
-            result: record[category],
-            _ranking: calcRanking(matched, mismatched, cntRelevantWords)
-          });
         }
-      })
-    });
+      });
+      if (Object.keys(matched).length > Object.keys(mismatched).length) {
+        res.push({
+          sentence: aSentence,
+          record: record,
+          category: category,
+          result: record[category],
+          _ranking: calcRanking(matched, mismatched, cntRelevantWords)
+        });
+      }
+    })
   });
   res.sort(cmpByResultThenRanking);
   res = filterRetainTopRankedResult(res);
   return res;
 }
 
-export function analyzeCategory(categoryword : string , aRules: Array<IMatch.mRule>, wholesentence: string): string {
+
+export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>)
+  : Array<IMatch.IWhatIsAnswer> {
+  if (debuglog.enabled) {
+    debuglog(JSON.stringify(records, undefined, 2));
+  }
+  var relevantRecords = records.filter(function (record: IMatch.IRecord) {
+    return (record[category] !== undefined) && (record[category] !== null);
+  });
+  var res = [];
+  debuglog("relevant records nr:" + relevantRecords.length);
+  perflog("relevant records nr:" + relevantRecords.length + " sentences " + aSentences.length);
+
+
+  var aSimplifiedSentences = aSentences.map(function (oSentence) {
+    var rWords = oSentence.filter(function (oWord) {
+      return !Word.Word.isFiller(oWord);
+    });
+    return {
+      oSentence: oSentence,
+      cntRelevantWords: rWords.length,
+      rWords: rWords
+    };
+  });
+
+  relevantRecords.forEach(function (record) {
+    aSimplifiedSentences.forEach(function (aSentence) {
+      // count matches in record which are *not* the category
+      var mismatched = 0;
+      var matched = 0;
+      aSentence.rWords.forEach(function (oWord) {
+        if (oWord.category && (record[oWord.category] !== undefined)) {
+          if (oWord.matchedString === record[oWord.category]) {
+            ++matched;
+          } else {
+            ++mismatched;
+          }
+        }
+      });
+      //console.log(JSON.stringify(aSentence.oSentence));
+      if (matched > mismatched) {
+        res.push({
+          sentence: aSentence.oSentence,
+          record: record,
+          category: category,
+          result: record[category],
+          _ranking: calcRankingSimple(matched, mismatched, aSentence.cntRelevantWords)
+        });
+      }
+    })
+  });
+  res.sort(cmpByResultThenRanking);
+  res = filterRetainTopRankedResult(res);
+  return res;
+}
+
+export function analyzeCategory(categoryword: string, aRules: Array<IMatch.mRule>, wholesentence: string): string {
   var cats = InputFilter.categorizeAWord(categoryword, aRules, wholesentence, {});
   // TODO qualify
-  cats = cats.filter(function(cat) {
+  cats = cats.filter(function (cat) {
     return cat.category === 'category';
   })
   if (cats.length) {
@@ -292,7 +351,7 @@ export function filterOnlyTopRanked(results: Array<IMatch.IWhatIsAnswer>): Array
     if (result._ranking === results[0]._ranking) {
       return true;
     }
-    if( result._ranking >= results[0]._ranking) {
+    if (result._ranking >= results[0]._ranking) {
       throw new Error("List to filter must be ordered");
     }
     return false;

@@ -1009,6 +1009,25 @@ exports.testinputFilter = function (test) {
 
 var ifr = inputFilterRules.getMRulesSample();
 
+var ifr2 = [ {
+  "category" : "category",
+  "matchedString" : "element name",
+  _ranking : 0.95,
+  type : 0,
+  word : "element name",
+  lowercaseword : "element name"
+}];
+
+exports.testCategorizeWordWithRankCutoff = function (test) {
+  var res = ab.categorizeWordWithRankCutoff('element names', ifr2);
+  delete res[0]._ranking;
+  delete res[0].levenmatch;
+  test.deepEqual(res, [
+    { string : 'element names', matchedString: 'element name' , category : 'category' }
+  ]);
+ test.done();
+}
+
 exports.testCategorizeString = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('UV2', true, ifr);
@@ -1142,15 +1161,15 @@ exports.testCategorizeStringDistanceNavTarget = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
   var res = ab.categorizeString('NavTargetResolut', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
-
+delete res[0].levenmatch;
+ res[0]._ranking = "0.9x";
   test.deepEqual(res, [
     {
       'string': 'NavTargetResolut',
       'matchedString': 'NavTargetResolution',
       'category': 'unit test',
-      _ranking: 1 * ab.levenPenalty(3),
-      'levenmatch': 3
-    },
+      _ranking: "0.9x",
+     },
     /*
     {
       'string': 'NavTargetResolu',

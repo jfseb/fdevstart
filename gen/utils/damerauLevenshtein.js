@@ -53,10 +53,53 @@ function levenshteinDamerau(a, b) {
 }
 exports.levenshteinDamerau = levenshteinDamerau;
 function levenshtein(a, b) {
-    //return sift4(a,b,10,40); // + b.length / 2);
+    //return 2.0 * sift3Distance(a,b); //,6,7); // + b.length / 2);
     return levenshteinDamerau(a, b);
 }
 exports.levenshtein = levenshtein;
+function sift3Distance(s1, s2) {
+    if (s1 == null || s1.length === 0) {
+        if (s2 == null || s2.length === 0) {
+            return 0;
+        }
+        else {
+            return s2.length;
+        }
+    }
+    if (s2 == null || s2.length === 0) {
+        return s1.length;
+    }
+    if (Math.abs(s1.length - s2.length) > 20) {
+        return Math.max(s1.length, s2.length) / 2;
+    }
+    var c = 0;
+    var offset1 = 0;
+    var offset2 = 0;
+    var lcs = 0;
+    var maxOffset = 3;
+    while ((c + offset1 < s1.length) && (c + offset2 < s2.length)) {
+        if (s1.charAt(c + offset1) == s2.charAt(c + offset2)) {
+            lcs++;
+        }
+        else {
+            offset1 = 0;
+            offset2 = 0;
+            for (var i = 0; i < maxOffset; i++) {
+                if ((c + i < s1.length) && (s1.charAt(c + i) == s2.charAt(c))) {
+                    offset1 = i;
+                    break;
+                }
+                if ((c + i < s2.length) && (s1.charAt(c) == s2.charAt(c + i))) {
+                    offset2 = i;
+                    break;
+                }
+            }
+        }
+        c++;
+    }
+    return (s1.length + s2.length) / 2 - lcs;
+}
+exports.sift3Distance = sift3Distance;
 //  Sift4 - common version
 // https://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html
 // online algorithm to compute the distance between two strings in O(n)

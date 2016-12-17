@@ -465,7 +465,12 @@ function makeBot(connector) {
                 debuglog('listall result:' + JSON.stringify(result1));
                 var joinresults = ListAll.joinResults(result1);
                 logQueryWhatIs(session, 'ListAll', result1);
-                session.send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n"));
+                if (joinresults.length) {
+                    session.send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n"));
+                }
+                else {
+                    session.send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n"));
+                }
                 return;
             }
             else {

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Start me up!</title>
+  <title>ask the fiori bot!</title>
 
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -211,18 +211,43 @@
 </body>
 <!-- index.html -->
 <script>
+  function require() {
+    return function() {
+      return function() {};
+     };
+  }
+  window.module = {};
 </script>
 
+
+<script src="./history.js"> </script>
+
+
 <script>
+  window.MyHistory = module.exports;
+  module = undefined;
     // You can also require other files to run in this process
     //var hs = require('./gen/utils/history.js');
     //var as = require('./gen/utils/appdata.js');
     //var ad = new as.PersistenceHandle("fdevstart","history.json")
-  //  window.inputHistory = new hs({
-  //    length : 80,
-  //    save: ad.save.bind(ad),
-  //    load: ad.load.bind(ad)
-  //  });
+ function saveHistory(oData) {
+   window.localStorage.setItem('fdevStart', JSON.stringify(oData));
+ }
+ function loadHistory(cb) {
+   try {
+     var u = window.localStorage.getItem('fdevStart');
+     u = u && JSON.parse(u);
+   } catch (e) {
+     u = undefined;
+   }
+   cb(undefined, u);
+ }
+
+  window.inputHistory = new  window.MyHistory({
+      length : 80,
+      save: saveHistory,
+      load: loadHistory
+   });
  </script>
 
 <script src="textareaag.js" ></script>
@@ -289,7 +314,7 @@ textarea.addEventListener("keydown",function(e) {
   }
   if (e.key === "Enter") {
      var value = textarea.value;
-   //  inputHistory.push(value);
+     inputHistory.push(value);
      textarea.value = "";
      var li = document.createElement("li");
      var div = document.createElement("div");
@@ -307,13 +332,13 @@ textarea.addEventListener("keydown",function(e) {
  }
  else
  if ( e.key === "ArrowUp") {
- //   inputHistory.backward();
- //   textarea.value = inputHistory.get();
+   inputHistory.backward();
+   textarea.value = inputHistory.get();
  }
  else
  if ( e.key === "ArrowDown") {
- //  var res = inputHistory.forward();
-//   textarea.value = inputHistory.get();
+   var res = inputHistory.forward();
+   textarea.value = inputHistory.get();
  } else {
 
 
@@ -325,6 +350,7 @@ textarea.addEventListener("keydown",function(e) {
 
 
   </script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function(event) {

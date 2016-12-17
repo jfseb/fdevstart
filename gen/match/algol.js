@@ -5,6 +5,10 @@
  */
 "use strict";
 /**
+ * Number of sentences which are not used
+ */
+exports.Cutoff_Sentences = 120;
+/**
  * levenshtein distances above this will not be considered valid
  */
 exports.Cutoff_LevenShtein = 150;

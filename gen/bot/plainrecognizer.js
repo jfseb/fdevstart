@@ -37,10 +37,16 @@ function parseRuleString(a) {
     var s = "^" + a + "$";
     var argMaps = {};
     var m = undefined;
-    while (m = /<([^>]+)>/.exec(s)) {
+    while (m = /<([^>]+)>([?]?)/.exec(s)) {
         var cat = m[1];
+        var greedy = m[2];
         var pos = 1 + countParenGroups(s.substring(0, m.index));
-        s = s.replace("<" + cat + ">", "(.*)");
+        if (greedy) {
+            s = s.replace("<" + cat + ">?", "(.*?)");
+        }
+        else {
+            s = s.replace("<" + cat + ">", "(.*)");
+        }
         if (argMaps[cat]) {
             throw Error("Model error duplicate entry!");
         }

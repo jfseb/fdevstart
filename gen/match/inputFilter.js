@@ -42,6 +42,9 @@ function calcDistance(sText1, sText2) {
         return 50000;
     }
     var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2);
+    if (debuglog.enabled) {
+        debuglog("distance" + a0 + "stripped>" + sText1.substring(0, sText2.length) + "<>" + sText2 + "<");
+    }
     if (a0 * 50 > 15 * sText2.length) {
         return 50000;
     }
@@ -211,13 +214,17 @@ function matchWord(oRule, context, options) {
     var s2 = oRule.word.toLowerCase();
     options = options || {};
     var delta = compareContext(context, oRule.follows, oRule.key);
-    debuglog(JSON.stringify(delta));
-    debuglog(JSON.stringify(options));
+    if (debuglog.enabled) {
+        debuglog(JSON.stringify(delta));
+        debuglog(JSON.stringify(options));
+    }
     if (options.matchothers && (delta.different > 0)) {
         return undefined;
     }
     var c = calcDistance(s2, s1);
-    debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
+    if (debuglog.enabled) {
+        debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
+    }
     if (c < 150) {
         var res = AnyObject.assign({}, oRule.follows);
         res = AnyObject.assign(res, context);
@@ -230,7 +237,9 @@ function matchWord(oRule, context, options) {
         res._weight = AnyObject.assign({}, res._weight);
         res._weight[oRule.key] = c;
         Object.freeze(res);
-        debuglog('Found one' + JSON.stringify(res, undefined, 2));
+        if (debuglog.enabled) {
+            debuglog('Found one' + JSON.stringify(res, undefined, 2));
+        }
         return res;
     }
     return undefined;
@@ -513,9 +522,11 @@ function reinForce(aCategorizedArray) {
         reinForceSentence(oSentence);
     });
     aCategorizedArray.sort(Sentence.cmpRankingProduct);
-    debuglog("after reinforce" + aCategorizedArray.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
+    if (debuglog.enabled) {
+        debuglog("after reinforce" + aCategorizedArray.map(function (oSentence) {
+            return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+        }).join("\n"));
+    }
     return aCategorizedArray;
 }
 exports.reinForce = reinForce;
@@ -528,21 +539,27 @@ function matchRegExp(oRule, context, options) {
     var s1 = context[oRule.key].toLowerCase();
     var reg = oRule.regexp;
     var m = reg.exec(s1);
-    debuglog("applying regexp: " + s1 + " " + JSON.stringify(m));
+    if (debuglog.enabled) {
+        debuglog("applying regexp: " + s1 + " " + JSON.stringify(m));
+    }
     if (!m) {
         return undefined;
     }
     options = options || {};
     var delta = compareContext(context, oRule.follows, oRule.key);
-    debuglog(JSON.stringify(delta));
-    debuglog(JSON.stringify(options));
+    if (debuglog.enabled) {
+        debuglog(JSON.stringify(delta));
+        debuglog(JSON.stringify(options));
+    }
     if (options.matchothers && (delta.different > 0)) {
         return undefined;
     }
     var oExtractedContext = extractArgsMap(m, oRule.argsMap);
-    debuglog("extracted args " + JSON.stringify(oRule.argsMap));
-    debuglog("match " + JSON.stringify(m));
-    debuglog("extracted args " + JSON.stringify(oExtractedContext));
+    if (debuglog.enabled) {
+        debuglog("extracted args " + JSON.stringify(oRule.argsMap));
+        debuglog("match " + JSON.stringify(m));
+        debuglog("extracted args " + JSON.stringify(oExtractedContext));
+    }
     var res = AnyObject.assign({}, oRule.follows);
     res = AnyObject.assign(res, oExtractedContext);
     res = AnyObject.assign(res, context);
@@ -559,12 +576,16 @@ function matchRegExp(oRule, context, options) {
 }
 exports.matchRegExp = matchRegExp;
 function sortByWeight(sKey, oContextA, oContextB) {
-    debuglog('sorting: ' + sKey + 'invoked with\n 1:' + JSON.stringify(oContextA, undefined, 2) +
-        " vs \n 2:" + JSON.stringify(oContextB, undefined, 2));
+    if (debuglog.enabled) {
+        debuglog('sorting: ' + sKey + 'invoked with\n 1:' + JSON.stringify(oContextA, undefined, 2) +
+            " vs \n 2:" + JSON.stringify(oContextB, undefined, 2));
+    }
     var rankingA = parseFloat(oContextA["_ranking"] || "1");
     var rankingB = parseFloat(oContextB["_ranking"] || "1");
     if (rankingA !== rankingB) {
-        debuglog(" rankin delta" + 100 * (rankingB - rankingA));
+        if (debuglog.enabled) {
+            debuglog(" rankin delta" + 100 * (rankingB - rankingA));
+        }
         return 100 * (rankingB - rankingA);
     }
     var weightA = oContextA["_weight"] && oContextA["_weight"][sKey] || 0;

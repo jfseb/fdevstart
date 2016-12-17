@@ -8,9 +8,14 @@
 
 import * as InputFilter from './inputFilter';
 
+import * as Algol from './Algol';
 import * as debug from 'debug';
 
 const debuglog = debug('whatis');
+import * as logger from '../utils/logger';
+var logPerf = logger.perf("perflistall");
+var perflog = debug('perf');
+//const perflog = logger.perf("perflistall");
 
 import * as utils from '../utils/utils';
 
@@ -47,23 +52,41 @@ export function listAllWithContext(category: string, contextQueryString: string,
   if (contextQueryString.length === 0) {
     return [];
   } else {
+    logPerf('listAllWithContext');
+    perflog("totalListAllWithContext");
     var matched = InputFilter.analyzeString(contextQueryString, aRules);
-    debuglog("After matched " + JSON.stringify(matched));
+    if(debuglog.enabled) {
+      debuglog("After matched " + JSON.stringify(matched));
+    }
     var aSentences = InputFilter.expandMatchArr(matched);
-    debuglog("after expand" + aSentences.map(function (oSentence) {
-      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
+    if(debuglog.enabled) {
+      debuglog("after expand" + aSentences.map(function (oSentence) {
+        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+      }).join("\n"));
+    }
     var aSentencesReinforced = InputFilter.reinForce(aSentences);
-    //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
-    debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
-      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
-    var matchedAnswers = WhatIs.matchRecords(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    if(debuglog.enabled) {
+      debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
+        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+      }).join("\n"));
+    }
+    // we limit analysis to n sentences
+    var aSentencesReinforced = aSentencesReinforced.slice(0, Algol.Cutoff_Sentences);
 
-    debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+    perflog("matching records ...");
+
+
+    var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    if(debuglog.enabled){
+      debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+    }
+    perflog("match records");
     var matchedFiltered = WhatIs.filterOnlyTopRanked(matchedAnswers);
-    debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
-
+    if (debuglog.enabled) {
+      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+    }
+    perflog("totalListAllWithContext");
+    logPerf('listAllWithContext');
     return matchedAnswers;
   }
 }
@@ -75,21 +98,33 @@ export function listAllHavingContext(category: string, contextQueryString: strin
     return [];
   } else {
     var matched = InputFilter.analyzeString(contextQueryString, aRules);
-    debuglog("After matched " + JSON.stringify(matched));
+    perflog("having after analyze ")
+    if(debuglog.enabled) {
+      debuglog("After matched " + JSON.stringify(matched));
+    }
     var aSentences = InputFilter.expandMatchArr(matched);
-    debuglog("after expand" + aSentences.map(function (oSentence) {
-      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
+    if(debuglog.enabled) {
+      debuglog("after expand" + aSentences.map(function (oSentence) {
+        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+      }).join("\n"));
+    }
     var aSentencesReinforced = InputFilter.reinForce(aSentences);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
     debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
     }).join("\n"));
-    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
-    debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+        // we limit analysis to n sentences
+    var aSentencesReinforced = aSentencesReinforced.slice(0,Algol.Cutoff_Sentences);
+    perflog("matching records ...")
+    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    if(debuglog.enabled) {
+      debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+    }
     var matchedFiltered = WhatIs.filterOnlyTopRanked(matchedAnswers);
-    debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
-
+    if (debuglog.enabled) {
+      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+    }
+    perflog("total listAllHavingContext")
     return matchedFiltered;
   }
 }

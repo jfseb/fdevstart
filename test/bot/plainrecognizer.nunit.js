@@ -22,6 +22,21 @@ exports.testParseRuleInt = function (test) {
 };
 
 
+
+exports.testParseRuleGreedy = function (test) {
+  const res =
+    recognizer.parseRule('what ((is)|(was)) a <category>? in <A1> and');
+  test.deepEqual(res, {
+    type: 1,
+    regexp: /^what ((is)|(was)) a (.*?) in (.*) and$/i,
+    argsMap: {
+      'category': 4,
+      'A1': 5
+    }
+  }, 'parsed ok');
+  test.done();
+};
+
 exports.testParseRuleIntParen = function (test) {
   const res =
     recognizer.parseRule('what (is)|(was) a <category> in <A1> and');
@@ -131,6 +146,43 @@ exports.testRecognizeSome = function (test) {
   });
 };
 
+
+exports.testRecognizeSome = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'What is the ABC for DEF in KLM'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'category',
+          entity: 'ABC',
+          startIndex: 12,
+          endIndex: 15
+        },
+        {
+          type: 'A1',
+          entity: 'DEF in KLM',
+          startIndex: 20,
+          endIndex: 30
+        }
+        ],
+        score: 0.9,
+        intent: 'WhatIs'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
 exports.testRecognizeNone = function (test) {
   var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
   var oContext = {
@@ -157,7 +209,7 @@ exports.testRecognizeNone = function (test) {
 exports.testRecognizeAmbiguous = function (test) {
 
   var ambRules = {
-    'Exit' : [
+    'Exit': [
       'Quit',
       'Leave',
       'Exit',
@@ -185,7 +237,7 @@ exports.testRecognizeAmbiguous = function (test) {
         intent: 'Exit'
       }
 
-    , 'correct result');
+      , 'correct result');
     test.done();
   });
 };
