@@ -13,7 +13,10 @@ var InputFilterRules = require('../match/inputFilterRules');
 var Tools = require('../match/tools');
 var fs = require('fs');
 var process = require('process');
-var modelPath = process.env["MODELPATH"] || "testmodel";
+/**
+ * the model path, may be controlled via environment variable
+ */
+var modelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 ;
 function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
     synonyms.forEach(function (syn) {

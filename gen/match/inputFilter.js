@@ -15,7 +15,7 @@
  * @file inputFilter.ts
  * @copyright (c) 2016 Gerd Forstmann
  */
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 var distance = require('../utils/damerauLevenshtein');
 var Logger = require('../utils/logger');
 var logger = Logger.logger('inputFilter');

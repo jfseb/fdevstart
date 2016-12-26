@@ -57,7 +57,23 @@ Currently the test folder is not compiled, but contains directly es6 modules
 gulp, gulp-watch
 
 
+##Envionment variables
 
+ABOT_MODELPATH=..\sensitive\
+DATABASE_URL= < a valid postgres connection string >
+ABOT_LOGDB=1
+
+
+
+
+##Postgres setup
+
+The bot logs conversations, users and sessions in a postgres database
+if environment variable ABOT_LOGDB is set to a truthy variable
+
+/src/sql/tabl_users.sql
+/src/sql/tabl_sessions.sql
+/src/sql/tabl_convlog.sql
 
 ##Models
 

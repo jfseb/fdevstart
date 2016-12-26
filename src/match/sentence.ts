@@ -10,7 +10,7 @@
  *
  */
 
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 
 // import * as debug from 'debug';
 

@@ -7,7 +7,7 @@
  * There are two types of logs ( append and overwrite, default is append)
  */
 
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 
 import * as debug from 'debug';
 
@@ -19,9 +19,7 @@ interface ILogger {
   logIt?: (any) => void
 };
 
-
 var perfs = {} as {[key : string] : { enabled : boolean, name : string, last: number, first : number, on : {}}};
-
 
 function logPerf(sString) {
   if(!this || !this.enabled) {

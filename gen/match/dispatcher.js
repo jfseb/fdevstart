@@ -4,7 +4,6 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-/// <reference path="../../lib/node-4.d.ts" />
 var AnyObject = Object;
 var distance = require('../utils/damerauLevenshtein');
 var debug = require('debug');

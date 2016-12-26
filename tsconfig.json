@@ -25,7 +25,6 @@
         "!node_modules/**"
     ],
     "files": [
-        "typings/modules/debug/index.d.ts",
         "src/interfaces.d.ts",
         "src/match/ifmatch.ts",
         "src/match/toolmatch.ts",
@@ -52,6 +51,7 @@
         "src/match/listall.ts",
         "src/match/word.ts",
         "src/utils/logger.ts",
+        "src/utils/dialoglogger.ts",
         "src/utils/damerauLevenshtein.ts",
         "src/utils/utils.ts"
     ],

@@ -54,6 +54,7 @@
     "elizabot": "0.0.2",
     "level": "^1.5.0",
     "levelgraph": "^1.3.1",
+    "pg": "^6.1.2",
     "stream-to-array": "^2.3.0"
   },
   "bin": {
@@ -71,6 +72,9 @@
     "comments": true
   },
   "devDependencies": {
+    "@types/debug": "0.0.29",
+    "@types/pg": "^6.1.34",
+    "@types/core-js": "^0.9.35",
     "babel": "^6.5.2",
     "babel-preset-es2015": "^6.18.0",
     "coveralls": "^2.11.15",

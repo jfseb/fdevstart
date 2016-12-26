@@ -11,9 +11,10 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 //declare module 'elizabot' { };
+//declare module 'winston-pg' { };
+//delcare module 'winston' {};
 
 import * as builder from 'botbuilder';
-
 import * as debug from 'debug';
 
 import * as Exec from '../exec/exec';
@@ -23,6 +24,69 @@ import * as Analyze from '../match/analyze';
 
 import * as WhatIs from '../match/whatis';
 import * as ListAll from '../match/listall';
+
+import * as DialogLogger from '../utils/dialoglogger';
+
+import * as process from 'process';
+
+var dburl = process.env.DATABASE_URL || "";
+
+var pglocalurl = "postgres://joe:abcdef@localhost:5432/abot";
+var dburl = process.env.DATABASE_URL || pglocalurl;
+
+import * as pg from 'pg';
+
+var dialogLogger = DialogLogger.logger("smartbot", dburl, pg);
+
+type stringOrMessage = string | builder.Message;
+function send<T extends stringOrMessage>(o : T) : T { return o; };
+function dialoglog(intent: string, session : builder.Session, response : stringOrMessage) {
+  var sResponse : string;
+  var sAction : string;
+  if( typeof response === "string") {
+    sAction = "";
+    sResponse = response;
+  } else {
+    var aMessage : builder.Message = response;
+    var iMessage : builder.IMessage = aMessage.toMessage();
+    sResponse = iMessage.text;
+    sAction = (iMessage.entities && iMessage.entities[0]) ?  (JSON.stringify(iMessage.entities && iMessage.entities[0])) : "";
+  }
+  dialogLogger({
+    intent: intent,
+    session: session,
+    response : sResponse,
+    action : sAction
+  });
+  session.send(response);
+}
+
+//const pgLogger = new PgLogger({
+//  name: 'test-logger',
+//  level: 'debug',
+//  connString: 'postgres://ubuntu@localhost:5432/circle_test',
+//  tableName: 'winston_logs',
+//});
+
+
+
+//winston.add(winston.transports.File, { filename: 'winston_out.log', timestamp : true });
+//  winston.remove(winston.transports.Console);
+//winston.add(pgLogger);
+
+/*
+const logger = new winston.Logger({
+  transports: [
+    new winston.transports.Console({
+      color: true,
+      timestamp: true,
+    }),
+    pgLogger,
+  ]
+});
+*/
+//pgLogger.initTable(done);
+
 
 var elizabot = require('../extern/elizabot/elizabot');
 //import * as elizabot from 'elizabot';
@@ -386,9 +450,9 @@ function makeBot(connector) {
         var prompt = Analyze.getPrompt(result[0]);
         session.dialogData.result = result[0];
         session.dialogData.prompt = prompt;
-        session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+        dialoglog("ShowMe", session,send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
           session.dialogData.result
-        ));
+        )));
         builder.Prompts.text(session, prompt.text);
       } else {
         var best = result.length ? Match.ToolMatch.dumpNice(result[0]) : "<nothing>";
@@ -398,7 +462,7 @@ function makeBot(connector) {
             .text('I did not understand this' + best)
             .addEntity({ url: "I don't know" });
         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-        session.send(reply);
+        dialoglog("ShowMe", session, send(reply));
       }
     },
     function (session, results, next) {
@@ -433,15 +497,16 @@ function makeBot(connector) {
           .text(exec.text)
           .addEntity(exec.action);
         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-        session.send(reply);
+        dialoglog("ShowMe",session,send(reply));
 
       } else {
         if (session.dialogData.result) {
-          session.send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+          dialoglog("ShowMe",
+          session,send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
             session.dialogData.result
-          ));
+          )));
         } else {
-          session.send("I did not get what you want");
+          dialoglog("ShowMe", session, send("I did not get what you want"));
         }
       }
     },
@@ -477,7 +542,7 @@ function makeBot(connector) {
         return;
       }
       if (!result || result.length === 0) {
-        session.send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"');
+        dialoglog("WhatIs",session,send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"'));
         // next();
         return;
       } else {
@@ -485,7 +550,7 @@ function makeBot(connector) {
         debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
         debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
         // TODO cleansed sentence
-        session.send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n"); //  + JSON.stringify(result[0]));
+        dialoglog("WhatIs",session,send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n")); //  + JSON.stringify(result[0]));
       }
     }
   ]);
@@ -504,7 +569,7 @@ function makeBot(connector) {
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
       if (category === "categories") {
         var res = theModel.category.join(";\n");
-        session.send("my categories are ...\n" + res);
+        dialoglog("ListAll",session,send("my categories are ...\n" + res));
         return;
       }
       if (category === "domains") {
@@ -516,12 +581,12 @@ function makeBot(connector) {
         var res = theModel.tools.map(function (oTool) {
           return oTool.name;
         }).join(";\n");
-        session.send("my tools are ...\n" + res);
+        dialoglog("ListAll", session,send("my tools are ...\n" + res));
         return;
       }
       var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
       if (!cat) {
-        session.send('I don\'t know anything about "' + category + '"');
+        dialoglog("ListAll",session,send('I don\'t know anything about "' + category + '"'));
         // next();
         return;
       }
@@ -540,9 +605,9 @@ function makeBot(connector) {
         var joinresults = ListAll.joinResults(result1);
         logQueryWhatIs(session, 'ListAll', result1);
         if(joinresults.length ){
-          session.send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n"));
+          dialoglog("ListAll",session,send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
         } else {
-          session.send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n"));
+          dialoglog("ListAll",session,send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
         }
         return;
       } else {
@@ -550,13 +615,16 @@ function makeBot(connector) {
         //
         const result = ListAll.listAllHavingContext(cat, cat, theModel.mRules, theModel.records);
         logQueryWhatIs(session, 'ListAll', result);
+
         if (result.length) {
           debuglog('listall result:' + JSON.stringify(result));
           var joinresults = ListAll.joinResults(result);
-          session.send("the " + category + " are ...\n" + joinresults.join(";\n"));
+          var response = "the " + category + " are ...\n" + joinresults.join(";\n");
+          dialoglog("ListAll",session,send(response));
           return;
         } else {
-          session.send("Found no data having \"" + cat + "\"");
+          var response = "Found no data having \"" + cat + "\""
+          dialoglog("ListAll",session,send(response));
           return;
         }
       }
@@ -566,6 +634,11 @@ function makeBot(connector) {
 
   dialog.matches('Wrong', [
     function (session, args, next) {
+        dialogLogger( {
+          session: session,
+          intent : "Wrong",
+          response : '<begin updown>'
+        });
       session.beginDialog('/updown', session.userData.count);
     },
     function (session, results, next) {
@@ -582,6 +655,11 @@ function makeBot(connector) {
     function (session, args, next) {
       console.log('exit :');
       console.log('exit' + JSON.stringify(args.entities));
+        dialogLogger( {
+          session: session,
+          intent : "Exit",
+          response : 'you are in a logic loop'
+        });
       session.send("you are in a logic loop ");
     }
   ]);
@@ -607,7 +685,12 @@ function makeBot(connector) {
         timestamp: time ? time.getTime() : null
       };
       // Prompt for title
-      if (!alarm.title) {
+        if (!alarm.title) {
+          dialogLogger( {
+          session: session,
+          intent : "train",
+          response : 'What fact would you like to train?'
+        });
         builder.Prompts.text(session, 'What fact would you like to train?');
       } else {
         next();
@@ -621,6 +704,8 @@ function makeBot(connector) {
 
       // Prompt for time (title will be blank if the user said cancel)
       if (alarm.title && !alarm.timestamp) {
+
+
         builder.Prompts.time(session, 'What time would you like to set the alarm for?');
       } else {
         next();
@@ -655,7 +740,7 @@ function makeBot(connector) {
     logQuery(session, "onDefault");
     var eliza = getElizaBot(getConversationId(session));
     var reply = eliza.transform(session.message.text);
-    session.send(reply);
+    dialoglog("eliza",session,send(reply));
     //new Eilzabot
     //session.send("I do not understand this at all");
     //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');

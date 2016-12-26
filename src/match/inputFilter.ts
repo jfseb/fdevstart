@@ -14,7 +14,7 @@
  * @file inputFilter.ts
  * @copyright (c) 2016 Gerd Forstmann
  */
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 import * as distance from '../utils/damerauLevenshtein';
 
 import * as Logger from '../utils/logger'

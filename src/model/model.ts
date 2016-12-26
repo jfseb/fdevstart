@@ -27,7 +27,10 @@ import * as fs from 'fs';
 
 import * as process from 'process';
 
-var modelPath = process.env["MODELPATH"] || "testmodel";
+/**
+ * the model path, may be controlled via environment variable
+ */
+var modelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 
 
 interface IModels {

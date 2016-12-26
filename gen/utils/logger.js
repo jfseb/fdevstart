@@ -5,7 +5,7 @@
  * There are two types of logs ( append and overwrite, default is append)
  */
 "use strict";
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 var debug = require('debug');
 var debuglog = debug('logger');
 ;

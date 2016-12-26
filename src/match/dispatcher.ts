@@ -5,7 +5,7 @@
  */
 
 
-/// <reference path="../../lib/node-4.d.ts" />
+// <reference path="../../lib/node-4.d.ts" />
 
 declare interface ObjectConstructor {
     assign(target: any, ...sources: any[]): any;
