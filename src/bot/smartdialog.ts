@@ -575,7 +575,7 @@ function makeBot(connector) {
         } else {
           var aRes = Model.getCategoriesForDomain(theModel, domain);
            var res = aRes.join(";\n");
-          dialoglog("ListAll",session,send("my categories are ...\n" + res));
+          dialoglog("ListAll",session,send("my categories in domain \"" + domain + "\" are ...\n" + res));
           return;
         }
       }
