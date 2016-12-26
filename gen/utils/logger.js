@@ -41,8 +41,27 @@ function perf(string) {
 exports.perf = perf;
 var fs = require('fs');
 var loggers = {};
+var os = require('os');
+function getWritableDir() {
+    // return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+    return os.tmpdir();
+}
+function setupOnce() {
+    var home = getWritableDir();
+    try {
+        fs.mkdirSync(home + '/' + 'fdevstart');
+    }
+    catch (e) {
+    }
+    try {
+        fs.mkdirSync(home + '/fdevstart/logs');
+    }
+    catch (e) {
+    }
+}
+setupOnce();
 function getFileName(name) {
-    return './logs/' + name + ".log";
+    return os.tmpdir() + '/fdevstart/logs/' + name + ".log";
 }
 exports._test = {
     getFileName: getFileName

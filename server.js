@@ -8,6 +8,7 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+var process = require('process');
  // conf = require('./config.json');
 var uuid = require('node-uuid');
 var debug = require('debug');
@@ -33,7 +34,7 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/public/index.html');
 });
 
-server.listen(42042); //conf.port);
+server.listen(process.env.PORT || 42042);
 
 io.sockets.on('connection', function (socket) {
   var id = uuid.v4().toString(); // '' + Date.now();
@@ -50,7 +51,6 @@ io.sockets.on('connection', function (socket) {
       text : sAnswer
     });
   }, id);
-
 
   //socket.emit('register', { id : id });
    // io.clients(0).send('chat' ,{ time  : new Date(), name : 'HUGO', text: 'something'});

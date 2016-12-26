@@ -55,8 +55,33 @@ import * as fs from 'fs';
 
 var loggers = {} as { [key: string]: ILogger };
 
+var os = require('os');
+
+function getWritableDir() {
+  // return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  return os.tmpdir();
+}
+
+
+function setupOnce() {
+
+  var home = getWritableDir();
+  try {
+    fs.mkdirSync(home + '/' + 'fdevstart' );
+  } catch (e) {
+
+  }
+  try {
+    fs.mkdirSync(home + '/fdevstart/logs' );
+  } catch(e) {
+
+  }
+}
+setupOnce();
+
+
 function getFileName(name: string) {
-  return './logs/' + name + ".log";
+  return os.tmpdir()  + '/fdevstart/logs/' + name + ".log";
 }
 
 export const _test = {
