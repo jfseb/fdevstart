@@ -18,7 +18,6 @@ const mRules = InputFilterRules.getMRulesSample();
 
 
 
-
 exports.testCmbByResult = function (test) {
   var aList = [
     {
@@ -318,3 +317,7 @@ exports.testFilterOnlyTopRankedThrows = function(test) {
   }
   test.done();
 };
+
+
+
+

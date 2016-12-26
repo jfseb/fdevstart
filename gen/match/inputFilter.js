@@ -166,7 +166,7 @@ function categorizeString(string, exact, oRules) {
                     if (levenmatch < levenCutoff) {
                         res.push({
                             string: string,
-                            matchedString: oRule.word,
+                            matchedString: oRule.matchedString,
                             category: oRule.category,
                             _ranking: (oRule._ranking || 1.0) * levenPenalty(levenmatch),
                             levenmatch: levenmatch
@@ -347,9 +347,6 @@ function categorizeAWord(sWordGroup, aRules, sString, words) {
     if (seenIt === undefined) {
         seenIt = categorizeWordWithRankCutoff(sWordGroup, aRules);
         utils.deepFreeze(seenIt);
-        if (seenIt === undefined) {
-            words[sWordGroup] = seenIt;
-        }
         words[sWordGroup] = seenIt;
     }
     if (!seenIt || seenIt.length === 0) {
@@ -511,6 +508,16 @@ function reinForceSentence(oSentence) {
             oWord.reinforce *= boost;
             oWord._ranking *= boost;
         });
+    });
+    oSentence.forEach(function (oWord, iIndex) {
+        if (iIndex > 0) {
+            if (oSentence[iIndex - 1].category === "meta" && (oWord.category === oSentence[iIndex - 1].matchedString)) {
+                oWord.reinforce = oWord.reinforce || 1;
+                var boost = reinforceDistWeight(1, oWord.category);
+                oWord.reinforce *= boost;
+                oWord._ranking *= boost;
+            }
+        }
     });
     return oSentence;
 }

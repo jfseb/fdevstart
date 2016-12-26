@@ -5,26 +5,20 @@
  */
 
 import * as intf from 'constants';
-
 import * as debug from 'debug';
 
 var debuglog = debug('model');
 
 import * as logger from '../utils/logger';
 
-
 const loadlog = logger.logger('modelload', '');
 
 import *  as IMatch from '../match/ifmatch';
-
 import * as Match from '../match/match';
-
 import * as InputFilterRules from '../match/inputFilterRules';
-
 import * as Tools from '../match/tools';
-
 import * as fs from 'fs';
-
+import * as Meta from './meta';
 import * as process from 'process';
 
 /**
@@ -32,15 +26,21 @@ import * as process from 'process';
  */
 var modelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 
+//export interface IModels = Match.IModels;
 
-interface IModels {
+/*
+export interface IModels {
     domains: string[],
     tools: IMatch.ITool[],
     category: string[],
     mRules: IMatch.mRule[],
     records: any[]
-    seenRules?: { [key: string]: IMatch.mRule }
-}
+    seenRules?: { [key: string]: IMatch.mRule },
+    meta : {
+        // entity -> relation -> target
+        t3 : { [key: string] : { [key : string] : any }}
+    }
+}*/
 
 interface IModel {
     domain: string,
@@ -98,7 +98,7 @@ function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
     return;
 }
 
-function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
+function loadModelData(oMdl: IModel, sModelName: string, oModel: IMatch.IModels) {
     // read the data ->
     // data is processed into mRules directly,
     const sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
@@ -137,16 +137,43 @@ function loadModelData(oMdl: IModel, sModelName: string, oModel: IModels) {
     });
 }
 
-function loadModel(sModelName: string, oModel: IModels) {
+function loadModel(sModelName: string, oModel: IMatch.IModels) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl) as IModel;
 
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
-
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
     }
+    // add relation domain -> category
+    var domainStr = MetaF.Domain(oMdl.domain).toFullString();
+    var relationStr = MetaF.Relation(Meta.RELATION_hasCategory).toFullString();
+    var reverseRelationStr = MetaF.Relation(Meta.RELATION_isCategoryOf).toFullString();
+    oMdl.category.forEach(function(sCategory) {
+
+        var CategoryString = MetaF.Category(sCategory).toFullString();
+        oModel.meta.t3[domainStr] = oModel.meta.t3[domainStr] || {};
+        oModel.meta.t3[domainStr][relationStr] = oModel.meta.t3[domainStr][relationStr] || {};
+        oModel.meta.t3[domainStr][relationStr][CategoryString]  = {};
+
+        oModel.meta.t3[CategoryString] = oModel.meta.t3[CategoryString] || {};
+        oModel.meta.t3[CategoryString][reverseRelationStr] = oModel.meta.t3[CategoryString][reverseRelationStr] || {};
+        oModel.meta.t3[CategoryString][reverseRelationStr][domainStr]  = {};
+
+    });
+
+    // add a precice domain matchrule
+    insertRuleIfNotPresent(oModel.mRules, {
+            category: "domain",
+            matchedString: oMdl.domain,
+            type: IMatch.EnumRuleType.WORD,
+            word: oMdl.domain,
+            _ranking: 0.95
+        }, oModel.seenRules);
+
+
+
     // extract tools an add to tools:
     oModel.tools.filter(function (oEntry) {
         if (oEntry.name === (oMdl.tool && oMdl.tool.name)) {
@@ -187,15 +214,15 @@ function loadModel(sModelName: string, oModel: IModels) {
     loadModelData(oMdl, sModelName, oModel);
 } // loadmodel
 
-
-export function loadModels() {
-    var oModel: IModels;
+export function loadModels() : IMatch.IModels {
+    var oModel: IMatch.IModels;
     oModel = {
         domains: [],
         tools: [],
         category: [],
         mRules: [],
-        records: []
+        records: [],
+        meta : { t3 : {} }
     }
     var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
@@ -214,6 +241,17 @@ export function loadModels() {
             _ranking: 0.95
         }, oModel.seenRules);
     });
+
+    // add the domain meta rule
+    insertRuleIfNotPresent(oModel.mRules, {
+            category: "meta",
+            matchedString: "domain",
+            type: IMatch.EnumRuleType.WORD,
+            word: "domain",
+            _ranking: 0.95
+        }, oModel.seenRules);
+
+
 
     //add a filler rule
     var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
@@ -243,3 +281,34 @@ export function loadModels() {
 }
 
 
+const MetaF = Meta.getMetaFactory();
+
+
+export function getResultAsArray(mdl : IMatch.IModels, a : Meta.IMeta, rel : Meta.IMeta) : Meta.IMeta[] {
+    if(rel.toType() !== 'relation') {
+        throw new Error("expect relation as 2nd arg");
+    }
+
+    var res = mdl.meta.t3[a.toFullString()] &&
+    mdl.meta.t3[a.toFullString()][rel.toFullString()];
+    if(!res) {
+        return [];
+    }
+    return Object.getOwnPropertyNames(res).sort().map(MetaF.parseIMeta);
+}
+
+export function getCategoriesForDomain(theModel : IMatch.IModels, domain : string) : string[] {
+    if(theModel.domains.indexOf(domain) < 0) {
+        throw new Error("Domain \"" + domain + "\" not part of model");
+    }
+    var res = getResultAsArray(theModel, MetaF.Domain(domain), MetaF.Relation(Meta.RELATION_hasCategory));
+    return Meta.getStringArray(res);
+}
+
+export function getDomainsForCategory(theModel : IMatch.IModels, category : string) : string[] {
+    if(theModel.category.indexOf(category) < 0) {
+        throw new Error("Category \"" + category + "\" not part of model");
+    }
+    var res = getResultAsArray(theModel, MetaF.Category(category), MetaF.Relation(Meta.RELATION_isCategoryOf));
+    return Meta.getStringArray(res);
+}

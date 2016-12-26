@@ -316,6 +316,7 @@ export function analyzeCategory(categoryword: string, aRules: Array<IMatch.mRule
   cats = cats.filter(function (cat) {
     return cat.category === 'category';
   })
+  debuglog(JSON.stringify(cats));
   if (cats.length) {
     return cats[0].matchedString;
   }
@@ -345,6 +346,7 @@ export function resolveCategory(category: string, contextQueryString: string,
     return matchedAnswers;
   }
 }
+
 
 export function filterOnlyTopRanked(results: Array<IMatch.IWhatIsAnswer>): Array<IMatch.IWhatIsAnswer> {
   var res = results.filter(function (result) {

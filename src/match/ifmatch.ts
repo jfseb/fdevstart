@@ -184,3 +184,17 @@ export interface IAction {
   pattern: string,
   concrete: string
 }
+
+
+export interface IModels {
+    domains: string[],
+    tools: ITool[],
+    category: string[],
+    mRules: mRule[],
+    records: any[]
+    seenRules?: { [key: string]: mRule },
+    meta : {
+        // entity -> relation -> target
+        t3 : { [key: string] : { [key : string] : any }}
+    }
+}

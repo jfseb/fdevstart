@@ -221,10 +221,10 @@ module.exports = function(app) {
     var email = req.session.reset.email;
 	// destory the session immediately after retrieving the stored email //
     req.session.destroy();
-    AM.updatePassword(email, nPass, function(e, o){
-      if (o){
+    AM.updatePassword(email, nPass, function(e, o) {
+      if (o) {
         res.status(200).send('ok');
-      }	else{
+      }	else {
         res.status(400).send('unable to update password');
       }
     });

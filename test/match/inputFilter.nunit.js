@@ -1626,6 +1626,54 @@ exports.testreinforceSentence = function (test) {
 };
 
 
+exports.testreinforceMetaDomainSentence = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+
+  var sentence = [
+    { string: 'domain', matchedString: 'domain', category: 'meta', _ranking: 1 },
+    { string: 'FLP', matchedString: 'FLP', category: 'domain', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'My next wiki', matchedString: 'My next wiki', category: 'wiki', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
+  ];
+
+  var res = ab.reinForceSentence(sentence);
+
+
+  var resline = [
+    {
+      string: 'domain', matchedString: 'domain', category: 'meta', _ranking: 1
+    },
+    {
+      string: 'FLP',
+      matchedString: 'FLP',
+      category: 'domain',
+      _ranking: 1.1,
+      reinforce: 1.1
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'cat', matchedString: 'catalog', category: 'category', _ranking: 1 },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    {
+      string: 'My next wiki',
+      matchedString: 'My next wiki',
+      category: 'wiki',
+      _ranking: 1.05,
+      reinforce: 1.05
+    },
+    { string: 'in', matchedString: 'in', category: 'filler', _ranking: 1 },
+    { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 }
+  ];
+
+  test.deepEqual(res, resline, 'correct reinforced string');
+  test.done();
+};
+
+
+
 
 exports.testreinforce = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))

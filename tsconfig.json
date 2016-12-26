@@ -30,6 +30,7 @@
         "src/match/toolmatch.ts",
         "src/constants.ts",
         "src/model/model.ts",
+        "src/model/meta.ts",
         "src/exec/exec.ts",
         "src/exec/execserver.ts",
         "src/exec/exectemplate.ts",

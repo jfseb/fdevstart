@@ -13,6 +13,11 @@ const ListAll = require(root + '/match/listall.js');
 
 const InputFilterRules = require(root + '/match/inputFilterRules.js');
 
+
+const Model = require(root + '/model/model.js');
+const theModel = Model.loadModels();
+
+
 const mRules = InputFilterRules.getMRulesSample();
 
 /*
@@ -73,3 +78,19 @@ exports.testListAllWithCategory = function (test) {
   test.deepEqual(res2, '"CrossApplcationNavigation"; "NavTargetResolution"; "ShellNavigation"');
   test.done();
 };
+
+
+exports.testinferDomain = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'domain FioriFLP');
+  test.equal(domain, 'FioriFLP', ' correct domain inferred');
+  test.done();
+};
+
+
+
+exports.testinferDomain2 = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'domain related to wiki');
+  test.equal(domain, 'wiki', ' correct domain inferred');
+  test.done();
+};
+

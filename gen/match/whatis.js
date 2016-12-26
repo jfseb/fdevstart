@@ -275,6 +275,7 @@ function analyzeCategory(categoryword, aRules, wholesentence) {
     cats = cats.filter(function (cat) {
         return cat.category === 'category';
     });
+    debuglog(JSON.stringify(cats));
     if (cats.length) {
         return cats[0].matchedString;
     }

@@ -12,6 +12,7 @@ var IMatch = require('../match/ifmatch');
 var InputFilterRules = require('../match/inputFilterRules');
 var Tools = require('../match/tools');
 var fs = require('fs');
+var Meta = require('./meta');
 var process = require('process');
 /**
  * the model path, may be controlled via environment variable
@@ -105,6 +106,27 @@ function loadModel(sModelName, oModel) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
     }
+    // add relation domain -> category
+    var domainStr = MetaF.Domain(oMdl.domain).toFullString();
+    var relationStr = MetaF.Relation(Meta.RELATION_hasCategory).toFullString();
+    var reverseRelationStr = MetaF.Relation(Meta.RELATION_isCategoryOf).toFullString();
+    oMdl.category.forEach(function (sCategory) {
+        var CategoryString = MetaF.Category(sCategory).toFullString();
+        oModel.meta.t3[domainStr] = oModel.meta.t3[domainStr] || {};
+        oModel.meta.t3[domainStr][relationStr] = oModel.meta.t3[domainStr][relationStr] || {};
+        oModel.meta.t3[domainStr][relationStr][CategoryString] = {};
+        oModel.meta.t3[CategoryString] = oModel.meta.t3[CategoryString] || {};
+        oModel.meta.t3[CategoryString][reverseRelationStr] = oModel.meta.t3[CategoryString][reverseRelationStr] || {};
+        oModel.meta.t3[CategoryString][reverseRelationStr][domainStr] = {};
+    });
+    // add a precice domain matchrule
+    insertRuleIfNotPresent(oModel.mRules, {
+        category: "domain",
+        matchedString: oMdl.domain,
+        type: 0 /* WORD */,
+        word: oMdl.domain,
+        _ranking: 0.95
+    }, oModel.seenRules);
     // extract tools an add to tools:
     oModel.tools.filter(function (oEntry) {
         if (oEntry.name === (oMdl.tool && oMdl.tool.name)) {
@@ -153,7 +175,8 @@ function loadModels() {
         tools: [],
         category: [],
         mRules: [],
-        records: []
+        records: [],
+        meta: { t3: {} }
     };
     var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
@@ -171,6 +194,14 @@ function loadModels() {
             _ranking: 0.95
         }, oModel.seenRules);
     });
+    // add the domain meta rule
+    insertRuleIfNotPresent(oModel.mRules, {
+        category: "meta",
+        matchedString: "domain",
+        type: 0 /* WORD */,
+        word: "domain",
+        _ranking: 0.95
+    }, oModel.seenRules);
     //add a filler rule
     var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
     var fillers = JSON.parse(sfillers);
@@ -198,5 +229,34 @@ function loadModels() {
     return oModel;
 }
 exports.loadModels = loadModels;
+var MetaF = Meta.getMetaFactory();
+function getResultAsArray(mdl, a, rel) {
+    if (rel.toType() !== 'relation') {
+        throw new Error("expect relation as 2nd arg");
+    }
+    var res = mdl.meta.t3[a.toFullString()] &&
+        mdl.meta.t3[a.toFullString()][rel.toFullString()];
+    if (!res) {
+        return [];
+    }
+    return Object.getOwnPropertyNames(res).sort().map(MetaF.parseIMeta);
+}
+exports.getResultAsArray = getResultAsArray;
+function getCategoriesForDomain(theModel, domain) {
+    if (theModel.domains.indexOf(domain) < 0) {
+        throw new Error("Domain \"" + domain + "\" not part of model");
+    }
+    var res = getResultAsArray(theModel, MetaF.Domain(domain), MetaF.Relation(Meta.RELATION_hasCategory));
+    return Meta.getStringArray(res);
+}
+exports.getCategoriesForDomain = getCategoriesForDomain;
+function getDomainsForCategory(theModel, category) {
+    if (theModel.category.indexOf(category) < 0) {
+        throw new Error("Category \"" + category + "\" not part of model");
+    }
+    var res = getResultAsArray(theModel, MetaF.Category(category), MetaF.Relation(Meta.RELATION_isCategoryOf));
+    return Meta.getStringArray(res);
+}
+exports.getDomainsForCategory = getDomainsForCategory;
 
 //# sourceMappingURL=model.js.map

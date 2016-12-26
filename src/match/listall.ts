@@ -11,7 +11,7 @@ import * as InputFilter from './inputFilter';
 import * as Algol from './algol';
 import * as debug from 'debug';
 
-const debuglog = debug('whatis');
+const debuglog = debug('listall');
 import * as logger from '../utils/logger';
 var logPerf = logger.perf("perflistall");
 var perflog = debug('perf');
@@ -29,7 +29,7 @@ import * as Word from './word';
 
 import * as WhatIs from './whatis';
 
-
+import * as Model from '../model/model';
 import * as Match from './match';
 
 
@@ -44,16 +44,8 @@ export function matchRecordHavingCategory(category: string, records: Array<IMatc
   return relevantRecords;
 }
 
-// const result = WhatIs.resolveCategory(cat, a1.entity,
-//   theModel.mRules, theModel.tools, theModel.records);
 
-export function listAllWithContext(category: string, contextQueryString: string,
-  aRules: Array<IMatch.mRule>, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
-  if (contextQueryString.length === 0) {
-    return [];
-  } else {
-    logPerf('listAllWithContext');
-    perflog("totalListAllWithContext");
+export function analyzeContextString(contextQueryString : string,  aRules: Array<IMatch.mRule>) {
     var matched = InputFilter.analyzeString(contextQueryString, aRules);
     if(debuglog.enabled) {
       debuglog("After matched " + JSON.stringify(matched));
@@ -72,6 +64,39 @@ export function listAllWithContext(category: string, contextQueryString: string,
     }
     // we limit analysis to n sentences
     var aSentencesReinforced = aSentencesReinforced.slice(0, Algol.Cutoff_Sentences);
+    return aSentencesReinforced;
+}
+
+// const result = WhatIs.resolveCategory(cat, a1.entity,
+//   theModel.mRules, theModel.tools, theModel.records);
+
+export function listAllWithContext(category: string, contextQueryString: string,
+  aRules: Array<IMatch.mRule>, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
+  if (contextQueryString.length === 0) {
+    return [];
+  } else {
+    logPerf('listAllWithContext');
+    perflog("totalListAllWithContext");
+    /*
+    var matched = InputFilter.analyzeString(contextQueryString, aRules);
+    if(debuglog.enabled) {
+      debuglog("After matched " + JSON.stringify(matched));
+    }
+    var aSentences = InputFilter.expandMatchArr(matched);
+    if(debuglog.enabled) {
+      debuglog("after expand" + aSentences.map(function (oSentence) {
+        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+      }).join("\n"));
+    }
+    var aSentencesReinforced = InputFilter.reinForce(aSentences);
+    if(debuglog.enabled) {
+      debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
+        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+      }).join("\n"));
+    }
+    // we limit analysis to n sentences
+    */
+    var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
 
     perflog("matching records ...");
 
@@ -97,24 +122,8 @@ export function listAllHavingContext(category: string, contextQueryString: strin
   if (contextQueryString.length === 0) {
     return [];
   } else {
-    var matched = InputFilter.analyzeString(contextQueryString, aRules);
-    perflog("having after analyze ")
-    if(debuglog.enabled) {
-      debuglog("After matched " + JSON.stringify(matched));
-    }
-    var aSentences = InputFilter.expandMatchArr(matched);
-    if(debuglog.enabled) {
-      debuglog("after expand" + aSentences.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
-    }
-    var aSentencesReinforced = InputFilter.reinForce(aSentences);
-    //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
-    debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
-      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
-        // we limit analysis to n sentences
-    var aSentencesReinforced = aSentencesReinforced.slice(0,Algol.Cutoff_Sentences);
+    perflog("matching records ...");
+    var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
     perflog("matching records ...")
     var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled) {
@@ -172,3 +181,44 @@ export function joinResults(results: Array<IMatch.IWhatIsAnswer>): string[] {
   }, 0);
   return res;
 }
+
+export function inferDomain(theModel : IMatch.IModels, contextQueryString: string): string {
+ // console.log("here the string" + contextQueryString);
+ //  console.log("here the rules" + JSON.stringify(theModel.mRules));
+  var res = analyzeContextString(contextQueryString, theModel.mRules);
+  //console.log(JSON.stringify(res,undefined,2));
+  // run through the string, search for a category
+  if(!res.length) {
+    return undefined;
+  }
+  var domains = [];
+  // do we have a domain ?
+  res[0].forEach(function(oWordGroup) {
+    if(oWordGroup.category === "domain") {
+      domains.push(oWordGroup.matchedString)
+    }
+  });
+  if(domains.length === 1) {
+    return domains[0];
+  }
+  if(domains.length > 0 ) {
+    return undefined;
+    // TODOD
+  }
+  // try a category reverse map
+  res[0].forEach(function(oWordGroup){
+    if(oWordGroup.category === "category") {
+      var sCat = oWordGroup.matchedString;
+      var doms = Model.getDomainsForCategory(theModel,sCat);
+      doms.forEach(function(sDom) {
+        if(domains.indexOf(sDom) < 0) {
+          domains.push(sDom);
+        }
+      });
+    }
+  });
+  if(domains.length === 1) {
+    return domains[0];
+  }
+  return undefined;
+};

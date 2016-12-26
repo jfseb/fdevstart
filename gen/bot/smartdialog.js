@@ -481,9 +481,22 @@ function makeBot(connector) {
             var category = categoryEntity.entity;
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
             if (category === "categories") {
-                var res = theModel.category.join(";\n");
-                dialoglog("ListAll", session, send("my categories are ...\n" + res));
-                return;
+                // do we have a filter ?
+                var domain = undefined;
+                if (a1 && a1.entity) {
+                    domain = ListAll.inferDomain(theModel, a1.entity);
+                }
+                if (!domain) {
+                    var res = theModel.category.join(";\n");
+                    dialoglog("ListAll", session, send("my categories are ...\n" + res));
+                    return;
+                }
+                else {
+                    var aRes = Model.getCategoriesForDomain(theModel, domain);
+                    var res = aRes.join(";\n");
+                    dialoglog("ListAll", session, send("my categories are ...\n" + res));
+                    return;
+                }
             }
             if (category === "domains") {
                 var res = theModel.domains.join(";\n");

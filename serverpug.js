@@ -36,9 +36,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
 
+//'https://jfseb-abot.herokuapp.com'
+
 app.get('*',function(req,res,next){
-  if(req.headers['x-forwarded-proto'] !='https')
-    res.redirect('https://jfseb-abot.herokuapp.com'+req.url);
+  if((req.headers['x-forwarded-proto'] !='https') && process.env.PORT)
+    res.redirect(process.env.ABOT_SERVER +req.url);
   else
     next(); /* Continue to other routes if we're not redirecting */
 });

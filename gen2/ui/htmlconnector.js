@@ -6,8 +6,8 @@
 
 /*global process:true*/
 
-var bb = require('botbuilder');
-var Message = bb.Message;
+var BotBuilder = require('botbuilder');
+var Message = BotBuilder.Message;
 var HTMLConnector = function () {
   function HTMLConnector(options) {
     this.replyCnt = 0;
@@ -62,7 +62,7 @@ var HTMLConnector = function () {
   HTMLConnector.prototype.send = function (messages, done) {
     for (var i = 0; i < messages.length; i++) {
       if (this.replyCnt++ > 0) {
-        console.log(' reply ');
+        //  console.log(' reply ');
       }
       var msg = messages[i];
       if (msg.text) {
@@ -80,7 +80,7 @@ var HTMLConnector = function () {
       if (msg.attachments && msg.attachments.length > 0) {
         for (var k = 0; i < msg.attachments.length; i++) {
           if (k > 0) {
-            console.log();
+            //console.log();
           }
           renderAttachment(msg.attachments[k]);
         }
@@ -208,5 +208,5 @@ function repeat(char, length) {
   return txt;
 }
 function log(text) {
-  console.log(text);
+  //console.log('XXXXXXXXXXXXXXXXXXX' + text);
 }
