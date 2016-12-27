@@ -2,6 +2,8 @@
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
 
+var debug = require('debug');
+var debuglog = debug('routes');
 var uuid = require('node-uuid');
 
 module.exports = function(app) {
@@ -48,7 +50,7 @@ module.exports = function(app) {
       if (!o){
         res.status(400).send(e);
       }	else{
-        console.log('got user' + JSON.stringify(o));
+        debuglog('got user' + JSON.stringify(o));
         req.session.user = o;
         if (req.body['remember-me'] == 'true'){
           res.cookie('user', o.user, { maxAge: 900000 });
@@ -79,7 +81,7 @@ module.exports = function(app) {
 	// if user is not logged-in redirect back to login page //
       res.redirect('/');
     }	else{
-      console.log('at home ' + JSON.stringify(req.session));
+      debuglog('at home ' + JSON.stringify(req.session));
       res.render('home', {
         user : (req.session.user && req.session.user.user) || undefined,
         title : 'abot',
@@ -120,8 +122,8 @@ module.exports = function(app) {
   app.post('/settings', function(req, res){
     if (req.session.user == null){
       res.redirect('/');
-    }	else{
-      console.log('here the user' + JSON.stringify(req.session.user));
+    }	else {
+      debuglog('here the user' + JSON.stringify(req.session.user));
       AM.updateAccount({
         id		: req.session.user.id,
         user	: req.body['user'],
@@ -189,7 +191,7 @@ module.exports = function(app) {
           if (!e){
             res.status(200).send('ok');
           }	else{
-            for (k in e) console.log('ERROR : ', k, e[k]);
+            for (k in e) debuglog('ERROR : ', k, e[k]);
             res.status(400).send('unable to dispatch password reset');
           }
         });

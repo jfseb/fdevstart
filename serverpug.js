@@ -35,6 +35,14 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
+
+app.get('*',function(req,res,next){
+  if(req.headers['x-forwarded-proto'] !='https')
+    res.redirect('https://jfseb-abot.herokuapp.com'+req.url);
+  else
+    next(); /* Continue to other routes if we're not redirecting */
+});
+
 app.use(express.static(__dirname + '/app/public'));
 
 if (process.env.NODE_ENV === 'development') {
@@ -153,7 +161,12 @@ io.sockets.on('connection', function (socket) {
       delete socket.handshake.session.userdata;
     }
   });
-
+  socket.on('error', (err) => {
+    console.log(err);
+  });
+  socket.on('reconnect_failed', (err) => {
+    console.log(err);
+  });
   connector.setAnswerHook(function (sAnswer, oCommand, sId) {
     debuglog('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
     socket.emit('wosap',{ time : new Date(),

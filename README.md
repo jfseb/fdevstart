@@ -63,7 +63,6 @@ ABOT_MODELPATH=..\sensitive\
 DATABASE_URL= < a valid postgres connection string >
 ABOT_LOGDB=1
 
-
 For the password reset e-mails:
 ABOT_SERVER=https://jfseb-abot.herokuapp.com
 ABOT_EMAIL_PASS
