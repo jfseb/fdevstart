@@ -50,6 +50,10 @@ const columnLengths = [10, 40, 1024, 1024, 512, 20, 40, 0,0 ];
 
 export function assureColumnLengthNotExceeded(obj : ILogEntry) : ILogEntry {
   columns.forEach(function(sCol,iIndex) {
+    if(columnLengths[iIndex] && typeof obj[sCol] !==  "string") {
+      debuglog("Unexpected non-string value " + JSON.stringify(obj[sCol]));
+      obj[sCol] = ""+ obj[sCol];
+    }
     if(obj[sCol] && columnLengths[iIndex] && obj[sCol].length > columnLengths[iIndex]) {
       obj[sCol] = obj[sCol].substring(0,columnLengths[iIndex]);
     }
@@ -62,6 +66,8 @@ export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => v
   callback = callback || (function() {});
   var session = answer.session;
   var pg = this.pg;
+  debuglog("here user id of message session.message.address " +
+  JSON.stringify(session.message.address.user));
   var oLogEntry : ILogEntry = {
     botid : this.name,
     userid: session.message.address
@@ -110,7 +116,8 @@ export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => v
             pgDone();
             if (err) {
              // logger.emit('error', err);
-             debuglog('Error inserting record into db ' + err);
+             debuglog('Error inserting record into db ' + err + '\n' +
+                values.join("\n"));
               callback(err);
             } else {
             //  logger.emit('logged');

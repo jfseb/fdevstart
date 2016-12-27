@@ -121,6 +121,7 @@ export function sift3Distance(s1, s2) {
     return (s1.length + s2.length) / 2 - lcs;
 }
 
+/*
 //  Sift4 - common version
 // https://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html
 // online algorithm to compute the distance between two strings in O(n)
@@ -224,3 +225,5 @@ export function sift4(s1, s2, maxOffset, maxDistance) {
     lcss+=local_cs;
     return Math.round(Math.max(l1,l2)- lcss +trans); //add the cost of transpositions to the final result
 }
+
+*/

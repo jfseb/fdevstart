@@ -34,7 +34,7 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/public/index.html');
 });
 
-server.listen(process.env.PORT || 42042);
+server.listen(process.env.PORT || 42043);
 
 io.sockets.on('connection', function (socket) {
   var id = uuid.v4().toString(); // '' + Date.now();

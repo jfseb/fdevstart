@@ -64,6 +64,13 @@ DATABASE_URL= < a valid postgres connection string >
 ABOT_LOGDB=1
 
 
+For the password reset e-mails:
+ABOT_SERVER=https://jfseb-abot.herokuapp.com
+ABOT_EMAIL_PASS
+ABOT_EMAIL_USER
+ABOT_EMAIL_SERVER
+
+
 
 
 ##Postgres setup
@@ -74,6 +81,12 @@ if environment variable ABOT_LOGDB is set to a truthy variable
 /src/sql/tabl_users.sql
 /src/sql/tabl_sessions.sql
 /src/sql/tabl_convlog.sql
+
+
+SSL setup on windows, see
+
+https://www.howtoforge.com/postgresql-ssl-certificates
+http://esaucairn-almuric.blogspot.de/2009/07/windows-ssl-for-postgresql.html
 
 ##Models
 

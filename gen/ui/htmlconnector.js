@@ -39,12 +39,18 @@ var HTMLConnector = function () {
     return this;
   };
   HTMLConnector.prototype.processMessage = function (line, id) {
+    if (typeof id === 'string') {
+      id = {
+        conversationid: id,
+        user: id
+      };
+    }
     if (this.handler) {
       var msg = new Message().address({
         channelId: 'console',
-        user: { id: id, name: this.user + 'id' },
+        user: { id: id.user, name: id.user },
         bot: { id: this.bot, name: this.bot },
-        conversation: { id: id }
+        conversation: { id: id.conversationid }
       }).timestamp().text(line);
       this.handler([msg.toMessage()]);
     }

@@ -26,6 +26,8 @@ var dburl = process.env.DATABASE_URL || "";
 var pglocalurl = "postgres://joe:abcdef@localhost:5432/abot";
 var dburl = process.env.DATABASE_URL || pglocalurl;
 var pg = require('pg');
+var o = pg;
+o.defaults.ssl = true;
 var dialogLogger = DialogLogger.logger("smartbot", dburl, pg);
 function send(o) { return o; }
 ;
@@ -106,7 +108,7 @@ var SimpleRecognizer = (function () {
     }
     SimpleRecognizer.prototype.recognize = function (context, callback) {
         var u = {};
-        console.log("recognizing " + context.message.text);
+        debuglog("recognizing " + context.message.text);
         if (context.message.text.indexOf("start") >= 0) {
             u.intent = "ShowEntity";
             u.score = 0.9;
@@ -174,7 +176,7 @@ var SimpleRecognizer = (function () {
             callback(undefined, u);
             return;
         }
-        console.log('recognizing nothing');
+        debuglog('recognizing nothing');
         u.intent = "None";
         u.score = 0.1;
         var e1 = {};
@@ -191,7 +193,7 @@ var SimpleUpDownRecognizer = (function () {
     }
     SimpleUpDownRecognizer.prototype.recognize = function (context, callback) {
         var u = {};
-        console.log("recognizing " + context.message.text);
+        debuglog("recognizing " + context.message.text);
         if (context.message.text.indexOf("down") >= 0) {
             u.intent = "intent.down";
             u.score = 0.9;
@@ -214,7 +216,7 @@ var SimpleUpDownRecognizer = (function () {
             callback(undefined, u);
             return;
         }
-        console.log('recognizing nothing');
+        debuglog('recognizing nothing');
         u.intent = "None";
         u.score = 0.1;
         var e1 = {};
@@ -355,7 +357,7 @@ function makeBot(connector) {
             var oNewEntity;
             // expecting entity A1
             debuglog("Show Entity");
-            console.log('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
             var result = Analyze.analyzeAll(a1.entity, theModel.mRules, theModel.tools, gwords);
             logQuery(session, 'ShowMe', result);
@@ -381,12 +383,7 @@ function makeBot(connector) {
             }
             else {
                 var best = result.length ? Match.ToolMatch.dumpNice(result[0]) : "<nothing>";
-                //session.send('I did not understand this' + best);
-                var reply = new builder.Message(session)
-                    .text('I did not understand this' + best)
-                    .addEntity({ url: "I don't know" });
-                // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-                dialoglog("ShowMe", session, send(reply));
+                dialoglog("ShowMe", session, send('I did not understand this' + best));
             }
         },
         function (session, results, next) {
@@ -566,8 +563,8 @@ function makeBot(connector) {
     ]);
     dialog.matches('Exit', [
         function (session, args, next) {
-            console.log('exit :');
-            console.log('exit' + JSON.stringify(args.entities));
+            debuglog('exit :');
+            debuglog('exit' + JSON.stringify(args.entities));
             dialogLogger({
                 session: session,
                 intent: "Exit",
@@ -578,15 +575,15 @@ function makeBot(connector) {
     ]);
     dialog.matches('Help', [
         function (session, args, next) {
-            console.log('help :');
-            console.log('help');
+            debuglog('help :');
+            debuglog('help');
             session.send("I know about .... <categories>>");
         }
     ]);
     // Add intent handlers
     dialog.matches('train', [
         function (session, args, next) {
-            console.log('train');
+            debuglog('train');
             // Resolve and store any entities passed from LUIS.
             var title = builder.EntityRecognizer.findEntity(args.entities, 'builtin.alarm.title');
             var time = builder.EntityRecognizer.resolveTime(args.entities);

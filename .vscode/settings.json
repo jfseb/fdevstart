@@ -6,7 +6,7 @@
     // The default end of line character.
     "files.eol": "\n",
 
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
     // Format a file on save. A formatter must be available, the file must not be auto-saved, and editor must not be shutting down.
     "editor.formatOnSave": false,
     // Turns auto fix on save on or off.
