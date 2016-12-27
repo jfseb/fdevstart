@@ -1,0 +1,18 @@
+
+
+E:\projects\nodejs\botbuilder\abot>heroku addons:create heroku-postgresql:hobby-basic
+Creating heroku-postgresql:hobby-basic on jfseb-abot... $9/month
+Database has been created and is available
+ ! This database is empty. If upgrading, you can transfer
+ ! data from another database with pg:copy
+Created postgresql-clean-39883 as DATABASE_URL
+Use heroku addons:docs heroku-postgresql to view documentation
+
+
+heroku pg:info
+
+heroku pg:wait
+
+heroku pg_psql <xxx.sql
+
+
