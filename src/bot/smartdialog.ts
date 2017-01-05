@@ -89,7 +89,7 @@ const logger = new winston.Logger({
 //pgLogger.initTable(done);
 
 
-var elizabot = require('../extern/elizabot/elizabot');
+var elizabot = require('../extern/elizabot/elizabot.js');
 //import * as elizabot from 'elizabot';
 
 let debuglog = debug('smartdialog');
