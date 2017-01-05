@@ -59,7 +59,7 @@ function findMatchingSets(a) {
         });
     });
     if (matchingSets.length === 0) {
-        return undefined;
+        return []; // undefined;
     }
     var cmpThisToolSet = cmpToolSet.bind(undefined, a.tool.sets);
     matchingSets.sort(cmpThisToolSet);

@@ -302,7 +302,7 @@ function getRandomResult(arr : string[]) : string {
   return arr[Math.floor(Math.random() * arr.length) % arr.length];
 }
 
-class SimpleUpDownRecognizer implements builder.IIntentRecognizer {
+export class SimpleUpDownRecognizer implements builder.IIntentRecognizer {
   constructor() {
 
   }
@@ -908,6 +908,7 @@ function makeBot(connector) {
 
 if (module) {
   module.exports = {
+    SimpleUpDownRecognizer : SimpleUpDownRecognizer,
     makeBot: makeBot
   };
 }

@@ -326,6 +326,7 @@ var SimpleUpDownRecognizer = (function () {
     };
     return SimpleUpDownRecognizer;
 }());
+exports.SimpleUpDownRecognizer = SimpleUpDownRecognizer;
 var AnyObject = Object;
 // globalTunnel.initialize({
 //  host: 'proxy.exxxample.com',
@@ -808,6 +809,7 @@ function makeBot(connector) {
 }
 if (module) {
     module.exports = {
+        SimpleUpDownRecognizer: SimpleUpDownRecognizer,
         makeBot: makeBot
     };
 }
