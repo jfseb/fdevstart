@@ -204,7 +204,7 @@ gulp.task('copyelizacov', function () {
   // Add the newer pipe to pass through newer images only
   return gulp.src(['node_modules/elizabot/elizabot.js'])
   //  .pipe(replace(/elizadata.jsfoo(.{3})/g, '$1foo'))
-    .pipe(gulp.dest('gencov/extern/elizabot'));
+    .pipe(gulp.dest('gencov/extern/elizabot/'));
 });
 
 
