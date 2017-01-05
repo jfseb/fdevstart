@@ -103,6 +103,26 @@ if (newFlow) {
 }
 else {
 }
+function isAnonymous(userid) {
+    return userid.indexOf("ano:") === 0;
+}
+function restrictLoggedOn(session, arr) {
+    var userid = session.message.address
+        && session.message.address.user
+        && session.message.address.user.id || "";
+    if (process.env.ABOT_EMAIL_USER && isAnonymous(userid)) {
+        if (arr.length < 6) {
+            return arr;
+        }
+        var res = arr.slice(0, Math.min(Math.max(Math.floor(arr.length / 3), 7), arr.length));
+        if (typeof arr[0] === "string") {
+            var delta = arr.length - res.length;
+            res.push("... and " + delta + " more entries for registered users");
+        }
+        return res;
+    }
+    return arr;
+}
 var SimpleRecognizer = (function () {
     function SimpleRecognizer() {
     }
@@ -188,6 +208,50 @@ var SimpleRecognizer = (function () {
     };
     return SimpleRecognizer;
 }());
+var aTrainReplies = ["Thank you for sharing this suggestion with us",
+    "Thank for for this valuable information.",
+    "Thank for for this interesting fact!",
+    "Thats a plethoria of information.",
+    "That's a nugget of information.",
+    "Lovely, I may consider you input.",
+    "Well done, anything more to let me know?",
+    "I do appreciate your teaching and my learning experience, or was it the other way round?",
+    "Your helpful input has been stored in some dusty corner of the World wide web!",
+    "Thank you for my learning experience!",
+    "I have incorporated your valuable suggestion in the wisdom of the internet"
+];
+var aTrainDialog = aTrainReplies;
+var aTrainExitHint = [
+    "\ntype \"done\" when you are done training me.",
+    "",
+    "",
+    "",
+    "\nremember, you are stuck here instructing me, type \"done\" to return.",
+    ""];
+var aEnterTrain = ["So you think this is wrong? You can offer your advise here.\n Type \"done\" if you are done with instructing me",
+    "Feel free to offer me your better solution here.\n",
+    "Some say \"The secret to happiness is to lower your expectations to the point they are already met.\", \nt if you could help me to becomde better, instruct me.",
+    "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
+    "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
+];
+var aBackFromTraining = [
+    "Puuh, back from training! Now for the easy part ...",
+    "Live and don't learn, that's us. Naah, we'll see.",
+    "The secret to happiness is to lower your expectations to the point they are already met.",
+    "Thanks for having this lecture session, now back to our usual self."
+];
+var aTrainNoKlingon = [
+    "He who master the dark arts of SAP must not dwell in the earthly realms of Start Trek.",
+    "SAP is a cloud company, not a space company.",
+    "The depth of R/3 are deeper than Deep Space 42.",
+    "My brainpower is fully absorbed with mastering other realms.",
+    "For the wosap, the sky is the limit. Feel free to check out nasa.gov .",
+    "The future is SAP or IBM blue, not space black.",
+    "That's left to some musky future."
+];
+function getRandomResult(arr) {
+    return arr[Math.floor(Math.random() * arr.length) % arr.length];
+}
 var SimpleUpDownRecognizer = (function () {
     function SimpleUpDownRecognizer() {
     }
@@ -206,6 +270,39 @@ var SimpleUpDownRecognizer = (function () {
             return;
         }
         if (context.message.text.indexOf("up") >= 0) {
+            u.intent = "intent.up";
+            u.score = 0.9;
+            var e1 = {};
+            e1.startIndex = "up".length;
+            e1.endIndex = context.message.text.length;
+            e1.score = 0.3;
+            u.entities = [e1];
+            callback(undefined, u);
+            return;
+        }
+        if (context.message.text.indexOf("done") >= 0) {
+            u.intent = "intent.up";
+            u.score = 0.9;
+            var e1 = {};
+            e1.startIndex = "up".length;
+            e1.endIndex = context.message.text.length;
+            e1.score = 0.3;
+            u.entities = [e1];
+            callback(undefined, u);
+            return;
+        }
+        if (context.message.text.indexOf("exit") >= 0) {
+            u.intent = "intent.up";
+            u.score = 0.9;
+            var e1 = {};
+            e1.startIndex = "up".length;
+            e1.endIndex = context.message.text.length;
+            e1.score = 0.3;
+            u.entities = [e1];
+            callback(undefined, u);
+            return;
+        }
+        if (context.message.text.indexOf("quit") >= 0) {
             u.intent = "intent.up";
             u.score = 0.9;
             var e1 = {};
@@ -305,12 +402,13 @@ function makeBot(connector) {
     var dialogUpDown = new builder.IntentDialog({ recognizers: [new SimpleUpDownRecognizer()] });
     bot.dialog('/updown', dialogUpDown);
     dialogUpDown.onBegin(function (session) {
-        session.send("Hi there, updown is waiting for you");
+        dialoglog("TrainMe", session, send(getRandomResult(aEnterTrain)));
+        //session.send("Hi there, updown is waiting for you");
     });
     dialogUpDown.matches('intent.up', [
         function (session, args, next) {
             session.dialogData.abc = args || {};
-            builder.Prompts.text(session, 'you want to go up');
+            builder.Prompts.text(session, 'you want to exit training? type \"done\" again.');
         },
         function (session, results, next) {
             session.dialogData.abc = results.reponse;
@@ -335,8 +433,8 @@ function makeBot(connector) {
     ]);
     dialogUpDown.onDefault(function (session) {
         logQuery(session, "onDefault");
-        session.send("You are trapped in a dialog which only understands up and down, one of them will get you out");
-        //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
+        var res = getRandomResult(aTrainDialog) + getRandomResult(aTrainExitHint);
+        dialoglog("TrainMe", session, send(res));
     });
     bot.dialog('/train', [
         function (session, args, next) {
@@ -487,24 +585,29 @@ function makeBot(connector) {
                     domain = ListAll.inferDomain(theModel, a1.entity);
                 }
                 if (!domain) {
-                    var res = theModel.category.join(";\n");
-                    dialoglog("ListAll", session, send("my categories are ...\n" + res));
+                    var res = restrictLoggedOn(session, theModel.category).join(";\n");
+                    if (a1 && a1.entity) {
+                        dialoglog("ListAll", session, send("I did not infer a domain restriction from \"" + a1.entity + "\", all my categories are ...\n" + res));
+                    }
+                    else {
+                        dialoglog("ListAll", session, send("my categories are ...\n" + res));
+                    }
                     return;
                 }
                 else {
                     var aRes = Model.getCategoriesForDomain(theModel, domain);
-                    var res = aRes.join(";\n");
+                    var res = restrictLoggedOn(session, aRes).join(";\n");
                     dialoglog("ListAll", session, send("my categories in domain \"" + domain + "\" are ...\n" + res));
                     return;
                 }
             }
             if (category === "domains") {
-                var res = theModel.domains.join(";\n");
+                var res = restrictLoggedOn(session, theModel.domains).join(";\n");
                 session.send("my domains are ...\n" + res);
                 return;
             }
             if (category === "tools") {
-                var res = theModel.tools.map(function (oTool) {
+                var res = restrictLoggedOn(session, theModel.tools).map(function (oTool) {
                     return oTool.name;
                 }).join(";\n");
                 dialoglog("ListAll", session, send("my tools are ...\n" + res));
@@ -526,7 +629,7 @@ function makeBot(connector) {
                     result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.mRules, theModel.records);
                 }
                 debuglog('listall result:' + JSON.stringify(result1));
-                var joinresults = ListAll.joinResults(result1);
+                var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
                 logQueryWhatIs(session, 'ListAll', result1);
                 if (joinresults.length) {
                     dialoglog("ListAll", session, send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
@@ -541,9 +644,10 @@ function makeBot(connector) {
                 //
                 var result = ListAll.listAllHavingContext(cat, cat, theModel.mRules, theModel.records);
                 logQueryWhatIs(session, 'ListAll', result);
+                result = restrictLoggedOn(session, result);
                 if (result.length) {
                     debuglog('listall result:' + JSON.stringify(result));
-                    var joinresults = ListAll.joinResults(result);
+                    var joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
                     var response = "the " + category + " are ...\n" + joinresults.join(";\n");
                     dialoglog("ListAll", session, send(response));
                     return;
@@ -554,6 +658,23 @@ function makeBot(connector) {
                     return;
                 }
             }
+        }
+    ]);
+    dialog.matches('TrainMe', [
+        function (session, args, next) {
+            var isCombinedIndex = {};
+            var oNewEntity;
+            // expecting entity A1
+            var message = session.message.text;
+            debuglog("Intent : Train");
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
+            if (message.toLowerCase().indexOf("kronos") >= 0 || message.toLowerCase().indexOf("klingon") >= 0) {
+                dialoglog("TrainMe", session, send(getRandomResult(aTrainNoKlingon)));
+                return;
+            }
+            var res = getRandomResult(aTrainReplies);
+            dialoglog("TrainMe", session, send(res));
         }
     ]);
     dialog.matches('Wrong', [
@@ -567,11 +688,11 @@ function makeBot(connector) {
         },
         function (session, results, next) {
             var alarm = session.dialogData.alarm;
-            session.send("back from wrong : " + JSON.stringify(results));
             next();
         },
         function (session, results) {
-            session.send('end of wrong');
+            session.send(getRandomResult(aBackFromTraining)); //  + JSON.stringify(results));
+            //session.send('end of wrong');
         }
     ]);
     dialog.matches('Exit', [

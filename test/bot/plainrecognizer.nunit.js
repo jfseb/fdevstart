@@ -236,7 +236,6 @@ exports.testRecognizeAmbiguous = function (test) {
         score: 0.9,
         intent: 'Exit'
       }
-
       , 'correct result');
     test.done();
   });

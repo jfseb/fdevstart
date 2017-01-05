@@ -5,6 +5,14 @@
     "start me <A1>",
     "display <A1>"
   ],
+  "TrainMe": [
+    "I think the correct <A1> is (related to)? <A2>",
+    "You should learn <A1>",
+    "I think <A1> is related to <A2>",
+    "Learn <A1>",
+    "Learn <A1>",
+    "understand <A1>"
+  ],
   "WhatIs": [
     "what (is|are) the <category>? (using|for|in|of) <A1>",
     "who is the <category>? of <A1>",
@@ -12,7 +20,7 @@
     "what is the <category> related to<A1>",
     "in which <category>? is <A1>",
     "gimme <category>? for <A1>",
-    "give me the <category>? for <A1>",
+    "give me the <category>? ((for)|(from)) <A1>",
     "give me the <category>? from <A1>",
     "can you ((tell|give)) me the <category> ((for)|(in)) <A1>",
     [
@@ -25,9 +33,9 @@
     "tell me the <category> of <A1>"
   ],
   "ListAll": [
-    "List all <categories> (in|for) <insth>",
+    "List all <categories> (in|for|with) <insth>",
     "List all <categories>",
-    "List <categories> ((in)|(for)) <insth>",
+    "List <categories> ((in)|(for)|(with)) <insth>",
     "List <categories>"
   ],
   "Help": [
@@ -43,6 +51,10 @@
   ],
   "Wrong": [
     "Wrong",
+    "This is not correct",
+    "This is false",
+    "false",
+    "No",
     "incorrect",
     "Liar"
   ]

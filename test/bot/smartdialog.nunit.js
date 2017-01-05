@@ -36,6 +36,19 @@ exports.testDomains = function (test) {
 };
 
 
+exports.testSuggest = function (test) {
+  testOne('list all domains',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes.indexOf('wiki') >= 0, true, 'wiki present');
+    test.deepEqual(sRes.indexOf('FioriFLP') >= 0, true, 'wiki present');
+    test.done();
+  });
+};
+
+
+
+
 
 exports.testListAllCategories = function (test) {
   testOne('list all categories',function(oRes) {

@@ -10,5 +10,6 @@
     // Format a file on save. A formatter must be available, the file must not be auto-saved, and editor must not be shutting down.
     "editor.formatOnSave": false,
     // Turns auto fix on save on or off.
-    "eslint.autoFixOnSave": true
-}
+    "eslint.autoFixOnSave": true,
+    "typescript.check.workspaceVersion": false
+  }

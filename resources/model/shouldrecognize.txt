@@ -5,3 +5,40 @@ show me transaction ABC in UV2
 show me UI2 Integration   (not matched as full word, but as UI2 / SystemObjectId
 
 
+show a hint
+show a sample question
+who programmed you
+
+
+list all categories in domain bom
+
+-> should indicate no domain was found.
+
+show all hints
+
+list all odata services for apps in LO-RFM-STO
+
+nw.core.extccl.lib.reuse
+
+
+sap.cus.sd.lib.processflow
+
+list all ApplicationComponents wiht ApplicationType FPM/WebDynpro  ApplicationComponent PM-WOC
+
+list all ApplicationComponents wiht ApplicationType FPM/WebDynpro  ApplicationComponent PM-WOC-JC
+
+
+#RequestForQuotation-manage
+
+s2p.mm.pur.rfq.maintains1
+
+list all ApplicationComponent for PM-WOC
+
+log me off
+change my settings
+
+
+TODO:
+restrict metadata
+explain synonyms
+SQL mode
