@@ -19,9 +19,13 @@ var InputFilterRules = require(root + '/match/inputFilterRules.js');
 exports.testModel = function (test) {
   test.expect(2);
   var u = Model.loadModels();
-  test.equal(u.tools.length, 5, 'no error');
+  test.equal(u.tools.length, 6, 'no error');
   test.deepEqual(u.category.sort(),
-    [ 'client',
+    [ 'atomic weight',
+      'client',
+      'element name',
+      'element number',
+      'element symbol',
       'fiori catalog',
       'fiori group',
       'fiori intent',
@@ -149,9 +153,13 @@ exports.testModel2 = function (test) {
 
   fs.writeFileSync('logs/model.all.json', JSON.stringify(u, undefined,2));
 
-  test.equal(u.tools.length, 5, 'no error');
+  test.equal(u.tools.length, 6, 'no error');
   test.deepEqual(u.category.sort(),
-    [ 'client',
+    [ 'atomic weight',
+      'client',
+      'element name',
+      'element number',
+      'element symbol',
       'fiori catalog',
       'fiori group',
       'fiori intent',
@@ -187,6 +195,7 @@ exports.testModelHasDomains = function (test) {
   test.deepEqual(rx.sort(),
     [ 'Fiori FLPD',
       'FioriFLP',
+      'IUPAC',
       'StartTA',
       'unit test',
       'wiki'

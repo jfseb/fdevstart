@@ -258,6 +258,23 @@ function makeRequest(sLine) {
 //    makeResponse(sLine);
 //});
 
+function moveCaretToEnd(el) {
+  if (typeof el.selectionStart == 'number') {
+    el.selectionStart = el.selectionEnd = el.value.length;
+  } else if (typeof el.createTextRange != 'undefined') {
+      el.focus();
+      var range = el.createTextRange();
+      range.collapse(false);
+      range.select();
+    }
+}
+function moveCursorToEnd(textarea) {
+  moveCaretToEnd(textarea);
+    // Work around Chrome's little problem
+  window.setTimeout(function() {
+    moveCaretToEnd(textarea);
+  }, 1);
+}
 
 textarea.addEventListener('change',updateText);
 textarea.addEventListener('paste',updateText);
@@ -289,11 +306,13 @@ textarea.addEventListener('keydown',function(e) {
  if ( e.key === 'ArrowUp') {
    inputHistory.backward();
    textarea.value = inputHistory.get();
+   moveCursorToEnd(textarea);
  }
  else
  if ( e.key === 'ArrowDown') {
    var res = inputHistory.forward();
    textarea.value = inputHistory.get();
+   moveCursorToEnd(textarea);
  } else {
 
 

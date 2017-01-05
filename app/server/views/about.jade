@@ -9,7 +9,7 @@ block content
 	nav.navbar.navbar-default.navbar-fixed-top
 		.container
 			.navbar-header
-				.navbar-brand abot impressum
+				.navbar-brand wosap about
 			ul.nav.navbar-nav.navbar-right #{uid}
 				li
 					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
@@ -18,12 +18,56 @@ block content
 	p  &nbsp;
 	p &nbsp;
 	p
-	h1 acknowledgements
-	p We thank the following resources for providing invaluable data:
 
-	|The World Factbook 2013-14. Washington, DC: Central Intelligence Agency, 2013 .
-	br
-	a(href="https://www.cia.gov/library/publications/the-world-factbook/index.html") https://www.cia.gov/library/publications/the-world-factbook/index.html<
+	blockquote
+		h2 Version
+		p wosap version 0.9
+		p This is a non-commercial, private website.
+		| Dies ist eine private Website.
+		br
+		| the content is in no way associated with or endorsed by any of the data sources or organizations publishing information
+		| on the datasources below.
+		br
+		| Notably it is not endorsed by the CIA or SAP
+		br
+
+	blockquote.bg-success
+		h2.bg-success Legal information
+
+		ul
+			li
+				a.btn.btn-default(href="/legal_de") Impressum, Haftungsausschluss, Datenschutzerkl&auml;rung (Deutsch, German)
+			li
+				a.btn.btn-default(href="/legal_de") Legal Disclosure, Disclaimer, Data Privacy Statement (English, Englisch)
+
+
+	blockquote.bg-warning
+		h2.bg-warning terms of use
+
+		ul
+			li
+				a.btn.btn-default(href="/termsofuse") terms of use
+
+
+	blockquote.bg-info
+		h2 content acknowledgements
+
+		b
+			| The content displayed here is collected privately (partially programmatically) by the author from public sources
+			| and/or sources in the public domain
+
+		p We especially thank the following resources for providing invaluable data, which is in the public domain:
+		ul
+			li
+				|The World Factbook 2013-14. Washington, DC: Central Intelligence Agency, 2013 .
+				br
+				a(href="https://www.cia.gov/library/publications/the-world-factbook/index.html") https://www.cia.gov/library/publications/the-world-factbook/index.html
+			li
+				a(href="www.wikipedia.org") wikipedia
+			li
+				a(href="IUPAC.org") International Union of Pure and Applied Chemistry
+
+
 
 block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')

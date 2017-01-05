@@ -1,7 +1,9 @@
+- pagetitle = pagetitle ? 'wosap: ' + pagetitle : 'wosap'
+
 doctype html
 html
 	head
-		title wosap Login
+		title #{pagetitle}
 		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
 		link(rel='stylesheet', href='/css/style.css')
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.1.1/gh-fork-ribbon.min.css')

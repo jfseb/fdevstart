@@ -1,0 +1,720 @@
+[
+  {
+    "element name": "hydrogen",
+    "element symbol": "H",
+    "element number": "1",
+    "atomic weight": "[1.007 84, 1.008 11]"
+  },
+  {
+    "element name": "helium",
+    "element symbol": "He",
+    "element number": "2",
+    "atomic weight": "4.002 602(2)"
+  },
+  {
+    "element name": "lithium",
+    "element symbol": "Li",
+    "element number": "3",
+    "atomic weight": "[6.938, 6.997]"
+  },
+  {
+    "element name": "beryllium",
+    "element symbol": "Be",
+    "element number": "4",
+    "atomic weight": "9.012 1831(5)"
+  },
+  {
+    "element name": "boron",
+    "element symbol": "B",
+    "element number": "5",
+    "atomic weight": "[10.806, 10.821]"
+  },
+  {
+    "element name": "carbon",
+    "element symbol": "C",
+    "element number": "6",
+    "atomic weight": "[12.0096, 12.0116]"
+  },
+  {
+    "element name": "nitrogen",
+    "element symbol": "N",
+    "element number": "7",
+    "atomic weight": "[14.006 43, 14.007 28]"
+  },
+  {
+    "element name": "oxygen",
+    "element symbol": "O",
+    "element number": "8",
+    "atomic weight": "[15.999 03, 15.999 77]"
+  },
+  {
+    "element name": "fluorine",
+    "element symbol": "F",
+    "element number": "9",
+    "atomic weight": "18.998 403 163(6)"
+  },
+  {
+    "element name": "neon",
+    "element symbol": "Ne",
+    "element number": "10",
+    "atomic weight": "20.1797(6)"
+  },
+  {
+    "element name": "sodium",
+    "element symbol": "Na",
+    "element number": "11",
+    "atomic weight": "22.989 769 28(2)"
+  },
+  {
+    "element name": "magnesium",
+    "element symbol": "Mg",
+    "element number": "12",
+    "atomic weight": "[24.304, 24.307]"
+  },
+  {
+    "element name": "aluminium",
+    "element symbol": "Al",
+    "element number": "13",
+    "atomic weight": "26.981 5385(7)",
+    "synonyms": {
+      "element name": [
+        "aluminum"
+      ]
+    }
+  },
+  {
+    "element name": "silicon",
+    "element symbol": "Si",
+    "element number": "14",
+    "atomic weight": "[28.084, 28.086]"
+  },
+  {
+    "element name": "phosphorus",
+    "element symbol": "P",
+    "element number": "15",
+    "atomic weight": "30.973 761 998(5)"
+  },
+  {
+    "element name": "sulfur",
+    "element symbol": "S",
+    "element number": "16",
+    "atomic weight": "[32.059, 32.076]"
+  },
+  {
+    "element name": "chlorine",
+    "element symbol": "Cl",
+    "element number": "17",
+    "atomic weight": "[35.446, 35.457]"
+  },
+  {
+    "element name": "argon",
+    "element symbol": "Ar",
+    "element number": "18",
+    "atomic weight": "39.948(1)"
+  },
+  {
+    "element name": "potassium",
+    "element symbol": "K",
+    "element number": "19",
+    "atomic weight": "39.0983(1)"
+  },
+  {
+    "element name": "calcium",
+    "element symbol": "Ca",
+    "element number": "20",
+    "atomic weight": "40.078(4)"
+  },
+  {
+    "element name": "scandium",
+    "element symbol": "Sc",
+    "element number": "21",
+    "atomic weight": "44.955 908(5)"
+  },
+  {
+    "element name": "titanium",
+    "element symbol": "Ti",
+    "element number": "22",
+    "atomic weight": "47.867(1)"
+  },
+  {
+    "element name": "vanadium",
+    "element symbol": "V",
+    "element number": "23",
+    "atomic weight": "50.9415(1)"
+  },
+  {
+    "element name": "chromium",
+    "element symbol": "Cr",
+    "element number": "24",
+    "atomic weight": "51.9961(6)"
+  },
+  {
+    "element name": "manganese",
+    "element symbol": "Mn",
+    "element number": "25",
+    "atomic weight": "54.938 044(3)"
+  },
+  {
+    "element name": "iron",
+    "element symbol": "Fe",
+    "element number": "26",
+    "atomic weight": "55.845(2)"
+  },
+  {
+    "element name": "cobalt",
+    "element symbol": "Co",
+    "element number": "27",
+    "atomic weight": "58.933 194(4)"
+  },
+  {
+    "element name": "nickel",
+    "element symbol": "Ni",
+    "element number": "28",
+    "atomic weight": "58.6934(4)"
+  },
+  {
+    "element name": "copper",
+    "element symbol": "Cu",
+    "element number": "29",
+    "atomic weight": "63.546(3)"
+  },
+  {
+    "element name": "zinc",
+    "element symbol": "Zn",
+    "element number": "30",
+    "atomic weight": "65.38(2)"
+  },
+  {
+    "element name": "gallium",
+    "element symbol": "Ga",
+    "element number": "31",
+    "atomic weight": "69.723(1)"
+  },
+  {
+    "element name": "germanium",
+    "element symbol": "Ge",
+    "element number": "32",
+    "atomic weight": "72.630(8)"
+  },
+  {
+    "element name": "arsenic",
+    "element symbol": "As",
+    "element number": "33",
+    "atomic weight": "74.921 595(6)"
+  },
+  {
+    "element name": "selenium",
+    "element symbol": "Se",
+    "element number": "34",
+    "atomic weight": "78.971(8)"
+  },
+  {
+    "element name": "bromine",
+    "element symbol": "Br",
+    "element number": "35",
+    "atomic weight": "[79.901, 79.907]"
+  },
+  {
+    "element name": "krypton",
+    "element symbol": "Kr",
+    "element number": "36",
+    "atomic weight": "83.798(2)"
+  },
+  {
+    "element name": "rubidium",
+    "element symbol": "Rb",
+    "element number": "37",
+    "atomic weight": "85.4678(3)"
+  },
+  {
+    "element name": "strontium",
+    "element symbol": "Sr",
+    "element number": "38",
+    "atomic weight": "87.62(1)"
+  },
+  {
+    "element name": "yttrium",
+    "element symbol": "Y",
+    "element number": "39",
+    "atomic weight": "88.905 84(2)"
+  },
+  {
+    "element name": "zirconium",
+    "element symbol": "Zr",
+    "element number": "40",
+    "atomic weight": "91.224(2)"
+  },
+  {
+    "element name": "niobium",
+    "element symbol": "Nb",
+    "element number": "41",
+    "atomic weight": "92.906 37(2)"
+  },
+  {
+    "element name": "molybdenum",
+    "element symbol": "Mo",
+    "element number": "42",
+    "atomic weight": "95.95(1)"
+  },
+  {
+    "element name": "technetium",
+    "element symbol": "Tc",
+    "element number": "43",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "ruthenium",
+    "element symbol": "Ru",
+    "element number": "44",
+    "atomic weight": "101.07(2)"
+  },
+  {
+    "element name": "rhodium",
+    "element symbol": "Rh",
+    "element number": "45",
+    "atomic weight": "102.905 50(2)"
+  },
+  {
+    "element name": "palladium",
+    "element symbol": "Pd",
+    "element number": "46",
+    "atomic weight": "106.42(1)"
+  },
+  {
+    "element name": "silver",
+    "element symbol": "Ag",
+    "element number": "47",
+    "atomic weight": "107.8682(2)"
+  },
+  {
+    "element name": "cadmium",
+    "element symbol": "Cd",
+    "element number": "48",
+    "atomic weight": "112.414(4)"
+  },
+  {
+    "element name": "indium",
+    "element symbol": "In",
+    "element number": "49",
+    "atomic weight": "114.818(1)"
+  },
+  {
+    "element name": "tin",
+    "element symbol": "Sn",
+    "element number": "50",
+    "atomic weight": "118.710(7)"
+  },
+  {
+    "element name": "antimony",
+    "element symbol": "Sb",
+    "element number": "51",
+    "atomic weight": "121.760(1)"
+  },
+  {
+    "element name": "tellurium",
+    "element symbol": "Te",
+    "element number": "52",
+    "atomic weight": "127.60(3)"
+  },
+  {
+    "element name": "iodine",
+    "element symbol": "I",
+    "element number": "53",
+    "atomic weight": "126.904 47(3)"
+  },
+  {
+    "element name": "xenon",
+    "element symbol": "Xe",
+    "element number": "54",
+    "atomic weight": "131.293(6)"
+  },
+  {
+    "element name": "caesium",
+    "element symbol": "Cs",
+    "element number": "55",
+    "atomic weight": "132.905 451 96(6)",
+    "synonyms": {
+      "element name": [
+        "cesium"
+      ]
+    }
+  },
+  {
+    "element name": "barium",
+    "element symbol": "Ba",
+    "element number": "56",
+    "atomic weight": "137.327(7)"
+  },
+  {
+    "element name": "lanthanum",
+    "element symbol": "La",
+    "element number": "57",
+    "atomic weight": "138.905 47(7)"
+  },
+  {
+    "element name": "cerium",
+    "element symbol": "Ce",
+    "element number": "58",
+    "atomic weight": "140.116(1)"
+  },
+  {
+    "element name": "praseodymium",
+    "element symbol": "Pr",
+    "element number": "59",
+    "atomic weight": "140.907 66(2)"
+  },
+  {
+    "element name": "neodymium",
+    "element symbol": "Nd",
+    "element number": "60",
+    "atomic weight": "144.242(3)"
+  },
+  {
+    "element name": "promethium",
+    "element symbol": "Pm",
+    "element number": "61",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "samarium",
+    "element symbol": "Sm",
+    "element number": "62",
+    "atomic weight": "150.36(2)"
+  },
+  {
+    "element name": "europium",
+    "element symbol": "Eu",
+    "element number": "63",
+    "atomic weight": "151.964(1)"
+  },
+  {
+    "element name": "gadolinium",
+    "element symbol": "Gd",
+    "element number": "64",
+    "atomic weight": "157.25(3)"
+  },
+  {
+    "element name": "terbium",
+    "element symbol": "Tb",
+    "element number": "65",
+    "atomic weight": "158.925 35(2)"
+  },
+  {
+    "element name": "dysprosium",
+    "element symbol": "Dy",
+    "element number": "66",
+    "atomic weight": "162.500(1)"
+  },
+  {
+    "element name": "holmium",
+    "element symbol": "Ho",
+    "element number": "67",
+    "atomic weight": "164.930 33(2)"
+  },
+  {
+    "element name": "erbium",
+    "element symbol": "Er",
+    "element number": "68",
+    "atomic weight": "167.259(3)"
+  },
+  {
+    "element name": "thulium",
+    "element symbol": "Tm",
+    "element number": "69",
+    "atomic weight": "168.934 22(2)"
+  },
+  {
+    "element name": "ytterbium",
+    "element symbol": "Yb",
+    "element number": "70",
+    "atomic weight": "173.054(5)"
+  },
+  {
+    "element name": "lutetium",
+    "element symbol": "Lu",
+    "element number": "71",
+    "atomic weight": "174.9668(1)"
+  },
+  {
+    "element name": "hafnium",
+    "element symbol": "Hf",
+    "element number": "72",
+    "atomic weight": "178.49(2)"
+  },
+  {
+    "element name": "tantalum",
+    "element symbol": "Ta",
+    "element number": "73",
+    "atomic weight": "180.947 88(2)"
+  },
+  {
+    "element name": "tungsten",
+    "element symbol": "W",
+    "element number": "74",
+    "atomic weight": "183.84(1)"
+  },
+  {
+    "element name": "rhenium",
+    "element symbol": "Re",
+    "element number": "75",
+    "atomic weight": "186.207(1)"
+  },
+  {
+    "element name": "osmium",
+    "element symbol": "Os",
+    "element number": "76",
+    "atomic weight": "190.23(3)"
+  },
+  {
+    "element name": "iridium",
+    "element symbol": "Ir",
+    "element number": "77",
+    "atomic weight": "192.217(3)"
+  },
+  {
+    "element name": "platinum",
+    "element symbol": "Pt",
+    "element number": "78",
+    "atomic weight": "195.084(9)"
+  },
+  {
+    "element name": "gold",
+    "element symbol": "Au",
+    "element number": "79",
+    "atomic weight": "196.966 569(5)"
+  },
+  {
+    "element name": "mercury",
+    "element symbol": "Hg",
+    "element number": "80",
+    "atomic weight": "200.592(3)"
+  },
+  {
+    "element name": "thallium",
+    "element symbol": "Tl",
+    "element number": "81",
+    "atomic weight": "[204.382, 204.385]"
+  },
+  {
+    "element name": "lead",
+    "element symbol": "Pb",
+    "element number": "82",
+    "atomic weight": "207.2(1)"
+  },
+  {
+    "element name": "bismuth",
+    "element symbol": "Bi",
+    "element number": "83",
+    "atomic weight": "208.980 40(1)"
+  },
+  {
+    "element name": "polonium",
+    "element symbol": "Po",
+    "element number": "84",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "astatine",
+    "element symbol": "At",
+    "element number": "85",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "radon",
+    "element symbol": "Rn",
+    "element number": "86",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "francium",
+    "element symbol": "Fr",
+    "element number": "87",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "radium",
+    "element symbol": "Ra",
+    "element number": "88",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "actinium",
+    "element symbol": "Ac",
+    "element number": "89",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "thorium",
+    "element symbol": "Th",
+    "element number": "90",
+    "atomic weight": "232.0377(4)"
+  },
+  {
+    "element name": "protactinium",
+    "element symbol": "Pa",
+    "element number": "91",
+    "atomic weight": "231.035 88(2)"
+  },
+  {
+    "element name": "uranium",
+    "element symbol": "U",
+    "element number": "92",
+    "atomic weight": "238.028 91(3)"
+  },
+  {
+    "element name": "neptunium",
+    "element symbol": "Np",
+    "element number": "93",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "plutonium",
+    "element symbol": "Pu",
+    "element number": "94",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "americium",
+    "element symbol": "Am",
+    "element number": "95",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "curium",
+    "element symbol": "Cm",
+    "element number": "96",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "berkelium",
+    "element symbol": "Bk",
+    "element number": "97",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "californium",
+    "element symbol": "Cf",
+    "element number": "98",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "einsteinium",
+    "element symbol": "Es",
+    "element number": "99",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "fermium",
+    "element symbol": "Fm",
+    "element number": "100",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "mendelevium",
+    "element symbol": "Md",
+    "element number": "101",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "nobelium",
+    "element symbol": "No",
+    "element number": "102",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "lawrencium",
+    "element symbol": "Lr",
+    "element number": "103",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "rutherfordium",
+    "element symbol": "Rf",
+    "element number": "104",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "dubnium",
+    "element symbol": "Db",
+    "element number": "105",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "seaborgium",
+    "element symbol": "Sg",
+    "element number": "106",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "bohrium",
+    "element symbol": "Bh",
+    "element number": "107",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "hassium",
+    "element symbol": "Hs",
+    "element number": "108",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "meitnerium",
+    "element symbol": "Mt",
+    "element number": "109",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "darmstadtium",
+    "element symbol": "Ds",
+    "element number": "110",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "roentgenium",
+    "element symbol": "Rg",
+    "element number": "111",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "copernicium",
+    "element symbol": "Cn",
+    "element number": "112",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "nihonium",
+    "element symbol": "Nh",
+    "element number": "113",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "flerovium",
+    "element symbol": "Fl",
+    "element number": "114",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "moscovium",
+    "element symbol": "Mc",
+    "element number": "115",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "livermorium",
+    "element symbol": "Lv",
+    "element number": "116",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "tennesine",
+    "element symbol": "Ts",
+    "element number": "117",
+    "atomic weight": "–"
+  },
+  {
+    "element name": "oganesson",
+    "element symbol": "Og",
+    "element number": "118",
+    "atomic weight": "–"
+  }
+]

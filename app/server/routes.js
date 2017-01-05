@@ -30,7 +30,7 @@ module.exports = function(app) {
   app.get('/login', function(req, res){
 	// check if the user's credentials are saved in a cookie //
     if (req.cookies.user == undefined || req.cookies.pass == undefined){
-      res.render('login', { title: 'Hello - Please Login To Your Account' });
+      res.render('login', { pagetitle : 'Login', title: 'Hello - Please Login To Your Account' });
     }	else{
 	// attempt automatic login //
       AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
@@ -94,6 +94,7 @@ module.exports = function(app) {
 
   app.get('/about', function(req, res) {
     res.render('about', {
+      pagetitle : 'about',
       user : (req.session.user && req.session.user.user) || undefined,
       title : 'abot',
       udata : req.session.user,
@@ -101,6 +102,36 @@ module.exports = function(app) {
     });
   });
 
+
+  app.get('/termsofuse', function(req, res) {
+    res.render('termsofuse', {
+      pagetitle : 'Terms of use',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'abot',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
+
+  app.get('/legal_en', function(req, res) {
+    res.render('legal_en', {
+      pagetitle : 'Legal Disclosure, Disclaimer and Privacy Statement',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'abot',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
+
+  app.get('/legal_de', function(req, res) {
+    res.render('legal_de', {
+      pagetitle : 'Impressum, Haftungsausschluss und Datenschutzerkl&auml;rung',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'abot',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
 
 // logged-in user homepage //
 
@@ -111,6 +142,7 @@ module.exports = function(app) {
       res.redirect('/');
     }	else{
       res.render('settings', {
+        pagetitle : 'settings',
         userid : (req.session.user && req.session.user.user) || '',
         title : 'Control Panel',
         udata : req.session.user,
@@ -162,7 +194,9 @@ module.exports = function(app) {
 // creating new accounts //
 
   app.get('/signup', function(req, res) {
-    res.render('signup', {  title: 'Signup' });
+    res.render('signup', {
+      pagetitle : 'Singup',
+      title: 'Signup' });
   });
 
   app.post('/signup', function(req, res){
@@ -251,12 +285,13 @@ module.exports = function(app) {
 	    });
   });
 // TODO disable
+/*
   app.get('/reset', function(req, res) {
     AM.delAllRecords(function(){
       res.redirect('/print');
     });
   });
-
+*/
   app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
 
 };

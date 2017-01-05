@@ -1,0 +1,33 @@
+{
+  "domain": "IUPAC",
+  "category": [
+    "element name",
+    "element symbol",
+    "atomic weight",
+    "element number"
+  ],
+  "wordindex": [
+    "element name", "element number", "element symbol"
+   ],
+   "exactOnly" : [
+     "element synmbol"
+   ],
+  "hidden": [
+    "_urlpattern"
+  ],
+  "tool": {
+    "name": "NoTool",
+    "requires": {
+      "impossible": { }
+    },
+    "optional": {
+    },
+    "sets" : {
+    }
+  },
+  "synonyms" : {
+    "element name" : ["name"],
+    "atomic weight" : ["element weight"],
+    "element symbol" : ["symbol"]
+  }
+}

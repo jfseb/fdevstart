@@ -1,0 +1,79 @@
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends layout
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand wosap terms of use
+			ul.nav.navbar-nav.navbar-right
+				li
+					a(href="/legal_de") german (deutsch) impressum
+				li
+					a(href="/legal_en") english Legal
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+
+	p &nbsp;
+
+	p &nbsp;
+
+	blockquote
+		h1
+			blockquote
+				h2 English
+
+				p Diese Seite und andere Dienste werden ausschliesslich auf Englisch angeboten.
+				p Durch die Nutzung dieser Website erkl&auml;en sie ihr Verst&auml;nis, Einerst&auml;nis und Kenntnis der unten angegebenen
+				| englishen texts und die Kenntnis der deutschen
+				a(href="/legal_de") Impressum, Haftungsaussschluss, Datenschutzerklärung
+
+				p Bitte verlassen sie die Seite, falls sie die Inhalte nicht verstehen oder ihnen nicht zustimmen.
+
+			blockquote
+				h2 Disclaimer
+
+				a(href="/legal_en")
+
+				p THE SERVICE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+				p The service or parts of it may be removed at any time
+
+				h2 Data quality
+				p The data listed here may be a subset, outdated, truncated or plain erroneous derivation of the original data.
+				p if in doubt, refer to original data at original sources
+
+			blockquote
+				h2 A privacy reminder from wosap
+
+				p To be consistent with data protection laws, we’re asking you to take a moment to review key points of our Privacy Policy. This isn’t about a change we’ve made — but please review some key points.
+				p By continuing to use our services you consent You can revoke your consent at any time with effect for the future.
+
+				h3 Usage data we process when you use wosap
+				p When you interact with the wosap, we process information about that activity - including information like the query you entered, potentially device IDs, IP addresses, cookie data, and location.
+				p Our Privacy Policy contains further descriptions of the data we process.
+				p We also process the kinds of information described above when you use apps.
+				p Purposes of the data processing
+				p We process this data for the purposes described in our policy, including to:
+				ul
+					li Help our services deliver more useful, customized content such as more relevant search results, based on your interests derived from such data;
+					li Improve the quality of our services and develop new ones;
+					li Deliver other services or ads based on your interests, which we can determine based on this data, like information that are related to things such as search queries;
+					li Improve security by protecting against fraud and abuse; and
+					li Conduct analytics and measurement to understand how our services are used.
+
+				h3 Combining data
+				p We also combine data among our services and across your devices for these purposes. For example, we use data from queries to build spell-correction models that we use accross our services.
+
+
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')

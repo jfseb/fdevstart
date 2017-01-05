@@ -1,0 +1,35 @@
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends layout
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand wosap Impressum und Haftungsausschluss; Datenschutzerkl&auml;rung
+			ul.nav.navbar-nav.navbar-right
+				li
+					a(href="/legal_en") english legal disclosure
+				li
+					a(href="/termsofuse") terms of use
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+
+
+	p &nbsp;
+
+	p &nbsp;
+
+	blockquote
+		include impressum_de.html
+
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')

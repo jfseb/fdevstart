@@ -30,7 +30,10 @@ html
 						else
 							a(href="/signup") register
 							a(href="/login") login
-						a(href="/about") about (impressum)
+						a(href="/about") about
+						a(href="/termsofuse") terms of use
+						a(href="/legal_de") impressum (german)
+						a(href="/legal_en") legal disclosure (english)
 				li.nav.center(style="float:center!important;padding: 8px 10px") ask the wosap
 				li.nav.right(style='float:right!important;margin-right:0px')
 					a.plainlink(href='#{namelink}', style="padding:10px 10px")
@@ -39,8 +42,6 @@ html
 
 		div(style='margin-top:20px', data-theme='a')
 			ul.ui-listview(style='-webkit-app-region: no-drag', data-role='listview')
-				li.common.response
-					div.common.response  Indicate your query or wish
 				li.request(data-icon="false")
 					textarea#growme.ui-input-textX(rows='5', value='Acbdef') list all sample questions
 

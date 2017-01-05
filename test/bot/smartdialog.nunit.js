@@ -47,6 +47,56 @@ exports.testSuggest = function (test) {
 };
 
 
+exports.testListWithContextDontKnow = function (test) {
+  testOne('list element names for silver',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes.indexOf('know anything about \"element names\"') >= 0, true, 'not found');
+    test.done();
+  });
+};
+
+exports.testListWithContextDontKnow = function (test) {
+  testOne('list all element name for silver',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes.indexOf('silver') >= 0, true, 'silver present');
+    test.done();
+  });
+};
+
+
+exports.testEliza = function (test) {
+  testOne('i am sad',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes.indexOf('sad') >= 0, true, 'sad presnet');
+    test.done();
+  });
+};
+
+exports.testTrain = function (test) {
+  testOne('i am sad',function(oRes) {
+    testOne('Wrong', function(oRes){
+      testOne('down', function(oRes){
+        testOne('What is this', function(oRes){
+          testOne('done', function(oRes){
+            testOne('done', function(oRes){
+              testOne('list all domains', function(oRes){
+                var sRes = oRes;
+                debuglog(JSON.stringify(oRes));
+                test.deepEqual(sRes.indexOf('wiki') >= 0, true, 'wiki present');
+                test.deepEqual(sRes.indexOf('FioriFLP') >= 0, true, 'wiki present');
+                test.done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+};
+
 
 
 
