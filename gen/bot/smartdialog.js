@@ -114,9 +114,10 @@ function restrictLoggedOn(session, arr) {
         if (arr.length < 6) {
             return arr;
         }
+        var len = arr.length;
         var res = arr.slice(0, Math.min(Math.max(Math.floor(arr.length / 3), 7), arr.length));
         if (typeof arr[0] === "string") {
-            var delta = arr.length - res.length;
+            var delta = len - res.length;
             res.push("... and " + delta + " more entries for registered users");
         }
         return res;
@@ -644,10 +645,16 @@ function makeBot(connector) {
                 //
                 var result = ListAll.listAllHavingContext(cat, cat, theModel.mRules, theModel.records);
                 logQueryWhatIs(session, 'ListAll', result);
-                result = restrictLoggedOn(session, result);
                 if (result.length) {
                     debuglog('listall result:' + JSON.stringify(result));
-                    var joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
+                    var joinresults = [];
+                    debuglog("here is cat>" + cat);
+                    if (cat !== "example question") {
+                        joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
+                    }
+                    else {
+                        joinresults = ListAll.joinResults(result);
+                    }
                     var response = "the " + category + " are ...\n" + joinresults.join(";\n");
                     dialoglog("ListAll", session, send(response));
                     return;

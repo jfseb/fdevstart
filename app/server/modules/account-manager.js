@@ -102,7 +102,7 @@ var accounts = {
         }
         client.query('DELETE FROM users', function (err, result) {
           if (err) {
-            console.log('ERR in DELETE' + JSON.stringify(err));
+            console.log('ERR in DELETE ALL' + JSON.stringify(err));
             done();
             cb();
             return;
@@ -117,9 +117,10 @@ var accounts = {
         if (err) {
           console.log(' here conn err : ' + err);
         }
-        client.query('DELETE FROM users WHERE id EQ $1::text', [obj.id], function (err, result) {
+      //  client.query('DELETE FROM users WHERE id EQ $1::text', [obj.id], function (err, result) {
+        client.query('DELETE FROM users WHERE id IN ($1)', [obj.id], function (err, result) {
           if (err) {
-            console.log('ERR in DELETE' + JSON.stringify(err));
+            console.log('ERR in DELETE with obj id ' + obj.id + ' type: ' + typeof obj.id +  ' -> ' + JSON.stringify(err));
             done();
             cb();
             return;
@@ -174,13 +175,13 @@ var accounts = {
 				// filter for all present values
             console.log('get every : ' + obj);
             var r = obj.every(function (o) {
-            var s = Object.getOwnPropertyNames(o)[0];
-            return (oRow[s] == obj[s]);
-          });
+              var s = Object.getOwnPropertyNames(o)[0];
+              return (oRow[s] == obj[s]);
+            });
             return r;
           } else if ((obj === undefined) || Object.getOwnPropertyNames(obj).length === 0) {
-          return true;
-        }
+            return true;
+          }
         });
 
         if (filterResult.length) {

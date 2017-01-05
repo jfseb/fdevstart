@@ -33,9 +33,9 @@
     "tell me the <category> of <A1>"
   ],
   "ListAll": [
-    "List all <categories> (in|for|with) <insth>",
+    "List all <categories>? (in|for|with) <insth>",
     "List all <categories>",
-    "List <categories> ((in)|(for)|(with)) <insth>",
+    "List <categories>? ((in)|(for)|(with)) <insth>",
     "List <categories>"
   ],
   "Help": [
