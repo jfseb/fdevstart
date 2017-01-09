@@ -1,0 +1,40 @@
+{
+  "domain": "StartTA",
+  "category": [
+    "transaction",
+    "systemId",
+    "client"
+  ],
+  "wordindex": [
+    "transaction"
+  ],
+  "hidden": [
+    "_url",
+    "_urlpattern"
+  ],
+  "toolhidden": true,
+  "tool": {
+    "name": "StartTA",
+    "requires": {
+      "transaction": {},
+      "systemId": {},
+      "client": {}
+    },
+    "optional": {},
+    "sets": {
+      "none": {
+        "set": [
+          "systemId",
+          "client",
+          "transaction"
+        ],
+        "response": "_urlpattern1"
+      }
+    }
+  },
+  "synonyms": {
+    "transaction": [
+      "TA"
+    ]
+  }
+}

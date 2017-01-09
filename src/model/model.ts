@@ -24,7 +24,7 @@ import * as process from 'process';
 /**
  * the model path, may be controlled via environment variable
  */
-var modelPath = process.env["ABOT_MODELPATH"] || "testmodel";
+var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 
 //export interface IModels = Match.IModels;
 
@@ -53,7 +53,9 @@ interface IModel {
     hidden: string[]
 };
 
-function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule }) {
+const ARR_MODEL_PROPERTIES = ["domain", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+
+function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule[] }) {
     synonyms.forEach(function (syn) {
         var oRule = {
             category: category,
@@ -67,8 +69,13 @@ function addSynonyms(synonyms: string[], category: string, synonymFor: string, m
     });
 }
 
+function getRuleKey(rule) {
+    return rule.matchedString + "-|-" + rule.category + " -|- " + rule.type  + " -|- " + rule.word + " ";
+}
+
 function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
-    seenRules: { [key: string]: IMatch.mRule }) {
+    seenRules: { [key: string]: IMatch.mRule[] }) {
+
     if (rule.type !== IMatch.EnumRuleType.WORD) {
         mRules.push(rule);
         return;
@@ -76,19 +83,19 @@ function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
     if ((rule.word === undefined) || (rule.matchedString === undefined)) {
         throw new Error('illegal rule' + JSON.stringify(rule, undefined, 2));
     }
-    var seenRules = seenRules || {};
-    var r = JSON.stringify(rule);
+    var r = getRuleKey(rule);
+    rule.lowercaseword = rule.word.toLowerCase();
     if (seenRules[r]) {
         debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
-        var duplicates = mRules.filter(function (oEntry) {
-            return !InputFilterRules.cmpMRule(oEntry, rule);
+        var duplicates = seenRules[r].filter(function( oEntry) {
+            return 0 === InputFilterRules.compareMRuleFull(oEntry,rule);
         });
-        if (duplicates.length > 0) {
+        if(duplicates.length > 0) {
             return;
         }
     }
-    seenRules[r] = rule;
-    rule.lowercaseword = rule.word.toLowerCase();
+    seenRules[r] = (seenRules[r] || []);
+    seenRules[r].push(rule);
     if (rule.word === "") {
         debuglog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
         loadlog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
@@ -98,7 +105,7 @@ function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
     return;
 }
 
-function loadModelData(oMdl: IModel, sModelName: string, oModel: IMatch.IModels) {
+function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oModel: IMatch.IModels) {
     // read the data ->
     // data is processed into mRules directly,
     const sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
@@ -137,7 +144,7 @@ function loadModelData(oMdl: IModel, sModelName: string, oModel: IMatch.IModels)
     });
 }
 
-function loadModel(sModelName: string, oModel: IMatch.IModels) {
+function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModels) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl) as IModel;
@@ -146,6 +153,27 @@ function loadModel(sModelName: string, oModel: IMatch.IModels) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
     }
+    // check properties of model
+    Object.keys(oMdl).sort().forEach(function(sProperty) {
+        if(ARR_MODEL_PROPERTIES.indexOf(sProperty) < 0) {
+            throw new Error('Model property "' + sProperty + '" not a known model propperty in model of domain ' + oMdl.domain + ' ');
+        }
+    });
+    // check that members of wordindex are in categories,
+    oMdl.wordindex = oMdl.wordindex || [];
+    oMdl.wordindex.forEach(function(sWordIndex) {
+        if(oMdl.category.indexOf(sWordIndex) < 0) {
+            throw new Error('Model wordindex "' + sWordIndex + '" not a category of domain ' + oMdl.domain + ' ');
+        }
+    });
+    oMdl.exactmatch = oMdl.exactmatch || [];
+    oMdl.exactmatch.forEach(function(sExactMatch) {
+        if(oMdl.category.indexOf(sExactMatch) < 0) {
+            throw new Error('Model exactmatch "' + sExactMatch + '" not a category of domain ' + oMdl.domain + ' ');
+        }
+    });
+
+
     // add relation domain -> category
     var domainStr = MetaF.Domain(oMdl.domain).toFullString();
     var relationStr = MetaF.Relation(Meta.RELATION_hasCategory).toFullString();
@@ -211,23 +239,48 @@ function loadModel(sModelName: string, oModel: IMatch.IModels) {
     oModel.category = oModel.category.filter(function (string, index) {
         return oModel.category[index] !== oModel.category[index + 1];
     });
-    loadModelData(oMdl, sModelName, oModel);
+    loadModelData(modelPath, oMdl, sModelName, oModel);
 } // loadmodel
 
-export function loadModels() : IMatch.IModels {
+
+export function splitRules(rules : IMatch.mRule[]) : IMatch.SplitRules {
+    var res = {};
+    var nonWordRules = [];
+    rules.forEach(function(rule) {
+        if(rule.type === IMatch.EnumRuleType.WORD) {
+            if(!rule.lowercaseword) {
+                throw new Error("Rule has no member lowercaseword" + JSON.stringify(rule));
+            }
+            res[rule.lowercaseword] = res[rule.lowercaseword] || [];
+            res[rule.lowercaseword].push(rule);
+        } else {
+            nonWordRules.push(rule);
+        }
+    });
+    return {
+        wordMap: res,
+        nonWordRules : nonWordRules,
+        allRules : rules
+    };
+}
+
+export function loadModels(modelPath? : string) : IMatch.IModels {
     var oModel: IMatch.IModels;
     oModel = {
         domains: [],
         tools: [],
+        rules : undefined,
         category: [],
         mRules: [],
+        seenRules : {},
         records: [],
         meta : { t3 : {} }
     }
+    modelPath = modelPath || envModelPath;
     var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
     mdls.forEach(function (sModelName) {
-        loadModel(sModelName, oModel)
+        loadModel(modelPath, sModelName, oModel)
     });
 
     // add the categories to the model:
@@ -275,6 +328,7 @@ export function loadModels() : IMatch.IModels {
         },
     */
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
+    oModel.rules = splitRules(oModel.mRules);
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
     delete oModel.seenRules;
     return oModel;
@@ -305,6 +359,17 @@ export function getCategoriesForDomain(theModel : IMatch.IModels, domain : strin
     return Meta.getStringArray(res);
 }
 
+/**
+ * Return all categories of a domain which can appear on a word,
+ * these are typically the wordindex domains + entries generated by generic rules
+ *
+ * The current implementation is a simplification
+ */
+export function getPotentialWordCategoriesForDomain(theModel : IMatch.IModels, domain : string) : string[] {
+    // this is a simplified version
+    return getCategoriesForDomain(theModel, domain);
+}
+
 export function getDomainsForCategory(theModel : IMatch.IModels, category : string) : string[] {
     if(theModel.category.indexOf(category) < 0) {
         throw new Error("Category \"" + category + "\" not part of model");
@@ -312,3 +377,20 @@ export function getDomainsForCategory(theModel : IMatch.IModels, category : stri
     var res = getResultAsArray(theModel, MetaF.Category(category), MetaF.Relation(Meta.RELATION_isCategoryOf));
     return Meta.getStringArray(res);
 }
+
+
+ export function getAllRecordCategoriesForTargetCategory(model : IMatch.IModels, category : string, wordsonly : boolean) : {[key: string] : boolean} {
+    var res = {};
+    //
+    var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
+    var domains = getDomainsForCategory(model, category);
+    domains.forEach(function(domain) {
+        fn(model, domain).forEach(function(wordcat) {
+            res[wordcat] = true;
+        });
+    });
+    Object.freeze(res);
+    return res;
+ }
+
+

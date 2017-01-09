@@ -1,0 +1,134 @@
+{
+  "domain": "FioriBOM",
+  "category": [
+    "uri",
+	"AppKey",
+	"ArtifactId",
+    "appId",
+    "fiori intent",
+    "AppName",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "BSPApplicationURL",
+    "releaseName",
+    "releaseId",
+    "BusinessCatalog",
+    "TechnicalCatalog",
+    "detailsurl",
+    "isPublished",
+    "BSPPackage",
+    "AppDocumentationLinkKW",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "BusinessGroupDescription",
+    "PrimaryODataServiceName",
+    "SemanticObject",
+    "SemanticAction",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "URLParameters",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    "ExternalReleaseName"
+     ],
+  "wordindex": [
+	"AppKey",
+    "appId",
+	"ArtifactId",
+    "fiori intent",
+    "AppName",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "BSPApplicationURL",
+    "releaseName",
+    "releaseId",
+    "BusinessCatalog",
+    "TechnicalCatalog",
+    "BSPPackage",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "BusinessGroupDescription",
+    "PrimaryODataServiceName",
+    "SemanticObject",
+    "SemanticAction",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    "ExternalReleaseName"
+  ],
+  "exactmatch": [
+    "appId",
+	"AppKey",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "BSPApplicationURL",
+    "releaseName",
+    "releaseId",
+    "BusinessCatalog",
+    "TechnicalCatalog",
+    "BSPPackage",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "PrimaryODataServiceName",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    "ExternalReleaseName"
+  ],
+  "hidden": [
+    "uri",
+    "detailsurl",
+    "_urlpattern1",
+    "_urlpattern2",
+    "_urlpattern3"
+  ],
+  "tool": {
+    "name": "BOMEditor",
+    "requires": {
+    },
+    "optional": {
+      "appId": {},
+      "AppName" : {},
+      "fiori intent": {}
+    },
+    "sets" : {
+      "intent": {
+        "set" : ["AppId"],
+        "response" : "detailsurl"
+      },
+      "none": {
+        "set" : ["AppName"],
+        "response" : "detailsurl"
+      },
+       "fintent": {
+        "set" : ["fiori intent"],
+        "response" : "detailsurl"
+      },
+      "soAction": {
+        "set" : ["SemanticObject", "SemanticAction"],
+        "response" : "detailsurl"
+      }
+    }
+  },
+  "synonyms" : {
+    "tool" : ["BOM Editor"],
+    "BOMEditor" : ["BOM Editor"],
+    "BSPApplicationURL" : ["BSP Path", "BSP Url", "Resource Path"],
+    "PrimaryODataServiceName" : ["ODataService", "Primary OData Service", "OData Service Name", "OData Service"],
+    "BSPName" : ["BSP", "BSP Name", "BSP repository"],
+    "RoleName" : ["Role Name", "PFCG Role"],
+    "ArtifactId" : ["component name", "ui5 component name", "library name", "javascript name", "javascript id", "manifest id", "appdescriptor id"],
+    "fiori intent": ["fiori intents", "intents", "intent"],
+    "ApplicationComponent" : ["Application Component", "Application components", "ApplicationComponents", "Support Component", "Component"],
+    "BusinessRoleName" : ["Business Role Name", "Backend PFCG Role"],
+    "fiori catalog" : ["catalog"]
+  }
+}

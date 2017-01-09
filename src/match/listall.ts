@@ -32,10 +32,11 @@ import * as WhatIs from './whatis';
 import * as Model from '../model/model';
 import * as Match from './match';
 
+var sWords = {};
 
 export function matchRecordHavingCategory(category: string, records: Array<IMatch.IRecord>)
   : Array<IMatch.IRecord> {
-  debuglog(JSON.stringify(records,undefined,2));
+  debuglog(debuglog.enabled ? JSON.stringify(records,undefined,2) : "-");
   var relevantRecords = records.filter(function (record: IMatch.IRecord) {
     return (record[category] !== undefined) && (record[category] !== null);
   });
@@ -45,8 +46,8 @@ export function matchRecordHavingCategory(category: string, records: Array<IMatc
 }
 
 
-export function analyzeContextString(contextQueryString : string,  aRules: Array<IMatch.mRule>) {
-    var matched = InputFilter.analyzeString(contextQueryString, aRules);
+export function analyzeContextString(contextQueryString : string,  rules: IMatch.SplitRules) {
+    var matched = InputFilter.analyzeString(contextQueryString, rules, sWords);
     if(debuglog.enabled) {
       debuglog("After matched " + JSON.stringify(matched));
     }
@@ -71,69 +72,49 @@ export function analyzeContextString(contextQueryString : string,  aRules: Array
 //   theModel.mRules, theModel.tools, theModel.records);
 
 export function listAllWithContext(category: string, contextQueryString: string,
-  aRules: Array<IMatch.mRule>, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): Array<IMatch.IWhatIsAnswer> {
   if (contextQueryString.length === 0) {
     return [];
   } else {
     logPerf('listAllWithContext');
     perflog("totalListAllWithContext");
-    /*
-    var matched = InputFilter.analyzeString(contextQueryString, aRules);
-    if(debuglog.enabled) {
-      debuglog("After matched " + JSON.stringify(matched));
-    }
-    var aSentences = InputFilter.expandMatchArr(matched);
-    if(debuglog.enabled) {
-      debuglog("after expand" + aSentences.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
-    }
-    var aSentencesReinforced = InputFilter.reinForce(aSentences);
-    if(debuglog.enabled) {
-      debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
-    }
-    // we limit analysis to n sentences
-    */
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
-
-    perflog("matching records ...");
-
-
-    var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    perflog("matching records (s=" + aSentencesReinforced.length + ")...");
+    var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled){
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
-    perflog("match records");
+    perflog("filtering topRanked (a=" + matchedAnswers.length + ")...");
     var matchedFiltered = WhatIs.filterOnlyTopRanked(matchedAnswers);
     if (debuglog.enabled) {
       debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
     }
-    perflog("totalListAllWithContext");
+    perflog("totalListAllWithContext (a=" + matchedFiltered.length + ")");
     logPerf('listAllWithContext');
-    return matchedAnswers;
+    return matchedFiltered; // ??? Answers;
   }
 }
 
 
 export function listAllHavingContext(category: string, contextQueryString: string,
-  aRules: Array<IMatch.mRule>, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
+  categorySet : { [key:string] : boolean }): Array<IMatch.IWhatIsAnswer> {
   if (contextQueryString.length === 0) {
     return [];
   } else {
-    perflog("matching records ...");
+    perflog("analyzeContextString ...");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
-    perflog("matching records ...")
-    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    perflog("matching records having (s=" + (aSentencesReinforced.length) + ")...");
+    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled) {
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
+    perflog("filteringTopRanked (a=" + matchedAnswers.length + ")...");
     var matchedFiltered = WhatIs.filterOnlyTopRanked(matchedAnswers);
     if (debuglog.enabled) {
       debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
     }
-    perflog("total listAllHavingContext")
+    perflog("totalListAllHavingContext (a=" + matchedFiltered.length + ")");
     return matchedFiltered;
   }
 }
@@ -185,7 +166,7 @@ export function joinResults(results: Array<IMatch.IWhatIsAnswer>): string[] {
 export function inferDomain(theModel : IMatch.IModels, contextQueryString: string): string {
  // console.log("here the string" + contextQueryString);
  //  console.log("here the rules" + JSON.stringify(theModel.mRules));
-  var res = analyzeContextString(contextQueryString, theModel.mRules);
+  var res = analyzeContextString(contextQueryString, theModel.rules);
   //console.log(JSON.stringify(res,undefined,2));
   // run through the string, search for a category
   if(!res.length) {

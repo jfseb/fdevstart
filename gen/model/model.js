@@ -17,8 +17,9 @@ var process = require('process');
 /**
  * the model path, may be controlled via environment variable
  */
-var modelPath = process.env["ABOT_MODELPATH"] || "testmodel";
+var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 ;
+var ARR_MODEL_PROPERTIES = ["domain", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
@@ -32,6 +33,9 @@ function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
         insertRuleIfNotPresent(mRules, oRule, seen);
     });
 }
+function getRuleKey(rule) {
+    return rule.matchedString + "-|-" + rule.category + " -|- " + rule.type + " -|- " + rule.word + " ";
+}
 function insertRuleIfNotPresent(mRules, rule, seenRules) {
     if (rule.type !== 0 /* WORD */) {
         mRules.push(rule);
@@ -40,19 +44,19 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
     if ((rule.word === undefined) || (rule.matchedString === undefined)) {
         throw new Error('illegal rule' + JSON.stringify(rule, undefined, 2));
     }
-    var seenRules = seenRules || {};
-    var r = JSON.stringify(rule);
+    var r = getRuleKey(rule);
+    rule.lowercaseword = rule.word.toLowerCase();
     if (seenRules[r]) {
         debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
-        var duplicates = mRules.filter(function (oEntry) {
-            return !InputFilterRules.cmpMRule(oEntry, rule);
+        var duplicates = seenRules[r].filter(function (oEntry) {
+            return 0 === InputFilterRules.compareMRuleFull(oEntry, rule);
         });
         if (duplicates.length > 0) {
             return;
         }
     }
-    seenRules[r] = rule;
-    rule.lowercaseword = rule.word.toLowerCase();
+    seenRules[r] = (seenRules[r] || []);
+    seenRules[r].push(rule);
     if (rule.word === "") {
         debuglog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
         loadlog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
@@ -61,7 +65,7 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
     mRules.push(rule);
     return;
 }
-function loadModelData(oMdl, sModelName, oModel) {
+function loadModelData(modelPath, oMdl, sModelName, oModel) {
     // read the data ->
     // data is processed into mRules directly,
     var sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
@@ -98,7 +102,7 @@ function loadModelData(oMdl, sModelName, oModel) {
         });
     });
 }
-function loadModel(sModelName, oModel) {
+function loadModel(modelPath, sModelName, oModel) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl);
@@ -106,6 +110,25 @@ function loadModel(sModelName, oModel) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
     }
+    // check properties of model
+    Object.keys(oMdl).sort().forEach(function (sProperty) {
+        if (ARR_MODEL_PROPERTIES.indexOf(sProperty) < 0) {
+            throw new Error('Model property "' + sProperty + '" not a known model propperty in model of domain ' + oMdl.domain + ' ');
+        }
+    });
+    // check that members of wordindex are in categories,
+    oMdl.wordindex = oMdl.wordindex || [];
+    oMdl.wordindex.forEach(function (sWordIndex) {
+        if (oMdl.category.indexOf(sWordIndex) < 0) {
+            throw new Error('Model wordindex "' + sWordIndex + '" not a category of domain ' + oMdl.domain + ' ');
+        }
+    });
+    oMdl.exactmatch = oMdl.exactmatch || [];
+    oMdl.exactmatch.forEach(function (sExactMatch) {
+        if (oMdl.category.indexOf(sExactMatch) < 0) {
+            throw new Error('Model exactmatch "' + sExactMatch + '" not a category of domain ' + oMdl.domain + ' ');
+        }
+    });
     // add relation domain -> category
     var domainStr = MetaF.Domain(oMdl.domain).toFullString();
     var relationStr = MetaF.Relation(Meta.RELATION_hasCategory).toFullString();
@@ -166,22 +189,47 @@ function loadModel(sModelName, oModel) {
     oModel.category = oModel.category.filter(function (string, index) {
         return oModel.category[index] !== oModel.category[index + 1];
     });
-    loadModelData(oMdl, sModelName, oModel);
+    loadModelData(modelPath, oMdl, sModelName, oModel);
 } // loadmodel
-function loadModels() {
+function splitRules(rules) {
+    var res = {};
+    var nonWordRules = [];
+    rules.forEach(function (rule) {
+        if (rule.type === 0 /* WORD */) {
+            if (!rule.lowercaseword) {
+                throw new Error("Rule has no member lowercaseword" + JSON.stringify(rule));
+            }
+            res[rule.lowercaseword] = res[rule.lowercaseword] || [];
+            res[rule.lowercaseword].push(rule);
+        }
+        else {
+            nonWordRules.push(rule);
+        }
+    });
+    return {
+        wordMap: res,
+        nonWordRules: nonWordRules,
+        allRules: rules
+    };
+}
+exports.splitRules = splitRules;
+function loadModels(modelPath) {
     var oModel;
     oModel = {
         domains: [],
         tools: [],
+        rules: undefined,
         category: [],
         mRules: [],
+        seenRules: {},
         records: [],
         meta: { t3: {} }
     };
+    modelPath = modelPath || envModelPath;
     var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
     mdls.forEach(function (sModelName) {
-        loadModel(sModelName, oModel);
+        loadModel(modelPath, sModelName, oModel);
     });
     // add the categories to the model:
     oModel.category.forEach(function (category) {
@@ -224,6 +272,7 @@ function loadModels() {
         },
     */
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
+    oModel.rules = splitRules(oModel.mRules);
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
     delete oModel.seenRules;
     return oModel;
@@ -250,6 +299,17 @@ function getCategoriesForDomain(theModel, domain) {
     return Meta.getStringArray(res);
 }
 exports.getCategoriesForDomain = getCategoriesForDomain;
+/**
+ * Return all categories of a domain which can appear on a word,
+ * these are typically the wordindex domains + entries generated by generic rules
+ *
+ * The current implementation is a simplification
+ */
+function getPotentialWordCategoriesForDomain(theModel, domain) {
+    // this is a simplified version
+    return getCategoriesForDomain(theModel, domain);
+}
+exports.getPotentialWordCategoriesForDomain = getPotentialWordCategoriesForDomain;
 function getDomainsForCategory(theModel, category) {
     if (theModel.category.indexOf(category) < 0) {
         throw new Error("Category \"" + category + "\" not part of model");
@@ -258,5 +318,19 @@ function getDomainsForCategory(theModel, category) {
     return Meta.getStringArray(res);
 }
 exports.getDomainsForCategory = getDomainsForCategory;
+function getAllRecordCategoriesForTargetCategory(model, category, wordsonly) {
+    var res = {};
+    //
+    var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
+    var domains = getDomainsForCategory(model, category);
+    domains.forEach(function (domain) {
+        fn(model, domain).forEach(function (wordcat) {
+            res[wordcat] = true;
+        });
+    });
+    Object.freeze(res);
+    return res;
+}
+exports.getAllRecordCategoriesForTargetCategory = getAllRecordCategoriesForTargetCategory;
 
 //# sourceMappingURL=model.js.map

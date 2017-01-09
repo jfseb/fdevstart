@@ -15,6 +15,7 @@ exports.CAT_TOOL = "tool";
 })(exports.EnumRuleType || (exports.EnumRuleType = {}));
 var EnumRuleType = exports.EnumRuleType;
 ;
+;
 (function (EnumActionType) {
     EnumActionType[EnumActionType["STARTURL"] = 0] = "STARTURL";
     EnumActionType[EnumActionType["STARTCMDLINE"] = 1] = "STARTCMDLINE";

@@ -27,14 +27,14 @@ import * as Toolmatcher from './toolmatcher';
 
 import * as Sentence from './sentence';
 
-export function analyzeAll(sString: string, aRules: Array<IMatch.mRule>, aTools: Array<IMatch.ITool>, words? ) {
+export function analyzeAll(sString: string, rules: IMatch.SplitRules, aTools: Array<IMatch.ITool>, words? ) {
   "use strict";
   if (sString.length === 0) {
     return [];
   } else {
     perf('analyzeString');
  //   InputFilter.resetCnt();
-    var matched = InputFilter.analyzeString(sString, aRules, words);
+    var matched = InputFilter.analyzeString(sString, rules, words);
     perf('analyzeString');
  //   InputFilter.dumpCnt();
     perf('expand');

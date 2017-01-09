@@ -1,0 +1,28 @@
+{
+  "domain": "hints",
+  "category": [
+    "hints"
+  ],
+  "wordindex": [
+  ],
+  "hidden": [
+    "_urlpattern"
+  ],
+  "tool": {
+    "name": "NoTool3",
+    "requires": {
+      "impossible": {}
+    },
+    "optional": {
+    },
+    "sets" : {
+      "none": {
+        "set" : ["impossible"],
+        "response" : "_urlpattern"
+      }
+    }
+  },
+  "synonyms" : {
+    "hints" : ["tips and tricks", "tips", "tricks", "expert tips"]
+  }
+}

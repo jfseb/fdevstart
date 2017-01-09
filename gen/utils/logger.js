@@ -18,9 +18,14 @@ function logPerf(sString) {
     console.log('Perf' + this.name);
     if (this.first === 0) {
         this.first = Date.now();
+        this.last = this.first;
     }
     else {
-        console.log('Perf' + this.name + ' total ' + (Date.now() - this.first));
+        var t = Date.now();
+        console.log('Perf' + this.name +
+            ' delta: ' + String("      " + (t - this.last)).slice(-6)
+            + ' total: ' + String("      " + (t - this.first)).slice(-6));
+        this.last = t;
     }
     if (this.on[sString]) {
         console.timeEnd(sString);

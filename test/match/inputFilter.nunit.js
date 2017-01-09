@@ -18,6 +18,9 @@ const utils = require(root + '/utils/utils.js');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
+const Model = require(root + '/model/model.js');
+
+
 const ab = inputFilter;
 
 exports.testcountAinB = function (test) {
@@ -1009,14 +1012,15 @@ exports.testinputFilter = function (test) {
 
 var ifr = inputFilterRules.getMRulesSample();
 
-var ifr2 = [ {
+
+var ifr2 =  Model.splitRules([ {
   "category" : "category",
   "matchedString" : "element name",
   _ranking : 0.95,
   type : 0,
   word : "element name",
   lowercaseword : "element name"
-}];
+}]);
 
 exports.testCategorizeWordWithRankCutoff = function (test) {
   var res = ab.categorizeWordWithRankCutoff('element names', ifr2);
@@ -1030,7 +1034,7 @@ exports.testCategorizeWordWithRankCutoff = function (test) {
 
 exports.testCategorizeString = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('UV2', true, ifr);
+  var res = ab.categorizeString2('UV2', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(res, [
     { string: 'UV2', matchedString: 'UV2', category: 'systemId', _ranking: 1 },
@@ -1043,7 +1047,7 @@ exports.testCategorizeString = function (test) {
 
 exports.testCategorizeStringClient = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('120', false, ifr);
+  var res = ab.categorizeString2('120', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res[0],
@@ -1058,7 +1062,7 @@ exports.testCategorizeStringClient = function (test) {
 
 exports.testCategorizeStringWiki = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('wiki', true, ifr);
+  var res = ab.categorizeString2('wiki', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(res, [
     { string: 'wiki', matchedString: 'wiki', category: 'category', _ranking: 1 },
@@ -1072,7 +1076,7 @@ exports.testCategorizeStringWiki = function (test) {
 
 exports.testCategorizeStringExactNoMatch = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetRes', true, ifr);
+  var res = ab.categorizeString2('NavTargetRes', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res, [
@@ -1095,7 +1099,7 @@ exports.testCategorizeStringExactNoMatch = function (test) {
 
 exports.testCategorizeStringNonExactNoMatch = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetRes', false, ifr);
+  var res = ab.categorizeString2('NavTargetRes', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res, [
@@ -1131,7 +1135,7 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
 
 exports.testCategorizeStringExactMatch = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetResolution', true, ifr);
+  var res = ab.categorizeString2('NavTargetResolution', true, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res, [
@@ -1159,7 +1163,7 @@ exports.testCategorizeStringExactMatch = function (test) {
 
 exports.testCategorizeStringDistanceNavTarget = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetResolut', false, ifr);
+  var res = ab.categorizeString2('NavTargetResolut', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 delete res[0].levenmatch;
  res[0]._ranking = "0.9x";
@@ -1197,7 +1201,7 @@ delete res[0].levenmatch;
 
 exports.testCategorizeStringDistanceNavTargetInBetween = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString('NavTargetResolutAdapt', false, ifr);
+  var res = ab.categorizeString2('NavTargetResolutAdapt', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res[0].matchedString, 'NavTargetResolution');
@@ -1258,7 +1262,7 @@ exports.testCategorizeStringBadRule = function (test) {
   test.done();
 };
 
-var sampleRules = inputFilterRules.assureLowerCaseWord([
+var sampleRules = Model.splitRules(inputFilterRules.assureLowerCaseWord([
   {
     type: 0,
     word: 'ab',
@@ -1288,7 +1292,7 @@ var sampleRules = inputFilterRules.assureLowerCaseWord([
     regexp: /^.*$/,
     category: 'unknown'
   }
-]);
+]));
 
 exports.testAnalyzeStringUV2Client120 = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
@@ -1372,7 +1376,7 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
   test.done();
 };
 
-var mRulesStrict = [
+var mRulesStrict = Model.splitRules( [
   {
     'category': 'category',
     'matchedString': 'unit test',
@@ -1396,7 +1400,8 @@ var mRulesStrict = [
     'word': '120',
     'lowercaseword': '120',
     '_ranking': 0.95
-  }];
+  }]
+);
 
 exports.testAnalyzeStringNoGenerics1 = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))

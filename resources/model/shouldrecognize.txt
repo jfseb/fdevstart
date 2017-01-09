@@ -18,8 +18,14 @@ show all hints
 
 list all odata services for apps in LO-RFM-STO
 
+
+"list all applications" -> if this is a synonym for transactional_xxxx
+
 nw.core.extccl.lib.reuse
 
+"what is an XXX " -> an XXX is a category in domain a.
+                    XXX is a synonym for XXX,
+                    XXX is a value for category YYY in (a record of) domain YYY
 
 sap.cus.sd.lib.processflow
 

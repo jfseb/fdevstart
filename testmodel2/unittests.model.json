@@ -1,0 +1,38 @@
+{
+  "domain": "unit test",
+  "category": [
+    "unit test",
+    "url",
+    "tool"
+  ],
+  "wordindex": [
+    "unit test",
+    "url"
+  ],
+  "exactmatch" : [
+    "url"
+  ],
+  "hidden": [
+    "_urlpattern"
+  ],
+  "tool": {
+    "name": "unit test",
+    "requires": {
+      "unit test": {}
+    },
+    "optional": {},
+    "sets": {
+      "default": {
+        "set": [
+          "unit test"
+        ],
+        "response": "url"
+      }
+    }
+  },
+  "synonyms": {
+    "tool": [
+      "unit tests"
+    ]
+  }
+}

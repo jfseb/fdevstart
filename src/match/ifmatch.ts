@@ -139,6 +139,12 @@ export interface mRule {
   _ranking?: number
 }
 
+export interface SplitRules {
+  allRules: Array<mRule>,
+  nonWordRules : Array<mRule>,
+  wordMap: { [key : string] : Array<mRule> }
+};
+
 export interface ICategorizedString {
   string: string,
   matchedString: string,
@@ -191,8 +197,9 @@ export interface IModels {
     tools: ITool[],
     category: string[],
     mRules: mRule[],
+    rules : SplitRules,
     records: any[]
-    seenRules?: { [key: string]: mRule },
+    seenRules?: { [key: string]: mRule[] },
     meta : {
         // entity -> relation -> target
         t3 : { [key: string] : { [key : string] : any }}

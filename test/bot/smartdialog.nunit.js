@@ -5,6 +5,8 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 var debug = require('debug');
 const debuglog = debug('smartdialog.nunit');
 
+
+var logger = require(root + '/utils/logger');
 const botdialog = require(root + '/bot/smartdialog.js');
 
 var HTMLConnector = require(root + '/ui/htmlconnector.js');
@@ -241,6 +243,44 @@ exports.testListAllCategoriesRelatedTo = function (test) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(sRes.indexOf('wiki') < 0, true, 'wiki present');
     test.deepEqual(sRes.indexOf('unit test') >= 0, true, 'wiki present');
+    test.done();
+  });
+};
+
+//var debug = require('debug');
+
+var logPerf = logger.perf('perflistall');
+//var perflog = debug('perf');
+
+
+exports.testPerfListAll1 = function (test) {
+  logPerf('testPerfListAll1');
+  testOne('list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning',function(oRes) {
+   // var sRes = oRes;
+    logPerf('testPerfListAll1');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(true, true);
+    test.done();
+  });
+};
+
+
+exports.testPerfListAll2 = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all AppNames in FIN-GL Account Manage fiori intent related to unit test',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(true, true);
+    test.done();
+  });
+};
+
+
+exports.testUpDownRecognizerUp = function (test) {
+  doRecognize('up', function(err, res) {
+    test.deepEqual(res.intent,  'intent.up');
     test.done();
   });
 };

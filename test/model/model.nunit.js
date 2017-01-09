@@ -12,13 +12,14 @@ var Tools = require(root + '/match/tools.js');
 
 var InputFilterRules = require(root + '/match/inputFilterRules.js');
 
+var theModel = Model.loadModels();
 
 /**
  * Unit test for sth
  */
 exports.testModel = function (test) {
   test.expect(2);
-  var u = Model.loadModels();
+  var u = theModel;
   test.equal(u.tools.length, 6, 'no error');
   test.deepEqual(u.category.sort(),
     [ 'atomic weight',
@@ -35,6 +36,19 @@ exports.testModel = function (test) {
       'unit test',
       'url',
       'wiki' ] , 'correct data read');
+  test.done();
+};
+
+
+exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
+
+  var res = Model.getAllRecordCategoriesForTargetCategory(theModel, 'element name');
+  test.deepEqual(res, {
+    'element name': true,
+    'element symbol' : true,
+    'atomic weight' : true,
+    'element number' : true
+  });
   test.done();
 };
 
@@ -124,7 +138,38 @@ exports.testModelCheckExactOnly = function (test) {
   var res = u.mRules.filter(function(oRule) {
     return oRule.exactOnly === true;
   });
-  test.equal(res.length, 113 , 'correct flag applied');
+  test.equal(res.length, 234 , 'correct flag applied');
+  test.done();
+};
+
+exports.testMakeWordMap = function(test) {
+  var rules  = [
+    { type : 0, lowercaseword : 'abc', category : '1'},
+    { type : 1, lowercaseword : 'def', category : '2'},
+    { type : 0 , lowercaseword : 'klm', category : '4'},
+    { type : 0 , lowercaseword : 'abc', category : '3'},
+  ];
+  var res = Model.splitRules(rules);
+
+  test.deepEqual(res,
+    { allRules : [
+    { type : 0, lowercaseword : 'abc', category : '1'},
+    { type : 1, lowercaseword : 'def', category : '2'},
+    { type : 0 , lowercaseword : 'klm', category : '4'},
+    { type : 0 , lowercaseword : 'abc', category : '3'},
+    ],
+      wordMap : {
+        'abc' : [
+        { type : 0, lowercaseword : 'abc', category : '1'},
+        { type : 0 , lowercaseword : 'abc', category : '3'}
+        ],
+        'klm' : [
+        { type : 0 , lowercaseword : 'klm', category : '4'}
+        ]
+      },
+      nonWordRules : [ { type : 1, lowercaseword : 'def', category : '2'} ]
+    }
+ );
   test.done();
 };
 

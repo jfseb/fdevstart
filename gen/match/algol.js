@@ -8,6 +8,14 @@
  * Number of sentences which are not used
  */
 exports.Cutoff_Sentences = 120;
+/*
+ try 4, 1.2
+
+ instead of 8, 1.5
+*/
+exports.calcDist = {
+    lengthDelta1: 8,
+};
 /**
  * levenshtein distances above this will not be considered valid
  */

@@ -111,12 +111,53 @@ exports.testRecognize = function (test) {
   test.done();
 };
 
+
+
+
+
 var fs = require('fs');
 var oJSON = JSON.parse(fs.readFileSync('./resources/model/intents.json'));
 var oRules = recognizer.parseRules(oJSON);
 
-exports.testRecognizeSome = function (test) {
 
+exports.testRecognizerWs = function (test) {
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'list all applications '
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'categories',
+          entity: 'applications',
+          startIndex: 9,
+          endIndex: 21
+        }
+        ],
+        score: 0.9,
+        intent: 'ListAll'
+      }
+
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testTrimValueAdjusting= function(test) {
+  test.deepEqual(recognizer.trimValueAdjusting('abc '), { deltaStart : 0, value : 'abc'}, 'correct result');
+  test.deepEqual(recognizer.trimValueAdjusting('  abc '), { deltaStart : 2, value : 'abc'}, 'correct result');
+  test.deepEqual(recognizer.trimValueAdjusting(' \t abc'), { deltaStart : 3, value : 'abc'}, 'correct result');
+  test.done();
+};
+
+exports.testRecognizeSome = function (test) {
   var oRules = recognizer.parseRules(oJSON);
   var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
 

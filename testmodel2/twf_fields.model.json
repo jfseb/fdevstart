@@ -1,0 +1,49 @@
+{
+  "domain": "TWF",
+  "category": [
+    "fieldId",
+    "fieldName",
+    "field description"
+  ],
+  "wordindex": [
+    "fieldName"
+  ],
+  "exactmatch": [
+    "fieldId"
+  ],
+  "hidden": [
+    "url"
+  ],
+  "tool": {
+    "name": "ShowTWF",
+    "requires": {
+      "fieldName": {}
+    },
+    "optional": {
+      "country": {}
+    },
+    "sets": {
+      "country": {
+        "set": [
+          "fieldName",
+          "country"
+        ],
+        "response": "url"
+      },
+      "fieldName": {
+        "set": [
+          "fieldName"
+        ],
+        "response": "url"
+      }
+    }
+  },
+  "synonyms": {
+    "Element name": [
+      "name"
+    ],
+    "Element symbol": [
+      "symbol"
+    ]
+  }
+}

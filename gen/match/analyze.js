@@ -12,7 +12,7 @@ var logger = require('../utils/logger');
 var perf = logger.perf('analyze');
 var Toolmatcher = require('./toolmatcher');
 var Sentence = require('./sentence');
-function analyzeAll(sString, aRules, aTools, words) {
+function analyzeAll(sString, rules, aTools, words) {
     "use strict";
     if (sString.length === 0) {
         return [];
@@ -20,7 +20,7 @@ function analyzeAll(sString, aRules, aTools, words) {
     else {
         perf('analyzeString');
         //   InputFilter.resetCnt();
-        var matched = InputFilter.analyzeString(sString, aRules, words);
+        var matched = InputFilter.analyzeString(sString, rules, words);
         perf('analyzeString');
         //   InputFilter.dumpCnt();
         perf('expand');

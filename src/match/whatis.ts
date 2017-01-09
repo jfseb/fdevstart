@@ -104,7 +104,9 @@ export function dumpWeightsTop(toolmatches: Array<IMatch.IWhatIsAnswer>, options
 
 export function filterRetainTopRankedResult(res: Array<IMatch.IWhatIsAnswer>): Array<IMatch.IWhatIsAnswer> {
   var result = res.filter(function (iRes, index) {
-    debuglog(index + ' ' + JSON.stringify(iRes));
+    if(debuglog.enabled) {
+      debuglog(index + ' ' + JSON.stringify(iRes));
+    }
     if (iRes.result === (res[index - 1] && res[index - 1].result)) {
       debuglog('skip');
       return false;
@@ -162,7 +164,8 @@ export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord
  * list all top level rankings
  */
 export function matchRecordsHavingContext(
-  aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>)
+  aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>,
+  categorySet : {[key : string] : boolean })
   : Array<IMatch.IWhatIsAnswer> {
   debuglog(JSON.stringify(records, undefined, 2));
   var relevantRecords = records.filter(function (record: IMatch.IRecord) {
@@ -170,41 +173,99 @@ export function matchRecordsHavingContext(
   });
   var res = [];
   debuglog("relevant records nr:" + relevantRecords.length);
-  debuglog("sentences are : " + JSON.stringify(aSentences, undefined, 2));
-  relevantRecords.forEach(function (record) {
-    // count matches in record which are *not* the category
-    aSentences.forEach(function (aSentence) {
-      var hasCategory = {};
-      var mismatched = {};
-      var matched = {};
-      var cntRelevantWords = 0;
-      aSentence.forEach(function (oWord) {
-        if (!Word.Word.isFiller(oWord)) {
-          cntRelevantWords = cntRelevantWords + 1;
-          if (oWord.category && (record[oWord.category] !== undefined)) {
-            if (oWord.matchedString === record[oWord.category]) {
-              matched[oWord.category] = oWord;
-            }
-            else {
-              mismatched[oWord.category] = oWord;
-            }
-          }
-          else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
-            hasCategory[oWord.matchedString] = 1;
-          }
-        }
+  debuglog(debuglog.enabled ? ("sentences are : " + JSON.stringify(aSentences, undefined, 2)) : "-");
+  if (process.env.ABOT_FAST && categorySet) {
+    // we are only interested in categories present in records for domains which contain the category
+    // var categoryset = Model.calculateRelevantRecordCategories(theModel,category);
+    //knowing the target
+    perflog("got categoryset with " + Object.keys(categorySet).length);
+    var fl = 0;
+    var lf = 0;
+    var aSimplifiedSentences = aSentences.map(function (oSentence) {
+      var fWords = oSentence.filter(function(oWord) {
+        return !Word.Word.isFiller(oWord);
       });
-      if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
-        res.push({
-          sentence: aSentence,
-          record: record,
-          category: category,
-          result: record[category],
-          _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
+      var rWords = oSentence.filter(function (oWord) {
+          return  !!categorySet[oWord.category] || Word.Word.isCategory(oWord);
         });
-      }
-    })
-  });
+        fl = fl + oSentence.length;
+        lf = lf + rWords.length;
+        return {
+          oSentence: oSentence,
+          cntRelevantWords: rWords.length, // not a filler  // to be compatible it would be fWords
+          rWords: rWords
+        };
+    });
+    Object.freeze(aSimplifiedSentences);
+    perflog("post simplify (r=" + relevantRecords.length + " s=" + aSentences.length + " fl " + fl + "->" + lf + ")");
+    relevantRecords.forEach(function (record) {
+      // count matches in record which are *not* the category
+      aSimplifiedSentences.forEach(function (aSentence) {
+        var hasCategory = {};
+        var mismatched = {};
+        var matched = {};
+        var cntRelevantWords = aSentence.cntRelevantWords;
+        aSentence.rWords.forEach(function (oWord) {
+            if (oWord.category && (record[oWord.category] !== undefined)) {
+              if (oWord.matchedString === record[oWord.category]) {
+                matched[oWord.category] = oWord;
+              }
+              else {
+                mismatched[oWord.category] = oWord;
+              }
+            }
+            else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
+              hasCategory[oWord.matchedString] = 1;
+            }
+          }
+        );
+        if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
+          res.push({
+            sentence: aSentence.oSentence,
+            record: record,
+            category: category,
+            result: record[category],
+            _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
+          });
+        }
+      })
+    });
+  } else {
+    relevantRecords.forEach(function (record) {
+      // count matches in record which are *not* the category
+      aSentences.forEach(function (aSentence) {
+        var hasCategory = {};
+        var mismatched = {};
+        var matched = {};
+        var cntRelevantWords = 0;
+        aSentence.forEach(function (oWord) {
+          if (!Word.Word.isFiller(oWord)) {
+            cntRelevantWords = cntRelevantWords + 1;
+            if (oWord.category && (record[oWord.category] !== undefined)) {
+              if (oWord.matchedString === record[oWord.category]) {
+                matched[oWord.category] = oWord;
+              }
+              else {
+                mismatched[oWord.category] = oWord;
+              }
+            }
+            else if (Word.Word.isCategory(oWord) && record[oWord.matchedString]) {
+              hasCategory[oWord.matchedString] = 1;
+            }
+          }
+        });
+        if ((Object.keys(matched).length + Object.keys(hasCategory).length) > Object.keys(mismatched).length) {
+          res.push({
+            sentence: aSentence,
+            record: record,
+            category: category,
+            result: record[category],
+            _ranking: calcRankingHavingCategory(matched, hasCategory, mismatched, cntRelevantWords)
+          });
+        }
+      })
+    });
+  }
   res.sort(cmpByResultThenRanking);
   res = filterRetainTopRankedResult(res);
   return res;
@@ -254,30 +315,59 @@ export function matchRecords(aSentences: Array<IMatch.ISentence>, category: stri
   return res;
 }
 
-
-export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>)
+export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category: string, records: Array<IMatch.IRecord>, categorySet? : { [key : string] : boolean} )
   : Array<IMatch.IWhatIsAnswer> {
   if (debuglog.enabled) {
     debuglog(JSON.stringify(records, undefined, 2));
   }
+  Object.freeze(categorySet);
+  perflog("matchRecordsQuick ...(r=" + records.length + " s=" + aSentences.length + ")");
   var relevantRecords = records.filter(function (record: IMatch.IRecord) {
     return (record[category] !== undefined) && (record[category] !== null);
   });
   var res = [];
-  debuglog("relevant records nr:" + relevantRecords.length);
+  debuglog("relevant records (r=" + relevantRecords.length + ")");
   perflog("relevant records nr:" + relevantRecords.length + " sentences " + aSentences.length);
+  if(process.env.ABOT_FAST && categorySet) {
+    // we are only interested in categories present in records for domains which contain the category
+    // var categoryset = Model.calculateRelevantRecordCategories(theModel,category);
+    //knowing the target
+    perflog("got categoryset with " + Object.keys(categorySet).length);
+    var fl = 0;
+      var lf = 0;
+      var aSimplifiedSentences = aSentences.map(function (oSentence) {
+        var rWords = oSentence.filter(function (oWord) {
+          return !!categorySet[oWord.category];
+        });
+        fl = fl + oSentence.length;
+        lf = lf + rWords.length;
+        return {
+          oSentence: oSentence,
+          cntRelevantWords: rWords.length,
+          rWords: rWords
+        };
+      });
+      perflog("post simplify (r=" + relevantRecords.length + " s=" + aSentences.length + " fl " + fl + "->" + lf + ")");
 
 
-  var aSimplifiedSentences = aSentences.map(function (oSentence) {
-    var rWords = oSentence.filter(function (oWord) {
-      return !Word.Word.isFiller(oWord);
+
+  } else {
+    var fl = 0;
+    var lf = 0;
+    var aSimplifiedSentences = aSentences.map(function (oSentence) {
+      var rWords = oSentence.filter(function (oWord) {
+        return !Word.Word.isFiller(oWord);
+      });
+      fl = fl + oSentence.length;
+      lf = lf + rWords.length;
+      return {
+        oSentence: oSentence,
+        cntRelevantWords: rWords.length,
+        rWords: rWords
+      };
     });
-    return {
-      oSentence: oSentence,
-      cntRelevantWords: rWords.length,
-      rWords: rWords
-    };
-  });
+    perflog("post simplify (r=" + relevantRecords.length + " s=" + aSentences.length + " fl " + fl + "->" + lf + ")");
+  }
 
   relevantRecords.forEach(function (record) {
     aSimplifiedSentences.forEach(function (aSentence) {
@@ -285,7 +375,7 @@ export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category:
       var mismatched = 0;
       var matched = 0;
       aSentence.rWords.forEach(function (oWord) {
-        if (oWord.category && (record[oWord.category] !== undefined)) {
+        if (record[oWord.category] !== undefined) {
           if (oWord.matchedString === record[oWord.category]) {
             ++matched;
           } else {
@@ -293,6 +383,9 @@ export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category:
           }
         }
       });
+     // if(matched > 0 || mismatched > 0 ) {
+     //   console.log(" m" + matched + " mismatched" + mismatched);
+     // }
       //console.log(JSON.stringify(aSentence.oSentence));
       if (matched > mismatched) {
         res.push({
@@ -305,13 +398,16 @@ export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category:
       }
     })
   });
+  perflog("sort (a=" + res.length + ")");
   res.sort(cmpByResultThenRanking);
+  perflog("filterRetain ...");
   res = filterRetainTopRankedResult(res);
+  perflog("matchRecordsQuick done: (r=" + relevantRecords.length + " s=" + aSentences.length + " a=" + res.length + ")");
   return res;
 }
 
-export function analyzeCategory(categoryword: string, aRules: Array<IMatch.mRule>, wholesentence: string): string {
-  var cats = InputFilter.categorizeAWord(categoryword, aRules, wholesentence, {});
+export function analyzeCategory(categoryword: string, rules: IMatch.SplitRules, wholesentence: string): string {
+  var cats = InputFilter.categorizeAWord(categoryword, rules, wholesentence, {});
   // TODO qualify
   cats = cats.filter(function (cat) {
     return cat.category === 'category';
@@ -326,11 +422,11 @@ export function analyzeCategory(categoryword: string, aRules: Array<IMatch.mRule
 //   theModel.mRules, theModel.tools, theModel.records);
 
 export function resolveCategory(category: string, contextQueryString: string,
-  aRules: Array<IMatch.mRule>, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
+  rules : IMatch.SplitRules, records: Array<IMatch.IRecord>): Array<IMatch.IWhatIsAnswer> {
   if (contextQueryString.length === 0) {
     return [];
   } else {
-    var matched = InputFilter.analyzeString(contextQueryString, aRules);
+    var matched = InputFilter.analyzeString(contextQueryString, rules);
     debuglog("after matched " + JSON.stringify(matched));
     var aSentences = InputFilter.expandMatchArr(matched);
     debuglog("after expand" + aSentences.map(function (oSentence) {

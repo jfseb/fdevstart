@@ -102,6 +102,21 @@ function parseRules(oJSON) {
 }
 exports.parseRules = parseRules;
 ;
+function trimValueAdjusting(value) {
+    var res = { deltaStart: 0, value: value };
+    var m = value.match(/^\s+/);
+    if (m) {
+        res.deltaStart = m[0].length;
+        value = value.substr(res.deltaStart);
+    }
+    m = value.match(/\s+$/);
+    if (m) {
+        value = value.substr(0, value.length - m[0].length);
+    }
+    res.value = value;
+    return res;
+}
+exports.trimValueAdjusting = trimValueAdjusting;
 function extractArgsMap(s, match, argsMap) {
     if (!argsMap) {
         return [];
@@ -115,7 +130,10 @@ function extractArgsMap(s, match, argsMap) {
             res.type = sKey;
             res.entity = value;
             res.startIndex = s.indexOf(value); // this may not be precise
-            res.endIndex = res.startIndex + value.length;
+            var trimAdjust = trimValueAdjusting(value);
+            res.startIndex += trimAdjust.deltaStart;
+            res.entity = trimAdjust.value;
+            res.endIndex = res.startIndex + trimAdjust.value.length;
             //res[sKey] = value
             result.push(res);
         }

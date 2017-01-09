@@ -107,6 +107,22 @@ export function parseRules(oJSON: { [key: string]: any }): { [key: string]: Arra
   return res;
 };
 
+export function trimValueAdjusting(value : string) : { deltaStart :number, value : string} {
+  var res = { deltaStart : 0, value : value };
+  var m = value.match(/^\s+/);
+  if(m) {
+    res.deltaStart = m[0].length;
+    value = value.substr(res.deltaStart);
+  }
+  m = value.match(/\s+$/);
+  if(m) {
+    value = value.substr(0, value.length - m[0].length);
+  }
+  res.value = value;
+  return res;
+
+}
+
 export function extractArgsMap(s : string, match: Array<string>, argsMap: { [key: string]: number }): Array<builder.IEntity> {
   if (!argsMap) {
     return [];
@@ -120,7 +136,10 @@ export function extractArgsMap(s : string, match: Array<string>, argsMap: { [key
       res.type = sKey;
       res.entity = value;
       res.startIndex = s.indexOf(value); // this may not be precise
-      res.endIndex = res.startIndex + value.length;
+      var trimAdjust = trimValueAdjusting(value);
+      res.startIndex += trimAdjust.deltaStart;
+      res.entity = trimAdjust.value;
+      res.endIndex = res.startIndex + trimAdjust.value.length;
       //res[sKey] = value
       result.push(res);
     }

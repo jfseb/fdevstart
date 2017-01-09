@@ -1,0 +1,26 @@
+[
+  {
+    "hints" : "quoting objects like \"Manage Account\" simplifies parsing and may reduce ambiguities."
+  },
+  {
+    "hints" : "Query entities containig many whitespaces must be quoted, e.g. \"List all AppNames in Role \"Assortment Specialist - Retail\" ."
+  },
+  {
+    "hints" : "when obtaining multiple ambigous results, use the \"List all ... for ... \" pattern or specify additional discriminating values"
+  },
+  {
+    "hints" : "enjoy SAP"
+  },
+  {
+    "hints" : "the only way to make me better is to use me."
+  },
+  {
+    "hints" : "apart from using me, the other way to make me better is to contribute."
+  },
+  {
+    "hints" : "register to get deeper insights into categories and the underlying model and remove some query limitations"
+  },
+  {
+    "hints" : "have fun"
+  }
+]

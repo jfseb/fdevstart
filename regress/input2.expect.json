@@ -1,0 +1,9 @@
+[
+  "my domains are ...\nwiki;\nunit test;\nFiori FLPD;\nFioriFLP;\nStartTA;\nR3;\nGeneticDNA;\nFioriBOM;\nIUPAC;\nTWF;\nTWF_countries;\nexample questions;\nexample commands;\nhints",
+  "The Sex Ratio of germany is at birth: :1.06 male(s)/female; 0-14 years: :1.06 male(s)/female; 15-24 years: :1.04 male(s)/female; 25-54 years: :1.03 male(s)/female; 55-64 years: :0.97 male(s)/female; 65 years and over: :0.76 male(s)/female; total population: :0.97 male(s)/female (2014 est.)\n",
+  "the ODataServices for FI-FIO-GL are ...\nAPJ_JOB_MANAGEMENT_SRV;\nCB_ACCOUNTING_DOCUMENT_BAM_SRV;\nCB_ACCOUNTING_DOCUMENT_SRV;\nCB_GL_ACCOUNT_SRV;\nCB_PROFIT_CENTER_SRV;\nFAC_ACC_DETERMINATION_SRV;\nFAC_AUDIT_JOURNAL_SRV;\nFAC_BALANCE_CARRY_FORWARD_SRV;\nFAC_CHART_OF_ACCOUNTS_SRV;\nFAC_EDITING_OPTIONS_SRV;\nFAC_FINANCIAL_DOCUMENT_SRV_01;\nFAC_FINANCIAL_STATEMENT_SRV;\nFAC_FINANCIALS_POSTING_SRV;\nFAC_FOREIGN_VAL_POST_SRV;\nFAC_GL_ACCOUNT_BALANCE_SRV;\nFAC_GL_ACCOUNT_LINE_ITEMS_SRV;\nFAC_GL_DOCUMENT_POST_SRV;\nFAC_GL_MANUAL_CLEARING_SRV;\nFAC_MAINT_CHART_OF_ACCOUNTS_SRV;\nFAC_MANAGE_GLACCOUNT_SRV;\nFAC_PROJECT_WIP_DETAIL_LIST_SRV;\nFAC_RECURRING_ACCOUNTING_DOC_SRV;\nFAC_TAX_PAYABLE_POST_SRV;\nFIN_OPEN_CLOSE_PERIOD_SRV;\nFIN_SEGMENT_SRV;\nFIN_USER_DEFAULTPARAMETER_SRV;\nFINS_TRR_MONITOR_SRV;\nMAINSERVICE;\nn/a",
+  "The ApplicationComponent of sap.cus.sd.lib.processflow is SD-FIO-HBA\n",
+  "the BSP Urls for ui2.ssuite.s2p.mm.pu.po.create.s1 are ...\n/sap/bc/ui5_ui5/sap/mm_po_cres1",
+  "the intents for FI-FIO-GL with ApplicationType \"FPM/WebDynpro\" are ...\n#GLAccount-manage;\n#ProfitCenter-manageProfitCenter;\n#ProfitCenter-openProfitCenter;\n#ProfitCenterGroup-manageProfitCenterGroup",
+  "the BSP Urls for ui2.ssuite.s2p.mm.pu.po.create.s1 are ...\n/sap/bc/ui5_ui5/sap/mm_po_cres1"
+]

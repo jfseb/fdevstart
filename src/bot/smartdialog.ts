@@ -126,7 +126,18 @@ var newFlow = true;
 import * as Model from '../model/model';
 import * as ExecServer from '../exec/execserver';
 
-const theModel = Model.loadModels();
+const theDefaultModel = Model.loadModels();
+
+var models = {};
+
+function loadModel(modelPath? : string) : IMatch.IModels {
+  modelPath = modelPath || "";
+  if(!models[modelPath]) {
+    models[modelPath] = Model.loadModels(modelPath);
+  }
+  return models[modelPath];
+}
+
 if (newFlow) {
 
 } else {
@@ -452,7 +463,9 @@ var gwords = {};
  * HTMLConnector
  * or connector = new builder.ConsoleConnector().listen()
  */
-function makeBot(connector) {
+function makeBot(connector, modelPath? : string) {
+
+  var theModel = loadModel(modelPath);
   bot = new builder.UniversalBot(connector);
 
 
@@ -539,7 +552,7 @@ function makeBot(connector) {
       debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
       const result = Analyze.analyzeAll(a1.entity,
-        theModel.mRules, theModel.tools, gwords);
+        theModel.rules, theModel.tools, gwords);
       logQuery(session, 'ShowMe', result);
       // test.expect(3)
       //  test.deepEqual(result.weight, 120, 'correct weight');
@@ -627,7 +640,7 @@ function makeBot(connector) {
       var category = categoryEntity.entity;
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
 
-      var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
+      var cat = WhatIs.analyzeCategory(category, theModel.rules, message);
       if (!cat) {
         session.send('I don\'t know anything about "' + category + '"');
         // next();
@@ -635,7 +648,7 @@ function makeBot(connector) {
       }
       debuglog('category identified:' + cat);
       const result = WhatIs.resolveCategory(cat, a1.entity,
-        theModel.mRules, theModel.records);
+        theModel.rules, theModel.records);
       debuglog('whatis result:' + JSON.stringify(result));
       logQueryWhatIs(session, 'WhatIs', result);
       var indis = WhatIs.isIndiscriminateResult(result);
@@ -703,7 +716,7 @@ function makeBot(connector) {
         dialoglog("ListAll", session,send("my tools are ...\n" + res));
         return;
       }
-      var cat = WhatIs.analyzeCategory(category, theModel.mRules, message);
+      var cat = WhatIs.analyzeCategory(category, theModel.rules, message);
       if (!cat) {
         dialoglog("ListAll",session,send('I don\'t know anything about "' + category + '"'));
         // next();
@@ -712,13 +725,15 @@ function makeBot(connector) {
       debuglog('category identified:' + cat);
       if (a1 && a1.entity) {
         debuglog('got filter:' + a1.entity);
+        var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
         var result1 = ListAll.listAllWithContext(cat, a1.entity,
-          theModel.mRules, theModel.records);
+          theModel.rules, theModel.records, categorySet);
         // TODO classifying the string twice is a terrible waste
         if (!result1.length) {
           debuglog('going for having');
-          result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.mRules,
-            theModel.records);
+          var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+          result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules,
+            theModel.records, categorySetFull);
         }
         debuglog('listall result:' + JSON.stringify(result1));
         var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
@@ -732,7 +747,8 @@ function makeBot(connector) {
       } else {
         // no entity, e.g. list all countries
         //
-        var result = ListAll.listAllHavingContext(cat, cat, theModel.mRules, theModel.records);
+        var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+        var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
         logQueryWhatIs(session, 'ListAll', result);
         if (result.length) {
           debuglog('listall result:' + JSON.stringify(result));

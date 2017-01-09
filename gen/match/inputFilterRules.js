@@ -1,5 +1,6 @@
 "use strict";
 var IMatch = require('./ifmatch');
+var Model = require('../model/model');
 exports.oKeyOrder = ["systemObjectCategory", "systemId", "systemObjectId"];
 var mUnitTestURLMap = {};
 var aregex = /\/([^/]*).qunit.html/;
@@ -267,6 +268,40 @@ function getRuleMap() {
 }
 exports.getRuleMap = getRuleMap;
 var mRuleArray;
+function compareMRuleFull(a, b) {
+    var r = a.category.localeCompare(b.category);
+    if (r) {
+        return r;
+    }
+    r = a.type - b.type;
+    if (r) {
+        return r;
+    }
+    if (a.matchedString && b.matchedString) {
+        r = a.matchedString.localeCompare(b.matchedString);
+        if (r) {
+            return r;
+        }
+    }
+    if (a.word && b.word) {
+        var r = a.word.localeCompare(b.word);
+        if (r) {
+            return r;
+        }
+    }
+    r = (a._ranking || 1.0) - (b._ranking || 1.0);
+    if (r) {
+        return r;
+    }
+    if (a.exactOnly && !b.exactOnly) {
+        return -1;
+    }
+    if (b.exactOnly && !a.exactOnly) {
+        return +1;
+    }
+    return 0;
+}
+exports.compareMRuleFull = compareMRuleFull;
 function cmpMRule(a, b) {
     var r = a.category.localeCompare(b.category);
     if (r) {
@@ -285,10 +320,21 @@ function cmpMRule(a, b) {
     if (a.word && b.word) {
         return a.word.localeCompare(b.word);
     }
-    return (a._ranking || 1.0) - (b._ranking || 1.0);
+    r = (a._ranking || 1.0) - (b._ranking || 1.0);
+    if (r) {
+        return r;
+    }
+    return 0;
+    /*
+    if(a.exactOnly && !b.exactOnly) {
+      return -1;
+    }
+    if(b.exactOnly && !a.exactOnly) {
+      return +1;
+    }*/
 }
 exports.cmpMRule = cmpMRule;
-function getMRulesSample() {
+function getIntMRulesSample() {
     var mRules = [];
     mRules = mRules.concat([
         // a generic rule for any id
@@ -460,6 +506,10 @@ function getMRulesSample() {
     var mRules = assureLowerCaseWord(mRules);
     return mRules.sort(cmpMRule);
 }
+exports.getIntMRulesSample = getIntMRulesSample;
+function getMRulesSample() {
+    return Model.splitRules(getIntMRulesSample());
+}
 exports.getMRulesSample = getMRulesSample;
 function assureLowerCaseWord(mRules) {
     return mRules.map(function (oRule) {
@@ -480,9 +530,10 @@ function getWikiUrl(string) {
 }
 exports.getWikiUrl = getWikiUrl;
 function getMRulesFull() {
-    var mRules = getMRulesSample();
+    var mRules = getIntMRulesSample();
     mRules = mRules.concat(mUnitTestWords);
-    return mRules.sort(cmpMRule);
+    mRules = assureLowerCaseWord(mRules);
+    return Model.splitRules(mRules.sort(cmpMRule));
 }
 exports.getMRulesFull = getMRulesFull;
 

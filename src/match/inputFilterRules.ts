@@ -3,6 +3,7 @@
 import * as xinputFilter from './inputFilter';
 import * as IMatch from './ifmatch';
 
+import * as Model from '../model/model';
 
 
 export const oKeyOrder: Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
@@ -316,6 +317,39 @@ export function getRuleMap() {
 
 var mRuleArray: Array<IMatch.mRule>;
 
+export function compareMRuleFull(a: IMatch.mRule, b: IMatch.mRule) {
+  var r = a.category.localeCompare(b.category);
+  if (r) {
+    return r;
+  }
+  r = a.type - b.type;
+  if (r) {
+    return r;
+  }
+  if (a.matchedString && b.matchedString) {
+    r = a.matchedString.localeCompare(b.matchedString);
+    if (r) {
+      return r;
+    }
+  }
+  if (a.word && b.word) {
+    var r = a.word.localeCompare(b.word);
+    if(r) {
+      return r;
+    }
+  }
+  r = (a._ranking || 1.0) - (b._ranking || 1.0);
+  if(r) {
+    return r;
+  }
+  if(a.exactOnly && !b.exactOnly) {
+    return -1;
+  }
+  if(b.exactOnly && !a.exactOnly) {
+    return +1;
+  }
+  return 0;
+}
 
 export function cmpMRule(a: IMatch.mRule, b: IMatch.mRule) {
   var r = a.category.localeCompare(b.category);
@@ -333,12 +367,28 @@ export function cmpMRule(a: IMatch.mRule, b: IMatch.mRule) {
     }
   }
   if (a.word && b.word) {
-    return a.word.localeCompare(b.word)
+    return a.word.localeCompare(b.word);
+    /*
+    if(r) {
+      return r;
+    }*/
   }
-  return (a._ranking || 1.0) - (b._ranking || 1.0);
+  r = (a._ranking || 1.0) - (b._ranking || 1.0);
+  if(r) {
+    return r;
+  }
+  return 0;
+  /*
+  if(a.exactOnly && !b.exactOnly) {
+    return -1;
+  }
+  if(b.exactOnly && !a.exactOnly) {
+    return +1;
+  }*/
+
 }
 
-export function getMRulesSample(): Array<IMatch.mRule> {
+export function getIntMRulesSample(): Array<IMatch.mRule> {
   var mRules = [] as Array<IMatch.mRule>;
   mRules = mRules.concat([
     // a generic rule for any id
@@ -509,10 +559,15 @@ export function getMRulesSample(): Array<IMatch.mRule> {
     },
   ]
   );
-
   var mRules = assureLowerCaseWord(mRules);
   return mRules.sort(cmpMRule);
 }
+
+
+export function getMRulesSample(): IMatch.SplitRules {
+  return Model.splitRules(getIntMRulesSample());
+}
+
 
 export function assureLowerCaseWord(mRules: Array<IMatch.mRule>) {
   return mRules.map(function (oRule) {
@@ -533,8 +588,9 @@ export function getWikiUrl(string: string) {
 }
 
 
-export function getMRulesFull(): Array<IMatch.mRule> {
-  var mRules = getMRulesSample();
+export function getMRulesFull(): IMatch.SplitRules {
+  var mRules = getIntMRulesSample();
   mRules = mRules.concat(mUnitTestWords);
-  return mRules.sort(cmpMRule);
+  mRules = assureLowerCaseWord(mRules);
+  return Model.splitRules(mRules.sort(cmpMRule));
 }

@@ -1,0 +1,217 @@
+[
+  {
+    "Amino acid": "phenylalanine",
+    "nucleotid sequence": "UUU",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "phenylalanine",
+    "nucleotid sequence": "UUC",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "UUA",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "UUG",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "CUU",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "CUC",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "CUA",
+    "code type": "RNA"
+  },
+  {
+    "Amino acid": "leucine",
+    "nucleotid sequence": "CUG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Isoleucine",
+    "nucleotid sequence": "AUU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Isoleucine",
+    "nucleotid sequence": "AUC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Isoleucine",
+    "nucleotid sequence": "AUA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Methionine",
+    "nucleotid sequence": "AUG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Valine",
+    "nucleotid sequence": "GUU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Valine",
+    "nucleotid sequence": "GUC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Valine",
+    "nucleotid sequence": "GUA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Valine",
+    "nucleotid sequence": "GUG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Serine",
+    "nucleotid sequence": "UCU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Serine",
+    "nucleotid sequence": "UCC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Serine",
+    "nucleotid sequence": "UCA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Serine",
+    "nucleotid sequence": "UCG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Proline",
+    "nucleotid sequence": "CCU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Proline",
+    "nucleotid sequence": "CCC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Proline",
+    "nucleotid sequence": "CCA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Proline",
+    "nucleotid sequence": "CCG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Theonine",
+    "nucleotid sequence": "ACU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Theonine",
+    "nucleotid sequence": "ACC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Theonine",
+    "nucleotid sequence": "ACA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Theonine",
+    "nucleotid sequence": "ACG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Alanine",
+    "nucleotid sequence": "GCU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Alanine",
+    "nucleotid sequence": "GCC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Alanine",
+    "nucleotid sequence": "GCA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Alanine",
+    "nucleotid sequence": "GCG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Typrosine",
+    "nucleotid sequence": "UAU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Typrosine",
+    "nucleotid sequence": "UAA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Stop (Ochre)",
+    "nucleotid sequence": "UAA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Stop (Amber)",
+    "nucleotid sequence": "UAG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Histidine",
+    "nucleotid sequence": "CAU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Histidine",
+    "nucleotid sequence": "CAC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Glutamine",
+    "nucleotid sequence": "CAA",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Glutamine",
+    "nucleotid sequence": "CAG",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Asparagine",
+    "nucleotid sequence": "AAU",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Asparagine",
+    "nucleotid sequence": "AAC",
+    "genetic code type": "RNA"
+  },
+  {
+    "Amino acid": "Asparagine",
+    "nucleotid sequence": "AAC",
+    "genetic code type": "RNA"
+  }
+]
