@@ -24,7 +24,7 @@
     "testcovWIN": "set FSD_COVERAGE=1 && nodeunit test/match test/exec test/model test/bot test/utils test/graph --reporter=lcov >info.lcov",
     "testcovNoReporter": "export FSD_COVERAGE=1 && nodeunit test/match test/exec test/model test/bot test/utils test/graph ",
     "testcovNoPipe": "export FSD_COVERAGE=1 && nodeunit test/match test/exec test/bot test/utils test/graph --reporter=lcov",
-    "testcov": "export FSD_COVERAGE=1 && nodeunit test/match nodeunit test/regress test/exec test/bot test/model test/utils test/graph --reporter=lcov | coveralls",
+    "testcov": "export FSD_COVERAGE=1 && nodeunit test/match test/regress test/exec test/bot test/model test/utils test/graph --reporter=lcov | coveralls",
     "tocoveralls": "cat info.lcov | coveralls",
     "tocoveralls2": "cat info.lcov | ./node_modules/.bin/coveralls",
     "coveralls2": "jscoverage src && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"
