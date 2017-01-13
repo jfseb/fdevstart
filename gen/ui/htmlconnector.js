@@ -4,7 +4,7 @@
  */
 'use strict';
 
-/*global process:true*/
+/* nonglobal process:true*/
 
 var BotBuilder = require('botbuilder');
 var Message = BotBuilder.Message;
@@ -28,14 +28,16 @@ var HTMLConnector = function () {
   };
 
   HTMLConnector.prototype.process = function (line) {
-    var that = this;
+    // var that = this;
     line = line || '';
+    /*
     if (line.toLowerCase() === 'quit') {
       that.quitHook();
       process.exit();
-    } else {
-      this.processMessage(line);
-    }
+    } else {*/
+    this.processMessage(line);
+    /*}
+    */
     return this;
   };
   HTMLConnector.prototype.processMessage = function (line, id) {

@@ -4,7 +4,7 @@
  */
 'use strict';
 
-/*global process:true*/
+/* nonglobal process:true*/
 
 var BotBuilder = require('botbuilder');
 var Message = BotBuilder.Message;
