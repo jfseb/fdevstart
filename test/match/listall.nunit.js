@@ -58,8 +58,14 @@ exports.testListAllWithContext = function (test) {
 };
 
 
-exports.testListAllHavingContext = function (test) {
+exports.testListAllWithContextEmpty = function (test) {
+  var res = ListAll.listAllWithContext('url', '',
+    mRules, records);
+  test.deepEqual(res,[]);
+  test.done();
+};
 
+exports.testListAllHavingContext = function (test) {
   var res = ListAll.listAllHavingContext('url', 'unit test',
     mRules, records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res);
@@ -68,6 +74,13 @@ exports.testListAllHavingContext = function (test) {
   test.done();
 };
 
+
+exports.testListAllHavingContextEmpty = function (test) {
+  var res = ListAll.listAllHavingContext('url', '', mRules, records);
+  var res2 = ListAll.formatDistinctFromWhatIfResult(res);
+  test.deepEqual(res2, '');
+  test.done();
+};
 
 
 exports.testListAllWithCategory = function (test) {
@@ -87,10 +100,40 @@ exports.testinferDomain = function (test) {
 };
 
 
+exports.testinferDomainUndef = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'cannot be analyzed');
+  test.equal(domain, undefined, ' correct undefined inferred');
+  test.done();
+};
+
+
 
 exports.testinferDomain2 = function (test) {
   var domain = ListAll.inferDomain(theModel, 'domain related to wiki');
   test.equal(domain, 'wiki', ' correct domain inferred');
   test.done();
 };
+
+
+exports.testinferDomainTwoDomains = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'domain FioriFLP domain wiki');
+  test.equal(domain, undefined, ' correct domain inferred');
+  test.done();
+};
+
+exports.testinferDomainDomainByCategory = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'element name');
+  test.equal(domain, 'IUPAC', ' correct domain inferred');
+  test.done();
+};
+
+
+exports.testinferDomainTwoDomainsByCategory = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'element name country');
+  test.equal(domain, undefined, ' correct domain inferred');
+  test.done();
+};
+
+
+
 
