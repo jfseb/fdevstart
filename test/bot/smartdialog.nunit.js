@@ -7,9 +7,9 @@ const debuglog = debug('smartdialog.nunit');
 
 
 var logger = require(root + '/utils/logger');
+var HTMLConnector = require(root + '/ui/htmlconnector.js');
 const botdialog = require(root + '/bot/smartdialog.js');
 
-var HTMLConnector = require(root + '/ui/htmlconnector.js');
 
 
 // Create bot and bind to console

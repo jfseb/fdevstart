@@ -12,6 +12,7 @@ node_js:
 # - "4"   does not support sourcemaps
 after_script:
   - npm run instrument
+  - ls gen_cov/bot
   - npm run testcov
   - npm run testcovNoReporter
   - npm run testcovNoPipe
