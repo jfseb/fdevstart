@@ -196,6 +196,7 @@ function executeStartup(oMergedContextResult) {
         return s;
     }
 }
+exports.executeStartup = executeStartup;
 function nrMatches(aObject, oContext) {
     return Object.keys(aObject).reduce(function (prev, key) {
         if (Object.prototype.hasOwnProperty.call(oContext, key)) {

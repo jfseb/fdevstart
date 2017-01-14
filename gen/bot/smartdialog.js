@@ -132,91 +132,96 @@ function restrictLoggedOn(session, arr) {
     }
     return arr;
 }
-var SimpleRecognizer = (function () {
-    function SimpleRecognizer() {
+/*
+export class SimpleRecognizer implements builder.IIntentRecognizer {
+  constructor() {
+
+  }
+
+  recognize(context: builder.IRecognizeContext, callback: (err: Error, result: builder.IIntentRecognizerResult) => void): void {
+    var u = {} as builder.IIntentRecognizerResult;
+
+    debuglog("recognizing " + context.message.text);
+    if (context.message.text.indexOf("start") >= 0) {
+      u.intent = "ShowEntity";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.startIndex = "start ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
     }
-    SimpleRecognizer.prototype.recognize = function (context, callback) {
-        var u = {};
-        debuglog("recognizing " + context.message.text);
-        if (context.message.text.indexOf("start") >= 0) {
-            u.intent = "ShowEntity";
-            u.score = 0.9;
-            var e1 = {};
-            e1.startIndex = "start ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        if (context.message.text.indexOf("train") >= 0) {
-            u.intent = "train";
-            u.score = 0.9;
-            var e1 = {};
-            e1.startIndex = "train ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        if (context.message.text.indexOf("learn") >= 0) {
-            u.intent = "learn";
-            u.score = 0.9;
-            var e1 = {};
-            e1.type = "trainFact";
-            e1.startIndex = "train ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        if (context.message.text.indexOf("help") >= 0) {
-            u.intent = "help";
-            u.score = 0.9;
-            var e1 = {};
-            e1.startIndex = "train ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        if (context.message.text.indexOf("exit") >= 0) {
-            u.intent = "exit";
-            u.score = 0.9;
-            var e1 = {};
-            e1.startIndex = "exit ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        if (context.message.text.indexOf("wrong") >= 0) {
-            u.intent = "wrong";
-            u.score = 0.9;
-            var e1 = {};
-            e1.startIndex = "exit ".length;
-            e1.endIndex = context.message.text.length;
-            e1.score = 0.3;
-            u.entities = [e1];
-            callback(undefined, u);
-            return;
-        }
-        debuglog('recognizing nothing');
-        u.intent = "None";
-        u.score = 0.1;
-        var e1 = {};
-        e1.startIndex = "exit ".length;
-        e1.endIndex = context.message.text.length;
-        e1.score = 0.1;
-        u.entities = [];
-        callback(undefined, u);
-    };
-    return SimpleRecognizer;
-}());
+
+    if (context.message.text.indexOf("train") >= 0) {
+      u.intent = "train";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.startIndex = "train ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
+    }
+    if (context.message.text.indexOf("learn") >= 0) {
+      u.intent = "learn";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.type = "trainFact";
+      e1.startIndex = "train ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
+    }
+    if (context.message.text.indexOf("help") >= 0) {
+      u.intent = "help";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.startIndex = "train ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
+    }
+    if (context.message.text.indexOf("exit") >= 0) {
+      u.intent = "exit";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.startIndex = "exit ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
+    }
+    if (context.message.text.indexOf("wrong") >= 0) {
+      u.intent = "wrong";
+      u.score = 0.9;
+      var e1 = {} as builder.IEntity;
+      e1.startIndex = "exit ".length;
+      e1.endIndex = context.message.text.length;
+      e1.score = 0.3;
+      u.entities = [e1];
+      callback(undefined, u);
+      return;
+    }
+    debuglog('recognizing nothing');
+    u.intent = "None";
+    u.score = 0.1;
+    var e1 = {} as builder.IEntity;
+    e1.startIndex = "exit ".length;
+    e1.endIndex = context.message.text.length;
+    e1.score = 0.1;
+    u.entities = [];
+    callback(undefined, u);
+  }
+}
+*/
 var aTrainReplies = ["Thank you for sharing this suggestion with us",
     "Thank for for this valuable information.",
     "Thank for for this interesting fact!",

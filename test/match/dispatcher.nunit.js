@@ -230,6 +230,15 @@ var aShowEntityActions = [
 
 exports.test_filterShowEntity = function (test) {
   debug('Here dispatcher' + JSON.stringify(dispatcher));
+  dispatcher.filterShowEntity({
+    result: { type : 'unknown' },
+    query : 'xyz' }
+  );
+  test.equal(1,1);
+};s;
+
+exports.test_filterShowEntity = function (test) {
+  debug('Here dispatcher' + JSON.stringify(dispatcher));
   var fut = dispatcher._test.filterShowEntity;
   var aMerged = fut({
     systemId: 'uv2',

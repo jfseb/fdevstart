@@ -209,7 +209,7 @@ const oWikis = matchdata.oWikis
     return ptn
   }
 
-  function executeStartup (oMergedContextResult) {
+  export function executeStartup (oMergedContextResult) {
     if (oMergedContextResult.result.type === 'URL') {
       var ptn = expandParametersInURL(oMergedContextResult)
       startBrowser(ptn)

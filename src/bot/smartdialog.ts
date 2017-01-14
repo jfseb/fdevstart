@@ -170,8 +170,8 @@ function restrictLoggedOn(session : builder.Session, arr : any[]) : any[] {
   return arr;
 }
 
-
-class SimpleRecognizer implements builder.IIntentRecognizer {
+/*
+export class SimpleRecognizer implements builder.IIntentRecognizer {
   constructor() {
 
   }
@@ -259,6 +259,7 @@ class SimpleRecognizer implements builder.IIntentRecognizer {
     callback(undefined, u);
   }
 }
+*/
 
 const aTrainReplies = [ "Thank you for sharing this suggestion with us",
 "Thank for for this valuable information.",
