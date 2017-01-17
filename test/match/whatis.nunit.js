@@ -106,45 +106,51 @@ exports.testCmbByRankTied = function (test) {
 exports.testFilterAcceptingOnly = function (test) {
 
   var inp = [
-    [{
-      string: 'unit test',
-      matchedString: 'unit test',
-      category: 'category',
-      _ranking: 1
-    },
+    [
+      {
+        string: 'unit test',
+        matchedString: 'unit test',
+        category: 'category',
+        _ranking: 1
+      },
       {
         string: 'NavTargetResolution',
         matchedString: 'NavTargetResolution',
         category: 'unit test',
         _ranking: 1.1,
         reinforce: 1.1
-      }],
-    [{
-      string: 'unit test',
-      matchedString: 'unit test',
-      category: 'abc',
-      _ranking: 1
-    },
+      }
+    ],
+    [
+      {
+        string: 'unit test',
+        matchedString: 'unit test',
+        category: 'abc',
+        _ranking: 1
+      },
       {
         string: 'NavTargetResolution',
         matchedString: 'NavTargetResolution',
         category: 'unit test',
         _ranking: 1.1,
         reinforce: 1.1
-      }],
-    [{
-      string: 'unit test',
-      matchedString: 'unit test',
-      category: 'filler',
-      _ranking: 1
-    },
+      }
+    ],
+    [
+      {
+        string: 'unit test',
+        matchedString: 'unit test',
+        category: 'filler',
+        _ranking: 1
+      },
       {
         string: 'NavTargetResolution',
         matchedString: 'NavTargetResolution',
         category: 'category',
         _ranking: 1.1,
         reinforce: 1.1
-      }]
+      }
+    ]
   ];
   var res = WhatIs.filterAcceptingOnly(inp, ['filler', 'category']);
   test.deepEqual(res, [inp[2]]);
