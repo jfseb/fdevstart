@@ -8,6 +8,7 @@ var EnumResponseCode = exports.EnumResponseCode;
 exports.CAT_CATEGORY = "category";
 exports.CAT_FILLER = "filler";
 exports.CAT_TOOL = "tool";
+exports.aOperatorNames = ["starting with", "ending with", "containing", "excluding", "having", "being"];
 ;
 (function (EnumRuleType) {
     EnumRuleType[EnumRuleType["WORD"] = 0] = "WORD";

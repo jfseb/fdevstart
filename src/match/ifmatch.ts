@@ -21,6 +21,16 @@ export interface IPromptDescription {
   required: boolean
 }
 
+export const aOperatorNames = ["starting with", "ending with", "containing", "excluding", "having", "being"];
+export type OperatorName = "starting with" | "ending with" | "containing" | "being" | "excluding" | "having";
+
+export interface IOperator {
+  operator : OperatorName,
+  code : string,
+  arity : number,
+  argcategory : [ string[] ]
+}
+
 export type IRecord = { [key : string] : string};
 
 
@@ -196,6 +206,7 @@ export interface IModels {
     domains: string[],
     tools: ITool[],
     category: string[],
+    operators : { [key: string] : IOperator },
     mRules: mRule[],
     rules : SplitRules,
     records: any[]

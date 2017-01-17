@@ -365,18 +365,25 @@ function matchRecordsQuick(aSentences, category, records, categorySet) {
     return res;
 }
 exports.matchRecordsQuick = matchRecordsQuick;
-function analyzeCategory(categoryword, rules, wholesentence) {
-    var cats = InputFilter.categorizeAWord(categoryword, rules, wholesentence, {});
+function classifyWordWithTargetCategory(word, targetcategory, rules, wholesentence) {
+    var cats = InputFilter.categorizeAWord(word, rules, wholesentence, {});
     // TODO qualify
     cats = cats.filter(function (cat) {
-        return cat.category === 'category';
+        return cat.category === targetcategory;
     });
     debuglog(JSON.stringify(cats));
     if (cats.length) {
         return cats[0].matchedString;
     }
 }
+function analyzeCategory(categoryword, rules, wholesentence) {
+    return classifyWordWithTargetCategory(categoryword, 'category', rules, wholesentence);
+}
 exports.analyzeCategory = analyzeCategory;
+function analyzeOperator(opword, rules, wholesentence) {
+    return classifyWordWithTargetCategory(opword, 'operator', rules, wholesentence);
+}
+exports.analyzeOperator = analyzeOperator;
 // const result = WhatIs.resolveCategory(cat, a1.entity,
 //   theModel.mRules, theModel.tools, theModel.records);
 function resolveCategory(category, contextQueryString, rules, records) {

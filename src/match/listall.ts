@@ -22,10 +22,12 @@ import * as utils from '../utils/utils';
 import * as IMatch from './ifmatch';
 
 import * as Toolmatcher from './toolmatcher';
+import * as BreakDown from './breakdown';
 
 import * as Sentence from './sentence';
 
 import * as Word from './word';
+import * as Operator from './operator';
 
 import * as WhatIs from './whatis';
 
@@ -120,6 +122,60 @@ export function listAllHavingContext(category: string, contextQueryString: strin
 }
 
 
+export function filterStringListByOp(operator: IMatch.IOperator, fragment : string,  srcarr : string[] ) : string[] {
+  var fragmentLC = BreakDown.trimQuotedSpaced(fragment.toLowerCase());
+  return srcarr.filter(function(str) {
+    return Operator.matches(operator, fragmentLC, str.toLowerCase());
+  }).sort();
+}
+
+function compareCaseInsensitive(a: string, b : string) {
+  var r = a.toLowerCase().localeCompare(b.toLowerCase());
+  if (r) {
+    return r;
+  }
+  return -a.localeCompare(b);
+}
+
+/**
+ * Sort string list case insensitive, then remove duplicates retaining
+ * "largest" match
+ */
+export function removeCaseDuplicates(arr : string[]) : string[] {
+  arr.sort(compareCaseInsensitive);
+  debuglog('sorted arr' + JSON.stringify(arr));
+  return arr.filter(function(s, index) {
+    return index === 0 || (0 !== arr[index -1 ].toLowerCase().localeCompare(s.toLowerCase()));
+  });
+};
+
+export function getCategoryOpFilterAsDistinctStrings(operator: IMatch.IOperator, fragment : string,
+  category : string, records: Array<IMatch.IRecord>) : string[] {
+    var fragmentLC = BreakDown.trimQuoted(fragment.toLowerCase());
+    var res = [];
+    var seen = {};
+    records.forEach(function(record) {
+      if(record[category] && Operator.matches(operator, fragmentLC, record[category].toLowerCase())) {
+        if(!seen[record[category]]) {
+          seen[record[category]] = true;
+          res.push(record[category]);
+        }
+      }
+    });
+    return removeCaseDuplicates(res);
+};
+
+export function likelyPluralDiff(a : string, pluralOfa : string) : boolean {
+  var aLC = BreakDown.trimQuoted(a.toLowerCase())  || "";
+  var pluralOfALC = BreakDown.trimQuoted((pluralOfa ||"").toLowerCase()) || "";
+  if (aLC === pluralOfALC) {
+    return true;
+  }
+  if( aLC +'s' === pluralOfALC) {
+    return true;
+  }
+  return false;
+};
 
 
 export function listAllWithCategory(category: string, records: Array<IMatch.IRecord>): Array<IMatch.IRecord> {

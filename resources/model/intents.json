@@ -32,10 +32,20 @@
     ],
     "tell me the <category> of <A1>"
   ],
+  "ListAllBinOp": [
+    [
+      "^List all (.*) ((starting with)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*)$",
+      {
+        "category": 1,
+        "operator" : 2,
+        "A2": 10
+      }
+    ]
+  ],
   "ListAll": [
-    "List all <categories>? (in|for|with) <insth>",
+    "List all <categories>? (in|for|with|where) <insth>",
     "List all <categories>",
-    "List <categories>? ((in)|(for)|(with)) <insth>",
+    "List <categories>? ((in)|(for)|(with)|(where)) <insth>",
     "List <categories>"
   ],
   "Help": [

@@ -156,10 +156,19 @@ function matchRegularExpression(text, oRule) {
     return res;
 }
 exports.matchRegularExpression = matchRegularExpression;
+function trimTrailingSentenceDelimiters(text) {
+    var m = /([!.;, ?]|\s)+$/.exec(text);
+    if (m) {
+        text = text.substr(0, text.length - m[0].length);
+    }
+    return text;
+}
+exports.trimTrailingSentenceDelimiters = trimTrailingSentenceDelimiters;
 function recognizeText(text, aRules) {
     var res = undefined;
+    var textStripped = trimTrailingSentenceDelimiters(text);
     aRules.every(function (oRule) {
-        res = matchRegularExpression(text, oRule);
+        res = matchRegularExpression(textStripped, oRule);
         return !res;
     });
     return res;

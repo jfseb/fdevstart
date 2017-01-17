@@ -93,6 +93,7 @@ exports.testListAllWithCategory = function (test) {
 };
 
 
+
 exports.testinferDomain = function (test) {
   var domain = ListAll.inferDomain(theModel, 'domain FioriFLP');
   test.equal(domain, 'FioriFLP', ' correct domain inferred');
@@ -127,13 +128,54 @@ exports.testinferDomainDomainByCategory = function (test) {
   test.done();
 };
 
-
 exports.testinferDomainTwoDomainsByCategory = function (test) {
   var domain = ListAll.inferDomain(theModel, 'element name country');
   test.equal(domain, undefined, ' correct domain inferred');
   test.done();
 };
 
+exports.testListAllFilterStringList = function (test) {
+  var res = ListAll.filterStringListByOp({
+    operator: 'contains'
+  }, 'abc',  [ '', 'abc', 'def abc hij', 'soabc', 'sonothing', 'abbutnotc']);
+  test.deepEqual(res, [ 'abc' , 'def abc hij', 'soabc']);
+  test.done();
+};
 
+
+exports.testListAllRemoveCaseDuplicates = function (test) {
+  var res = ListAll.removeCaseDuplicates(['abC', 'abc', 'Abc', 'ABC', 'abcD', 'ABCD', 'AB', 'a']);
+  test.deepEqual(res, ['a', 'AB', 'ABC', 'ABCD']);
+  test.done();
+};
+
+exports.testlikelyPluralDiff = function (test) {
+  test.equal(ListAll.likelyPluralDiff('element name', 'element names' ), true);
+  test.equal(ListAll.likelyPluralDiff('element name', '"element names"' ), true);
+  test.equal(ListAll.likelyPluralDiff('element name', '"element nam"' ), false);
+  test.equal(ListAll.likelyPluralDiff('element names', '"element name"' ), false);
+  test.done();
+};
+
+exports.testListAllFilterStringList = function (test) {
+  var res = ListAll.getCategoryOpFilterAsDistinctStrings( {
+    operator : 'starting with'
+  }, 'aBc' , 'cat1',    [
+    { 'cat1' : 'abCAndMore'},
+    { 'cat1' : 'abCAndSomeMore'},
+    { 'cat1' : 'abcAndsomemore'},
+    { 'cat1' : 'abCAndAnything'},
+     { 'cat1' : 'AbcAndsomemore'},
+
+    { 'cat1' : 'abCAndMore',
+      'cat2': 'abcAndMore' },
+    { 'cat1' : 'nononAndMore',
+      'cat2': 'abcAndMore' },
+    { 'cat0' : 'abCAndMore'},
+    { 'cat1' : 'abCAndMore'},
+  ]);
+  test.deepEqual(res, [ 'abCAndAnything' , 'abCAndMore', 'AbcAndsomemore' ]);
+  test.done();
+};
 
 

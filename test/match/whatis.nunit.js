@@ -17,7 +17,6 @@ const InputFilterRules = require(root + '/match/inputFilterRules.js');
 const mRules = InputFilterRules.getMRulesSample();
 
 
-
 exports.testCmbByResult = function (test) {
   var aList = [
     {
@@ -112,6 +111,17 @@ exports.testCategorizeBad = function (test) {
   test.done();
 };
 
+exports.testanalyzeOperator = function (test) {
+  var res = WhatIs.analyzeOperator('starting with', mRules, 'what is unit test for abc');
+  test.equal(res, 'starts with');
+  test.done();
+};
+
+exports.testanalyzeOperatorBad = function (test) {
+  var res = WhatIs.analyzeOperator('ain no op', mRules, 'what is unit test for abc');
+  test.equal(res, undefined);
+  test.done();
+};
 
 /*
 export function resolveCategory(category: string, sString: string,

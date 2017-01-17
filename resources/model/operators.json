@@ -1,0 +1,86 @@
+{
+  "operators": {
+    "containing": {
+      "arity": 2,
+      "argcategory": [
+        [
+          "category"
+        ],
+        [
+          "_fragment"
+        ]
+      ]
+    },
+    "starting with": {
+      "arity": 2,
+      "argcategory": [
+        [
+          "category"
+        ],
+        [
+          "_fragment"
+        ]
+      ]
+    },
+    "ending with":{
+      "arity": 2,
+      "argcategory": [
+        [
+          "category"
+        ],
+        [
+          "_fragment"
+        ]
+      ]
+    },
+    "excluding": {
+      "arity": 1,
+      "argcategory": [
+        [
+          "fact"
+        ]
+      ]
+    },
+    "being": {
+      "arity": 2,
+      "argcategory": [
+        [
+          "category"
+        ],
+        [
+          "category"
+        ]
+      ]
+    },
+    "having" : {
+      "arity": 2,
+      "argcategory": [
+        [
+          "category"
+        ],
+        [
+          "category"
+        ]
+      ]
+    }
+  },
+  "synonyms": {
+    "starting with": [
+      "starts with", "begins with", "begin with", "which begin with",
+      "which begins with"
+    ],
+    "ending with": [
+      "ends with", "which end with", "which ends with", "which ends with a",
+      "which ends with an", "which terminates with", "which ends with a"
+    ],
+    "being": [ "is",
+      "beeing", "beeing a", "beeing an", "is a", "is an"
+    ],
+    "containing" : [
+      "contains"
+    ],
+    "having": [
+      "has a", "has an"
+    ]
+  }
+}

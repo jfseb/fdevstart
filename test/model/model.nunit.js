@@ -39,6 +39,27 @@ exports.testModel = function (test) {
   test.done();
 };
 
+exports.testModelGetOperator = function (test) {
+  test.expect(1);
+  var op = Model.getOperator(theModel,'containing');
+  test.deepEqual(op,
+    {
+      'arity': 2,
+      'operator' : 'containing',
+      'argcategory': [
+        [
+          'category'
+        ],
+        [
+          '_fragment'
+        ]
+      ]
+    }
+  , 'no error');
+  test.done();
+};
+
+
 
 exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 

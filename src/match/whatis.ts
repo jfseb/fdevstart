@@ -406,17 +406,28 @@ export function matchRecordsQuick(aSentences: Array<IMatch.ISentence>, category:
   return res;
 }
 
-export function analyzeCategory(categoryword: string, rules: IMatch.SplitRules, wholesentence: string): string {
-  var cats = InputFilter.categorizeAWord(categoryword, rules, wholesentence, {});
+function classifyWordWithTargetCategory(word: string, targetcategory : string, rules: IMatch.SplitRules,
+wholesentence : string ) : string {
+var cats = InputFilter.categorizeAWord(word, rules, wholesentence, {});
   // TODO qualify
   cats = cats.filter(function (cat) {
-    return cat.category === 'category';
+    return cat.category === targetcategory;
   })
   debuglog(JSON.stringify(cats));
   if (cats.length) {
     return cats[0].matchedString;
   }
 }
+
+
+export function analyzeCategory(categoryword: string, rules: IMatch.SplitRules, wholesentence: string): string {
+  return classifyWordWithTargetCategory(categoryword, 'category', rules, wholesentence);
+}
+
+export function analyzeOperator(opword: string, rules: IMatch.SplitRules, wholesentence: string): string {
+  return classifyWordWithTargetCategory(opword, 'operator', rules, wholesentence);
+}
+
 
 // const result = WhatIs.resolveCategory(cat, a1.entity,
 //   theModel.mRules, theModel.tools, theModel.records);

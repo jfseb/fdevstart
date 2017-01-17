@@ -74,6 +74,7 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
     oMdlData.forEach(function (oEntry) {
         if (!oEntry.tool && oMdl.tool.name) {
             oEntry.tool = oMdl.tool.name;
+            oEntry._domain = oMdl.domain;
         }
         oModel.records.push(oEntry);
         oMdl.wordindex.forEach(function (category) {
@@ -220,6 +221,7 @@ function loadModels(modelPath) {
         tools: [],
         rules: undefined,
         category: [],
+        operators: {},
         mRules: [],
         seenRules: {},
         records: [],
@@ -261,6 +263,40 @@ function loadModels(modelPath) {
         matchedString: "filler",
         _ranking: 0.9
     });
+    //add operators
+    var sOperators = fs.readFileSync('./resources/model/operators.json', 'utf-8');
+    var operators = JSON.parse(sOperators);
+    Object.keys(operators.operators).forEach(function (operator) {
+        if (IMatch.aOperatorNames.indexOf(operator) < 0) {
+            debuglog("unknown operator " + operator);
+            throw new Error("unknown operator " + operator);
+        }
+        oModel.operators[operator] = operators.operators[operator];
+        oModel.operators[operator].operator = operator;
+        Object.freeze(oModel.operators[operator]);
+        var word = operator;
+        insertRuleIfNotPresent(oModel.mRules, {
+            category: "operator",
+            word: word.toLowerCase(),
+            lowercaseword: word.toLowerCase(),
+            type: 0 /* WORD */,
+            matchedString: word,
+            _ranking: 0.9
+        }, oModel.seenRules);
+        // add all synonyms
+        if (operators.synonyms[operator]) {
+            Object.keys(operators.synonyms[operator]).forEach(function (synonym) {
+                insertRuleIfNotPresent(oModel.mRules, {
+                    category: "operator",
+                    word: synonym.toLowerCase(),
+                    lowercaseword: synonym.toLowerCase(),
+                    type: 0 /* WORD */,
+                    matchedString: operator,
+                    _ranking: 0.9
+                }, oModel.seenRules);
+            });
+        }
+    });
     /*
         })
             {
@@ -279,6 +315,10 @@ function loadModels(modelPath) {
 }
 exports.loadModels = loadModels;
 var MetaF = Meta.getMetaFactory();
+function getOperator(mdl, operator) {
+    return mdl.operators[operator];
+}
+exports.getOperator = getOperator;
 function getResultAsArray(mdl, a, rel) {
     if (rel.toType() !== 'relation') {
         throw new Error("expect relation as 2nd arg");

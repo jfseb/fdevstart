@@ -114,6 +114,7 @@ function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oMod
     oMdlData.forEach(function (oEntry) {
         if (!oEntry.tool && oMdl.tool.name) {
             oEntry.tool = oMdl.tool.name;
+            oEntry._domain = oMdl.domain;
         }
         oModel.records.push(oEntry);
 
@@ -271,6 +272,7 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
         tools: [],
         rules : undefined,
         category: [],
+        operators : {},
         mRules: [],
         seenRules : {},
         records: [],
@@ -317,6 +319,41 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
         matchedString: "filler",
         _ranking: 0.9
     });
+
+    //add operators
+    var sOperators = fs.readFileSync('./resources/model/operators.json', 'utf-8');
+    var operators = JSON.parse(sOperators);
+    Object.keys(operators.operators).forEach(function(operator) {
+        if(IMatch.aOperatorNames.indexOf(operator) < 0) {
+            debuglog("unknown operator " + operator);
+            throw new Error("unknown operator " + operator);
+        }
+        oModel.operators[operator] = operators.operators[operator];
+        oModel.operators[operator].operator = <IMatch.OperatorName> operator;
+        Object.freeze(oModel.operators[operator]);
+        var word = operator;
+        insertRuleIfNotPresent(oModel.mRules, {
+            category: "operator",
+            word : word.toLowerCase(),
+            lowercaseword : word.toLowerCase(),
+            type: IMatch.EnumRuleType.WORD,
+            matchedString : word,
+            _ranking: 0.9
+        }, oModel.seenRules);
+        // add all synonyms
+        if(operators.synonyms[operator]) {
+            Object.keys(operators.synonyms[operator]).forEach(function(synonym) {
+                insertRuleIfNotPresent(oModel.mRules,{
+                    category: "operator",
+                    word : synonym.toLowerCase(),
+                    lowercaseword : synonym.toLowerCase(),
+                    type: IMatch.EnumRuleType.WORD,
+                    matchedString : operator,
+                    _ranking: 0.9
+                }, oModel.seenRules);
+            });
+        }
+    });
     /*
         })
             {
@@ -337,6 +374,9 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
 
 const MetaF = Meta.getMetaFactory();
 
+export function getOperator(mdl: IMatch.IModels, operator : string) : IMatch.IOperator {
+    return mdl.operators[operator];
+}
 
 export function getResultAsArray(mdl : IMatch.IModels, a : Meta.IMeta, rel : Meta.IMeta) : Meta.IMeta[] {
     if(rel.toType() !== 'relation') {

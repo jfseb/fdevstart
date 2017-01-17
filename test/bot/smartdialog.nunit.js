@@ -247,6 +247,108 @@ exports.testListAllCategoriesRelatedTo = function (test) {
   });
 };
 
+exports.testOperatorStartsWith = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all element names starting with ni',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my element names starting with "ni" are ...\nnickel;\nnihonium;\nniobium;\nnitrogen');
+    test.done();
+  });
+};
+
+exports.testOperatorStartsWithFI = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all Application Components starting with FI',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'I don\'t know anything about \"Application Components\"');
+    test.done();
+  });
+};
+
+
+exports.testOperatorCatEndingUPAC = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories ending with UPA!',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'I have no categories ending with "UPA"');
+    test.done();
+  });
+};
+
+
+
+exports.testOperatorContainingUPAC = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all domains containing "UPA"',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my domains containing "UPA" are ...\nIUPAC');
+    test.done();
+  });
+};
+
+exports.testOperatorContainingNit = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all tools containing "nit"',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my tools containing "nit" are ...\nunit test');
+    test.done();
+  });
+};
+
+
+exports.testOperatorEndingWith = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all tools ending with "ABC"',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'I have no tools ending with "ABC"');
+    test.done();
+  });
+};
+
+
+exports.testOperatorCategoriesStartsWith = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories starting with elem?',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement symbol');
+    test.done();
+  });
+};
+
+exports.testOperatorStartsWithQuoted = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories starting with "elem"',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement symbol');
+    test.done();
+  });
+};
+
+
 //var debug = require('debug');
 
 var logPerf = logger.perf('perflistall');

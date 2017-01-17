@@ -235,7 +235,7 @@ exports.test_filterShowEntity = function (test) {
     query : 'xyz' }
   );
   test.equal(1,1);
-};s;
+};
 
 exports.test_filterShowEntity = function (test) {
   debug('Here dispatcher' + JSON.stringify(dispatcher));

@@ -224,6 +224,173 @@ exports.testRecognizeSome = function (test) {
 };
 
 
+
+exports.testRecognizeListAllBinOp = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'List all ABC starting with DEF'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'category',
+          entity: 'ABC',
+          startIndex: 9,
+          endIndex: 12
+        },
+        {
+          type: 'operator',
+          entity: 'starting with',
+          startIndex: 13,
+          endIndex: 26
+        },
+        {
+          type: 'A2',
+          entity: 'DEF',
+          startIndex: 27,
+          endIndex: 30
+        }
+        ],
+        score: 0.9,
+        intent: 'ListAllBinOp'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeListAllWhere = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'List all ABC where XYZ starts with X'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'categories',
+          entity: 'ABC',
+          startIndex: 9,
+          endIndex: 12
+        },
+        {
+          type: 'insth',
+          entity: 'XYZ starts with X',
+          startIndex: 19,
+          endIndex: 36
+        }
+        ],
+        score: 0.9,
+        intent: 'ListAll'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+exports.testtrimTrailingSentenceDelimiters = function(test) {
+  test.equal(recognizer.trimTrailingSentenceDelimiters('abc !!!?!'), 'abc');
+  test.equal(recognizer.trimTrailingSentenceDelimiters('abc '), 'abc');
+  test.equal(recognizer.trimTrailingSentenceDelimiters('defhij " \n !!\n!?!'), 'defhij \"');
+  test.equal(recognizer.trimTrailingSentenceDelimiters('defhij'), 'defhij');
+  test.equal(recognizer.trimTrailingSentenceDelimiters(''), '');
+
+  test.done();
+};
+
+exports.testRecognizeListAllWhereTails = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+  var cnt = 0;
+  var arr =
+  ['?', '???', '!?!', '!', ';', '.'];
+  arr.forEach(function(term) {
+    var oContext = {
+      message: {
+        text: 'List all ABC where XYZ starts with X' + term
+      }
+    };
+    Recognizer.recognize(oContext, function (err, res) {
+      test.deepEqual(res,
+        {
+          entities:
+          [{
+            type: 'categories',
+            entity: 'ABC',
+            startIndex: 9,
+            endIndex: 12
+          },
+          {
+            type: 'insth',
+            entity: 'XYZ starts with X',
+            startIndex: 19,
+            endIndex: 36
+          }
+          ],
+          score: 0.9,
+          intent: 'ListAll'
+        }
+        , 'correct result');
+      cnt = cnt + 1;
+      if(cnt === arr.length) {
+        test.done();
+      }
+    });
+  });
+};
+
+// TODO
+exports.testRecognizeWith = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'List all ABC with XYZ startng with X'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'categories',
+          entity: 'ABC',
+          startIndex: 9,
+          endIndex: 12
+        },
+        {
+          type: 'insth',
+          entity: 'XYZ startng with X',
+          startIndex: 18,
+          endIndex: 36
+        }
+        ],
+        score: 0.9,
+        intent: 'ListAll'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+
 exports.testRecognizeNone = function (test) {
   var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
   var oContext = {

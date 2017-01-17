@@ -57,6 +57,10 @@ Currently the test folder is not compiled, but contains directly es6 modules
 gulp, gulp-watch
 
 
+set ABOT_WRITE_REGRESS=1 to overwrite the regression database
+
+run node perf/smartdialog.perf.js for performance regression
+
 ##Environment variables
 
 ABOT_MODELPATH=..\sensitive\
@@ -72,7 +76,6 @@ ABOT_EMAIL_USER
 ABOT_EMAIL_SERVER
 
 set via heroku
-
 
 ##Postgres setup
 

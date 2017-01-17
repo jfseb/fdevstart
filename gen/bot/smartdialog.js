@@ -18,6 +18,7 @@ var builder = require('botbuilder');
 var debug = require('debug');
 var Match = require('../match/match');
 var Analyze = require('../match/analyze');
+var BreakDown = require('../match/breakdown');
 var WhatIs = require('../match/whatis');
 var ListAll = require('../match/listall');
 var DialogLogger = require('../utils/dialoglogger');
@@ -619,7 +620,7 @@ function makeBot(connector, modelPath) {
             }
             if (category === "domains") {
                 var res = restrictLoggedOn(session, theModel.domains).join(";\n");
-                session.send("my domains are ...\n" + res);
+                dialoglog("ListAll", session, send("my domains are ...\n" + res));
                 return;
             }
             if (category === "tools") {
@@ -682,6 +683,90 @@ function makeBot(connector, modelPath) {
                     dialoglog("ListAll", session, send(response));
                     return;
                 }
+            }
+        }
+    ]);
+    dialog.matches('ListAllBinOp', [
+        function (session, args, next) {
+            var isCombinedIndex = {};
+            var oNewEntity;
+            // expecting entity A1
+            var message = session.message.text;
+            debuglog("Intent : ListAllBinOp");
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
+            var categoryWord = categoryEntity.entity;
+            var opEntity = builder.EntityRecognizer.findEntity(args.entities, 'operator');
+            var operatorWord = opEntity.entity;
+            // categorize as operator ?
+            var operator = WhatIs.analyzeOperator(operatorWord, theModel.rules, message);
+            var category = WhatIs.analyzeCategory(categoryWord, theModel.rules, message);
+            var operatorArgs = Model.getOperator(theModel, operator);
+            var a2 = builder.EntityRecognizer.findEntity(args.entities, 'A2');
+            if (!operator) {
+                var s = "Unknown operator " + operatorWord + ", this is a model bug, check operators.json and intents.json";
+                dialoglog("ListAllBinOp", session, send("ouch, this was in internal error. Recovering from a weird operator \""
+                    + operatorWord + "\"\n"));
+                throw new Error(s);
+            }
+            var fragment = a2 && a2.entity;
+            fragment = BreakDown.trimQuoted(BreakDown.trimQuotedSpaced(fragment));
+            debuglog("fragment after trimming \"" + fragment + "\"");
+            if (categoryWord === "categories") {
+                // do we have a filter?
+                var aFilteredCategories = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.category);
+                res = restrictLoggedOn(session, aFilteredCategories).join(";\n");
+                if (res.length) {
+                    dialoglog("ListAllBinOp", session, send("my categories " + operator + ' "' + fragment + '" are ...\n' + res));
+                }
+                else {
+                    dialoglog("ListAllBinOp", session, send('I have no categories ' + operator + ' "' + fragment + '"'));
+                }
+                return;
+            }
+            else if (categoryWord === "domains") {
+                var aRes = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.domains);
+                res = restrictLoggedOn(session, aRes).join(";\n");
+                if (res.length) {
+                    dialoglog("ListAllBinOp", session, send("my domains " + operator + ' "' + fragment + '" are ...\n' + res));
+                }
+                else {
+                    dialoglog("ListAllBinOp", session, send('I have no domains ' + operator + ' "' + fragment + '"'));
+                }
+                return;
+            }
+            else if (categoryWord === "tools") {
+                var aRes = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.tools.map(function (oTool) { return oTool.name; }));
+                var res = restrictLoggedOn(session, aRes).join(";\n");
+                if (res.length) {
+                    dialoglog("ListAllBinOp", session, send("my tools " + operator + ' "' + fragment + '" are ...\n' + res));
+                }
+                else {
+                    dialoglog("ListAllBinOp", session, send("I have no tools " + operator + ' "' + fragment + '"'));
+                }
+                return;
+            }
+            else {
+                var cat = WhatIs.analyzeCategory(categoryWord, theModel.rules, message);
+                if (!cat) {
+                    dialoglog("ListAllBinOp", session, send('I don\'t know anything about "' + categoryWord + '"'));
+                    // next();
+                    return;
+                }
+                debuglog('category identified:' + cat);
+                var aRes = ListAll.getCategoryOpFilterAsDistinctStrings(operatorArgs, fragment, category, theModel.records);
+                var res = restrictLoggedOn(session, aRes).join(";\n");
+                var infixExplain = '';
+                if (!ListAll.likelyPluralDiff(category, categoryWord)) {
+                    infixExplain = '("' + category + '")';
+                }
+                if (res.length) {
+                    dialoglog("ListAllBinOp", session, send('my ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '" are ...\n' + res));
+                }
+                else {
+                    dialoglog("ListAllBinOp", session, send('I have no ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '"'));
+                }
+                return;
             }
         }
     ]);

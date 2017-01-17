@@ -163,10 +163,20 @@ export function matchRegularExpression(text : string, oRule : IMatch.IntentRule)
   return res;
 }
 
+
+export function trimTrailingSentenceDelimiters(text : string) : string {
+  var m = /([!.;, ?]|\s)+$/.exec(text);
+  if (m) {
+    text = text.substr(0,text.length- m[0].length);
+  }
+  return text;
+}
+
 export function recognizeText(text : string, aRules : Array<IMatch.IntentRule>) : builder.IIntentRecognizerResult{
     var res = undefined;
+    var textStripped = trimTrailingSentenceDelimiters(text);
     aRules.every(function (oRule) {
-        res = matchRegularExpression(text, oRule);
+        res = matchRegularExpression(textStripped, oRule);
         return !res;
     });
     return res;

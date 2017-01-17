@@ -530,6 +530,12 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       word: "flpd",
     },
     {
+      category: "operator",
+      matchedString: "starts with",
+      type: 0,
+      word: "starting with",
+    },
+    {
       category: "tool",
       matchedString: "FLP",
       type: 0,

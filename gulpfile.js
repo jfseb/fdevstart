@@ -301,7 +301,6 @@ gulp.task('coveralls', function () {
 });
 
 
-
 var gulp_shell = require('gulp-shell');
 
 gulp.task('graphviz', function () {
@@ -313,5 +312,5 @@ gulp.task('graphviz', function () {
 
 // Default Task
 gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test', 'babel2', 'tsc2']);
-
+gulp.task('build', ['tsc', 'babel', 'standard', 'babel2', 'tsc2']);
 gulp.task('allhome', ['default', 'graphviz']);
