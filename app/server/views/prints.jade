@@ -1,0 +1,17 @@
+
+extends layout
+
+block content
+	div.container(style='margin:20px')
+		table.table.table-bordered.table-striped
+			thead
+				tr
+					th(style='width:40px') table
+					th #
+			tbody
+				tr
+					td logconv
+					td= stats.logconv
+				tr
+					td session
+					td= stats.session
