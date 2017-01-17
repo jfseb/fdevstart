@@ -57,6 +57,19 @@ exports.testListAllWithContext = function (test) {
   test.done();
 };
 
+exports.testJoinResultsTupel = function (test) {
+
+  var result = [{'sentence':[{'string':'mercury','matchedString':'mercury','category':'element name','_ranking':0.95}],
+    'record':{'element name':'mercury','element symbol':'Hg','element number':'80','atomic weight':'200.592(3)',
+      'tool':'NoTool','_domain':'IUPAC'},
+    'categories':['element name','atomic weight'],'result':['mercury','200.592(3)'],'_ranking':1.5}];
+
+  var res = ListAll.joinResultsTupel(result);
+
+  test.deepEqual(res, ['"mercury" and "200.592(3)"']);
+  test.done();
+};
+
 
 exports.testListAllWithContextEmpty = function (test) {
   var res = ListAll.listAllWithContext('url', '',

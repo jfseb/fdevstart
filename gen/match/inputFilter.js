@@ -404,7 +404,7 @@ function filterRemovingUncategorized(arr) {
     });
 }
 exports.filterRemovingUncategorized = filterRemovingUncategorized;
-function categorizeAWord(sWordGroup, rules, sString, words, cntRec) {
+function categorizeAWord(sWordGroup, rules, sentence, words, cntRec) {
     var seenIt = words[sWordGroup];
     if (seenIt === undefined) {
         seenIt = categorizeWordWithRankCutoff(sWordGroup, rules, cntRec);
@@ -413,7 +413,7 @@ function categorizeAWord(sWordGroup, rules, sString, words, cntRec) {
     }
     if (!seenIt || seenIt.length === 0) {
         logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
-            + sString + "\"");
+            + sentence + "\"");
         if (sWordGroup.indexOf(" ") <= 0) {
             debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
         }

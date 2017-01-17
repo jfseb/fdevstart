@@ -2,14 +2,14 @@
 // preset form values if we receive a userdata object //
 - user = user
 
-extends layout
+extends layout_p
 
 block content
 
 	nav.navbar.navbar-default.navbar-fixed-top
 		.container
 			.navbar-header
-				.navbar-brand wosap about
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap about
 			ul.nav.navbar-nav.navbar-right #{uid}
 				li
 					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
@@ -19,54 +19,108 @@ block content
 	p &nbsp;
 	p
 
-	blockquote
-		h2 Version
-		p wosap version 0.9
-		p This is a non-commercial, private website.
-		| Dies ist eine private Website.
+	div.well
+
+		h3 legal links
+			span.pull-right Rechtliche Erklärungen
+		p
+		span This is a non-commercial, private website.
+		span.pull-right Dies ist eine nicht kommerzielle, private Website.
 		br
+		span
+			a(href="/legal_en") Legal Disclosure, Disclaimer, Data Privacy Statement (English, Englisch)
+		span.pull-right
+			a(href="/legal_de") Impressum, Haftungsausschluss, Datenschutzerkl&auml;rung (Deutsch, German)
+		br
+		span
+			a.btn.btn-default(href="/termsofuse") Terms of use
+		span.pull-right
+			a.btn.btn-default(href="/termsofuse") Nutzungsbedingungen
+
+		br
+		p
 		| the content is in no way associated with or endorsed by any of the data sources or organizations publishing information
 		| on the datasources below.
 		br
 		| Notably it is not endorsed by the CIA or SAP
 		br
+		p
 
-	blockquote.bg-success
-		h2.bg-success Legal information
+		h3 Version and features&nbsp;
+			a.small(href="/whatsnew") (what's new)
+		div.panel.panel-sm.panel-warning
+			div.panel.panel-sm.panel-heading(style="background-color:#ffb833;color:darkblue") wosap version 0.10 featuring ...
+			div.panel-body(style="padding-top:0px !important")
+				div.row(style="padding-left:0px !important")
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffe6cc") keep alive
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffedcc")
+							small(style="color:black;font-style:bold;font-family:Courier New") "list all C starting with S"
+							br
+							small(style="color:black;font-style:bold;font-family:Courier New")	"list all C containing F"
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffedcc")
+							small(style="color:black;font-style:bold;font-family:Courier New") "list all C with F"
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffedcc")
+							small(style="color:black;font-style:bold;font-family:Courier New") list all categories in domain
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffedcc")
+							small(style="color:black;font-style:bold;font-family:Courier New") list all domains
+							small(style="color:black;font-style:bold;font-family:Courier New") list all categories
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffe6cc") user registration
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffe6e6")  style alignment
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffe6cc") email pw reset
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.well.well-sm.text-center(style="background-color:#ffe6e6") terms of use, impressum etc.
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.panel.bg-success.panel-sm.panel-warning.bg-success
+							div.panel-heading.text-center.bg-success(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: IUPAC
+							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:2px !important") basic chemical element facts
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.panel.panel-sm.panel-warning
+							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: The world factbook
+							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:4px !important") Country information
+					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
+						div.panel.panel-sm.panel-warning
+							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: Fiori BOM
+							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:4px !important") Information on Fiori applications
 
-		ul
-			li
-				a.btn.btn-default(href="/legal_de") Impressum, Haftungsausschluss, Datenschutzerkl&auml;rung (Deutsch, German)
-			li
-				a.btn.btn-default(href="/legal_en") Legal Disclosure, Disclaimer, Data Privacy Statement (English, Englisch)
+		p
 
+		h3 content acknowledgements
+		div.panel.panel-sm.panel-info
+			div.panel.panel-sm.panel-heading
+				b
+					| The content displayed here is collected privately (partially programmatically) by the author from public sources
+					| and/or sources in the public domain
+			div.panel-body
 
-	blockquote.bg-warning
-		h2.bg-warning terms of use
-
-		ul
-			li
-				a.btn.btn-default(href="/termsofuse") terms of use
-
-
-	blockquote.bg-info
-		h2 content acknowledgements
-
-		b
-			| The content displayed here is collected privately (partially programmatically) by the author from public sources
-			| and/or sources in the public domain
-
-		p We especially thank the following resources for providing invaluable data, which is in the public domain:
-		ul
-			li
-				|The World Factbook 2013-14. Washington, DC: Central Intelligence Agency, 2013 .
-				br
-				a(href="https://www.cia.gov/library/publications/the-world-factbook/index.html") https://www.cia.gov/library/publications/the-world-factbook/index.html
-			li
-				a(href="www.wikipedia.org") wikipedia
-			li
-				a(href="IUPAC.org") International Union of Pure and Applied Chemistry
-
+				div.row
+					div.col-sm-6
+						div.well.well-sm.text-center
+								|The World Factbook 2013-14.
+								br
+								| Washington, DC: Central Intelligence Agency, 2013 .
+								br
+								a(href="https://www.cia.gov/library/publications/the-world-factbook/index.html") https://www.cia.gov/library/publications/the-world-factbook/index.html
+					div.col-sm-6
+							div.well.well-sm.text-center(href="abc")
+								a(href="www.wikipedia.org") wikipedia
+						div.col-sm-6
+							div.well.well-sm.text-center
+								| International Union of pure and applied chemistry
+								br
+								a(href="IUPAC.org") IUPAC.org
+					div.col-sm-6
+							div.well.well-sm.text-center
+								| SAP Fiori Applications reference library
+								br
+								a(href="https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#?sap-language=EN") Fiori apps reference library
 
 
 block scripts

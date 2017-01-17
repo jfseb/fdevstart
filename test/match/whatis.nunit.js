@@ -11,11 +11,14 @@ var debuglog = require('debug')('analyze.nunit');
 
 const WhatIs = require(root + '/match/whatis.js');
 
+var Sentence = require(root + '/match/sentence.js');
 
 const InputFilterRules = require(root + '/match/inputFilterRules.js');
 
 const mRules = InputFilterRules.getMRulesSample();
 
+const Model = require(root + '/model/model.js');
+const theModel = Model.loadModels();
 
 exports.testCmbByResult = function (test) {
   var aList = [
@@ -67,7 +70,7 @@ exports.testCmbByRankTied = function (test) {
     {
       _ranking: 1.0,
       result: 'ABC',
-      record: { 'category' : 'AAA', 'some': 'AAAA' }
+      record: { 'category': 'AAA', 'some': 'AAAA' }
     },
     {
       _ranking: 1.0,
@@ -85,19 +88,192 @@ exports.testCmbByRankTied = function (test) {
 
   test.deepEqual(res[0], {
     result: 'ABC', _ranking: 1.0,
-    record: { 'category': 'AAA' , 'nosome' : 'AAAA' }
+    record: { 'category': 'AAA', 'nosome': 'AAAA' }
   }, 'sort order');
   test.deepEqual(res[1], {
     result: 'ABC', _ranking: 1.0,
     record: {
-      'category' : 'AAA',
-      'some':     'AAAA'
+      'category': 'AAA',
+      'some': 'AAAA'
     }
   }, 'sort order 2nd');
 
 
   test.done();
 };
+
+
+exports.testFilterAcceptingOnly = function (test) {
+
+  var inp = [
+    [{
+      string: 'unit test',
+      matchedString: 'unit test',
+      category: 'category',
+      _ranking: 1
+    },
+      {
+        string: 'NavTargetResolution',
+        matchedString: 'NavTargetResolution',
+        category: 'unit test',
+        _ranking: 1.1,
+        reinforce: 1.1
+      }],
+    [{
+      string: 'unit test',
+      matchedString: 'unit test',
+      category: 'abc',
+      _ranking: 1
+    },
+      {
+        string: 'NavTargetResolution',
+        matchedString: 'NavTargetResolution',
+        category: 'unit test',
+        _ranking: 1.1,
+        reinforce: 1.1
+      }],
+    [{
+      string: 'unit test',
+      matchedString: 'unit test',
+      category: 'filler',
+      _ranking: 1
+    },
+      {
+        string: 'NavTargetResolution',
+        matchedString: 'NavTargetResolution',
+        category: 'category',
+        _ranking: 1.1,
+        reinforce: 1.1
+      }]
+  ];
+  var res = WhatIs.filterAcceptingOnly(inp, ['filler', 'category']);
+  test.deepEqual(res, [inp[2]]);
+  test.done();
+};
+
+
+
+exports.testcmpByNrCategoriesAndSameDomain2 = function (test) {
+  var inp = [
+    [
+      { matchedString : 'abc',
+        category: 'category'
+      },
+      {matchedString : 'abc',
+        category: 'filler'
+      }],
+    [
+      {
+        matchedString : 'abc',
+        'category': 'category'
+      },
+      {
+        matchedString : 'abc',
+        'category': 'category'
+      },
+      {
+        matchedString : 'abc',
+        'category': 'category'
+      },
+      {
+        matchedString : 'def',
+        category: 'category'
+      }],
+    [
+      {
+        matchedString : 'abc',
+        'category': 'category'
+      },
+      {
+        matchedString : 'hij',
+        'category': 'category'
+      },
+      {
+        matchedString : 'def',
+        category: 'category'
+      }],
+    [
+      {
+        category: 'filler'
+      },
+      {
+        category: 'filler'
+      }
+    ]
+  ];
+  var res = inp;
+  res.sort(WhatIs.cmpByNrCategoriesAndSameDomain);
+  var res2 = Sentence.getDistinctCategoriesInSentence(res[0]);
+  test.deepEqual(res2, ['abc','hij','def']);
+  test.done();
+};
+
+
+
+exports.testcmpByNrCategoriesAndSameDomain = function (test) {
+  var inp = [
+    [
+      { matchedString : 'abc',
+        category: 'category'
+      },
+      {matchedString : 'abc',
+        category: 'filler'
+      }],
+    [
+      {
+        matchedString : 'abc',
+        'category': 'category'
+      },
+      {
+        matchedString : 'def',
+        category: 'category'
+      }],
+    [
+      {
+        category: 'filler'
+      },
+      {
+        category: 'filler'
+      }
+    ]
+  ];
+  var best = inp[1];
+  var res = inp;
+  res.sort(WhatIs.cmpByNrCategoriesAndSameDomain);
+  test.deepEqual(res[0],best);
+  test.done();
+};
+
+
+
+
+
+
+exports.testAnalyzeCategoryMult = function (test) {
+  var res = WhatIs.analyzeCategoryMult('unit test and', theModel.rules, 'what is unit test wiki for abc');
+  test.deepEqual(res, ['unit test']);
+  test.done();
+};
+
+exports.testAnalyzeCategoryMult2 = function (test) {
+  var res = WhatIs.analyzeCategoryMult('unit test and wiki', mRules, 'what is unit test wiki for abc');
+  test.deepEqual(res, ['unit test', 'wiki']);
+  test.done();
+};
+
+// TODO, this is bullshit, complete cover must be better than sloppy matches!
+exports.testCategorizeMultElement = function (test) {
+  var res = WhatIs.analyzeCategoryMult('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');
+  test.deepEqual(res, ['element name', 'element number', 'atomic weight', 'element symbol']);
+  test.done();
+};
+
+exports.testCategorizeMultElement2 = function (test) {
+  var res = WhatIs.analyzeCategoryMult2('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');
+  test.deepEqual(res, ['element name', 'element number', 'element symbol']);
+  test.done();
+};
+
 
 exports.testCategorize = function (test) {
   var res = WhatIs.analyzeCategory('unit test', mRules, 'what is unit test for abc');
@@ -308,22 +484,22 @@ exports.testResolveCategoryAmb = function (test) {
   test.done();
 };
 
-var aResults = [{ _ranking : 1}, {_ranking : 1}, { _ranking : 0.7} ];
-exports.testFilterOnlyTopRanked = function(test) {
+var aResults = [{ _ranking: 1 }, { _ranking: 1 }, { _ranking: 0.7 }];
+exports.testFilterOnlyTopRanked = function (test) {
   var res = WhatIs.filterOnlyTopRanked(aResults);
   test.equal(res.length, 2);
   test.done();
 };
 
-var aResultsMisOrdered = [{ _ranking : 1}, {_ranking : 1}, { _ranking : 1.2 } ];
-exports.testFilterOnlyTopRankedThrows = function(test) {
+var aResultsMisOrdered = [{ _ranking: 1 }, { _ranking: 1 }, { _ranking: 1.2 }];
+exports.testFilterOnlyTopRankedThrows = function (test) {
   test.expect(1);
   try {
     WhatIs.filterOnlyTopRanked(aResultsMisOrdered);
-    test.equal(1,0);
+    test.equal(1, 0);
   } catch (e) {
     /*empty*/
-    test.equal(1,1);
+    test.equal(1, 1);
   }
   test.done();
 };

@@ -87,6 +87,11 @@ if environment variable ABOT_LOGDB is set to a truthy variable
 /src/sql/tabl_convlog.sql
 
 
+heroku pg:info
+heroku pg:psql
+
+
+
 SSL setup on windows, see
 
 [https://www.howtoforge.com/postgresql-ssl-certificates]
@@ -99,9 +104,22 @@ see
 http://www.postgresonline.com/journal/archives/169-Fuzzy-string-matching-with-Trigram-and-Trigraphs.html)
 
 
+##Application keepalive
+
+see
+http://stackoverflow.com/questions/5480337/easy-way-to-prevent-heroku-idling
+
+##Newrelic
+
+
+
+
 ##Models
 
-the formulated questions are in
+the formulated questions are in a model called questions.
+
+
 
 resources/model/intents.json
+resources/model/operators.json
 

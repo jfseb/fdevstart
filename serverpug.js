@@ -4,7 +4,10 @@
  */
 
 /*global __dirname:true*/
-
+var process = require('process');
+if(process.env.ABOT_EMAIL_USER) {
+  require('newrelic');
+}
 var http = require('http');
 var express = require('express');
 var session = require('express-session');
@@ -16,7 +19,6 @@ var cookieParser = require('cookie-parser');
 
 var pgSession = require('connect-pg-simple')(session);
 
-var process = require('process');
  // conf = require('./config.json');
 
 var uuid = require('node-uuid');

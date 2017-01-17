@@ -19,7 +19,9 @@ import * as InputFilterRules from '../match/inputFilterRules';
 import * as Tools from '../match/tools';
 import * as fs from 'fs';
 import * as Meta from './meta';
+import * as Utils from '../utils/utils';
 import * as process from 'process';
+import * as _ from 'lodash';
 
 /**
  * the model path, may be controlled via environment variable
@@ -424,6 +426,31 @@ export function getDomainsForCategory(theModel : IMatch.IModels, category : stri
     //
     var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
     var domains = getDomainsForCategory(model, category);
+    domains.forEach(function(domain) {
+        fn(model, domain).forEach(function(wordcat) {
+            res[wordcat] = true;
+        });
+    });
+    Object.freeze(res);
+    return res;
+ }
+
+ export function getAllRecordCategoriesForTargetCategories(model : IMatch.IModels, categories : string[], wordsonly : boolean) : {[key: string] : boolean} {
+    var res = {};
+    //
+    var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
+    var domains = undefined;
+    categories.forEach(function(category) {
+        var catdomains = getDomainsForCategory(model, category)
+        if(!domains) {
+            domains = catdomains;
+        } else {
+            domains = _.intersection(domains, catdomains);
+        }
+    });
+    if(domains.length === 0) {
+        throw new Error('categories ' + Utils.listToQuotedCommaAnd(categories) + ' have no common domain.')
+    }
     domains.forEach(function(domain) {
         fn(model, domain).forEach(function(wordcat) {
             res[wordcat] = true;

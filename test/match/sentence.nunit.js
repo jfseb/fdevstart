@@ -26,6 +26,7 @@ const oSentence = [
 ];
 
 
+
 exports.testFindWordByCategory = function (test) {
   // prepare
   // act
@@ -35,6 +36,29 @@ exports.testFindWordByCategory = function (test) {
   test.equal(res.word, oSentence[2], 'correct result');
   test.done();
 };
+
+
+
+exports.testGetDistinctCategoriesInSentence = function (test) {
+  // prepare
+  // act
+  const res = sentence.getDistinctCategoriesInSentence([
+      {'matchedString' : 'start', 'category' : 'filler'},
+      {'matchedString' : 'catalog', 'category' : 'category'},
+      {'matchedString' : 'ABC', 'category' : 'catalog'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'FLPD', 'category' : 'category'},
+      {'matchedString' : 'in', 'category' : 'filler'},
+      {'matchedString' : 'catalog', 'category' : 'category'},
+      {'matchedString' : 'client', 'category' : 'category'},
+      {'matchedString' : '120', 'category' : 'client'}
+  ]);
+  // check
+  test.deepEqual(res, ['catalog', 'FLPD', 'client']);
+  test.done();
+};
+
+
 
 exports.testFindWordByCategoryNotFound = function (test) {
   // prepare

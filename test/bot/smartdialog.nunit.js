@@ -120,6 +120,53 @@ exports.testShowMe2 = function (test) {
   });
 };
 
+exports.testListAllMultipleCategories = function (test) {
+  testOne('List all atomic weight, element name, element symbol for element name silver',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,  'the atomic weight, element name, element symbol for element name silver are ...\n"107.8682(2)", "silver" and "Ag"' );
+    test.done();
+  });
+};
+
+exports.testListAllMultipleCategories2 = function (test) {
+  testOne('What is the atomic weight and element symbol for gold',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes, 'The "atomic weight" and "element symbol" of gold are "196.966 569(5)" and "Au"\n');
+    test.deepEqual(sRes.indexOf('966') >= 0, true, 'wiki present');
+    test.done();
+  });
+};
+
+exports.testListAllMultipleCategoriesBadMix = function (test) {
+  testOne('What is the unit test and element symbol for gold',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes, 'I don\'t know anything about "unit test and element symbol" ("unit test" and "element symbol")" in relation to "gold"');
+    test.done();
+  });
+};
+
+exports.testListAllMultipleOK2 = function (test) {
+  testOne('list all element name, atomic weight for mercury',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes, 'the element name, atomic weight for mercury are ...\n"mercury" and "200.592(3)"' );
+
+    test.done();
+  });
+};
+
+exports.testListAllMultipleBadCombine = function (test) {
+  testOne('list all element name, wiki for mercury',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes, 'I cannot combine "element name, wiki(Error: categories "element name" and "wiki" have no common domain.)' );
+    test.done();
+  });
+};
+
 
 
 exports.testShowMe2 = function (test) {

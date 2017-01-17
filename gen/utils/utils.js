@@ -8,6 +8,23 @@ function deepFreeze(o) {
     }
 }
 exports.deepFreeze = deepFreeze;
+function listToCommaAnd(list, quote) {
+    quote = quote || "";
+    if (list.length === 0) {
+        return quote + quote;
+    }
+    var base = list.slice(0, list.length - 1).join(quote + ", " + quote);
+    if (base) {
+        base = quote + base + quote + ' and ' + quote + list[list.length - 1] + quote;
+        return base;
+    }
+    return quote + list[0] + quote;
+}
+exports.listToCommaAnd = listToCommaAnd;
+function listToQuotedCommaAnd(list) {
+    return listToCommaAnd(list, '"');
+}
+exports.listToQuotedCommaAnd = listToQuotedCommaAnd;
 // courtesy of
 // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
 function cloneDeep(item) {

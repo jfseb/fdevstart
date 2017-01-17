@@ -462,8 +462,8 @@ export function filterRemovingUncategorized(arr: IFMatch.ICategorizedString[][][
   });
 }
 
-export function categorizeAWord(sWordGroup: string, rules: IMatch.SplitRules, sString: string, words: { [key: string]: Array<IFMatch.ICategorizedString>},
-cntRec ? : ICntRec ) {
+export function categorizeAWord(sWordGroup: string, rules: IMatch.SplitRules, sentence: string, words: { [key: string]: Array<IFMatch.ICategorizedString>},
+cntRec ? : ICntRec ) : IMatch.ICategorizedString[] {
   var seenIt = words[sWordGroup];
   if (seenIt === undefined) {
     seenIt = categorizeWordWithRankCutoff(sWordGroup, rules, cntRec);
@@ -472,7 +472,7 @@ cntRec ? : ICntRec ) {
   }
   if (!seenIt || seenIt.length === 0) {
     logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
-      + sString + "\"");
+      + sentence + "\"");
     if (sWordGroup.indexOf(" ") <= 0) {
       debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
     }
@@ -509,7 +509,9 @@ cntRec ? : ICntRec ) {
  *
  */
 export function analyzeString(sString: string, rules: IMatch.SplitRules,
-  words?: { [key: string]: Array<IFMatch.ICategorizedString> }) {
+  words?: { [key: string]: Array<IFMatch.ICategorizedString> })
+  : [ [ IMatch.ICategorizedString[]] ]
+   {
   var cnt = 0;
   var fac = 1;
   var u = breakdown.breakdownString(sString, Algol.MaxSpacesPerCombinedWord);
@@ -519,10 +521,10 @@ export function analyzeString(sString: string, rules: IMatch.SplitRules,
   //console.log(JSON.stringify(u));
   words = words || {};
   debugperf('this many known words: ' + Object.keys(words).length);
-  var res = [];
+  var res = [] as [[ IMatch.ICategorizedString[]] ];
   var cntRec = {};
   u.forEach(function (aBreakDownSentence) {
-      var categorizedSentence = [];
+      var categorizedSentence = [] as [ IMatch.ICategorizedString[] ];
       var isValid = aBreakDownSentence.every(function (sWordGroup: string, index : number) {
         var seenIt = categorizeAWord(sWordGroup, rules, sString, words, cntRec);
         if(seenIt.length === 0) {

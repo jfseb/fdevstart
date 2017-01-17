@@ -13,7 +13,9 @@ var InputFilterRules = require('../match/inputFilterRules');
 var Tools = require('../match/tools');
 var fs = require('fs');
 var Meta = require('./meta');
+var Utils = require('../utils/utils');
 var process = require('process');
+var _ = require('lodash');
 /**
  * the model path, may be controlled via environment variable
  */
@@ -372,5 +374,31 @@ function getAllRecordCategoriesForTargetCategory(model, category, wordsonly) {
     return res;
 }
 exports.getAllRecordCategoriesForTargetCategory = getAllRecordCategoriesForTargetCategory;
+function getAllRecordCategoriesForTargetCategories(model, categories, wordsonly) {
+    var res = {};
+    //
+    var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
+    var domains = undefined;
+    categories.forEach(function (category) {
+        var catdomains = getDomainsForCategory(model, category);
+        if (!domains) {
+            domains = catdomains;
+        }
+        else {
+            domains = _.intersection(domains, catdomains);
+        }
+    });
+    if (domains.length === 0) {
+        throw new Error('categories ' + Utils.listToQuotedCommaAnd(categories) + ' have no common domain.');
+    }
+    domains.forEach(function (domain) {
+        fn(model, domain).forEach(function (wordcat) {
+            res[wordcat] = true;
+        });
+    });
+    Object.freeze(res);
+    return res;
+}
+exports.getAllRecordCategoriesForTargetCategories = getAllRecordCategoriesForTargetCategories;
 
 //# sourceMappingURL=model.js.map

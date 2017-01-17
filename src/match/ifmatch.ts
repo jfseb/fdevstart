@@ -42,6 +42,15 @@ export interface IWhatIsAnswer {
   _ranking : number
 }
 
+
+export interface IWhatIsTupelAnswer {
+  sentence: ISentence,
+  record : IRecord,
+  categories : string[],
+  result: string[],
+  _ranking : number
+}
+
 export interface IMatchedSetRecord {
   setId : string,
   record : IRecord

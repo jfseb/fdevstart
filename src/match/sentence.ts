@@ -33,6 +33,20 @@ export function findWordByCategory(oSentence, sCategory : string) : { word : IMa
     return res;
 }
 
+export function getDistinctCategoriesInSentence(oSentence : IMatch.ISentence) : string[] {
+  var res = [];
+  var resm = {};
+  oSentence.forEach(function(oWord) {
+    if(oWord.category === "category") {
+      if(!resm[oWord.matchedString]) {
+        res.push(oWord.matchedString);
+        resm[oWord.matchedString] = 1;
+      }
+    }
+  });
+  return res;
+}
+
 export function rankingGeometricMean(oSentence : IMatch.ISentence) : number {
   const length = oSentence.length;
   if(length === 0) {

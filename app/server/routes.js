@@ -96,7 +96,17 @@ module.exports = function(app) {
     res.render('about', {
       pagetitle : 'about',
       user : (req.session.user && req.session.user.user) || undefined,
-      title : 'abot',
+      title : 'wosap about',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
+
+  app.get('/whatsnew', function(req, res) {
+    res.render('whatsnew', {
+      pagetitle : 'whatsnew',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'wosap: what\'s new',
       udata : req.session.user,
       altData : req.session.altData
     });

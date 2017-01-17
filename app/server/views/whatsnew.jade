@@ -1,0 +1,84 @@
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends layout_p
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap what's new
+			ul.nav.navbar-nav.navbar-right #{uid}
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+	p  &nbsp;
+	p &nbsp;
+	p
+
+	div.well
+
+		table.table.table-condensed.table-striped
+			thead
+				tr
+					th date
+					th category
+					th feature
+			tbody
+				tr
+					td 21.01.2016
+					td query
+					td multiple "categories" in list all, what is
+					td "list all Application Component, BSPNAme, fiori intent for maintain
+						br
+						"list all &lt;catgory&gt; containing &lt;F"
+				tr
+					td 20.01.2016
+					td site
+					td new about page, styles
+					td
+				tr
+					td 19.01.2016
+					td query
+					td filter containing, starting with, ending with
+					td "list all &lt;catgory&gt; starting with &lt;string&gt;"
+						br
+						"list all &lt;catgory&gt; containing &lt;F"
+				tr
+					td 10.01.2016
+					td query
+					td filter by &lt;domain&gt;
+					td "list all categories in &lt;domain&gt"
+				tr
+					td 20.01.2016
+					td tech
+					td always on, traffic monitoring
+					td
+				tr
+					td 10.01.2016
+					td query
+					td metaqueries
+					td "list all categories"
+				tr
+					td 10.01.2016
+					td query
+					td metaqueries
+					td "list all domains"
+				tr
+					td 08.01.2016
+					td tech
+					td email reset
+					td
+				tr
+					td 08.01.2016
+					td tech
+					td user registration
+					td
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')

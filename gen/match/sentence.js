@@ -24,6 +24,20 @@ function findWordByCategory(oSentence, sCategory) {
     return res;
 }
 exports.findWordByCategory = findWordByCategory;
+function getDistinctCategoriesInSentence(oSentence) {
+    var res = [];
+    var resm = {};
+    oSentence.forEach(function (oWord) {
+        if (oWord.category === "category") {
+            if (!resm[oWord.matchedString]) {
+                res.push(oWord.matchedString);
+                resm[oWord.matchedString] = 1;
+            }
+        }
+    });
+    return res;
+}
+exports.getDistinctCategoriesInSentence = getDistinctCategoriesInSentence;
 function rankingGeometricMean(oSentence) {
     var length = oSentence.length;
     if (length === 0) {

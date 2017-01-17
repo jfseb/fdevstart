@@ -74,6 +74,30 @@ exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 };
 
 
+exports.testgetAllRecordCategoriesForTargetCategories1 = function (test) {
+
+  try {
+    Model.getAllRecordCategoriesForTargetCategories(theModel, ['element name', 'wiki' ]);
+    test.equal(true,false);
+  } catch(e) {
+    test.equal(e.toString(), 'categories "element name" and "wiki" have no common domain');
+  }
+  test.done();
+};
+
+
+exports.testgetAllRecordCategoriesForTargetCategories2 = function (test) {
+
+  var res = Model.getAllRecordCategoriesForTargetCategories(theModel, ['element name', 'element symbol']);
+  test.deepEqual(res, {
+    'element name': true,
+    'element symbol' : true,
+    'atomic weight' : true,
+    'element number' : true
+  });
+  test.done();
+};
+
 const MetaF = Meta.getMetaFactory();
 
 exports.testgetResultAsArrayBad = function (test) {

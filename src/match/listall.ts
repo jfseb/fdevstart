@@ -49,25 +49,7 @@ export function matchRecordHavingCategory(category: string, records: Array<IMatc
 
 
 export function analyzeContextString(contextQueryString : string,  rules: IMatch.SplitRules) {
-    var matched = InputFilter.analyzeString(contextQueryString, rules, sWords);
-    if(debuglog.enabled) {
-      debuglog("After matched " + JSON.stringify(matched));
-    }
-    var aSentences = InputFilter.expandMatchArr(matched);
-    if(debuglog.enabled) {
-      debuglog("after expand" + aSentences.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
-    }
-    var aSentencesReinforced = InputFilter.reinForce(aSentences);
-    if(debuglog.enabled) {
-      debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
-    }
-    // we limit analysis to n sentences
-    var aSentencesReinforced = aSentencesReinforced.slice(0, Algol.Cutoff_Sentences);
-    return aSentencesReinforced;
+  return WhatIs.analyzeContextString(contextQueryString,rules);
 }
 
 // const result = WhatIs.resolveCategory(cat, a1.entity,
@@ -120,6 +102,56 @@ export function listAllHavingContext(category: string, contextQueryString: strin
     return matchedFiltered;
   }
 }
+
+
+export function listAllTupelWithContext(categories: string[], contextQueryString: string,
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): Array<IMatch.IWhatIsTupelAnswer> {
+  if (contextQueryString.length === 0) {
+    return [];
+  } else {
+    logPerf('listAllWithContext');
+    perflog("totalListAllWithContext");
+    var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
+    perflog("matching records (s=" + aSentencesReinforced.length + ")...");
+    var matchedAnswers = WhatIs.matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    if(debuglog.enabled){
+      debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+    }
+    perflog("filtering topRanked (a=" + matchedAnswers.length + ")...");
+    var matchedFiltered = WhatIs.filterOnlyTopRankedTupel(matchedAnswers);
+    if (debuglog.enabled) {
+      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+    }
+    perflog("totalListAllWithContext (a=" + matchedFiltered.length + ")");
+    logPerf('listAllWithContext');
+    return matchedFiltered; // ??? Answers;
+  }
+}
+
+
+export function listAllTupelHavingContext(categories: string[], contextQueryString: string,
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
+  categorySet : { [key:string] : boolean }): Array<IMatch.IWhatIsTupelAnswer> {
+  if (contextQueryString.length === 0) {
+    return [];
+  } else {
+    perflog("analyzeContextString ...");
+    var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
+    perflog("matching records having (s=" + (aSentencesReinforced.length) + ")...");
+    var matchedAnswers = WhatIs.matchRecordsTupelHavingContext(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    if(debuglog.enabled) {
+      debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+    }
+    perflog("filteringTopRanked (a=" + matchedAnswers.length + ")...");
+    var matchedFiltered = WhatIs.filterOnlyTopRankedTupel(matchedAnswers);
+    if (debuglog.enabled) {
+      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+    }
+    perflog("totalListAllHavingContext (a=" + matchedFiltered.length + ")");
+    return matchedFiltered;
+  }
+}
+
 
 
 export function filterStringListByOp(operator: IMatch.IOperator, fragment : string,  srcarr : string[] ) : string[] {
@@ -212,6 +244,22 @@ export function joinResults(results: Array<IMatch.IWhatIsAnswer>): string[] {
     if (result._ranking === results[0]._ranking) {
       if(res.indexOf(result.result) < 0 ){
         res.push(result.result);
+      }
+      return prev + 1;
+    }
+  }, 0);
+  return res;
+}
+
+import * as Utils from '../utils/utils';
+
+export function joinResultsTupel(results: Array<IMatch.IWhatIsTupelAnswer>): string[] {
+  var res  = [];
+  var cnt = results.reduce(function (prev, result) {
+    if (result._ranking === results[0]._ranking) {
+      var value = Utils.listToQuotedCommaAnd(result.result);
+      if(res.indexOf(value) < 0 ){
+        res.push(value);
       }
       return prev + 1;
     }

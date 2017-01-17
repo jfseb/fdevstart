@@ -8,6 +8,22 @@ export function deepFreeze(o : any) {
   }
 }
 
+export function listToCommaAnd(list : string[], quote? : string) {
+    quote = quote || "";
+    if( list.length === 0) {
+        return quote + quote;
+    }
+    var base = list.slice(0,list.length-1).join(quote + ", " + quote);
+    if(base) {
+        base = quote + base + quote + ' and ' + quote + list[list.length-1] + quote;
+        return base;
+    }
+    return quote + list[0] + quote;
+}
+
+export function listToQuotedCommaAnd(list : string[]) {
+    return listToCommaAnd(list,'"');
+}
 
 // courtesy of
 // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
