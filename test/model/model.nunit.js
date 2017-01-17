@@ -20,22 +20,38 @@ var theModel = Model.loadModels();
 exports.testModel = function (test) {
   test.expect(2);
   var u = theModel;
-  test.equal(u.tools.length, 6, 'no error');
+  test.equal(u.tools.length, 8, 'no error');
   test.deepEqual(u.category.sort(),
-    [ 'atomic weight',
+    [ '_url',
+      'albedo',
+      'atomic weight',
       'client',
+      'distance',
+      'eccentricity',
       'element name',
       'element number',
+      'element properties',
       'element symbol',
       'fiori catalog',
       'fiori group',
       'fiori intent',
+      'mass',
+      'object mass',
+      'object name',
+      'object type',
+      'orbit radius',
+      'orbital period',
+      'orbits',
+      'radius',
       'systemId',
       'tool',
       'transaction',
       'unit test',
       'url',
-      'wiki' ] , 'correct data read');
+      'visual luminosity',
+      'visual magnitude',
+      'wiki' ]
+   , 'correct data read');
   test.done();
 };
 
@@ -67,6 +83,7 @@ exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
     'element name': true,
     'element symbol' : true,
     'atomic weight' : true,
+    'element properties': true,
     'element number' : true
   });
   test.done();
@@ -165,7 +182,8 @@ exports.testgetDomainsForCategory = function (test) {
   //console.log('here the model ************ ' + JSON.stringify(u.meta.t3,undefined,2));
   var res = Model.getDomainsForCategory(u, 'client');
   test.deepEqual(res,
-    [ 'Fiori FLPD',
+    [
+      'Fiori FLPD',
       'FioriFLP',
       'StartTA' ] , 'correct data read');
   test.done();
@@ -242,22 +260,39 @@ exports.testModel2 = function (test) {
 
   fs.writeFileSync('logs/model.all.json', JSON.stringify(u, undefined,2));
 
-  test.equal(u.tools.length, 6, 'no error');
+  test.equal(u.tools.length, 8, 'no error');
   test.deepEqual(u.category.sort(),
-    [ 'atomic weight',
+
+    [ '_url',
+      'albedo',
+      'atomic weight',
       'client',
+      'distance',
+      'eccentricity',
       'element name',
       'element number',
+      'element properties',
       'element symbol',
       'fiori catalog',
       'fiori group',
       'fiori intent',
+      'mass',
+      'object mass',
+      'object name',
+      'object type',
+      'orbit radius',
+      'orbital period',
+      'orbits',
+      'radius',
       'systemId',
       'tool',
       'transaction',
       'unit test',
       'url',
-      'wiki' ] , 'correct data read');
+      'visual luminosity',
+      'visual magnitude',
+      'wiki' ]
+ , 'correct data read');
   test.done();
 
 };
@@ -282,9 +317,11 @@ exports.testModelHasDomains = function (test) {
   var rx = r2.map(function(oRule) { return oRule.matchedString; });
 
   test.deepEqual(rx.sort(),
-    [ 'Fiori FLPD',
+    [ 'Cosmos',
+      'Fiori FLPD',
       'FioriFLP',
       'IUPAC',
+      'Philosophers elements',
       'StartTA',
       'unit test',
       'wiki'

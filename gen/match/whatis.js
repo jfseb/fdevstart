@@ -665,6 +665,7 @@ function matchRecordsQuickMultipleCategories(aSentences, categories, records, ca
 }
 exports.matchRecordsQuickMultipleCategories = matchRecordsQuickMultipleCategories;
 function classifyWordWithTargetCategory(word, targetcategory, rules, wholesentence) {
+    //console.log("classify " + word + " "  + targetcategory);
     var cats = InputFilter.categorizeAWord(word, rules, wholesentence, {});
     // TODO qualify
     cats = cats.filter(function (cat) {
@@ -698,9 +699,11 @@ exports.splitAtCommaAnd = splitAtCommaAnd;
  */
 function analyzeCategoryMult2(categorylist, rules, wholesentence) {
     var rtrimmed = splitAtCommaAnd(categorylist);
-    var rcat = rtrimmed.map(function (o) { return analyzeCategory(o, rules, wholesentence); });
+    var rcat = rtrimmed.map(function (o) {
+        return analyzeCategory(o, rules, wholesentence);
+    });
     if (rcat.indexOf(undefined) >= 0) {
-        throw new Error('"' + rtrimmed[rcat.indexOf(undefined) + '" is not a category!']);
+        throw new Error('"' + rtrimmed[rcat.indexOf(undefined)] + '" is not a category!');
     }
     return rcat;
 }

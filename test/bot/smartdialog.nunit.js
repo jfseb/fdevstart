@@ -287,7 +287,7 @@ exports.testListAllNotACat = function (test) {
   testOne('list all NOTACATEGORY',function(oRes) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(oRes,
-    'I don\'t know anything about "NOTACATEGORY"(Error: "undefined)');
+    'I don\'t know anything about "NOTACATEGORY"(Error: "NOTACATEGORY" is not a category!)');
     test.done();
   });
 };
@@ -303,6 +303,15 @@ exports.testListAllMultOnlyCat = function (test) {
   });
 };
 
+
+exports.testListWeirdError = function (test) {
+  testOne('list all Applications',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    'I don\'t know anything about "Applications"(Error: "Applications" is not a category!)');
+    test.done();
+  });
+};
 
 
 

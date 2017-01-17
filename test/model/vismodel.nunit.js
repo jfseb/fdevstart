@@ -13,10 +13,10 @@ exports.testCalcCategoryRecord = function (test) {
   const rec = Vismodel.calcCategoryRecord(m, 'element name', 'IUPAC');
 
   test.deepEqual(rec, {
-    otherdomains : [],
-    nrDistinctValues : 118,
+    otherdomains : ['Philosophers elements'],
+    nrDistinctValues : 122,
     nrDistinctValuesInDomain : 118,
-    nrRecords : 118,
+    nrRecords : 122,
     nrRecordsInDomain: 118
   });
   test.done();
@@ -27,10 +27,10 @@ exports.testCalcCategoryRecordOtherDomain = function (test) {
   const rec = Vismodel.calcCategoryRecord(m, 'element name', 'XYZ');
 
   test.deepEqual(rec, {
-    otherdomains : ['IUPAC'],
-    nrDistinctValues : 118,
+    otherdomains : ['IUPAC', 'Philosophers elements'],
+    nrDistinctValues : 122,
     nrDistinctValuesInDomain : 0,
-    nrRecords : 118,
+    nrRecords : 122,
     nrRecordsInDomain: 0
   });
   test.done();

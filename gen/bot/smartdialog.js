@@ -246,17 +246,17 @@ var aTrainExitHint = [
     "",
     "\nremember, you are stuck here instructing me, type \"done\" to return.",
     ""];
-var aEnterTrain = ["So you think this is wrong? You can offer your advise here.\n Type \"done\" if you are done with instructing me",
-    "Feel free to offer me your better solution here.\n",
-    "Some say \"The secret to happiness is to lower your expectations to the point they are already met.\", \nt if you could help me to becomde better, instruct me.",
-    "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
-    "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
+var aEnterTrain = ['So you think this is wrong? You can offer your advise here.\n Type "done" if you are done with instructing me',
+    'Feel free to offer me your better solution here.\nType "done" if you are done with instructing me',
+    'Some say "The secret to happiness is to lower your expectations to the point they are already met.", \nt if you could help me to become better, instruct me.\n Type "done" if you are done with teaching me',
+    'Feel free to offer me your better solution here.\n Type "done" if you are done with instructing me',
+    'Feel free to offer me your better solution here.\n Type "done" if you are done with instructing me',
 ];
 var aBackFromTraining = [
-    "Puuh, back from training! Now for the easy part ...",
-    "Live and don't learn, that's us. Naah, we'll see.",
-    "The secret to happiness is to lower your expectations to the point they are already met.",
-    "Thanks for having this lecture session, now back to our usual self."
+    'Puuh, back from training! Now for the easy part ...\n ask me a new question.',
+    'Live and don\'t learn, that\'s us. Naah, we\'ll see.\nAsk me another question.',
+    'The secret to happiness is to lower your expectations to the point they are already met.\n Ask me a question.',
+    'Thanks for having this lecture session, now i am back to our usual self.\n Ask me a question.'
 ];
 var aTrainNoKlingon = [
     "He who master the dark arts of SAP must not dwell in the earthly realms of Start Trek.",
@@ -900,7 +900,7 @@ function makeBot(connector, modelPath) {
             var resFact = Describe.describeFactInDomain(factOrCat, filterDomain, theModel);
             if (catResults) {
                 var prefixed = catResults.map(function (res) {
-                    return (Describe.sloppyOrExact(factOrCat, category, theModel) + "  " + res);
+                    return (Describe.sloppyOrExact(category, factOrCat, theModel) + "  " + res);
                 });
             }
             if (catResults.length) {

@@ -77,6 +77,15 @@ ABOT_EMAIL_SERVER
 
 set via heroku
 
+
+
+### Development
+ABOT_WRITE_REGRESS
+
+##some heroku commands 4
+
+heroku config:get
+
 ##Postgres setup
 
 The bot logs conversations, users and sessions in a postgres database
@@ -138,6 +147,11 @@ intended to work ;-)
 
 
 * fix: describe domain not implemented
+* list all countries with Government type communist state give same result
+  as list all countries with Government type   :-(
+        Indicate ignored passages!
+  )
+* domain categorization first
 * regression tool
   build a tool to run a full regression on historical questions and answers,
    with the ability to mark changes and track the evolution of responses.

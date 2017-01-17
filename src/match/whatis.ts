@@ -718,10 +718,10 @@ export function matchRecordsQuickMultipleCategories(aSentences: Array<IMatch.ISe
 }
 
 
-
 function classifyWordWithTargetCategory(word: string, targetcategory : string, rules: IMatch.SplitRules,
 wholesentence : string ) : string {
-var cats = InputFilter.categorizeAWord(word, rules, wholesentence, {});
+  //console.log("classify " + word + " "  + targetcategory);
+  var cats = InputFilter.categorizeAWord(word, rules, wholesentence, {});
   // TODO qualify
   cats = cats.filter(function (cat) {
     return cat.category === targetcategory;
@@ -755,9 +755,11 @@ export function splitAtCommaAnd(str : string) : string[] {
  */
 export function analyzeCategoryMult2(categorylist: string, rules: IMatch.SplitRules, wholesentence: string): string[] {
   var rtrimmed = splitAtCommaAnd(categorylist);
-  var rcat = rtrimmed.map(function(o) { return analyzeCategory(o,rules,wholesentence); });
+  var rcat = rtrimmed.map(function(o) {
+    return analyzeCategory(o,rules,wholesentence);
+  });
   if(rcat.indexOf(undefined) >= 0) {
-    throw new Error('"' + rtrimmed[rcat.indexOf(undefined)+'" is not a category!']);
+    throw new Error('"' + rtrimmed[rcat.indexOf(undefined)]+'" is not a category!');
   }
   return rcat;
 }
