@@ -89,8 +89,15 @@ if environment variable ABOT_LOGDB is set to a truthy variable
 
 SSL setup on windows, see
 
-https://www.howtoforge.com/postgresql-ssl-certificates
+[https://www.howtoforge.com/postgresql-ssl-certificates]
 http://esaucairn-almuric.blogspot.de/2009/07/windows-ssl-for-postgresql.html
+
+##Postgres trigraph matching
+
+see
+[http://www.postgresonline.com/journal/archives/169-Fuzzy-string-matching-with-Trigram-and-Trigraphs.html](
+http://www.postgresonline.com/journal/archives/169-Fuzzy-string-matching-with-Trigram-and-Trigraphs.html)
+
 
 ##Models
 

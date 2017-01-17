@@ -25,10 +25,13 @@ var dburl = process.env.DATABASE_URL || pglocalurl;
 
 pg.defaults.ssl = true;
 
-
 exports.testLoadWords = function (test) {
   if (process.env.ABOT_EMAIL_USER) {
     return;
+  }
+  test.done();
+  if(!process.env.ABOT_INDEXWORDS) {
+    return; // not today
   }
   var fut = IndexWords.dumpWords(dburl, m);
   test.done();
