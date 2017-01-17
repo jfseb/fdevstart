@@ -34,6 +34,9 @@
     "example question" : "what is the ApplicationType for #ControllingDocument-setControllingArea"
   },
   {
+    "example question" : "list all Application Component, BSPName, ODataService, fiori intent for maintain"
+  },
+  {
     "example question" : "list all OData Services for retail.store.stockcorrection"
   },
   {

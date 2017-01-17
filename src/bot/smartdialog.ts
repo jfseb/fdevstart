@@ -312,6 +312,17 @@ const aTrainNoKlingon = [
   "That's left to some musky future."
 ]
 
+export const aResponsesOnTooLong = [
+  "Your input should be eloquent in it's brevity. This one was too long.",
+  "my wisdom is severly bound by my limited input processing capabilities. Could you formulate a shorter input? Thank you.",
+  "The length of you input indicates you probably know more about the topic than me? Can i humbly ask you to formulate a shorter question?",
+  '\"What ever you want to teach, be brief\" (Horace). While this does not always applies to my answers, it is require for your questions. Please try again with a refined questions.',
+  'I understand more than 4-letter words, but not more than 20 word sentences. Please try to shorten your input.',
+  'the sky is the limit? Air force member or not, you can ask longer questions than \"the sky\", but not this long',
+  'My answers may be exhaustive, but I understand more than 4-letter words, but not more than 20 word sentences. Sorry.',
+  'Our conversation must be highly assymmetric: my answers may be verbose and exhaustive and fuzzy, questions and input must be brief. Try to reformulate it',
+];
+
 function getRandomResult(arr : string[]) : string {
   return arr[Math.floor(Math.random() * arr.length) % arr.length];
 }
@@ -1018,6 +1029,18 @@ function makeBot(connector, modelPath? : string) {
     }
   ]);
 
+  dialog.matches('TooLong', [
+    function (session, args, next) {
+      var isCombinedIndex = {};
+      var oNewEntity;
+      // expecting entity A1
+      var message = session.message.text;
+      debuglog("Intent : TooLong");
+      debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+      var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
+      dialoglog("TooLong",session,send(getRandomResult(aResponsesOnTooLong)));
+     }
+  ]);
 
 
   dialog.matches('Wrong', [
@@ -1154,6 +1177,7 @@ function makeBot(connector, modelPath? : string) {
 if (module) {
   module.exports = {
     SimpleUpDownRecognizer : SimpleUpDownRecognizer,
+    aResponsesOnTooLong : aResponsesOnTooLong,
     makeBot: makeBot
   };
 }

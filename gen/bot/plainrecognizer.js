@@ -164,11 +164,41 @@ function trimTrailingSentenceDelimiters(text) {
     return text;
 }
 exports.trimTrailingSentenceDelimiters = trimTrailingSentenceDelimiters;
+function normalizeWhitespace(text) {
+    text = text.replace(/\s+/g, ' ');
+    return text;
+}
+exports.normalizeWhitespace = normalizeWhitespace;
+/**
+ * Givena string, replace all "....."  with <word>
+ */
+function compactQuoted(text) {
+    text = text.replace(/"[^"]+"/g, "<word>");
+    return text;
+}
+exports.compactQuoted = compactQuoted;
+function countCompactWords(text) {
+    text = text.replace(/,/g, ' ');
+    text = text.replace(/ \s+/g, ' ');
+    return text.split(" ").length;
+}
+exports.countCompactWords = countCompactWords;
+function checkForLength(text) {
+    var textStripped = trimTrailingSentenceDelimiters(text);
+    if ((textStripped.length > 200) || (countCompactWords(compactQuoted(text)) > 20)) {
+        return {
+            intent: "TooLong",
+            score: 1.0,
+            entities: []
+        };
+    }
+    return undefined;
+}
+exports.checkForLength = checkForLength;
 function recognizeText(text, aRules) {
     var res = undefined;
-    var textStripped = trimTrailingSentenceDelimiters(text);
     aRules.every(function (oRule) {
-        res = matchRegularExpression(textStripped, oRule);
+        res = matchRegularExpression(text, oRule);
         return !res;
     });
     return res;
@@ -184,7 +214,13 @@ var RegExpRecognizer = (function () {
         var u = {};
         var text = context.message.text;
         var that = this;
+        var r = checkForLength(text);
+        if (r) {
+            callback(undefined, r);
+            return;
+        }
         debuglog("rules " + JSON.stringify(this.oRules));
+        var text = trimTrailingSentenceDelimiters(text);
         var results = Object.keys(this.oRules).map(function (sKey) {
             var u = recognizeText(text, that.oRules[sKey]);
             if (u) {

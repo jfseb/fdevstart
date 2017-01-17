@@ -8,14 +8,14 @@ const debuglog = debug('smartdialog.nunit');
 
 var logger = require(root + '/utils/logger');
 var HTMLConnector = require(root + '/ui/htmlconnector.js');
-const botdialog = require(root + '/bot/smartdialog.js');
+const SmartDialog = require(root + '/bot/smartdialog.js');
 
 
 
 // Create bot and bind to console
 function getBotInstance() {
   var connector = new HTMLConnector.HTMLConnector();
-  botdialog.makeBot(connector);
+  SmartDialog.makeBot(connector);
   return connector;
 }
 
@@ -29,8 +29,8 @@ function testOne(str,cb) {
 //SimpleUpDownRecognizer
 
 function doRecognize( sText, cb) {
-  debuglog('type ' + typeof botdialog.SimpleUpDownRecognizer);
-  var recognizer = new (botdialog.SimpleUpDownRecognizer)();
+  debuglog('type ' + typeof SmartDialog.SimpleUpDownRecognizer);
+  var recognizer = new (SmartDialog.SimpleUpDownRecognizer)();
   recognizer.recognize({
     message : {
       text : sText
@@ -154,6 +154,27 @@ exports.testListAllMultipleOK2 = function (test) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(sRes, 'the element name, atomic weight for mercury are ...\n"mercury" and "200.592(3)"' );
 
+    test.done();
+  });
+};
+
+exports.testTooLongWordCount = function (test) {
+  testOne('a b c d e f g h i j "k l m n o p" r s t ad so on is very short a',function(oRes) {
+    //console.log('here answeres', SmartDialog.aResponsesOnTooLong.join('\n'));
+    test.deepEqual(SmartDialog.aResponsesOnTooLong.indexOf(oRes) >= 0, true);
+    test.done();
+  });
+};
+
+
+exports.testTooLongSentence = function (test) {
+  testOne('ahasdfasdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
+  +' kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk '
+  +' kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk '
+  +' kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk '
+  + ' jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjj'
+  + ' llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll',function(oRes) {
+    test.deepEqual(SmartDialog.aResponsesOnTooLong.indexOf(oRes) >= 0, true);
     test.done();
   });
 };

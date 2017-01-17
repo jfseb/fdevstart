@@ -389,6 +389,107 @@ exports.testRecognizeWith = function (test) {
   });
 };
 
+exports.testNormalizeWhitespace = function(test) {
+  test.deepEqual(recognizer.normalizeWhitespace(' This is  \t  not\t"a love song"   and "we do like the USofA  '),
+                ' This is not "a love song" and "we do like the USofA ');
+  test.done();
+};
+
+exports.testCompactQuoted = function (test) {
+  test.deepEqual(recognizer.compactQuoted(' This is not "a love song" and "we do like" the USofA'),
+                ' This is not <word> and <word> the USofA');
+  test.done();
+};
+
+exports.testCompactQuotedUnterminated = function (test) {
+  test.deepEqual(recognizer.compactQuoted(' This is not "a love song" and "we do like the USofA'),
+                ' This is not <word> and "we do like the USofA');
+
+  test.done();
+};
+
+exports.testCountCompactWords = function (test) {
+  test.deepEqual(recognizer.countCompactWords('a b c d e f g h k i l m n'),10);
+  //test.deepEqual(recognizer.countCompactWords('a,c,d,e,f,g h k i l m n'),10);
+  //test.deepEqual(recognizer.countCompactWords('a,b,c,d,e f g h k i l m n'),10);
+  test.done();
+};
+
+
+exports.testCountCompactWords = function (test) {
+
+  test.deepEqual(recognizer.countCompactWords(' a b '),4);
+  test.deepEqual(recognizer.countCompactWords('a,,,,,,,b, , , , ,c '),4);
+  test.done();
+};
+
+
+
+exports.testRecognizeTooLong = function (test) {
+  var ambRules = {
+    'Exit': [
+      'Quit',
+    ]
+  };
+  var ambiguousRules = recognizer.parseRules(ambRules);
+  var Recognizer = new (recognizer.RegExpRecognizer)(ambiguousRules);
+  var oContext = {
+    message: {
+      text: 'This message has too many characters to be procesed by the wosap in his own time frame wiht current limits and more fun to the limit than anyboader else and so on'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities: [],
+        score: 1,
+        intent: 'TooLong'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeTooLong2 = function (test) {
+  var ambRules = {
+    'Exit': [
+      'QuAAAAA',
+    ]
+  };
+  var ambiguousRules = recognizer.parseRules(ambRules);
+  var Recognizer = new (recognizer.RegExpRecognizer)(ambiguousRules);
+  var oContext = {
+    message: {
+      text: 'This messagehastoo many charactersTobaprocesswdfbjoealkdfjaoeslf saladsfsfasfdalkfja slfkjsafsjflskjfslkfj'
+      +  'slkfjaslkdfjsalkfjsklfjslfkjasdasflkfdjaslökfjaslkdfjasölfkjassffkjaslökdfjaslkdfjassafldfjsasafadfasdfskjsdlkfjasldkfjaslkdfjsalfkjslkdfjaslkfjslakdfjslkfdjlskdfjslkfjslkfdj'
+      +  'slkfjaslkdfjsalkfjsklfjslfkjasdasflkfdjaslökfjaslkdfjasölfkjassffkjaslökdfjaslkdfjassafldfjsasafadfasdfskjsdlkfjasldkfjaslkdfjsalfkjslkdfjaslkfjslakdfjslkfdjlskdfjslkfjslkfdj'
+      +  'slkfjaslkdfjsalkfjsklfjslfkjasdasflkfdjaslökfjaslkdfjasölfkjassffkjaslökdfjaslkdfjassafldfjsasafadfasdfskjsdlkfjasldkfjaslkdfjsalfkjslkdfjaslkfjslakdfjslkfdjlskdfjslkfjslkfdj'
+    }
+  };
+  new Promise(function(resolve,reject) {
+    Recognizer.recognize(oContext, function (err, res) {
+      test.deepEqual(res.intent,'TooLong');
+      resolve();
+    });
+  }).then(function() {
+    return new Promise(function(resolve,reject) {
+      var oContext = {
+        message: {
+          text: 'This h t m w a a i sl d d d d df  s f f e  af f asf  fs ds fs fs df sf s fs '
+        }
+      };
+      Recognizer.recognize(oContext, function (err, res) {
+        test.deepEqual(res.intent,'TooLong');
+        resolve();
+      });
+    });
+  }
+  ).then(function() {
+    test.done();
+  });
+};
+
 
 
 exports.testRecognizeNone = function (test) {

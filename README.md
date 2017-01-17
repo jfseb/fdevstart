@@ -117,9 +117,68 @@ http://stackoverflow.com/questions/5480337/easy-way-to-prevent-heroku-idling
 ##Models
 
 the formulated questions are in a model called questions.
+similar the formulated hints
 
 
 
+There are
 resources/model/intents.json
 resources/model/operators.json
+
+
+##strategies
+
+Some information to jog memory on how stuff was/is implemented and
+intended to work ;-)
+[whatis](./strategy_whatis.md).
+
+
+
+##Todo ideas
+
+* regression tool
+  build a tool to run a full regression on historical questions and answers,
+   with the ability to mark changes and track the evolution of responses.
+    -> pgsql database,  query by example,
+     table with questions,
+     table with current and history answers + categorization of response "changes"
+  * Make the history correct to move back to "last entry".
+  * on response,
+   Returns a categorized word on and use that in a codecompletion
+     ->awesomeplete
+* automate upload of recorded data to AWS to keep below the 10000 lines free psql limit in heroku
+* tidy up website
+* assure some load control on the bot to make machine downloads harder
+* built a (local) webservice to query/response for regression testing
+* add a statistics website (nr of records, nr of facts etc).
+* add graphviz images for the models
+* make a "what is x" or "Tell me about X" rule,
+   with a response like
+               X is a category in Domain A,
+
+      X is a fact for category U in (x) Records of Domain a.
+
+      X is a synonym for U, which is ...
+
+      Other synonyms are ...
+
+* sample model with multi domain fact
+   *earth water air, fire
+   *earth mars, jupiter, ...
+
+* add philosophical quote of the day
+* add settings dialog and voting on some features / feedback (record what user actually activate)
+* prevent access from other clients by using some session token in the communication
+
+* manual commands to logout
+
+* "read the riot act", get users agreement to cookies and privacy after some interaction
+
+* add accept to create account page.
+
+* describe X.
+
+* add descriptions to the categories and domains.
+
+* add linsk to the FioriSAP model
 
