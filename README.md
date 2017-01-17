@@ -136,6 +136,8 @@ intended to work ;-)
 
 ##Todo ideas
 
+
+* fix: describe domain not implemented
 * regression tool
   build a tool to run a full regression on historical questions and answers,
    with the ability to mark changes and track the evolution of responses.
