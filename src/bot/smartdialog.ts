@@ -978,12 +978,16 @@ function makeBot(connector, modelPath?: string) {
         return;
         // getDomainsForCategory
       }
+
+
+
       var category = WhatIs.analyzeCategory(factOrCat, theModel.rules, message);
       var catResults = [];
       if (category) {
         //TODO
         catResults = Describe.describeCategory(category,filterDomain, theModel,message);
       }
+
       var resFact = Describe.describeFactInDomain(factOrCat, filterDomain,theModel);
       if(catResults) {
       var prefixed = catResults.map(res =>

@@ -20,7 +20,7 @@ var theModel = Model.loadModels();
 exports.testModel = function (test) {
   test.expect(2);
   var u = theModel;
-  test.equal(u.tools.length, 8, 'no error');
+  test.equal(u.tools.length, 5, 'no error');
   test.deepEqual(u.category.sort(),
     [ '_url',
       'albedo',
@@ -235,6 +235,24 @@ exports.testMakeWordMap = function(test) {
 };
 
 
+/**
+ * Unit test for sth
+ */
+exports.testCategorySorting = function (test) {
+  var map = { 'a' : { importance : 0.1}, 'b' : { importance : 0.2 },
+    'd' : { importance : 0.2 } , 'c' : { importance: 0.2}, 'f' : { }};
+
+  test.equals(Model.rankCategoryByImportance({}, 'uu', 'ff'), 1, 'localcomp');
+  test.equals(Model.rankCategoryByImportance({ 'uu' : {} }, 'uu', 'ff'), -1, 'onehas');
+
+  test.equals(Model.rankCategoryByImportance({ 'uu' : { } , 'ff' : {importance  : 1 } }, 'uu', 'ff'), 98, '2ndimp');
+  test.equals(Model.rankCategoryByImportance({ 'uu' : {  importance : 0.1 } , 'ff' : {importance  : 1 } }, 'uu', 'ff'), -0.9, 'firstmoreimp');
+
+  var res = Model.sortCategoriesByImportance(map, ['j', 'e', 'f', 'b', 'c', 'd', 'a', 'b', 'h']);
+  test.deepEqual( res, ['a', 'b', 'b', 'c', 'd', 'f', 'e', 'h', 'j']);
+  test.done();
+};
+
 var fs = require('fs');
 /**
  * Unit test for sth
@@ -259,7 +277,7 @@ exports.testModel2 = function (test) {
 
   fs.writeFileSync('logs/model.all.json', JSON.stringify(u, undefined,2));
 
-  test.equal(u.tools.length, 8, 'no error');
+  test.equal(u.tools.length, 5, 'no error');
   test.deepEqual(u.category.sort(),
 
     [ '_url',

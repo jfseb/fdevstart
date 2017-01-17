@@ -384,6 +384,17 @@ exports.testDescribeOneAtATime = function (test) {
   });
 };
 
+
+exports.testDescribeADomain = function (test) {
+  testOne('describe cosmos',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    '"cosmos"is a domain with 13 categories and 7 records\nDescription:a model with a small subset of cosmological entities. Main purpose is to test \na)properties which occur multiple times (e.g. "Sun" in "object name" as key and in "orbits"; \nb) "earth" as a property which is also present in a differnt model\n' );
+    test.done();
+  });
+};
+
+
 exports.testDescribeEcc = function (test) {
   testOne('describe eccentricity',function(oRes) {
     debuglog(JSON.stringify(oRes));

@@ -24,10 +24,13 @@ import * as IMatch from './ifmatch';
 
 export const Category = {
   CAT_CATEGORY :  "category",
+  CAT_DOMAIN :  "domain",
   CAT_FILLER : "filler",
   CAT_TOOL : "tool",
   _aCatFillers : ["filler"],
-
+  isDomain : function(sCategory : string )  : boolean{
+    return sCategory === Category.CAT_DOMAIN;
+  },
   isCategory : function(sCategory : string )  : boolean{
     return sCategory === Category.CAT_CATEGORY;
   },
@@ -42,5 +45,8 @@ export const Word = {
   },
   isCategory : function(word : IMatch.IWord) : boolean {
     return Category.isCategory(word.category);
+  },
+  isDomain : function(word : IMatch.IWord) : boolean {
+    return Category.isDomain(word.category);
   }
 };

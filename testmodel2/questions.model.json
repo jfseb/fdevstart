@@ -10,18 +10,6 @@
     "_urlpattern"
   ],
   "tool": {
-    "name": "NoTool1",
-    "requires": {
-      "impossible": {}
-    },
-    "optional": {
-    },
-    "sets" : {
-      "none": {
-        "set" : ["impossible"],
-        "response" : "_urlpattern"
-      }
-    }
   },
   "synonyms" : {
     "example questions" : ["questions", "sample questions"]

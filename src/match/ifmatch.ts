@@ -214,6 +214,7 @@ export interface IAction {
 
 export interface ICategoryDesc {
   name: string,
+  importance? : number,
   description? : string,
   iskey? : boolean
   exactMatch: boolean,

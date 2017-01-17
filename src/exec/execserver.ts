@@ -69,7 +69,14 @@ export function execTool(match: IMatch.IToolMatch, records: IMatch.IRecord[], bE
   action: any
 } {
   //
+  debuglog("records for match " + JSON.stringify(match));
   var matchSetRecord = Toolmatch.findFirstSetRecord(match, records);
+  if(!matchSetRecord) {
+    return {
+      text : "cannot start",
+      action: {}
+    }
+  };
   var set = match.tool.sets[matchSetRecord.setId];
   var pattern = matchSetRecord.record[set.response];
 

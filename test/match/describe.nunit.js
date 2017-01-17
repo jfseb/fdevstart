@@ -174,6 +174,21 @@ exports.testDescribeFactInDomainSIUPAC = function (test) {
   test.done();
 };
 
+exports.testDescribeDomain = function (test) {
+  var oRes = Describe.describeDomain('cusmos', 'Cosmos', theModel);
+  test.deepEqual(oRes,
+ '"cusmos" (interpreted as "Cosmos")is a domain with 13 categories and 7 records\nDescription:a model with a small subset of cosmological entities. Main purpose is to test \na)properties which occur multiple times (e.g. "Sun" in "object name" as key and in "orbits"; \nb) "earth" as a property which is also present in a differnt model\n' );
+  test.done();
+};
+
+
+exports.testDescribeFactWhichIsADomain = function (test) {
+  var oRes = Describe.describeFactInDomain('cusmos', undefined, theModel);
+  test.deepEqual(oRes,
+ '"cusmos" (interpreted as "Cosmos")is a domain with 13 categories and 7 records\nDescription:a model with a small subset of cosmological entities. Main purpose is to test \na)properties which occur multiple times (e.g. "Sun" in "object name" as key and in "orbits"; \nb) "earth" as a property which is also present in a differnt model\n' );
+  test.done();
+};
+
 
 exports.testMakeValuesListOne = function (test) {
   var res = Describe.makeValuesListString(['abc'] );
@@ -243,7 +258,9 @@ exports.testDescribeInDomain = function (test) {
 
 exports.testDescribeCategoryInhomogeneous = function (test) {
   var res = Describe.describeCategory('orbits', undefined, theModel, 'abc');
-  var cmp = 'is a category in domain "Cosmos"\nIt is present in 3 (42.9%) of records in this domain,\nhaving 2(+2) distinct values.\nPossible values are ...\n"Alpha Centauri C" or "Sun"';
+  var cmp = 'is a category in domain "Cosmos"\nIt is present in 3 (42.9%) of records in this domain,\nhaving 2(+2) distinct values.\nPossible values are ...\n"Alpha Centauri C" or "Sun"\nDescription: for planets, name of the central entity' ;
+  //
+  //var cmp = 'is a category in domain "Cosmos"\nIt is present in 3 (42.9%) of records in this domain,\nhaving 2(+2) distinct values.\nPossible values are ...\n"Alpha Centauri C" or "Sun"\nDescription:';
   debuglog(res);
   debuglog([cmp]);
   test.deepEqual(res,[cmp]);
@@ -264,7 +281,10 @@ exports.testDescribeCategoryEcc = function (test) {
 
 exports.testDescribeCategoryMult = function (test) {
   var res = Describe.describeCategory('element name', undefined, theModel, 'abc');
-  var cmp1 = 'is a category in domain "Philosophers elements"\nIt is present in 4 (100.0%) of records in this domain,\nhaving 4 distinct values.\nPossible values are ...\n"earth", "fire", "water" or "wind"';
+  var cmp1 =
+ 'is a category in domain "Philosophers elements"\nIt is present in 4 (100.0%) of records in this domain,\nhaving 4 distinct values.\nPossible values are ...\n"earth", "fire", "water" or "wind"\nDescription: name of the philosophical element' ;
+
+//  'is a category in domain "Philosophers elements"\nIt is present in 4 (100.0%) of records in this domain,\nhaving 4 distinct values.\nPossible values are ...\n"earth", "fire", "water" or "wind"';
   var cmp2 =  ELEMENT_NAME_IUPAC;
   debuglog(res[0]);
   debuglog(res[0]);

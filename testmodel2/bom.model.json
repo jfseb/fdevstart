@@ -2,20 +2,45 @@
   "domain": "FioriBOM",
   "category": [
     "uri",
-	"AppKey",
-	"ArtifactId",
+	  {
+      "name" : "AppKey",
+      "description": "a technical key, combination of appId and releaseId",
+      "key" : true
+    },
+	  { "name" : "ArtifactId",
+       "description" : " for UI5 based applications, name of the UI5 Component, e.g. \"ui.s2p.mm.supconf.monitors1\". "
+    },
     "appId",
-    "fiori intent",
+    { "name" : "fiori intent",
+      "description" : "A combination of \"#\" <SemanticObject> - <Semanticaction> which appears in the URL of the Fiori Launchpad when addressing the application"
+    },
     "AppName",
-    "ApplicationComponent",
-    "RoleName",
-    "ApplicationType",
-    "BSPName",
-    "BSPApplicationURL",
+    { "name" : "ApplicationComponent",
+      "description" : "Support component for the Frontend application, typically"
+    },
+    {
+      "name" : "RoleName",
+      "description" : " A business role name, e.g. \"Purchaser\", for a technical role (PFCG), try BusinessRoleName"
+    },
+    { "name": "ApplicationType",
+      "description" : "Whether the application is classical or not"
+    },
+    { "name" : "BSPName",
+      "description" : "Name of the Business Server Page "
+    },
+    {
+      "name" : "BSPApplicationURL",
+      "description"  : "url of the BSP application in an ABAP system, see BSP name for the technical storage  sab bc "
+    },
     "releaseName",
     "releaseId",
-    "BusinessCatalog",
-    "TechnicalCatalog",
+    { "name" :  "BusinessCatalog",
+      "description": "The SAP BUsiness catalog which references the application in a \"TechnicalCatalog\" or \"BackendCatalog\" (for GUI/WDA transactions"
+    },
+    {
+      "name" : "TechnicalCatalog",
+      "description" : "Technical catalog, basic definition of \"TargetMapping\" and \"Tile\" for fiori (UI5) Applications"
+    },
     "detailsurl",
     "isPublished",
     "BSPPackage",
@@ -23,11 +48,16 @@
     "BusinessRoleName",
     "BusinessGroupName",
     "BusinessGroupDescription",
-    "PrimaryODataServiceName",
+    {
+      "name": "PrimaryODataServiceName",
+      "description" : "OData service : Technical name of the OData Service operating on a Gateway server (and implemented in the R/3 Backend) serving data for UI5 based Fiori Apps"
+    },
     "SemanticObject",
     "SemanticAction",
     "FrontendSoftwareComponent",
-    "TransactionCodes",
+    { "name" :  "TransactionCodes",
+      "description" : "For GUI based transaction, the transaciton code behind intent, a classical R/3 SAPGUi transaction"
+    },
     "URLParameters",
     "LPDCustInstance",
     "PrimaryODataPFCGRole",
@@ -101,26 +131,26 @@
     },
     "sets" : {
       "intent": {
-        "set" : ["AppId"],
-        "response" : "detailsurl"
+        "set" : ["appId"],
+        "response" : "uri"
       },
       "none": {
         "set" : ["AppName"],
-        "response" : "detailsurl"
+        "response" : "uri"
       },
        "fintent": {
         "set" : ["fiori intent"],
-        "response" : "detailsurl"
+        "response" : "uri"
       },
       "soAction": {
         "set" : ["SemanticObject", "SemanticAction"],
-        "response" : "detailsurl"
+        "response" : "uri"
       }
     }
   },
   "synonyms" : {
     "tool" : ["BOM Editor"],
-    "BOMEditor" : ["BOM Editor"],
+    "BOMEditor" : ["BOM Editor", "Fiori Application Library"],
     "BSPApplicationURL" : ["BSP Path", "BSP Url", "Resource Path"],
     "PrimaryODataServiceName" : ["ODataService", "Primary OData Service", "OData Service Name", "OData Service"],
     "BSPName" : ["BSP", "BSP Name", "BSP repository"],

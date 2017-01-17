@@ -2,13 +2,15 @@
   "domain": "wiki",
   "category": [
     "wiki",
-    "tool"
+    "tool",
+    "wikipage"
   ],
   "wordindex": [
     "wiki"
   ],
   "hidden": [
-    "_url"
+    "_url",
+    "wikipage"
   ],
   "tool": {
     "name": "wiki",

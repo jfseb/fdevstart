@@ -16,14 +16,6 @@
     "_urlpattern"
   ],
   "tool": {
-    "name": "NoTool",
-    "requires": {
-      "impossible": { }
-    },
-    "optional": {
-    },
-    "sets" : {
-    }
   },
   "synonyms" : {
     "element name" : ["name"],

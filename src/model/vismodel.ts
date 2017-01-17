@@ -158,6 +158,9 @@ function replaceBr(string : string ) : string {
    return string;
 }
 
+
+
+
 /**
  * generate a textual representation of a domain
  */
@@ -165,6 +168,7 @@ export function tabDomain(domain : string, m : IMatch.IModels) {
   // draw a model domains
 
   var cats = Model.getCategoriesForDomain(m,domain);
+  cats = Model.sortCategoriesByImportance( m.full.domain[domain].categories || {}, cats);
   //console.log(cats.join("\n"));
   var catdesc = Describe.getCategoryStatsInDomain(cats[0],domain,m);
   var catResult = calcCategoryRecord(m, cats[0], domain);
@@ -217,6 +221,7 @@ block content
 
   var categoryResults = {};
   var otherdomains = [];
+  var categoryMap = m.full.domain[domain].categories || {};
   cats.forEach(function(cat) {
     var catdesc = Describe.getCategoryStatsInDomain(cat,domain,m);
     //console.log(JSON.stringify(catdesc));
@@ -255,9 +260,11 @@ block content
   });
 
   var othercats = cats.length - Object.keys(m.full.domain[domain].categories).length ;
+  var remainingCategories = _.difference(cats, Object.keys(m.full.domain[domain].categories));
   if ((othercats) > 0) {
     res += `
 \t\tp   and ${othercats} other categories
+\t\t| ${Util.listToCommaAnd(remainingCategories)}
        `
 
   }

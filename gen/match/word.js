@@ -16,9 +16,13 @@
 "use strict";
 exports.Category = {
     CAT_CATEGORY: "category",
+    CAT_DOMAIN: "domain",
     CAT_FILLER: "filler",
     CAT_TOOL: "tool",
     _aCatFillers: ["filler"],
+    isDomain: function (sCategory) {
+        return sCategory === exports.Category.CAT_DOMAIN;
+    },
     isCategory: function (sCategory) {
         return sCategory === exports.Category.CAT_CATEGORY;
     },
@@ -32,6 +36,9 @@ exports.Word = {
     },
     isCategory: function (word) {
         return exports.Category.isCategory(word.category);
+    },
+    isDomain: function (word) {
+        return exports.Category.isDomain(word.category);
     }
 };
 

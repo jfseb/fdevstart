@@ -36,14 +36,6 @@
   "hidden": [
   ],
   "tool": {
-    "name": "NoToolCosmos",
-    "requires": {
-      "impossible": { }
-    },
-    "optional": {
-    },
-    "sets" : {
-    }
   },
   "synonyms" : {
   }

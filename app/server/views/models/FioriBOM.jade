@@ -56,6 +56,54 @@ block content
 											| "/AIF/CUST/S6OP", "/AIF/EDCHANGES/S6OP", "/AIF/IFB/S6OP" ...
       
 			tr
+					td.cat_count appId
+					td 12779 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td the Fiori appId, note that multiple records exists, as the same ID may change over time with verions
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "/AIF/CUST", "/AIF/EDCHANGES", "/AIF/IFB", "/AIF/IFMON", "/AIF/IFTEST" ...
+      
+			tr
+					td.cat_count fiori intent
+					td 10370 distinct values in 81.1% of records
+					td
+						table
+							tr.cat_synonyms
+								td fiori intents, intents and intent
+							tr.cat_description
+								td A combination of "#" <SemanticObject> - <Semanticaction> which appears in the URL of the Fiori Launchpad when addressing the application
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "#*-AnalyzeKPIDetials", "#*-analyzeKPIDetails", "#*-analyzeSBKPIDetails" ...
+      
+			tr
+					td.cat_count AppName
+					td 12778 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Human legible Application name
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "ABC Analysis for Cycle Counting"
+											br
+											| (2): "AIF Configuration"
+											br
+											| (3): "ALE Master Data Distribution Routing"
+											br
+											| ...
+      
+			tr
 					td.cat_count ApplicationComponent
 					td 12779 distinct values in 100.0% of records
 					td
@@ -68,20 +116,6 @@ block content
 								td Possible values are ...
 											br
 											| "AC-INT", "AP-MD-BP", "AP-MD-BP-UI", "AP-PPE", "BC-ABA-SC", "BC-BMT-OM" ...
-      
-			tr
-					td.cat_count ApplicationType
-					td 12779 distinct values in 100.0% of records
-					td
-						table
-							tr.cat_synonyms
-								td &nbsp;
-							tr.cat_description
-								td Whether the application is classical or not
-							tr.cat_samplevalues
-								td Possible values are ...
-											br
-											| "Analytical", "Analytical, Design Studio", "Analytical, FPM/WebDynpro" ...
       
 			tr
 					td.cat_count ArtifactId
@@ -98,26 +132,6 @@ block content
 											| "?", "CreateIncident", "MyIncidents", "MySAPNotes", "NA", "SystemMonitoring" ...
       
 			tr
-					td.cat_count BSPApplicationURL
-					td 5623 distinct values in 44.0% of records
-					td
-						table
-							tr.cat_synonyms
-								td BSP Path, BSP Url and Resource Path
-							tr.cat_description
-								td url of the BSP application in an ABAP system , see BSP name for the technical storage /sab/bc/
-							tr.cat_samplevalues
-								td Possible values are ...
-											br
-											| (1): "#DetectionMethod-managePredictiveRule"
-											br
-											| (2): "/sap/bc/bsp/sap/MM_SUPPIV_REFS1"
-											br
-											| (3): "/sap/bc/bsp/sap/cpm_comm_mons1"
-											br
-											| ...
-      
-			tr
 					td.cat_count BSPName
 					td 5148 distinct values in 40.3% of records
 					td
@@ -130,6 +144,26 @@ block content
 								td Possible values are ...
 											br
 											| "/DDF/DDEL_MON", "/DDF/DDEL_PLAN", "/DDF/DSIM_EM", "/DDF/MRG_PUBGRP" ...
+      
+			tr
+					td.cat_count BSPApplicationURL
+					td 5622 distinct values in 44.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td BSP Path, BSP Url and Resource Path
+							tr.cat_description
+								td url of the BSP application in an ABAP system, see BSP name for the technical storage  /sab/bc/ui5_ui5/.. 
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "#DetectionMethod-managePredictiveRule"
+											br
+											| (2): "/sap/bc/bsp/sap/MM_SUPPIV_REFS1"
+											br
+											| (3): "/sap/bc/bsp/sap/cpm_comm_mons1"
+											br
+											| ...
       
 			tr
 					td.cat_count BusinessCatalog
@@ -152,6 +186,20 @@ block content
 											| ...
       
 			tr
+					td.cat_count TechnicalCatalog
+					td 12556 distinct values in 98.3% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Technical catalog, basic definition of "TargetMapping" and "Tile" for fiori (UI5) Applications
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "    SAP_SRM_TC_T  ", "    SAP_SRM_TC_T_X1  ", " SAP_IS_PS_TC_T" ...
+      
+			tr
 					td.cat_count PrimaryODataServiceName
 					td 4603 distinct values in 36.0% of records
 					td
@@ -166,6 +214,20 @@ block content
 											| "/AMR/OD_ALLOCATIONPLAN", "/AMR/OD_COMMON", "/AMR/OD_MARKETUNIT" ...
       
 			tr
+					td.cat_count ApplicationType
+					td 12779 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Whether the application is classical or not
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "Analytical", "Analytical, Design Studio", "Analytical, FPM/WebDynpro" ...
+      
+			tr
 					td.cat_count RoleName
 					td 12602 distinct values in 98.6% of records
 					td
@@ -178,20 +240,6 @@ block content
 								td Possible values are ...
 											br
 											| "Academic Advisor", "Access Control Administrator", "Accounts Payable Accountant" ...
-      
-			tr
-					td.cat_count TechnicalCatalog
-					td 12556 distinct values in 98.3% of records
-					td
-						table
-							tr.cat_synonyms
-								td &nbsp;
-							tr.cat_description
-								td Technical catalog, basic definition of "TargetMapping" and "Tile" for fiori (UI5) Applications
-							tr.cat_samplevalues
-								td Possible values are ...
-											br
-											| "    SAP_SRM_TC_T  ", "    SAP_SRM_TC_T_X1  ", " SAP_IS_PS_TC_T" ...
       
 			tr
 					td.cat_count TransactionCodes
@@ -213,21 +261,8 @@ block content
 											br
 											| ...
       
-			tr
-					td.cat_count fiori intent
-					td 10370 distinct values in 81.1% of records
-					td
-						table
-							tr.cat_synonyms
-								td fiori intents, intents and intent
-							tr.cat_description
-								td A combination of "#" <SemanticObject> - <Semanticaction> which appears in the URL of the Fiori Launchpad when addressing the application
-							tr.cat_samplevalues
-								td Possible values are ...
-											br
-											| "#*-AnalyzeKPIDetials", "#*-analyzeKPIDetails", "#*-analyzeSBKPIDetails" ...
-      
-		p   and 19 other categories
+		p   and 17 other categories
+		| AppDocumentationLinkKW, BSPPackage, BusinessGroupDescription, BusinessGroupName, BusinessRoleName, detailsurl, ExternalReleaseName, FrontendSoftwareComponent, isPublished, LPDCustInstance, PrimaryODataPFCGRole, releaseId, releaseName, SemanticAction, SemanticObject, uri and URLParameters
        
 		h3 Version
 			a.small(href="/whatsnew")

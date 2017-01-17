@@ -74,9 +74,11 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
     oMdlData.forEach(function (oEntry) {
+        if (!oEntry.tool) {
+            oEntry._domain = oMdl.domain;
+        }
         if (!oEntry.tool && oMdl.tool.name) {
             oEntry.tool = oMdl.tool.name;
-            oEntry._domain = oMdl.domain;
         }
         oModel.records.push(oEntry);
         oMdl.category.forEach(function (cat) {
@@ -180,14 +182,40 @@ function loadModel(modelPath, sModelName, oModel) {
         word: oMdl.domain,
         _ranking: 0.95
     }, oModel.seenRules);
-    // extract tools an add to tools:
-    oModel.tools.filter(function (oEntry) {
-        if (oEntry.name === (oMdl.tool && oMdl.tool.name)) {
-            console.log("Tool " + oMdl.tool.name + " already present when loading " + sModelName);
-            //throw new Error('Domain already loaded?');
+    // check the tool
+    if (oMdl.tool && oMdl.tool.requires) {
+        var requires = Object.keys(oMdl.tool.requires || {});
+        var diff = _.difference(requires, oMdl.category);
+        if (diff.length > 0) {
+            console.log((" " + oMdl.domain + " : Unkown category in requires of tool: \"") + diff.join('"') + '"');
             process.exit(-1);
         }
-    });
+        var optional = Object.keys(oMdl.tool.optional);
+        diff = _.difference(optional, oMdl.category);
+        if (diff.length > 0) {
+            console.log((" " + oMdl.domain + " : Unkown category optional of tool: \"") + diff.join('"') + '"');
+            process.exit(-1);
+        }
+        Object.keys(oMdl.tool.sets || {}).forEach(function (setID) {
+            var diff = _.difference(oMdl.tool.sets[setID].set, oMdl.category);
+            if (diff.length > 0) {
+                console.log((" " + oMdl.domain + " : Unkown category in setId " + setID + " of tool: \"") + diff.join('"') + '"');
+                process.exit(-1);
+            }
+        });
+        // extract tools an add to tools:
+        oModel.tools.filter(function (oEntry) {
+            if (oEntry.name === (oMdl.tool && oMdl.tool.name)) {
+                console.log("Tool " + oMdl.tool.name + " already present when loading " + sModelName);
+                //throw new Error('Domain already loaded?');
+                process.exit(-1);
+            }
+        });
+    }
+    else {
+        oMdl.toolhidden = true;
+        oMdl.tool.requires = { "impossible": {} };
+    }
     // add the tool name as rule unless hidden
     if (!oMdl.toolhidden && oMdl.tool && oMdl.tool.name) {
         insertRuleIfNotPresent(oModel.mRules, {
@@ -347,6 +375,35 @@ function loadModels(modelPath) {
     return oModel;
 }
 exports.loadModels = loadModels;
+function sortCategoriesByImportance(map, cats) {
+    var res = cats.slice(0);
+    res.sort(rankCategoryByImportance.bind(undefined, map));
+    return res;
+}
+exports.sortCategoriesByImportance = sortCategoriesByImportance;
+function rankCategoryByImportance(map, cata, catb) {
+    var catADesc = map[cata];
+    var catBDesc = map[catb];
+    if (cata === catb) {
+        return 0;
+    }
+    // if a is before b, return -1
+    if (catADesc && !catBDesc) {
+        return -1;
+    }
+    if (!catADesc && catBDesc) {
+        return +1;
+    }
+    var prioA = (catADesc && catADesc.importance) || 99;
+    var prioB = (catBDesc && catBDesc.importance) || 99;
+    // lower prio goes to front
+    var r = prioA - prioB;
+    if (r) {
+        return r;
+    }
+    return cata.localeCompare(catb);
+}
+exports.rankCategoryByImportance = rankCategoryByImportance;
 var MetaF = Meta.getMetaFactory();
 function getOperator(mdl, operator) {
     return mdl.operators[operator];

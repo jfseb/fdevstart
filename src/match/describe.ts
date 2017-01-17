@@ -212,10 +212,17 @@ export function describeCategoryInDomain(category : string, filterdomain : strin
 */
   var stats = getCategoryStatsInDomain(category,filterdomain,theModel);
 
-  return 'is a category in domain "' + filterdomain + '"\n'
+  var res = 'is a category in domain "' + filterdomain + '"\n'
   + `It is present in ${stats.presentRecords} (${stats.percPresent}%) of records in this domain,\n` +
    `having ${stats.distinct + ''}${stats.delta} distinct values.\n`
   + stats.sampleValues;
+
+  var desc = theModel.full.domain[filterdomain].categories[category] || {} as IMatch.ICategoryDesc;
+  var description = desc.description || "";
+  if (description) {
+    res += `\nDescription: ${description}`;
+  }
+  return res;
 }
 
 export function findRecordsWithFact(matchedString: string, category : string, records : any, domains : { [key : string] : number}) : any[] {
@@ -239,15 +246,44 @@ function sortedKeys<T>(map : {[key : string] : T}) : string[] {
   return r;
 }
 
+export function describeDomain(fact : string, domain: string, theModel: IMatch.IModels) : string {
+  var count = theModel.records.reduce(function(prev, record) {
+    return prev + ((record._domain === domain) ? 1 : 0);
+  },0);
+  var catcount = Model.getCategoriesForDomain(theModel, domain).length;
+  var res = sloppyOrExact(domain, fact, theModel) + `is a domain with ${catcount} categories and ${count} records\n`;
+  var desc = theModel.full.domain[domain].description || "";
+  if(desc) {
+    res += `Description:` + desc + `\n`;
+  }
+  return res;
+}
+
 export function describeFactInDomain(fact : string, filterdomain : string, theModel: IMatch.IModels) : string {
   var sentences = WhatIs.analyzeContextString(fact,  theModel.rules);
   var lengthOneSentences = sentences.filter(oSentence => oSentence.length === 1);
+  var res = '';
   // remove categories and domains
   var onlyFacts = lengthOneSentences.filter(oSentence =>{
     debuglog(JSON.stringify(oSentence[0]));
-    return !Word.Word.isFiller(oSentence[0]) && !Word.Word.isCategory(oSentence[0])
+    return !Word.Word.isDomain(oSentence[0]) &&
+           !Word.Word.isFiller(oSentence[0]) && !Word.Word.isCategory(oSentence[0])
   }
   );
+  var onlyDomains = lengthOneSentences.filter(oSentence =>{
+    return Word.Word.isDomain(oSentence[0]);
+  });
+  if(onlyDomains && onlyDomains.length > 0) {
+    debuglog(JSON.stringify(onlyDomains));
+    onlyDomains.forEach(function(sentence) {
+      var domain = sentence[0].matchedString;
+      if( !filterdomain || domain === filterdomain) {
+        debuglog("here match " + JSON.stringify(sentence));
+        res += describeDomain(fact, sentence[0].matchedString, theModel);
+      }
+    })
+  }
+
   debuglog("only facts: " + JSON.stringify(onlyFacts));
   var recordMap = {};
   var domainsMap = {} as {[key: string] : number};
@@ -300,24 +336,27 @@ export function describeFactInDomain(fact : string, filterdomain : string, theMo
   debuglog(JSON.stringify(domainMatchCatCount,undefined,2));
   debuglog(JSON.stringify(domainRecordCount,undefined,2));
   var domains = sortedKeys(domainMatchCatCount);
-  var res = '"' + fact + '" has a meaning in ';
+  var resNext =  '"' + fact + '" has a meaning in ';
   var single = false;
   if(Object.keys(domainMatchCatCount).length > 1) {
-    res += '' + domains.length +
+    resNext += '' + domains.length +
               ' domains: ' + Utils.listToQuotedCommaAnd(domains) + "";
   } else if(domains.length === 1) {
     if(!filterdomain) {
-      res += `one `;
+      resNext += `one `;
     }
-    res += `domain "${domains[0]}":`;
+    resNext += `domain "${domains[0]}":`;
     single = true;
   } else {
+    if(res) {
+      return res;
+    }
     if(filterdomain) {
       return `"${fact}" is no known fact in domain "${filterdomain}".\n`;
     }
     return `"${fact}" is no known fact.\n`;
   }
-  res += "\n"; // ...\n";
+  res += resNext + "\n"; // ...\n";
   domains.forEach(function(domain) {
     var md = domainMatchCatCount[domain];
     Object.keys(md).forEach(matchedstring => {

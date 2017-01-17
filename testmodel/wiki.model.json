@@ -2,7 +2,8 @@
   "domain": "wiki",
   "category": [
     "wiki",
-    "tool"
+    "tool",
+    "_url"
   ],
   "wordindex": [
     "wiki"
@@ -16,7 +17,7 @@
       "wiki": {}
     },
     "optional": {
-      "wikipage": {}
+      "_url": {}
     }
   }
 }

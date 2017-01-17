@@ -22,6 +22,19 @@ exports.testWordisCategory= function (test) {
   test.deepEqual(Word.isCategory({}), false, 'empty correct');
   test.done();
 };
+
+//const Category = OpsWord.Category;
+
+exports.testWordisDomain= function (test) {
+  // prepare
+  // act
+  // check
+  test.deepEqual(Word.isDomain({ category : 'category'}), false, ' first correct');
+  test.deepEqual(Word.isDomain({ category : 'domain'}), true, 'wiki is ');
+  test.deepEqual(Word.isDomain({}), false, 'empty correct');
+  test.done();
+};
+
 exports.testWordisFiller = function (test) {
   // prepare
   // act

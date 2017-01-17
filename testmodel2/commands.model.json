@@ -9,18 +9,6 @@
     "_urlpattern"
   ],
   "tool": {
-    "name": "NoTool2",
-    "requires": {
-      "impossible": {}
-    },
-    "optional": {
-    },
-    "sets" : {
-      "none": {
-        "set" : ["impossible"],
-        "response" : "_urlpattern"
-      }
-    }
   },
   "synonyms" : {
     "example commands" : ["commands", "sample commands"]

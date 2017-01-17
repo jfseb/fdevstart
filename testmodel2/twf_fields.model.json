@@ -1,9 +1,16 @@
 {
-  "domain": "TWF",
+  "domain": "TWF fields",
+  "description" : "The world factbook fields",
   "category": [
-    "fieldId",
-    "fieldName",
-    "field description"
+    { "name" : "fieldId",
+      "description" : "Technical key of field"
+    },
+    { "name" : "fieldName",
+      "description" : "name of field"
+    },
+    { "name" : "field description",
+      "description" : "verbose description of field"
+    }
   ],
   "wordindex": [
     "fieldName"
@@ -19,14 +26,11 @@
     "requires": {
       "fieldName": {}
     },
-    "optional": {
-      "country": {}
-    },
+    "optional" : {},
     "sets": {
       "country": {
         "set": [
-          "fieldName",
-          "country"
+          "fieldId"
         ],
         "response": "url"
       },

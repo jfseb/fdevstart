@@ -1,7 +1,11 @@
 {
   "domain": "TWF_countries",
+  "description" : "a description of numerous facts about countries, courtesy of \"The World Factbook\", CIA",
   "category": [
-  "country",
+    {
+    "name": "country",
+    "description" : "name of a country"
+    },
   "fieldId",
   "fieldName",
   "TRANSPORTATION - NOTE",
@@ -395,10 +399,10 @@
   "tool": {
     "name": "ShowTWF_country",
     "requires": {
-      "fieldName": {}
+      "country": {}
     },
     "optional": {
-      "country": {}
+      "fieldName": {}
     },
     "sets": {
       "country": {

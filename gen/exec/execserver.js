@@ -51,7 +51,15 @@ function makeGenericText(match, setId, record) {
 exports.makeGenericText = makeGenericText;
 function execTool(match, records, bExplain) {
     //
+    debuglog("records for match " + JSON.stringify(match));
     var matchSetRecord = Toolmatch.findFirstSetRecord(match, records);
+    if (!matchSetRecord) {
+        return {
+            text: "cannot start",
+            action: {}
+        };
+    }
+    ;
     var set = match.tool.sets[matchSetRecord.setId];
     var pattern = matchSetRecord.record[set.response];
     var context = Toolmatch.makeMatchSet(match, set);
