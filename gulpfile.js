@@ -29,7 +29,7 @@ var testDir = 'test';
 
 gulp.task('watch', function () {
   gulp.watch([srcDir + '/**/*.js', testDir + '/**/*.js', srcDir + '/**/*.ts', 'gulpfile.js'],
-    ['tsc', 'babel', 'test', 'standard']);
+    ['tsc', 'babel', 'standard']);
 });
 
 const babel = require('gulp-babel');

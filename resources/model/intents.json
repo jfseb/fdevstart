@@ -13,6 +13,19 @@
     "Learn <A1>",
     "understand <A1>"
   ],
+  "Describe": [
+    [
+      "^describe ([^,]+) ((in)|(for)|(given)|(of)) domain ([\"A-Za-z0-9 ]+)$",
+      {
+        "A1": 1,
+        "D": 7
+      }
+    ],
+    "describe <A1> (in|for|given|of) domain <D>",
+    "describe <A1>",
+    "tell me about <A1> (in|for|given|of) domain <D>",
+    "tell me about <A1>"
+  ],
   "WhatIs": [
     "what (is|are) the <category>? (using|for|in|of) <A1>",
     "who is the <category>? of <A1>",
@@ -33,6 +46,15 @@
     "tell me the <category> of <A1>"
   ],
   "ListAllBinOp": [
+    [
+      "^List all (.*) ((starting with)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*) ((in)|(for)|(of)) domain (.*)$",
+      {
+        "category": 1,
+        "operator" : 2,
+        "A2": 10,
+        "domain" : 15
+      }
+    ],
     [
       "^List all (.*) ((starting with)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*)$",
       {

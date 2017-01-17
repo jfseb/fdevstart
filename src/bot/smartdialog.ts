@@ -25,7 +25,10 @@ import * as BreakDown from '../match/breakdown';
 
 import * as WhatIs from '../match/whatis';
 import * as ListAll from '../match/listall';
+import * as Describe from '../match/describe';
 import * as Utils from '../utils/utils';
+
+import * as _ from 'lodash';
 
 import * as DialogLogger from '../utils/dialoglogger';
 
@@ -42,24 +45,24 @@ o.defaults.ssl = true;
 var dialogLogger = DialogLogger.logger("smartbot", dburl, pg);
 
 type stringOrMessage = string | builder.Message;
-function send<T extends stringOrMessage>(o : T) : T { return o; };
-function dialoglog(intent: string, session : builder.Session, response : stringOrMessage) {
-  var sResponse : string;
-  var sAction : string;
-  if( typeof response === "string") {
+function send<T extends stringOrMessage>(o: T): T { return o; };
+function dialoglog(intent: string, session: builder.Session, response: stringOrMessage) {
+  var sResponse: string;
+  var sAction: string;
+  if (typeof response === "string") {
     sAction = "";
     sResponse = response;
   } else {
-    var aMessage : builder.Message = response;
-    var iMessage : builder.IMessage = aMessage.toMessage();
+    var aMessage: builder.Message = response;
+    var iMessage: builder.IMessage = aMessage.toMessage();
     sResponse = iMessage.text;
-    sAction = (iMessage.entities && iMessage.entities[0]) ?  (JSON.stringify(iMessage.entities && iMessage.entities[0])) : "";
+    sAction = (iMessage.entities && iMessage.entities[0]) ? (JSON.stringify(iMessage.entities && iMessage.entities[0])) : "";
   }
   dialogLogger({
     intent: intent,
     session: session,
-    response : sResponse,
-    action : sAction
+    response: sResponse,
+    action: sAction
   });
   session.send(response);
 }
@@ -132,9 +135,9 @@ const theDefaultModel = Model.loadModels();
 
 var models = {};
 
-function loadModel(modelPath? : string) : IMatch.IModels {
+function loadModel(modelPath?: string): IMatch.IModels {
   modelPath = modelPath || "";
-  if(!models[modelPath]) {
+  if (!models[modelPath]) {
     models[modelPath] = Model.loadModels(modelPath);
   }
   return models[modelPath];
@@ -149,21 +152,21 @@ if (newFlow) {
   //const mRules = InputFilterRules.getMRulesSample();
 }
 
-function isAnonymous(userid : string) : boolean {
+function isAnonymous(userid: string): boolean {
   return userid.indexOf("ano:") === 0;
 }
 
-function restrictLoggedOn(session : builder.Session, arr : any[]) : any[] {
+function restrictLoggedOn(session: builder.Session, arr: any[]): any[] {
   var userid = session.message.address
     && session.message.address.user
     && session.message.address.user.id || "";
-  if(process.env.ABOT_EMAIL_USER && isAnonymous(userid))  {
-    if(arr.length  < 6) {
+  if (process.env.ABOT_EMAIL_USER && isAnonymous(userid)) {
+    if (arr.length < 6) {
       return arr;
     }
     var len = arr.length;
     var res = arr.slice(0, Math.min(Math.max(Math.floor(arr.length / 3), 7), arr.length));
-    if(typeof arr[0] === "string") {
+    if (typeof arr[0] === "string") {
       var delta = len - res.length;
       res.push("... and " + delta + " more entries for registered users");
     }
@@ -263,34 +266,34 @@ export class SimpleRecognizer implements builder.IIntentRecognizer {
 }
 */
 
-const aTrainReplies = [ "Thank you for sharing this suggestion with us",
-"Thank for for this valuable information.",
-"Thank for for this interesting fact!",
-"Thats a plethoria of information.",
-"That's a nugget of information.",
-"Lovely, I may consider you input.",
-"Well done, anything more to let me know?",
-"I do appreciate your teaching and my learning experience, or was it the other way round?",
-"Your helpful input has been stored in some dusty corner of the World wide web!",
-"Thank you for my learning experience!",
-"I have incorporated your valuable suggestion in the wisdom of the internet"
+const aTrainReplies = ["Thank you for sharing this suggestion with us",
+  "Thank for for this valuable information.",
+  "Thank for for this interesting fact!",
+  "Thats a plethoria of information.",
+  "That's a nugget of information.",
+  "Lovely, I may consider you input.",
+  "Well done, anything more to let me know?",
+  "I do appreciate your teaching and my learning experience, or was it the other way round?",
+  "Your helpful input has been stored in some dusty corner of the World wide web!",
+  "Thank you for my learning experience!",
+  "I have incorporated your valuable suggestion in the wisdom of the internet"
 ];
 
 var aTrainDialog = aTrainReplies;
 
 var aTrainExitHint = [
-"\ntype \"done\" when you are done training me.",
-"",
-"",
-"",
-"\nremember, you are stuck here instructing me, type \"done\" to return.",
-""];
+  "\ntype \"done\" when you are done training me.",
+  "",
+  "",
+  "",
+  "\nremember, you are stuck here instructing me, type \"done\" to return.",
+  ""];
 
 const aEnterTrain = ["So you think this is wrong? You can offer your advise here.\n Type \"done\" if you are done with instructing me",
-"Feel free to offer me your better solution here.\n",
-"Some say \"The secret to happiness is to lower your expectations to the point they are already met.\", \nt if you could help me to becomde better, instruct me.",
-"Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
-"Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
+  "Feel free to offer me your better solution here.\n",
+  "Some say \"The secret to happiness is to lower your expectations to the point they are already met.\", \nt if you could help me to becomde better, instruct me.",
+  "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
+  "Feel free to offer me your better solution here.\n Type \"done\" if you are done with instructing me",
 ];
 
 
@@ -323,7 +326,17 @@ export const aResponsesOnTooLong = [
   'Our conversation must be highly assymmetric: my answers may be verbose and exhaustive and fuzzy, questions and input must be brief. Try to reformulate it',
 ];
 
-function getRandomResult(arr : string[]) : string {
+
+export const metawordsDescriptions = {
+        "category": "an attribute of a record in a model, example: a Planet has a \"name\" attribute",
+        "domain": "a group of facts which are typically unrelated",
+        "key": "an attribute value (of a category) which  is unique for the record",
+        "tool": "is potentialy command to execute",
+        "record": "a specific set of \"fact\"s of a domain, a \"record\" has a set of attributes values (\"fact\"s) of the categories, often a record has a \"key\"",
+        "fact": "a specific category value of a record in a domain, may be a \"key\" value",
+      };
+
+function getRandomResult(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length) % arr.length];
 }
 
@@ -497,7 +510,7 @@ var gwords = {};
  * HTMLConnector
  * or connector = new builder.ConsoleConnector().listen()
  */
-function makeBot(connector, modelPath? : string) {
+function makeBot(connector, modelPath?: string) {
 
   var theModel = loadModel(modelPath);
   bot = new builder.UniversalBot(connector);
@@ -606,7 +619,7 @@ function makeBot(connector, modelPath? : string) {
         var prompt = Analyze.getPrompt(result[0]);
         session.dialogData.result = result[0];
         session.dialogData.prompt = prompt;
-        dialoglog("ShowMe", session,send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+        dialoglog("ShowMe", session, send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
           session.dialogData.result
         )));
         builder.Prompts.text(session, prompt.text);
@@ -647,14 +660,14 @@ function makeBot(connector, modelPath? : string) {
           .text(exec.text)
           .addEntity(exec.action);
         // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
-        dialoglog("ShowMe",session,send(reply));
+        dialoglog("ShowMe", session, send(reply));
 
       } else {
         if (session.dialogData.result) {
           dialoglog("ShowMe",
-          session,send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
-            session.dialogData.result
-          )));
+            session, send("Not enough information supplied: " + Match.ToolMatch.dumpNice(
+              session.dialogData.result
+            )));
         } else {
           dialoglog("ShowMe", session, send("I did not get what you want"));
         }
@@ -678,10 +691,10 @@ function makeBot(connector, modelPath? : string) {
         cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
         debuglog("here cats" + cats.join(","));
       } catch (e) {
-        if(e) {
+        if (e) {
           debuglog("here exception" + e);
-          dialoglog("WhatIs",session,send('I don\'t know anything about "' + category +
-          (e ?  '(' + e.toString() + ')'  : "" )));
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + category +
+            (e ? '(' + e.toString() + ')' : "")));
           // next();
           return;
         }
@@ -697,7 +710,7 @@ function makeBot(connector, modelPath? : string) {
           return;
         }
       }
-      if(cats.length === 1) {
+      if (cats.length === 1) {
         debuglog('category identified:' + cat);
         const result = WhatIs.resolveCategory(cat, a1.entity,
           theModel.rules, theModel.records);
@@ -710,7 +723,7 @@ function makeBot(connector, modelPath? : string) {
           return;
         }
         if (!result || result.length === 0) {
-          dialoglog("WhatIs",session,send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"'));
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"'));
           // next();
           return;
         } else {
@@ -718,7 +731,7 @@ function makeBot(connector, modelPath? : string) {
           debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
           debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
           // TODO cleansed sentence
-          dialoglog("WhatIs",session,send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n")); //  + JSON.stringify(result[0]));
+          dialoglog("WhatIs", session, send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n")); //  + JSON.stringify(result[0]));
         }
       } // single category
       else {
@@ -734,7 +747,7 @@ function makeBot(connector, modelPath? : string) {
           return;
         }
         if (!resultArr || resultArr.length === 0) {
-          dialoglog("WhatIs",session,send('I don\'t know anything about "' + category + "\" (" + Utils.listToQuotedCommaAnd(cats)+ ')\" in relation to "' + a1.entity + '"'));
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + category + "\" (" + Utils.listToQuotedCommaAnd(cats) + ')\" in relation to "' + a1.entity + '"'));
           // next();
           return;
         } else {
@@ -742,7 +755,7 @@ function makeBot(connector, modelPath? : string) {
           debuglog('best result : ' + JSON.stringify(resultArr[0] || {}, undefined, 2));
           //debuglog('top : ' + WhatIs.dumpWeightsTop(resultArr, { top: 3 }));
           // TODO cleansed sentence
-          dialoglog("WhatIs",session,send('The ' + Utils.listToQuotedCommaAnd(cats) + ' of ' + a1.entity + ' are ' + Utils.listToQuotedCommaAnd(resultArr[0].result) + '\n')); //  + JSON.stringify(result[0]));
+          dialoglog("WhatIs", session, send('The ' + Utils.listToQuotedCommaAnd(cats) + ' of ' + a1.entity + ' are ' + Utils.listToQuotedCommaAnd(resultArr[0].result) + '\n')); //  + JSON.stringify(result[0]));
         }
       } //endif multiple categories
     }
@@ -763,18 +776,225 @@ function makeBot(connector, modelPath? : string) {
       if (category === "categories") {
         // do we have a filter ?
         var domain = undefined;
-        if(a1 && a1.entity) {
+        if (a1 && a1.entity) {
           domain = ListAll.inferDomain(theModel, a1.entity);
         }
-        if(!domain) {
+        if (!domain) {
           var res = restrictLoggedOn(session, theModel.category).join(";\n");
-          if(a1 && a1.entity) {
-            dialoglog("ListAll",session,send("I did not infer a domain restriction from \"" + a1.entity + "\", all my categories are ...\n" + res));
+          if (a1 && a1.entity) {
+            dialoglog("ListAll", session, send("I did not infer a domain restriction from \"" + a1.entity + "\", all my categories are ...\n" + res));
           } else {
-            dialoglog("ListAll",session,send("my categories are ...\n" + res));
+            dialoglog("ListAll", session, send("my categories are ...\n" + res));
           }
           return;
         } else {
+          var aRes = Model.getCategoriesForDomain(theModel, domain);
+          var res = restrictLoggedOn(session, aRes).join(";\n");
+          dialoglog("ListAll", session, send("my categories in domain \"" + domain + "\" are ...\n" + res));
+          return;
+        }
+      }
+      if (category === "domains") {
+        var res = restrictLoggedOn(session, theModel.domains).join(";\n");
+        dialoglog("ListAll", session, send("my domains are ...\n" + res));
+        return;
+      }
+      if (category === "tools") {
+        var res = restrictLoggedOn(session, theModel.tools).map(function (oTool) {
+          return oTool.name;
+        }).join(";\n");
+        dialoglog("ListAll", session, send("my tools are ...\n" + res));
+        return;
+      }
+      var cats = [];
+      try {
+        cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
+        debuglog("here cats" + cats.join(","));
+      } catch (e) {
+        if (e) {
+          debuglog("here exception" + e);
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + category + '"(' + e.toString() + ')'));
+          // next();
+          return;
+        }
+      }
+      if (!cats || (cats.length === 0)) {
+        dialoglog("ListAll", session, send('I don\'t know anything about "' + category + '"'));
+        // next();
+        return;
+      }
+      var cat = "";
+      if (cats.length === 1) {
+        cat = cats[0];
+      }
+      if (cats.length === 1) {
+        debuglog('category identified:' + cat);
+        if (a1 && a1.entity) {
+          debuglog('got filter:' + a1.entity);
+          var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
+          var result1 = ListAll.listAllWithContext(cat, a1.entity,
+            theModel.rules, theModel.records, categorySet);
+          // TODO classifying the string twice is a terrible waste
+          if (!result1.length) {
+            debuglog('going for having');
+            var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+            result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules,
+              theModel.records, categorySetFull);
+          }
+          debuglog('listall result:' + JSON.stringify(result1));
+          var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
+          logQueryWhatIs(session, 'ListAll', result1);
+          if (joinresults.length) {
+            dialoglog("ListAll", session, send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+          } else {
+            dialoglog("ListAll", session, send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+          }
+          return;
+        } else {
+          // no entity, e.g. list all countries
+          //
+          var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+          var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
+          logQueryWhatIs(session, 'ListAll', result);
+          if (result.length) {
+            debuglog('listall result:' + JSON.stringify(result));
+            var joinresults = [];
+            debuglog("here is cat>" + cat);
+            if (cat !== "example question") {
+              joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
+            } else {
+              joinresults = ListAll.joinResults(result);
+            }
+            var response = "the " + category + " are ...\n" + joinresults.join(";\n");
+            dialoglog("ListAll", session, send(response));
+            return;
+          } else {
+            var response = "Found no data having \"" + cat + "\""
+            dialoglog("ListAll", session, send(response));
+            return;
+          }
+        }
+      } else {
+        // multiple categories
+        debuglog('categories identified:' + cats.join(","));
+        if (a1 && a1.entity) {
+          debuglog('got filter:' + a1.entity);
+          try {
+            var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+          } catch (e) {
+            debuglog("here exception" + e);
+            dialoglog("WhatIs", session, send('I cannot combine "' + category + '(' + e.toString() + ')'));
+            return;
+          }
+          var result1T = ListAll.listAllTupelWithContext(cats, a1.entity,
+            theModel.rules, theModel.records, categorySet);
+          // TODO classifying the string twice is a terrible waste
+          if (!result1T.length) {
+            debuglog('going for having');
+            var categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+            result1T = ListAll.listAllTupelHavingContext(cats, a1.entity, theModel.rules,
+              theModel.records, categorySetFull);
+          }
+          debuglog('listall result:' + JSON.stringify(result1T));
+          var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T));
+          logQueryWhatIsTupel(session, 'ListAll', result1T);
+          if (joinresults.length) {
+            dialoglog("ListAll", session, send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+          } else {
+            dialoglog("ListAll", session, send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+          }
+          return;
+        } else {
+          // no entity, e.g. list all countries
+          //
+          var categorySetFull = {} as { [key: string]: boolean };
+          try {
+            categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+          } catch (e) {
+            debuglog("here exception" + e);
+            dialoglog("WhatIs", session, send('I cannot combine "' + category + '(' + e.toString() + ')'));
+            // next();
+            return;
+          }
+          var resultT = ListAll.listAllTupelHavingContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
+          logQueryWhatIsTupel(session, 'ListAll', resultT);
+          if (resultT.length) {
+            debuglog('listall result:' + JSON.stringify(resultT));
+            var joinresults = [];
+            debuglog("here is cat>" + cats.join(", "));
+            if (cat !== "example question") {
+              joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(resultT));
+            } else {
+              joinresults = ListAll.joinResultsTupel(resultT);
+            }
+            var response = "the " + category + " are ...\n" + joinresults.join(";\n");
+            dialoglog("ListAll", session, send(response));
+            return;
+          } else {
+            var response = "Found no data having \"" + cat + "\""
+            dialoglog("ListAll", session, send(response));
+            return;
+          }
+        }
+      }
+    }
+  ]);
+
+  dialog.matches('Describe', [
+    function (session, args, next) {
+      var isCombinedIndex = {};
+      var oNewEntity;
+      // expecting entity A1
+      var message = session.message.text;
+      debuglog("Intent : Describe");
+      debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+      var factEntity = builder.EntityRecognizer.findEntity(args.entities, 'A1');
+      var factOrCat = factEntity && factEntity.entity;
+      var domainEntity = builder.EntityRecognizer.findEntity(args.entities, 'D');
+      var domainS = domainEntity && domainEntity.entity;
+      var filterDomain = undefined;
+      if (domainS) {
+        filterDomain = ListAll.inferDomain(theModel, domainS);
+        debuglog("got domain" + filterDomain);
+        if (!filterDomain) {
+          dialoglog("Describe", session, send("I did not infer a domain restriction from \"" + domainS + "\". Specify an existing domain. (List all domains) to get exact names.\n"));
+          return;
+        }
+      }
+
+      debuglog("factOrCat is" + factOrCat);
+      if (metawordsDescriptions[factOrCat.toLowerCase()]) {
+        // do we have a filter ?
+        var prefix = "";
+        if (filterDomain) {
+          prefix = '"in domain "' + filterDomain + '" make no sense when matching a metaword.\n';
+        }
+        debuglog("showing meta result");
+        dialoglog("Describe", session, send(prefix + '"' + factOrCat + '" is ' + metawordsDescriptions[factOrCat.toLowerCase()] + ""));
+        return;
+      }
+      var categories = [];
+      if (WhatIs.splitAtCommaAnd(factOrCat).length > 1) {
+        dialoglog("Describe", session, send("Whoa, i can only explain one thing at a time, not \"" + factOrCat + "\". Please ask one at a time."));
+        return;
+        // getDomainsForCategory
+      }
+      var category = WhatIs.analyzeCategory(factOrCat, theModel.rules, message);
+      var catResults = [];
+      if (category) {
+        //TODO
+        catResults = Describe.describeCategory(category,filterDomain, theModel,message);
+      }
+      var resFact = Describe.describeFactInDomain(factOrCat, filterDomain,theModel);
+      if(catResults) {
+      var prefixed = catResults.map(res =>
+        `${Describe.sloppyOrExact(factOrCat,category, theModel)}  ${res}` );
+      }
+      if(catResults.length) {
+        resFact = prefixed.join("\n"); + "\n" + resFact;
+      }
+      dialoglog("Describe", session, send(resFact));
+      /*
           var aRes = Model.getCategoriesForDomain(theModel, domain);
            var res = restrictLoggedOn(session, aRes).join(";\n");
           dialoglog("ListAll",session,send("my categories in domain \"" + domain + "\" are ...\n" + res));
@@ -793,6 +1013,9 @@ function makeBot(connector, modelPath? : string) {
         dialoglog("ListAll", session,send("my tools are ...\n" + res));
         return;
       }
+      */
+
+      /*
       var cats = [];
         try {
         cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
@@ -924,8 +1147,9 @@ function makeBot(connector, modelPath? : string) {
           }
         }
       }
+        */
     }
-]);
+  ]);
 
 
   dialog.matches('ListAllBinOp', [
@@ -938,73 +1162,98 @@ function makeBot(connector, modelPath? : string) {
       debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
       var categoryWord = categoryEntity.entity;
-      var opEntity = builder.EntityRecognizer.findEntity(args.entities,'operator');
-      var operatorWord = opEntity.entity;
+      var opEntity = builder.EntityRecognizer.findEntity(args.entities, 'operator');
+      var operatorWord = opEntity &&  opEntity.entity;
       // categorize as operator ?
-
+      var filterDomainEntity =  builder.EntityRecognizer.findEntity(args.entities, 'domain');
+      var filterDomainS = filterDomainEntity && filterDomainEntity.entity;
       var operator = WhatIs.analyzeOperator(operatorWord, theModel.rules, message);
       var category = WhatIs.analyzeCategory(categoryWord, theModel.rules, message);
       var operatorArgs = Model.getOperator(theModel, operator);
       var a2 = builder.EntityRecognizer.findEntity(args.entities, 'A2');
       if (!operator) {
-        var s = "Unknown operator " + operatorWord +", this is a model bug, check operators.json and intents.json";
-        dialoglog("ListAllBinOp",session,send("ouch, this was in internal error. Recovering from a weird operator \""
-        + operatorWord + "\"\n"));
+        var s = "Unknown operator " + operatorWord + ", this is a model bug, check operators.json and intents.json";
+        dialoglog("ListAllBinOp", session, send("ouch, this was in internal error. Recovering from a weird operator \""
+          + operatorWord + "\"\n"));
         throw new Error(s);
       }
+      var filterDomain = undefined;
+      if (filterDomainS) {
+        debuglog("found a domainString" + filterDomainS);
+        filterDomain = ListAll.inferDomain(theModel, filterDomainS);
+        debuglog("got domain" + filterDomain);
+        if (!filterDomain) {
+          dialoglog("Describe", session, send("I did not infer a domain restriction from \"" + filterDomainS + "\". Specify an existing domain. (List all domains) to get exact names.\n"));
+          return;
+        }
+      }
+
       var fragment = a2 && a2.entity;
       fragment = BreakDown.trimQuoted(BreakDown.trimQuotedSpaced(fragment));
       debuglog("fragment after trimming \"" + fragment + "\"");
       if (categoryWord === "categories") {
         // do we have a filter?
-        var aFilteredCategories = ListAll.filterStringListByOp(operatorArgs, fragment,  theModel.category);
+        var aFilteredCategories = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.category);
+        if(filterDomain) {
+          var catsForDomain = Model.getCategoriesForDomain(theModel,filterDomain);
+          aFilteredCategories = _.intersection(aFilteredCategories,catsForDomain);
+        }
         res = restrictLoggedOn(session, aFilteredCategories).join(";\n");
         if (res.length) {
-          dialoglog("ListAllBinOp",session,send("my categories " + operator + ' "' + fragment + '" are ...\n' + res));
+          if(filterDomain) {
+            dialoglog("ListAllBinOp", session, send(`my categories ${operator} "${fragment}" in domain "${filterDomain}" are ...\n` + res));
+          }else {
+            dialoglog("ListAllBinOp", session, send(`my categories ${operator} "${fragment}" are ...\n` + res));
+          }
         } else {
-          dialoglog("ListAllBinOp", session,send('I have no categories ' + operator + ' "' + fragment + '"'));
+          dialoglog("ListAllBinOp", session, send('I have no categories ' + operator + ' "' + fragment + '"'));
         }
-          return;
+        return;
       }
       else if (categoryWord === "domains") {
-        var aRes = ListAll.filterStringListByOp(operatorArgs, fragment,  theModel.domains);
+        var aRes = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.domains);
         res = restrictLoggedOn(session, aRes).join(";\n");
         if (res.length) {
-          dialoglog("ListAllBinOp",session,send("my domains " + operator + ' "' + fragment + '" are ...\n' + res));
+          dialoglog("ListAllBinOp", session, send("my domains " + operator + ' "' + fragment + '" are ...\n' + res));
         } else {
-          dialoglog("ListAllBinOp", session,send('I have no domains ' + operator + ' "' + fragment + '"'));
+          dialoglog("ListAllBinOp", session, send('I have no domains ' + operator + ' "' + fragment + '"'));
         }
         return;
       }
       else if (categoryWord === "tools") {
-        var aRes = ListAll.filterStringListByOp(operatorArgs, fragment,  theModel.tools.map(
-        function(oTool) { return oTool.name; }));
+        var aRes = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.tools.map(
+          function (oTool) { return oTool.name; }));
         var res = restrictLoggedOn(session, aRes).join(";\n");
-        if(res.length) {
-          dialoglog("ListAllBinOp", session,send("my tools " + operator + ' "' + fragment + '" are ...\n' + res));
+        if (res.length) {
+          dialoglog("ListAllBinOp", session, send("my tools " + operator + ' "' + fragment + '" are ...\n' + res));
         } else {
-          dialoglog("ListAllBinOp", session,send("I have no tools " + operator + ' "' + fragment + '"'));
+          dialoglog("ListAllBinOp", session, send("I have no tools " + operator + ' "' + fragment + '"'));
         }
         return;
       }
       else { // category is category
         var cat = WhatIs.analyzeCategory(categoryWord, theModel.rules, message);
         if (!cat) {
-          dialoglog("ListAllBinOp",session,send('I don\'t know anything about "' + categoryWord + '"'));
+          dialoglog("ListAllBinOp", session, send('I don\'t know anything about "' + categoryWord + '"'));
           // next();
           return;
         }
         debuglog('category identified:' + cat);
-        var aRes = ListAll.getCategoryOpFilterAsDistinctStrings(operatorArgs, fragment, category, theModel.records);
+        var aRes = ListAll.getCategoryOpFilterAsDistinctStrings(operatorArgs, fragment, category, theModel.records, filterDomain);
         var res = restrictLoggedOn(session, aRes).join(";\n");
         var infixExplain = ''
         if (!ListAll.likelyPluralDiff(category, categoryWord)) {
           infixExplain = '("' + category + '")';
         }
-        if(res.length) {
-          dialoglog("ListAllBinOp",session,send('my ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '" are ...\n' + res));
+        if (res.length) {
+          if (filterDomain) {
+            dialoglog("ListAllBinOp", session, send(`my ${categoryWord}${infixExplain} ${operator} "${fragment}" in domain "${filterDomain}" are ...\n` + res));
+
+          } else {
+            dialoglog("ListAllBinOp", session, send(`my ${categoryWord}${infixExplain} ${operator} "${fragment}" are ...\n` + res));
+          }
         } else {
-          dialoglog("ListAllBinOp", session,send('I have no ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '"'));
+          dialoglog("ListAllBinOp", session, send('I have no ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '"'));
         }
         return;
       }
@@ -1021,11 +1270,11 @@ function makeBot(connector, modelPath? : string) {
       debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
       if (message.toLowerCase().indexOf("kronos") >= 0 || message.toLowerCase().indexOf("klingon") >= 0) {
-        dialoglog("TrainMe",session,send(getRandomResult(aTrainNoKlingon)));
+        dialoglog("TrainMe", session, send(getRandomResult(aTrainNoKlingon)));
         return;
       }
       var res = getRandomResult(aTrainReplies);
-      dialoglog("TrainMe",session,send(res));
+      dialoglog("TrainMe", session, send(res));
     }
   ]);
 
@@ -1038,18 +1287,18 @@ function makeBot(connector, modelPath? : string) {
       debuglog("Intent : TooLong");
       debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
       var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
-      dialoglog("TooLong",session,send(getRandomResult(aResponsesOnTooLong)));
-     }
+      dialoglog("TooLong", session, send(getRandomResult(aResponsesOnTooLong)));
+    }
   ]);
 
 
   dialog.matches('Wrong', [
     function (session, args, next) {
-        dialogLogger( {
-          session: session,
-          intent : "Wrong",
-          response : '<begin updown>'
-        });
+      dialogLogger({
+        session: session,
+        intent: "Wrong",
+        response: '<begin updown>'
+      });
       session.beginDialog('/updown', session.userData.count);
     },
     function (session, results, next) {
@@ -1066,11 +1315,11 @@ function makeBot(connector, modelPath? : string) {
     function (session, args, next) {
       debuglog('exit :');
       debuglog('exit' + JSON.stringify(args.entities));
-        dialogLogger( {
-          session: session,
-          intent : "Exit",
-          response : 'you are in a logic loop'
-        });
+      dialogLogger({
+        session: session,
+        intent: "Exit",
+        response: 'you are in a logic loop'
+      });
       session.send("you are in a logic loop ");
     }
   ]);
@@ -1094,11 +1343,11 @@ function makeBot(connector, modelPath? : string) {
         timestamp: time ? time.getTime() : null
       };
       // Prompt for title
-        if (!alarm.title) {
-          dialogLogger( {
+      if (!alarm.title) {
+        dialogLogger({
           session: session,
-          intent : "train",
-          response : 'What fact would you like to train?'
+          intent: "train",
+          response: 'What fact would you like to train?'
         });
         builder.Prompts.text(session, 'What fact would you like to train?');
       } else {
@@ -1149,7 +1398,7 @@ function makeBot(connector, modelPath? : string) {
     logQuery(session, "onDefault");
     var eliza = getElizaBot(getConversationId(session));
     var reply = eliza.transform(session.message.text);
-    dialoglog("eliza",session,send(reply));
+    dialoglog("eliza", session, send(reply));
     //new Eilzabot
     //session.send("I do not understand this at all");
     //builder.DialogAction.send('I\'m sorry I didn\'t understand. I can only show start and ring');
@@ -1176,8 +1425,9 @@ function makeBot(connector, modelPath? : string) {
 
 if (module) {
   module.exports = {
-    SimpleUpDownRecognizer : SimpleUpDownRecognizer,
-    aResponsesOnTooLong : aResponsesOnTooLong,
+    SimpleUpDownRecognizer: SimpleUpDownRecognizer,
+    aResponsesOnTooLong: aResponsesOnTooLong,
+    metawordsDescriptions : metawordsDescriptions,
     makeBot: makeBot
   };
 }

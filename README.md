@@ -176,9 +176,27 @@ intended to work ;-)
 
 * add accept to create account page.
 
-* describe X.
+* describe X. Tell me about X
 
 * add descriptions to the categories and domains.
 
 * add linsk to the FioriSAP model
 
+* multivalued facts  make WebDynpro, factsheet categories modelled like this
+* multidomain facts
+* priorities in intent recognition
+
+
+database extraction:
+
+
+http://stackoverflow.com/questions/22887524/how-can-i-get-a-plain-text-postgres-database-dump-on-heroku
+
+
+import a dump:
+E:\projects\nodejs\botbuilder\abot>psql -p 5433 --username=postgres --dbname=wosap_repl <heroku_db
+
+dump from heroku:
+
+pg_dump --host=exxxxxx.compute-1.amazonaws.com --port=5432  -f heroku_db --username=iyyyyyyyyyyyyyyy --passsword=xxx
+ --dbname=dcicct7om3vohl

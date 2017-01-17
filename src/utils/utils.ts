@@ -8,21 +8,32 @@ export function deepFreeze(o : any) {
   }
 }
 
-export function listToCommaAnd(list : string[], quote? : string) {
+
+export function listToQuotedCommaWord(list : string[], quote : string, word: string) {
     quote = quote || "";
     if( list.length === 0) {
         return quote + quote;
     }
     var base = list.slice(0,list.length-1).join(quote + ", " + quote);
     if(base) {
-        base = quote + base + quote + ' and ' + quote + list[list.length-1] + quote;
+        base = quote + base + quote + ' ' + word + ' ' + quote + list[list.length-1] + quote;
         return base;
     }
     return quote + list[0] + quote;
 }
 
+export function listToCommaAnd(list : string[], quote? : string) {
+    return listToQuotedCommaWord(list,quote, 'and');
+}
+export function listToCommaOr(list : string[], quote? : string) {
+    return  listToQuotedCommaWord(list,'', 'or');
+}
+
 export function listToQuotedCommaAnd(list : string[]) {
-    return listToCommaAnd(list,'"');
+    return listToQuotedCommaWord(list,'"','and');
+}
+export function listToQuotedCommaOr(list : string[], quote? : string) {
+    return  listToQuotedCommaWord(list,'"', 'or');
 }
 
 // courtesy of

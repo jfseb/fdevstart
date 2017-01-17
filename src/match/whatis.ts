@@ -737,11 +737,8 @@ export function analyzeCategory(categoryword: string, rules: IMatch.SplitRules, 
   return classifyWordWithTargetCategory(categoryword, 'category', rules, wholesentence);
 }
 
-/**
- * A simple implementation, splitting at and and ,
- */
-export function analyzeCategoryMult2(categorylist: string, rules: IMatch.SplitRules, wholesentence: string): string[] {
-  var r = categorylist.split(/(\band\b)|[,]/);
+export function splitAtCommaAnd(str : string) : string[] {
+  var r = str.split(/(\band\b)|[,]/);
   r = r.filter(function(o,index) {
     if(index % 2 > 0) {
       return false;
@@ -749,9 +746,16 @@ export function analyzeCategoryMult2(categorylist: string, rules: IMatch.SplitRu
     return true;
   });
   var rtrimmed = r.map(function(o) {
-    return new String(o).trim();
+      return new String(o).trim();
   });
-  var rcat = r.map(function(o) { return analyzeCategory(o,rules,wholesentence); });
+  return rtrimmed;
+}
+/**
+ * A simple implementation, splitting at and and ,
+ */
+export function analyzeCategoryMult2(categorylist: string, rules: IMatch.SplitRules, wholesentence: string): string[] {
+  var rtrimmed = splitAtCommaAnd(categorylist);
+  var rcat = rtrimmed.map(function(o) { return analyzeCategory(o,rules,wholesentence); });
   if(rcat.indexOf(undefined) >= 0) {
     throw new Error('"' + rtrimmed[rcat.indexOf(undefined)+'" is not a category!']);
   }

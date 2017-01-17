@@ -182,11 +182,14 @@ export function removeCaseDuplicates(arr : string[]) : string[] {
 };
 
 export function getCategoryOpFilterAsDistinctStrings(operator: IMatch.IOperator, fragment : string,
-  category : string, records: Array<IMatch.IRecord>) : string[] {
+  category : string, records: Array<IMatch.IRecord>, filterDomain? : string) : string[] {
     var fragmentLC = BreakDown.trimQuoted(fragment.toLowerCase());
     var res = [];
     var seen = {};
     records.forEach(function(record) {
+      if(filterDomain && record ['_domain'] !== filterDomain) {
+        return;
+      }
       if(record[category] && Operator.matches(operator, fragmentLC, record[category].toLowerCase())) {
         if(!seen[record[category]]) {
           seen[record[category]] = true;

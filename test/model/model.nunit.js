@@ -60,7 +60,6 @@ exports.testModelGetOperator = function (test) {
 };
 
 
-
 exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 
   var res = Model.getAllRecordCategoriesForTargetCategory(theModel, 'element name');
@@ -80,7 +79,7 @@ exports.testgetAllRecordCategoriesForTargetCategories1 = function (test) {
     Model.getAllRecordCategoriesForTargetCategories(theModel, ['element name', 'wiki' ]);
     test.equal(true,false);
   } catch(e) {
-    test.equal(e.toString(), 'categories "element name" and "wiki" have no common domain');
+    test.equal(e.toString(), 'Error: categories "element name" and "wiki" have no common domain.');
   }
   test.done();
 };

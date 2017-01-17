@@ -12,6 +12,9 @@
 export const Cutoff_Sentences = 120;
 
 
+
+
+
 /*
  try 4, 1.2
 
@@ -47,3 +50,5 @@ export const Top_N_WordCategorizations = 5;
 
 
 
+export const DescribeValueListMinCountValueList = 3;
+export const DescribeValueListLengthCharLimit = 60;

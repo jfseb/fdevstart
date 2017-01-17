@@ -1,0 +1,27 @@
+{
+  "domain": "Philosophers elements",
+  "category": [
+    "element name",
+    "element properties"
+  ],
+  "wordindex": [
+    "element name"
+   ],
+   "exactmatch" : [
+   ],
+  "hidden": [
+  ],
+  "tool": {
+    "name": "NoToolPhilo",
+    "requires": {
+      "impossible": { }
+    },
+    "optional": {
+    },
+    "sets" : {
+    }
+  },
+  "synonyms" : {
+    "element name" : ["name"]
+  }
+}

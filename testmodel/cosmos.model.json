@@ -1,0 +1,40 @@
+{
+  "domain": "Cosmos",
+  "category": [
+    "object name",
+    "visual magnitude",
+    "object mass",
+    "visual luminosity",
+    "mass",
+    "radius",
+    "object type",
+    "orbits",
+    "distance",
+    "_url",
+    "orbit radius",
+    "eccentricity",
+    "orbital period",
+    "albedo"
+  ],
+  "wordindex": [
+    "object name",
+    "object type",
+    "orbits"
+   ],
+   "exactmatch" : [
+   ],
+  "hidden": [
+  ],
+  "tool": {
+    "name": "NoToolCosmos",
+    "requires": {
+      "impossible": { }
+    },
+    "optional": {
+    },
+    "sets" : {
+    }
+  },
+  "synonyms" : {
+  }
+}

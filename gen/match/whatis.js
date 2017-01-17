@@ -679,11 +679,8 @@ function analyzeCategory(categoryword, rules, wholesentence) {
     return classifyWordWithTargetCategory(categoryword, 'category', rules, wholesentence);
 }
 exports.analyzeCategory = analyzeCategory;
-/**
- * A simple implementation, splitting at and and ,
- */
-function analyzeCategoryMult2(categorylist, rules, wholesentence) {
-    var r = categorylist.split(/(\band\b)|[,]/);
+function splitAtCommaAnd(str) {
+    var r = str.split(/(\band\b)|[,]/);
     r = r.filter(function (o, index) {
         if (index % 2 > 0) {
             return false;
@@ -693,7 +690,15 @@ function analyzeCategoryMult2(categorylist, rules, wholesentence) {
     var rtrimmed = r.map(function (o) {
         return new String(o).trim();
     });
-    var rcat = r.map(function (o) { return analyzeCategory(o, rules, wholesentence); });
+    return rtrimmed;
+}
+exports.splitAtCommaAnd = splitAtCommaAnd;
+/**
+ * A simple implementation, splitting at and and ,
+ */
+function analyzeCategoryMult2(categorylist, rules, wholesentence) {
+    var rtrimmed = splitAtCommaAnd(categorylist);
+    var rcat = rtrimmed.map(function (o) { return analyzeCategory(o, rules, wholesentence); });
     if (rcat.indexOf(undefined) >= 0) {
         throw new Error('"' + rtrimmed[rcat.indexOf(undefined) + '" is not a category!']);
     }

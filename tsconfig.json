@@ -50,6 +50,7 @@
         "src/match/listall.ts",
         "src/match/matchdata.ts",
         "src/match/match.ts",
+        "src/match/describe.ts",
         "src/match/operator.ts",
         "src/match/sentence.ts",
         "src/match/tools.ts",

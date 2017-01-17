@@ -35,6 +35,7 @@ var debug = require('debug')('history');
 function History(options) {
   this._default = options && options.default || '';
   this._data = [];
+  this._shadowvalue = [];
   this._save = options && options.save;
   this._length = options && options.length || 20;
   this._pos = (typeof options.pos === 'number') ? options.pos : (this._data.length);
@@ -61,22 +62,24 @@ function History(options) {
 }
 
 History.prototype.get = function () {
-  if (this._pos >= this._data.length) {
-    return this._default;
+  if(this._pos > this._data.length) {
+    console.log('this shoudl not happen');
   }
-  return this._data[this._pos];
+  if(this._shadowvalue[this._pos] === undefined) {
+    return this._data[this._pos];
+  }
+  return this._shadowvalue[this._pos];
 };
 
-History.prototype.forward = function () {
-  if (this._pos === this._data.length) {
-    return this.get();
+History.prototype.forward = function (currentvalue) {
+  // we are already at the end
+  if (this._pos >= this._data.length) {
+    return undefined; // marker not to alter anything!
   }
-  if (this._pos === this._data.length - 1) {
-    return this.get();
-  }
-  this._state = 'history';
-  this._pos = Math.min(this._data.length, this._pos + 1);
+  this._shadowvalue[this._pos] = currentvalue;
+  this._pos = this._pos + 1;
   return this.get();
+  this._state = 'history';
 };
 
 History.prototype._shiftIfNeeded = function () {
@@ -94,38 +97,18 @@ History.prototype.push = function (oNext) {
     throw Error('Object cannot be null or undefined');
   }
   this._state = 'pushed';
-  if (oNext === this.get()) {
-    if (this._data.length) {
-      debug('this.data leng' + this._data[this._data.length - 1]);
-      if (oNext !== this._data[this._data.length - 1]) {
-        this._data.push(oNext);
-        this._shiftIfNeeded();
-        this.save();
-        return;
-      } else {
-        // we added the last thing again, do not increase
-        return;
-      }
-    } else {
-      this._data.push(oNext);
-      this._shiftIfNeeded();
-      this.save();
-      return;
-    }
+  this._shadowvalue = [];
+  // we add the record unless it's identical to the last one
+  if (this._data.length && oNext === this._data[this._data.length - 1]) {
+    // do not push
+    this._pos = this.data.length;
+    return;
   } else {
-    // the new entry is not the current one
-    if (this._data.length && this._pos === this._data.length - 1) {
-      debug('should not get here');
-      return;
-    } else {
-      this._data.push(oNext);
-      this._pos = this._pos + 1;
-      debug('pushing ' + oNext + 'into ' + JSON.stringify(this._data));
-      this._shiftIfNeeded();
-      debug('after push ' + this._pos + '/' + JSON.stringify(this._data));
-      this.save();
-      return;
-    }
+    this._data.push(oNext);
+    this._pos = this._data.length;
+    this._shiftIfNeeded();
+    this.save();
+    return;
   }
 };
 
@@ -148,21 +131,15 @@ History.prototype.set = function (oCurrent) {
   }
 }
 */
-History.prototype.backward = function () {
+History.prototype.backward = function (currentvalue) {
   if (this._data.length === 0) {
-    return this.get();
+    return undefined;
   }
-  if (this._state === 'pushed') {
-    this._state = 'history';
-    if (this._pos < this._data.length) {
-      return this.get();
-    }
-    this._pos = Math.max(0, this._pos - 1);
-    return this.get();
+  if(this._pos <= 0) {
+    return undefined;
   }
-  this._state = 'history';
-  this._pos = Math.max(0, this._pos - 1);
-  debug('pos after backward ' + this._pos);
+  this._shadowvalue[this._pos] = currentvalue;
+  this._pos = this._pos  - 1;
   return this.get();
 };
 
@@ -262,11 +239,11 @@ function moveCaretToEnd(el) {
   if (typeof el.selectionStart == 'number') {
     el.selectionStart = el.selectionEnd = el.value.length;
   } else if (typeof el.createTextRange != 'undefined') {
-      el.focus();
-      var range = el.createTextRange();
-      range.collapse(false);
-      range.select();
-    }
+    el.focus();
+    var range = el.createTextRange();
+    range.collapse(false);
+    range.select();
+  }
 }
 function moveCursorToEnd(textarea) {
   moveCaretToEnd(textarea);
@@ -304,15 +281,19 @@ textarea.addEventListener('keydown',function(e) {
   }
   else
  if ( e.key === 'ArrowUp') {
-   inputHistory.backward();
-   textarea.value = inputHistory.get();
-   moveCursorToEnd(textarea);
+   var r = inputHistory.backward(textarea.value);
+   if(r !== undefined) {
+     textarea.value = r;
+     moveCursorToEnd(textarea);
+   }
  }
  else
  if ( e.key === 'ArrowDown') {
-   var res = inputHistory.forward();
-   textarea.value = inputHistory.get();
-   moveCursorToEnd(textarea);
+   var res = inputHistory.forward(textarea.value);
+   if(res !== undefined ) {
+     textarea.value = res;
+     moveCursorToEnd(textarea);
+   }
  } else {
 
 

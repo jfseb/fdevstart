@@ -31,7 +31,8 @@ export interface IOperator {
   argcategory : [ string[] ]
 }
 
-export type IRecord = { [key : string] : string};
+export type IRecord = { [key : string] : string
+};
 
 
 export interface IWhatIsAnswer {

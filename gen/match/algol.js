@@ -36,5 +36,7 @@ exports.aReinforceDistWeight = [0.1, 0.1, 0.05, 0.02];
  * only the top n words are considered
  */
 exports.Top_N_WordCategorizations = 5;
+exports.DescribeValueListMinCountValueList = 3;
+exports.DescribeValueListLengthCharLimit = 60;
 
 //# sourceMappingURL=algol.js.map

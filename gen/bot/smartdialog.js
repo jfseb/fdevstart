@@ -21,7 +21,9 @@ var Analyze = require('../match/analyze');
 var BreakDown = require('../match/breakdown');
 var WhatIs = require('../match/whatis');
 var ListAll = require('../match/listall');
+var Describe = require('../match/describe');
 var Utils = require('../utils/utils');
+var _ = require('lodash');
 var DialogLogger = require('../utils/dialoglogger');
 var process = require('process');
 var dburl = process.env.DATABASE_URL || "";
@@ -275,6 +277,14 @@ exports.aResponsesOnTooLong = [
     'My answers may be exhaustive, but I understand more than 4-letter words, but not more than 20 word sentences. Sorry.',
     'Our conversation must be highly assymmetric: my answers may be verbose and exhaustive and fuzzy, questions and input must be brief. Try to reformulate it',
 ];
+exports.metawordsDescriptions = {
+    "category": "an attribute of a record in a model, example: a Planet has a \"name\" attribute",
+    "domain": "a group of facts which are typically unrelated",
+    "key": "an attribute value (of a category) which  is unique for the record",
+    "tool": "is potentialy command to execute",
+    "record": "a specific set of \"fact\"s of a domain, a \"record\" has a set of attributes values (\"fact\"s) of the categories, often a record has a \"key\"",
+    "fact": "a specific category value of a record in a domain, may be a \"key\" value",
+};
 function getRandomResult(arr) {
     return arr[Math.floor(Math.random() * arr.length) % arr.length];
 }
@@ -844,6 +854,215 @@ function makeBot(connector, modelPath) {
             }
         }
     ]);
+    dialog.matches('Describe', [
+        function (session, args, next) {
+            var isCombinedIndex = {};
+            var oNewEntity;
+            // expecting entity A1
+            var message = session.message.text;
+            debuglog("Intent : Describe");
+            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            var factEntity = builder.EntityRecognizer.findEntity(args.entities, 'A1');
+            var factOrCat = factEntity && factEntity.entity;
+            var domainEntity = builder.EntityRecognizer.findEntity(args.entities, 'D');
+            var domainS = domainEntity && domainEntity.entity;
+            var filterDomain = undefined;
+            if (domainS) {
+                filterDomain = ListAll.inferDomain(theModel, domainS);
+                debuglog("got domain" + filterDomain);
+                if (!filterDomain) {
+                    dialoglog("Describe", session, send("I did not infer a domain restriction from \"" + domainS + "\". Specify an existing domain. (List all domains) to get exact names.\n"));
+                    return;
+                }
+            }
+            debuglog("factOrCat is" + factOrCat);
+            if (exports.metawordsDescriptions[factOrCat.toLowerCase()]) {
+                // do we have a filter ?
+                var prefix = "";
+                if (filterDomain) {
+                    prefix = '"in domain "' + filterDomain + '" make no sense when matching a metaword.\n';
+                }
+                debuglog("showing meta result");
+                dialoglog("Describe", session, send(prefix + '"' + factOrCat + '" is ' + exports.metawordsDescriptions[factOrCat.toLowerCase()] + ""));
+                return;
+            }
+            var categories = [];
+            if (WhatIs.splitAtCommaAnd(factOrCat).length > 1) {
+                dialoglog("Describe", session, send("Whoa, i can only explain one thing at a time, not \"" + factOrCat + "\". Please ask one at a time."));
+                return;
+            }
+            var category = WhatIs.analyzeCategory(factOrCat, theModel.rules, message);
+            var catResults = [];
+            if (category) {
+                //TODO
+                catResults = Describe.describeCategory(category, filterDomain, theModel, message);
+            }
+            var resFact = Describe.describeFactInDomain(factOrCat, filterDomain, theModel);
+            if (catResults) {
+                var prefixed = catResults.map(function (res) {
+                    return (Describe.sloppyOrExact(factOrCat, category, theModel) + "  " + res);
+                });
+            }
+            if (catResults.length) {
+                resFact = prefixed.join("\n");
+                +"\n" + resFact;
+            }
+            dialoglog("Describe", session, send(resFact));
+            /*
+                var aRes = Model.getCategoriesForDomain(theModel, domain);
+                 var res = restrictLoggedOn(session, aRes).join(";\n");
+                dialoglog("ListAll",session,send("my categories in domain \"" + domain + "\" are ...\n" + res));
+                return;
+              }
+            }
+            if (category === "domains") {
+              var res = restrictLoggedOn(session, theModel.domains).join(";\n");
+              dialoglog("ListAll",session, send("my domains are ...\n" + res));
+              return;
+            }
+            if (category === "tools") {
+              var res = restrictLoggedOn(session, theModel.tools).map(function (oTool) {
+                return oTool.name;
+              }).join(";\n");
+              dialoglog("ListAll", session,send("my tools are ...\n" + res));
+              return;
+            }
+            */
+            /*
+            var cats = [];
+              try {
+              cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
+              debuglog("here cats" + cats.join(","));
+            } catch (e) {
+                if(e) {
+                  debuglog("here exception" + e);
+                  dialoglog("WhatIs",session,send('I don\'t know anything about "' + category + '"(' + e.toString() + ')'));
+                  // next();
+                  return;
+                }
+            }
+            if (!cats || (cats.length === 0)) {
+              dialoglog("ListAll",session,send('I don\'t know anything about "' + category + '"'));
+              // next();
+              return;
+            }
+            var cat = "";
+            if( cats.length === 1) {
+              cat = cats[0];
+            }
+            if( cats.length === 1) {
+              debuglog('category identified:' + cat);
+              if (a1 && a1.entity) {
+                debuglog('got filter:' + a1.entity);
+                var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
+                var result1 = ListAll.listAllWithContext(cat, a1.entity,
+                  theModel.rules, theModel.records, categorySet);
+                // TODO classifying the string twice is a terrible waste
+                if (!result1.length) {
+                  debuglog('going for having');
+                  var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+                  result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules,
+                    theModel.records, categorySetFull);
+                }
+                debuglog('listall result:' + JSON.stringify(result1));
+                var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
+                logQueryWhatIs(session, 'ListAll', result1);
+                if(joinresults.length ){
+                  dialoglog("ListAll",session,send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+                } else {
+                  dialoglog("ListAll",session,send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+                }
+                return;
+              } else {
+                // no entity, e.g. list all countries
+                //
+                var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+                var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
+                logQueryWhatIs(session, 'ListAll', result);
+                if (result.length) {
+                  debuglog('listall result:' + JSON.stringify(result));
+                  var joinresults = [];
+                  debuglog("here is cat>" + cat);
+                  if(cat !== "example question") {
+                    joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
+                  } else {
+                    joinresults = ListAll.joinResults(result);
+                  }
+                  var response = "the " + category + " are ...\n" + joinresults.join(";\n");
+                  dialoglog("ListAll",session,send(response));
+                  return;
+                } else {
+                  var response = "Found no data having \"" + cat + "\""
+                  dialoglog("ListAll",session,send(response));
+                  return;
+                }
+              }
+            } else {
+              // multiple categories
+              debuglog('categories identified:' + cats.join(","));
+              if (a1 && a1.entity) {
+                debuglog('got filter:' + a1.entity);
+                try {
+                var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+                } catch(e) {
+                    debuglog("here exception" + e);
+                    dialoglog("WhatIs",session,send('I cannot combine "' + category + '(' + e.toString() + ')'));
+                    return;
+                }
+                var result1T = ListAll.listAllTupelWithContext(cats, a1.entity,
+                  theModel.rules, theModel.records, categorySet);
+                // TODO classifying the string twice is a terrible waste
+                if (!result1T.length) {
+                  debuglog('going for having');
+                  var categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+                  result1T = ListAll.listAllTupelHavingContext(cats, a1.entity, theModel.rules,
+                    theModel.records, categorySetFull);
+                }
+                debuglog('listall result:' + JSON.stringify(result1T));
+                var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T));
+                logQueryWhatIsTupel(session, 'ListAll', result1T);
+                if(joinresults.length ){
+                  dialoglog("ListAll",session,send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+                } else {
+                  dialoglog("ListAll",session,send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+                }
+                return;
+              } else {
+                // no entity, e.g. list all countries
+                //
+                var categorySetFull = {} as { [key : string] : boolean};
+                try {
+                  categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+                } catch(e) {
+                    debuglog("here exception" + e);
+                    dialoglog("WhatIs",session,send('I cannot combine "' + category + '(' + e.toString() + ')'));
+                // next();
+                    return;
+                }
+                var resultT = ListAll.listAllTupelHavingContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
+                logQueryWhatIsTupel(session, 'ListAll', resultT);
+                if (resultT.length) {
+                  debuglog('listall result:' + JSON.stringify(resultT));
+                  var joinresults = [];
+                  debuglog("here is cat>" + cats.join(", "));
+                  if(cat !== "example question") {
+                    joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(resultT));
+                  } else {
+                    joinresults = ListAll.joinResultsTupel(resultT);
+                  }
+                  var response = "the " + category + " are ...\n" + joinresults.join(";\n");
+                  dialoglog("ListAll",session,send(response));
+                  return;
+                } else {
+                  var response = "Found no data having \"" + cat + "\""
+                  dialoglog("ListAll",session,send(response));
+                  return;
+                }
+              }
+            }
+              */
+        }
+    ]);
     dialog.matches('ListAllBinOp', [
         function (session, args, next) {
             var isCombinedIndex = {};
@@ -855,8 +1074,10 @@ function makeBot(connector, modelPath) {
             var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
             var categoryWord = categoryEntity.entity;
             var opEntity = builder.EntityRecognizer.findEntity(args.entities, 'operator');
-            var operatorWord = opEntity.entity;
+            var operatorWord = opEntity && opEntity.entity;
             // categorize as operator ?
+            var filterDomainEntity = builder.EntityRecognizer.findEntity(args.entities, 'domain');
+            var filterDomainS = filterDomainEntity && filterDomainEntity.entity;
             var operator = WhatIs.analyzeOperator(operatorWord, theModel.rules, message);
             var category = WhatIs.analyzeCategory(categoryWord, theModel.rules, message);
             var operatorArgs = Model.getOperator(theModel, operator);
@@ -867,15 +1088,34 @@ function makeBot(connector, modelPath) {
                     + operatorWord + "\"\n"));
                 throw new Error(s);
             }
+            var filterDomain = undefined;
+            if (filterDomainS) {
+                debuglog("found a domainString" + filterDomainS);
+                filterDomain = ListAll.inferDomain(theModel, filterDomainS);
+                debuglog("got domain" + filterDomain);
+                if (!filterDomain) {
+                    dialoglog("Describe", session, send("I did not infer a domain restriction from \"" + filterDomainS + "\". Specify an existing domain. (List all domains) to get exact names.\n"));
+                    return;
+                }
+            }
             var fragment = a2 && a2.entity;
             fragment = BreakDown.trimQuoted(BreakDown.trimQuotedSpaced(fragment));
             debuglog("fragment after trimming \"" + fragment + "\"");
             if (categoryWord === "categories") {
                 // do we have a filter?
                 var aFilteredCategories = ListAll.filterStringListByOp(operatorArgs, fragment, theModel.category);
+                if (filterDomain) {
+                    var catsForDomain = Model.getCategoriesForDomain(theModel, filterDomain);
+                    aFilteredCategories = _.intersection(aFilteredCategories, catsForDomain);
+                }
                 res = restrictLoggedOn(session, aFilteredCategories).join(";\n");
                 if (res.length) {
-                    dialoglog("ListAllBinOp", session, send("my categories " + operator + ' "' + fragment + '" are ...\n' + res));
+                    if (filterDomain) {
+                        dialoglog("ListAllBinOp", session, send(("my categories " + operator + " \"" + fragment + "\" in domain \"" + filterDomain + "\" are ...\n") + res));
+                    }
+                    else {
+                        dialoglog("ListAllBinOp", session, send(("my categories " + operator + " \"" + fragment + "\" are ...\n") + res));
+                    }
                 }
                 else {
                     dialoglog("ListAllBinOp", session, send('I have no categories ' + operator + ' "' + fragment + '"'));
@@ -912,14 +1152,19 @@ function makeBot(connector, modelPath) {
                     return;
                 }
                 debuglog('category identified:' + cat);
-                var aRes = ListAll.getCategoryOpFilterAsDistinctStrings(operatorArgs, fragment, category, theModel.records);
+                var aRes = ListAll.getCategoryOpFilterAsDistinctStrings(operatorArgs, fragment, category, theModel.records, filterDomain);
                 var res = restrictLoggedOn(session, aRes).join(";\n");
                 var infixExplain = '';
                 if (!ListAll.likelyPluralDiff(category, categoryWord)) {
                     infixExplain = '("' + category + '")';
                 }
                 if (res.length) {
-                    dialoglog("ListAllBinOp", session, send('my ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '" are ...\n' + res));
+                    if (filterDomain) {
+                        dialoglog("ListAllBinOp", session, send(("my " + categoryWord + infixExplain + " " + operator + " \"" + fragment + "\" in domain \"" + filterDomain + "\" are ...\n") + res));
+                    }
+                    else {
+                        dialoglog("ListAllBinOp", session, send(("my " + categoryWord + infixExplain + " " + operator + " \"" + fragment + "\" are ...\n") + res));
+                    }
                 }
                 else {
                     dialoglog("ListAllBinOp", session, send('I have no ' + categoryWord + infixExplain + ' ' + operator + ' "' + fragment + '"'));
@@ -1083,6 +1328,7 @@ if (module) {
     module.exports = {
         SimpleUpDownRecognizer: SimpleUpDownRecognizer,
         aResponsesOnTooLong: exports.aResponsesOnTooLong,
+        metawordsDescriptions: exports.metawordsDescriptions,
         makeBot: makeBot
     };
 }

@@ -187,8 +187,230 @@ exports.testRecognizeSome = function (test) {
   });
 };
 
+exports.testRecognizeDescribe = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
 
-exports.testRecognizeSome = function (test) {
+  var oContext = {
+    message: {
+      text: 'describe AB'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'AB',
+          startIndex: 9,
+          endIndex: 11
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeDescribeUppercase = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'Describe AB'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'AB',
+          startIndex: 9,
+          endIndex: 11
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeTellMeDescribe = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'describe AB'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'AB',
+          startIndex: 9,
+          endIndex: 11
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+exports.testRecognizeTellMeAb = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'Tell me about AB'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'AB',
+          startIndex: 14,
+          endIndex: 16
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeTellMe = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'Tell me about AB in domain Fiori BOM.'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'AB',
+          startIndex: 14,
+          endIndex: 16
+        },
+        {
+          type: 'D',
+          entity: 'Fiori BOM',
+          startIndex: 27,
+          endIndex: 36
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+
+exports.testRecognizeTellMeFi = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'Tell me about "Fiori intent"?'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: '"Fiori intent"',
+          startIndex: 14,
+          endIndex: 28
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+
+exports.testRecognizeTellMeD2 = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'Describe ASF SFA in domain Fiori BOM.'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'ASF SFA',
+          startIndex: 9,
+          endIndex: 16
+        },
+        {
+          type: 'D',
+          entity: 'Fiori BOM',
+          startIndex: 27,
+          endIndex: 36
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeSomeMore = function (test) {
 
   var oRules = recognizer.parseRules(oJSON);
   var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
@@ -265,6 +487,56 @@ exports.testRecognizeListAllBinOp = function (test) {
     test.done();
   });
 };
+
+
+
+exports.testRecognizeListAllBinOpDomain = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'List all ABC starting with DEF in domain UU'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'category',
+          entity: 'ABC',
+          startIndex: 9,
+          endIndex: 12
+        },
+        {
+          type: 'operator',
+          entity: 'starting with',
+          startIndex: 13,
+          endIndex: 26
+        },
+        {
+          type: 'A2',
+          entity: 'DEF',
+          startIndex: 27,
+          endIndex: 30
+        },
+        {
+          type: 'domain',
+          entity: 'UU',
+          startIndex: 41,
+          endIndex: 43
+        }
+        ],
+        score: 0.9,
+        intent: 'ListAllBinOp'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
 
 
 exports.testRecognizeListAllWhere = function (test) {

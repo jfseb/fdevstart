@@ -8,23 +8,35 @@ function deepFreeze(o) {
     }
 }
 exports.deepFreeze = deepFreeze;
-function listToCommaAnd(list, quote) {
+function listToQuotedCommaWord(list, quote, word) {
     quote = quote || "";
     if (list.length === 0) {
         return quote + quote;
     }
     var base = list.slice(0, list.length - 1).join(quote + ", " + quote);
     if (base) {
-        base = quote + base + quote + ' and ' + quote + list[list.length - 1] + quote;
+        base = quote + base + quote + ' ' + word + ' ' + quote + list[list.length - 1] + quote;
         return base;
     }
     return quote + list[0] + quote;
 }
+exports.listToQuotedCommaWord = listToQuotedCommaWord;
+function listToCommaAnd(list, quote) {
+    return listToQuotedCommaWord(list, quote, 'and');
+}
 exports.listToCommaAnd = listToCommaAnd;
+function listToCommaOr(list, quote) {
+    return listToQuotedCommaWord(list, '', 'or');
+}
+exports.listToCommaOr = listToCommaOr;
 function listToQuotedCommaAnd(list) {
-    return listToCommaAnd(list, '"');
+    return listToQuotedCommaWord(list, '"', 'and');
 }
 exports.listToQuotedCommaAnd = listToQuotedCommaAnd;
+function listToQuotedCommaOr(list, quote) {
+    return listToQuotedCommaWord(list, '"', 'or');
+}
+exports.listToQuotedCommaOr = listToQuotedCommaOr;
 // courtesy of
 // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
 function cloneDeep(item) {

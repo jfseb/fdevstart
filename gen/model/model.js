@@ -79,6 +79,13 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
             oEntry._domain = oMdl.domain;
         }
         oModel.records.push(oEntry);
+        oMdl.category.forEach(function (cat) {
+            if (oEntry[cat] === 'undefined') {
+                oEntry[cat] = "n/a";
+                var bug = "INCONSISTENT*> ModelData " + sFileName + " does not contain category " + cat + " with value 'undefined', undefined is illegal value, use n/a " + JSON.stringify(oEntry) + "";
+                debuglog(bug);
+            }
+        });
         oMdl.wordindex.forEach(function (category) {
             if (oEntry[category] === undefined) {
                 debuglog("INCONSISTENT*> ModelData " + sFileName + " does not contain category " + category + " of wordindex" + JSON.stringify(oEntry) + "");
@@ -100,6 +107,9 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
                 insertRuleIfNotPresent(oModel.mRules, oRule, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
                     addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
+                }
+                if (oEntry.synonyms && oEntry.synonyms[category]) {
+                    addSynonyms(oEntry.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
                 }
             }
         });

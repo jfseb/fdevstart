@@ -19,11 +19,13 @@ function getBotInstance() {
   return connector;
 }
 
-var conn = getBotInstance();
+//var conn = getBotInstance();
 
 function testOne(str,cb) {
+  var conn = getBotInstance();
   conn.setAnswerHook(cb);
   conn.processMessage(str, 'unittest');
+  return conn;
 }
 
 //SimpleUpDownRecognizer
@@ -315,6 +317,78 @@ exports.testListAllCategoriesRelatedTo = function (test) {
   });
 };
 
+exports.testDescribeStupidDomain = function (test) {
+  testOne('describe ABC in domain NODomain',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'I did not infer a domain restriction from "NODomain". Specify an existing domain. (List all domains) to get exact names.\n');
+    test.done();
+  });
+};
+
+
+exports.testDescribeCategory = function (test) {
+  testOne('describe category',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    '"category" is ' + SmartDialog.metawordsDescriptions['category']);
+    test.done();
+  });
+};
+
+exports.testDescribeCategorySenselessDomain = function (test) {
+  testOne('describe category in domain wiki',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+'"in domain "wiki" make no sense when matching a metaword.\n' +
+
+    '"category" is ' + SmartDialog.metawordsDescriptions['category']);
+    test.done();
+  });
+};
+
+
+exports.testDescribeOneAtATime = function (test) {
+  testOne('describe silver and gold',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,'Whoa, i can only explain one thing at a time, not "silver and gold". Please ask one at a time.');
+    test.done();
+  });
+};
+
+exports.testDescribeEcc = function (test) {
+  testOne('describe eccentricity',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    const DESCRIBE_ECCEN =  '"eccentricity"  is a category in domain "Cosmos"\nIt is present in 2 (33.3%) of records in this domain,\n'
+    + 'having 2(+1) distinct values.\nPossible values are ...\n"0.0167" or "0.0934"';
+    test.deepEqual(oRes,
+    DESCRIBE_ECCEN);
+    test.done();
+  });
+};
+
+exports.testDescribe = function (test) {
+  testOne('describe silver',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+     '"silver" has a meaning in one domain "IUPAC":\n"silver" is a value for category "element name" present in 1(0.8%) of records;\n'
+        );
+    test.done();
+  });
+};
+
+
+exports.testDescribeEarth = function (test) {
+  testOne('describe earth',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    '"earth" has a meaning in 2 domains: "Cosmos" and "Philosophers elements"\nin domain "Cosmos" "earth" is a value for category "object name" present in 1(16.7%) of records;\nin domain "Philosophers elements" "earth" is a value for category "element name" present in 1(25.0%) of records;\n'
+    );
+    test.done();
+  });
+};
+
+
+
 exports.testOperatorStartsWith = function (test) {
   logPerf('testPerfListAll');
  // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
@@ -399,7 +473,7 @@ exports.testOperatorCategoriesStartsWith = function (test) {
   //  var sRes = oRes;
     logPerf('testPerfListAll');
     debuglog(JSON.stringify(oRes));
-    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement symbol');
+    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement properties;\nelement symbol');
     test.done();
   });
 };
@@ -411,7 +485,56 @@ exports.testOperatorStartsWithQuoted = function (test) {
   //  var sRes = oRes;
     logPerf('testPerfListAll');
     debuglog(JSON.stringify(oRes));
-    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement symbol');
+    test.deepEqual(oRes, 'my categories starting with "elem" are ...\nelement name;\nelement number;\nelement properties;\nelement symbol');
+    test.done();
+  });
+};
+
+exports.testOperatorStartsWithQuotedInDomain = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories starting with "elem" in domain IUPAC',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my categories starting with "elem" in domain "IUPAC" are ...\nelement name;\nelement number;\nelement symbol');
+    test.done();
+  });
+};
+
+exports.testOperatorStartsWithQuotedInDomainSloppy = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories starting with "elem" in domain IUPAD',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my categories starting with "elem" in domain "IUPAC" are ...\nelement name;\nelement number;\nelement symbol');
+    test.done();
+  });
+};
+
+
+exports.testOperatorStartsWithQuotedInNoDomain = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all categories starting with "elem" in domain NONEXSITENT',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'I did not infer a domain restriction from "NONEXSITENT". Specify an existing domain. (List all domains) to get exact names.\n');
+    test.done();
+  });
+};
+
+exports.testOperatorStartsWithQuotedMemberInDomain = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all element names starting with e in domain IUPAC',function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes, 'my element names starting with "e" in domain "IUPAC" are ...\neinsteinium;\nerbium;\neuropium');
     test.done();
   });
 };
