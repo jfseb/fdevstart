@@ -13,18 +13,17 @@
     "Learn <A1>",
     "understand <A1>"
   ],
-  "Describe": [
-    [
-      "^describe ([^,]+) ((in)|(for)|(given)|(of)) domain ([\"A-Za-z0-9 ]+)$",
-      {
-        "A1": 1,
-        "D": 7
-      }
-    ],
-    "describe <A1> (in|for|given|of) domain <D>",
-    "describe <A1>",
-    "tell me about <A1> (in|for|given|of) domain <D>",
-    "tell me about <A1>"
+  "WhatAreYou": [
+    "^what are you$",
+    "^Tell me about you$",
+    "^what is your purpose in life$"
+  ],
+  "LIFF": [
+    "^what is your purpose in life$",
+    "^what is the meaning of life$",
+    "^what is the goal$",
+    "^what is the meaning$",
+    "^what is your purpose$"
   ],
   "WhatIs": [
     "what (is|are) the <category>? (using|for|in|of) <A1>",
@@ -44,6 +43,32 @@
       }
     ],
     "tell me the <category> of <A1>"
+  ],
+  "Describe": [
+    [
+      "^describe ([^,]+) ((in)|(for)|(given)|(of)) domain ([\"A-Za-z0-9 ]+)$",
+      {
+        "A1": 1,
+        "D": 7
+      }
+    ],
+    "describe <A1> (in|for|given|of) domain <D>",
+    "describe <A1>",
+    "tell me about <A1> (in|for|given|of) domain <D>",
+    "tell me about <A1>",
+     [
+      "^what is (a )?((\\w+)|(\"[^\"]+\"))$",
+      {
+        "A1": 2
+      }
+    ],
+    [
+      "^what is (a )?((\\w+)|(\"[^\"]+\")) in domain ([\"A-Za-z0-9 ]+)$",
+      {
+        "A1": 2,
+        "D": 7
+      }
+    ]
   ],
   "ListAllBinOp": [
     [

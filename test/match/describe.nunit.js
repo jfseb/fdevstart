@@ -53,7 +53,7 @@ exports.testCountPresence = function (test) {
 
 exports.testDescribeFactInDomain = function (test) {
   var res = Describe.describeFactInDomain('nomatchnotevenclose', undefined, theModel);
-  var cmp = '"nomatchnotevenclose" is no known fact.\n';
+  var cmp = 'I don\'t know anything about "nomatchnotevenclose".\n';
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);

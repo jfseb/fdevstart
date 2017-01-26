@@ -354,7 +354,7 @@ export function describeFactInDomain(fact : string, filterdomain : string, theMo
     if(filterdomain) {
       return `"${fact}" is no known fact in domain "${filterdomain}".\n`;
     }
-    return `"${fact}" is no known fact.\n`;
+    return `I don't know anything about "${fact}".\n`;
   }
   res += resNext + "\n"; // ...\n";
   domains.forEach(function(domain) {

@@ -372,6 +372,130 @@ exports.testRecognizeTellMeFi = function (test) {
   });
 };
 
+exports.testRecognizeWhatIsSimpleA = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'What is a Businesscatalog'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: '"Businesscatalog"',
+          startIndex: 10,
+          endIndex: 25
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+exports.testRecognizeWhatIsSimpleA = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'What is a Businesscatalog'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'Businesscatalog',
+          startIndex: 10,
+          endIndex: 25
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+exports.testRecognizeWhatIsComplex = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'What is the element weight for element name silver'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'category',
+          entity: 'element weight',
+          startIndex: 12,
+          endIndex: 26
+        },
+        {
+          type: 'A1',
+          entity: 'element name silver',
+          startIndex: 31,
+          endIndex: 50
+        }
+        ],
+        score: 0.9,
+        intent: 'WhatIs'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+
+exports.testRecognizeWhatIsSimple = function (test) {
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'What is water'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'A1',
+          entity: 'water',
+          startIndex: 8,
+          endIndex: 13
+        }
+        ],
+        score: 0.9,
+        intent: 'Describe'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
 
 
 exports.testRecognizeTellMeD2 = function (test) {

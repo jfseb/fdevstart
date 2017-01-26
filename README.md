@@ -146,7 +146,11 @@ intended to work ;-)
 ##Todo ideas
 
 
-* fix: describe domain not implemented
+* fix: describe domain not implemented done
+* fix FioriBOm domain descriptions
+* fix primarytable move to each record
+* fix add Business catalog to BackendCatalogs model
+
 * list all countries with Government type communist state give same result
   as list all countries with Government type   :-(
         Indicate ignored passages!
@@ -163,7 +167,7 @@ intended to work ;-)
    Returns a categorized word on and use that in a codecompletion
      ->awesomeplete
 * automate upload of recorded data to AWS to keep below the 10000 lines free psql limit in heroku
-* tidy up website
+* tidy up website, mostly done
 * assure some load control on the bot to make machine downloads harder
 * built a (local) webservice to query/response for regression testing
 * add a statistics website (nr of records, nr of facts etc).
@@ -177,10 +181,14 @@ intended to work ;-)
       X is a synonym for U, which is ...
 
       Other synonyms are ...
+  mostly done.
+
+* make this work with what is XXX
 
 * sample model with multi domain fact
    *earth water air, fire
    *earth mars, jupiter, ...
+   done
 
 * add philosophical quote of the day
 * add settings dialog and voting on some features / feedback (record what user actually activate)
@@ -192,11 +200,14 @@ intended to work ;-)
 
 * add accept to create account page.
 
-* describe X. Tell me about X
+* describe X. Tell me about X,
+   done
+* todo: what is is X
 
 * add descriptions to the categories and domains.
 
 * add linsk to the FioriSAP model
+   done
 
 * multivalued facts  make WebDynpro, factsheet categories modelled like this
 * multidomain facts
