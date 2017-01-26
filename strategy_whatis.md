@@ -22,6 +22,14 @@ describe A in domain D
 Tell me about A
 
 
+#thing to look into
+
+
+use jaro or jaro winkler for distance
+look into natural package, notably the edge stuff
+and plural/singular conversions
+
+
 
 #list all x BinOp y
 

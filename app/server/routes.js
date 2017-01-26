@@ -294,6 +294,19 @@ module.exports = function(app) {
       }
 	    });
   });
+
+  ['Cosmos','IUPAC','Philosophers_elements', 'TWF_fields','TWF_countries',  'SAP_Transaction_codes', 'FioriBOM','GeneticDNA'].forEach(function(sPage) {
+    app.get('/domains/' + sPage, function(req, res) {
+      res.render('models/' + sPage, {
+        pagetitle : 'domain ' + sPage,
+        user : (req.session.user && req.session.user.user) || undefined,
+        title : 'domain ' + sPage,
+        udata : req.session.user,
+        altData : req.session.altData
+      });
+    });
+  });
+
 // TODO disable
 /*
   app.get('/reset', function(req, res) {

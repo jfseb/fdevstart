@@ -82,5 +82,16 @@
         "blue planet"
       ]
     }
+  },
+  {
+    "object name" : "Sun",
+    "visual luminosity" : "n/a",
+    "orbit radius" : "1.016 - 0.983 AU, 152,100,000km - 14,.095,000km",
+    "mass" : "333,000*earth, 1.989×10^30 kg",
+    "radius" : "109*earth, 695700km",
+    "visual magnitude" : "-27",
+    "object type" : "star",
+    "distance" : "1au; 1.496x10^8 km, 8min 19s at light speed",
+    "_url" : "https://en.wikipedia.org/wiki/Sun"
   }
 ]

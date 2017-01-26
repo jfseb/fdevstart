@@ -1,0 +1,99 @@
+
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends ../layout_p
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap domain TWF fields
+			ul.nav.navbar-nav.navbar-right #{uid}
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+	p  &nbsp;
+	p &nbsp;
+	p
+
+	div.well
+		h3 domain "TWF fields"
+			span.pull-right 189 records
+		p
+		span The world factbook fields
+
+		table.table.table-condensed.table-striped
+			thead
+				tr
+					th category
+					th(style="width:10%") count
+					th
+						table
+							tr
+								td synonyms
+							tr
+								td description
+							tr
+								td example values
+			tbody
+
+			tr
+					td.cat_count field description
+					td 178 distinct values in 94.2% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td verbose description of field
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "A generally patriotic musical composition - usually in the form of a song or hymn of praise - that evokes and eulogizes the history, traditions, or struggles of a nation or its people. National anthems can be officially recognized as a national song by a country's constitution or by an enacted law, or simply by tradition. Although most anthems contain lyrics, some do not."
+											br
+											| (2): "A national symbol is a faunal, floral, or other abstract representation - or some distinctive object - that over time has come to be closely identified with a country or entity. Not all countries have national symbols; a few countries have more than one."
+											br
+											| (3): "Data on household income or consumption come from household surveys, the results adjusted for household size. Nations use different standards and procedures in collecting and adjusting the data. Surveys based on income will normally show a more unequal distribution than surveys based on consumption. The quality of surveys is improving with time, yet caution is still necessary in making inter-country comparisons."
+											br
+											| ...
+      
+			tr
+					td.cat_count fieldId
+					td 189 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Technical key of field
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2010", "2011", "2012", "2013", "2015", "2018" ...
+      
+			tr
+					td.cat_count fieldName
+					td 189 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td name of field
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "ADMINISTRATIVE DIVISIONS", "AFFILIATION", "AGE STRUCTURE" ...
+      
+		h3 Version
+			a.small(href="/whatsnew")
+
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')

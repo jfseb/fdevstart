@@ -43,9 +43,9 @@ exports.testSloppyOrExactSyn = function (test) {
 exports.testCountPresence = function (test) {
   var res = Describe.countRecordPresence('orbits', 'Cosmos', theModel);
   test.deepEqual(res, {
-    totalrecords : 6,
+    totalrecords : 7,
     presentrecords : 3,
-    values : { 'Sun' : 2, 'Alpha Centauri C' : 1, undefined : 2 , 'n/a' : 1 },
+    values : { 'Sun' : 2, 'Alpha Centauri C' : 1, undefined : 3 , 'n/a' : 1 },
     multivalued : false
   });
   test.done();
@@ -71,8 +71,9 @@ exports.testDescribeFactInDomainFilter = function (test) {
 
 exports.testDescribeFactInDomainSun = function (test) {
   var res = Describe.describeFactInDomain('sun', undefined, theModel);
-  var cmp = '"sun" has a meaning in one domain "Cosmos":\n'
-  + '"sun" is a value for category "orbits" present in 2(33.3%) of records;\n';
+  //var cmp = '"sun" has a meaning in domain "Cosmos":\n"sun" ...\nis a value for category "orbits" present in 2(28.6%) of records;\nis a value for category "object name" present in 1(14.3%) of records;\n' == '"sun" has a meaning in domain "Cosmos":\n"sun" is a value for category "orbits" present in 2(28.6%) of records;\n';
+  //var cmp = '"sun" has a meaning in domain "Cosmos":\n"sun" ...\nis a value for category "orbits" present in 2(28.6%) of records;\nis a value for category "object name" present in 1(14.3%) of records;\n';
+  var cmp =  '"sun" has a meaning in one domain "Cosmos":\n"sun" ...\nis a value for category "orbits" present in 2(28.6%) of records;\nis a value for category "object name" present in 1(14.3%) of records;\n';
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -81,8 +82,9 @@ exports.testDescribeFactInDomainSun = function (test) {
 
 exports.testDescribeFactInDomainSunCosmos = function (test) {
   var res = Describe.describeFactInDomain('sun', 'Cosmos', theModel);
-  var cmp = '"sun" has a meaning in domain "Cosmos":\n'
-  + '"sun" is a value for category "orbits" present in 2(33.3%) of records;\n';
+
+  var cmp = '"sun" has a meaning in domain "Cosmos":\n"sun" ...\nis a value for category "orbits" present in 2(28.6%) of records;\nis a value for category "object name" present in 1(14.3%) of records;\n';
+
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -92,7 +94,7 @@ exports.testDescribeFactInDomainSunCosmos = function (test) {
 exports.testDescribeFactInDomainProxima2 = function (test) {
   var res = Describe.describeFactInDomain('Proxima Centauri', 'Cosmos', theModel);
   var cmp =`"Proxima Centauri" has a meaning in domain "Cosmos":
-"Proxima Centauri" (interpreted as "Alpha Centauri C") is a value for category "object name" present in 1(16.7%) of records;\n`;
+"Proxima Centauri" (interpreted as "Alpha Centauri C") is a value for category "object name" present in 1(14.3%) of records;\n`;
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -104,8 +106,8 @@ exports.testDescribeFactInDomainAlpha = function (test) {
   var res = Describe.describeFactInDomain('Alpha Centauri C', 'Cosmos', theModel);
   var cmp = '"Alpha Centauri C" has a meaning in domain "Cosmos":\n' +
   '"Alpha Centauri C" ...\n' +
-      'is a value for category "object name" present in 1(16.7%) of records;\n' +
-      'is a value for category "orbits" present in 1(16.7%) of records;\n' ;
+      'is a value for category "object name" present in 1(14.3%) of records;\n' +
+      'is a value for category "orbits" present in 1(14.3%) of records;\n' ;
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -115,11 +117,11 @@ exports.testDescribeFactInDomainAlpha = function (test) {
 exports.testDescribeFactInDomainAlphaFuzz = function (test) {
   var res = Describe.describeFactInDomain('Alpha Centauri X', 'Cosmos', theModel);
   var cmp =`"Alpha Centauri X" has a meaning in domain "Cosmos":
-"Alpha Centauri X" (interpreted as "Alpha Centauri A") is a value for category "object name" present in 1(16.7%) of records;
-"Alpha Centauri X" (interpreted as "Alpha Centauri B") is a value for category "object name" present in 1(16.7%) of records;
+"Alpha Centauri X" (interpreted as "Alpha Centauri A") is a value for category "object name" present in 1(14.3%) of records;
+"Alpha Centauri X" (interpreted as "Alpha Centauri B") is a value for category "object name" present in 1(14.3%) of records;
 "Alpha Centauri X" (interpreted as "Alpha Centauri C") ...
-is a value for category "object name" present in 1(16.7%) of records;
-is a value for category "orbits" present in 1(16.7%) of records;\n`;
+is a value for category "object name" present in 1(14.3%) of records;
+is a value for category "orbits" present in 1(14.3%) of records;\n`;
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -130,7 +132,7 @@ is a value for category "orbits" present in 1(16.7%) of records;\n`;
 exports.testDescribeFactInDomainBluePlanet = function (test) {
   var res = Describe.describeFactInDomain('blue planet', 'Cosmos', theModel);
   var cmp = '"blue planet" has a meaning in domain "Cosmos":\n' +
-    '"blue planet" (interpreted as "earth") is a value for category "object name" present in 1(16.7%) of records;\n';
+    '"blue planet" (interpreted as "earth") is a value for category "object name" present in 1(14.3%) of records;\n';
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -143,7 +145,7 @@ exports.testDescribeFactInDomainEarth = function (test) {
   //TODO , restrict synonyms per domain!
   var res = Describe.describeFactInDomain('earth', undefined, theModel);
   var cmp = `"earth" has a meaning in 2 domains: "Cosmos" and "Philosophers elements"
-in domain "Cosmos" "earth" is a value for category "object name" present in 1(16.7%) of records;
+in domain "Cosmos" "earth" is a value for category "object name" present in 1(14.3%) of records;
 in domain "Philosophers elements" "earth" is a value for category "element name" present in 1(25.0%) of records;\n`;
   debuglog(res);
   debuglog(cmp);
@@ -156,7 +158,7 @@ exports.testDescribeFactInDomainBluePlanetAll = function (test) {
   //TODO , restrict synonyms per domain!
   var res = Describe.describeFactInDomain('blue planet', undefined, theModel);
   var cmp = `"blue planet" has a meaning in one domain "Cosmos":
-"blue planet" (interpreted as "earth") is a value for category "object name" present in 1(16.7%) of records;\n`;
+"blue planet" (interpreted as "earth") is a value for category "object name" present in 1(14.3%) of records;\n`;
   debuglog(res);
   debuglog(cmp);
   test.equals(res,cmp);
@@ -241,7 +243,7 @@ exports.testDescribeInDomain = function (test) {
 
 exports.testDescribeCategoryInhomogeneous = function (test) {
   var res = Describe.describeCategory('orbits', undefined, theModel, 'abc');
-  var cmp = 'is a category in domain "Cosmos"\nIt is present in 3 (50.0%) of records in this domain,\nhaving 2(+2) distinct values.\nPossible values are ...\n"Alpha Centauri C" or "Sun"';
+  var cmp = 'is a category in domain "Cosmos"\nIt is present in 3 (42.9%) of records in this domain,\nhaving 2(+2) distinct values.\nPossible values are ...\n"Alpha Centauri C" or "Sun"';
   debuglog(res);
   debuglog([cmp]);
   test.deepEqual(res,[cmp]);
@@ -251,7 +253,7 @@ exports.testDescribeCategoryInhomogeneous = function (test) {
 
 exports.testDescribeCategoryEcc = function (test) {
   var res = Describe.describeCategory('eccentricity', undefined, theModel, 'abc');
-  var cmp = 'is a category in domain "Cosmos"\nIt is present in 2 (33.3%) of records in this domain,\nhaving 2(+1) distinct values.\n'
+  var cmp = 'is a category in domain "Cosmos"\nIt is present in 2 (28.6%) of records in this domain,\nhaving 2(+1) distinct values.\n'
   + 'Possible values are ...\n"0.0167" or "0.0934"';
   debuglog(res);
   debuglog([cmp]);

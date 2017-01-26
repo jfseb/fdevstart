@@ -387,8 +387,10 @@ exports.testDescribeOneAtATime = function (test) {
 exports.testDescribeEcc = function (test) {
   testOne('describe eccentricity',function(oRes) {
     debuglog(JSON.stringify(oRes));
-    const DESCRIBE_ECCEN =  '"eccentricity"  is a category in domain "Cosmos"\nIt is present in 2 (33.3%) of records in this domain,\n'
-    + 'having 2(+1) distinct values.\nPossible values are ...\n"0.0167" or "0.0934"';
+    const DESCRIBE_ECCEN = '"eccentricity"  is a category in domain "Cosmos"\nIt is present in 2 (28.6%) of records in this domain,\nhaving 2(+1) distinct values.\nPossible values are ...\n"0.0167" or "0.0934"';
+
+    //const DESCRIBE_ECCEN =  '"eccentricity"  is a category in domain "Cosmos"\nIt is present in 2 (33.3%) of records in this domain,\n'
+    //+ 'having 2(+1) distinct values.\nPossible values are ...\n"0.0167" or "0.0934"';
     test.deepEqual(oRes,
     DESCRIBE_ECCEN);
     test.done();
@@ -410,7 +412,7 @@ exports.testDescribeEarth = function (test) {
   testOne('describe earth',function(oRes) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(oRes,
-    '"earth" has a meaning in 2 domains: "Cosmos" and "Philosophers elements"\nin domain "Cosmos" "earth" is a value for category "object name" present in 1(16.7%) of records;\nin domain "Philosophers elements" "earth" is a value for category "element name" present in 1(25.0%) of records;\n'
+    '"earth" has a meaning in 2 domains: "Cosmos" and "Philosophers elements"\nin domain "Cosmos" "earth" is a value for category "object name" present in 1(14.3%) of records;\nin domain "Philosophers elements" "earth" is a value for category "element name" present in 1(25.0%) of records;\n'
     );
     test.done();
   });

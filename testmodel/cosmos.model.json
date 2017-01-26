@@ -1,15 +1,25 @@
 {
   "domain": "Cosmos",
+  "description" : "a model with a small subset of cosmological entities. Main purpose is to test \na)properties which occur multiple times (e.g. \"Sun\" in \"object name\" as key and in \"orbits\"; \nb) \"earth\" as a property which is also present in a differnt model",
   "category": [
-    "object name",
+    {
+      "name" : "object name",
+      "description" : "name of the comsmological object, e.g. star, start system, galaxy or planet"
+    },
     "visual magnitude",
-    "object mass",
     "visual luminosity",
-    "mass",
-    "radius",
-    "object type",
-    "orbits",
-    "distance",
+    { "name": "mass",
+      "description" : "mass of an object"},
+    { "name": "radius"},
+    { "name": "object type",
+      "description" : "type of object, e.g. \"star\", \"planet\"."
+    },
+    { "name": "orbits",
+      "description" : "for planets, name of the central entity"
+    },
+    { "name":"distance",
+      "description" : "distance from earth"
+    },
     "_url",
     "orbit radius",
     "eccentricity",

@@ -212,7 +212,22 @@ export interface IAction {
 }
 
 
+export interface ICategoryDesc {
+  name: string,
+  description? : string,
+  iskey? : boolean
+  exactMatch: boolean,
+  synonyms? : string[];
+}
+
 export interface IModels {
+    full : {
+      domain : { [key : string] : {
+          description: string,
+          categories : { [key : string] : ICategoryDesc }
+        }
+      }
+    },
     domains: string[],
     tools: ITool[],
     category: string[],

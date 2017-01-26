@@ -1,0 +1,147 @@
+
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends ../layout_p
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap domain Cosmos
+			ul.nav.navbar-nav.navbar-right #{uid}
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+	p  &nbsp;
+	p &nbsp;
+	p
+
+	div.well
+		h3 domain "Cosmos"
+			span.pull-right 7 records
+		p
+		span a model with a small subset of cosmological entities. Main purpose is to test 
+											br
+											| a)properties which occur multiple times (e.g. "Sun" in "object name" as key and in "orbits"; 
+											br
+											| b) "earth" as a property which is also present in a differnt model
+
+		table.table.table-condensed.table-striped
+			thead
+				tr
+					th category
+					th(style="width:10%") count
+					th
+						table
+							tr
+								td synonyms
+							tr
+								td description
+							tr
+								td example values
+			tbody
+
+			tr
+					td.cat_count distance
+					td 6 distinct values in 85.7% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td distance from earth
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "0"
+											br
+											| (2): "1au; 1.496x10^8 km, 8min 19s at light speed"
+											br
+											| (3): "4.2 lightyears, 1.30pc"
+											br
+											| ...
+      
+			tr
+					td.cat_count mass
+					td 6 distinct values in 85.7% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td mass of an object
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| ".907*sun", "0.107*earth", "0.134*sun, 1.27*earth" ...
+      
+			tr
+					td.cat_count object name
+					td 7 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td name of the comsmological object, e.g. star, start system, galaxy or planet
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "Alpha Centauri A", "Alpha Centauri B", "Alpha Centauri C", "Mars" ...
+      
+			tr
+					td.cat_count object type
+					td 6 distinct values in 85.7% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td type of object, e.g. "star", "planet".
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "planet", "star" or "star, red dwarf"
+      
+			tr
+					td.cat_count orbits
+					td 3 distinct values in 42.9% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td for planets, name of the central entity
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "Alpha Centauri C" or "Sun"
+      
+			tr
+					td.cat_count radius
+					td 4 distinct values in 57.1% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td 
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "0.141*sun, 1.1+/-0.3*earth", "0.53*earth, 3.390 km", "1*earth, 6371km" ...
+      
+		p   and 7 other categories
+       
+		h3 Version
+			a.small(href="/whatsnew")
+
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')

@@ -162,7 +162,17 @@ export function toPercent(a : number, b: number) : string {
   return "" + (100* a / b).toFixed(1);
 }
 
-export function describeCategoryInDomain(category : string, filterdomain : string, theModel: IMatch.IModels) : string {
+
+export interface ICategoryStats {
+  categoryDesc : IMatch.ICategoryDesc,
+  presentRecords : number,
+  distinct : string,
+  delta : string,
+  percPresent : string,
+  sampleValues : string,
+};
+
+export function getCategoryStatsInDomain(category : string, filterdomain : string, theModel: IMatch.IModels) : ICategoryStats {
   const recordCount = countRecordPresence(category, filterdomain, theModel);
   debuglog(JSON.stringify(theModel.records.filter(a => a._domain === "Cosmos"),undefined,2));
   const percent = toPercent(recordCount.presentrecords , recordCount.totalrecords);
@@ -175,11 +185,37 @@ export function describeCategoryInDomain(category : string, filterdomain : strin
   var delta =  (undefNaDelta) ?  "(+" + undefNaDelta + ")" : "";
   const distinct = '' + realvalues.length;
   const valuesList = makeValuesListString(realvalues);
+  return {
+    categoryDesc : theModel.full.domain[filterdomain].categories[category],
+    distinct : distinct,
+    delta : delta,
+    presentRecords : recordCount.presentrecords,
+    percPresent : percent,
+    sampleValues : valuesList
+  }
+}
+
+export function describeCategoryInDomain(category : string, filterdomain : string, theModel: IMatch.IModels) : string {
+/*  const recordCount = countRecordPresence(category, filterdomain, theModel);
+  debuglog(JSON.stringify(theModel.records.filter(a => a._domain === "Cosmos"),undefined,2));
+  const percent = toPercent(recordCount.presentrecords , recordCount.totalrecords);
+  debuglog(JSON.stringify(recordCount.values));
+  var allValues =Object.keys(recordCount.values);
+  var realvalues = allValues.filter(value => (value !== 'undefined') && (value !== 'n/a'));
+  debuglog
+  realvalues.sort();
+  var undefNaDelta =  (allValues.length - realvalues.length);
+  var delta =  (undefNaDelta) ?  "(+" + undefNaDelta + ")" : "";
+  const distinct = '' + realvalues.length;
+
+  const valuesList = makeValuesListString(realvalues);
+*/
+  var stats = getCategoryStatsInDomain(category,filterdomain,theModel);
 
   return 'is a category in domain "' + filterdomain + '"\n'
-  + `It is present in ${recordCount.presentrecords} (${percent}%) of records in this domain,\n` +
-   `having ${distinct + ''}${delta} distinct values.\n`
-  + valuesList;
+  + `It is present in ${stats.presentRecords} (${stats.percPresent}%) of records in this domain,\n` +
+   `having ${stats.distinct + ''}${stats.delta} distinct values.\n`
+  + stats.sampleValues;
 }
 
 export function findRecordsWithFact(matchedString: string, category : string, records : any, domains : { [key : string] : number}) : any[] {

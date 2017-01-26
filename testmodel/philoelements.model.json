@@ -1,5 +1,6 @@
 {
   "domain": "Philosophers elements",
+  "description" : "Philosophical elements, a trivial model to create some ambiguities, notably \"earth\", which is also a key of the domain cosmos",
   "category": [
     "element name",
     "element properties"

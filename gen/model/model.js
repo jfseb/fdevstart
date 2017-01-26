@@ -21,7 +21,7 @@ var _ = require('lodash');
  */
 var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 ;
-var ARR_MODEL_PROPERTIES = ["domain", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+var ARR_MODEL_PROPERTIES = ["domain", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
@@ -119,6 +119,21 @@ function loadModel(modelPath, sModelName, oModel) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl);
+    var categoryDescribedMap = {};
+    oMdl.categoryDescribed = [];
+    // rectify category
+    oMdl.category = oMdl.category.map(function (cat) {
+        if (typeof cat === "string") {
+            return cat;
+        }
+        if (typeof cat.name !== "string") {
+            console.log("Missing name in object typed category in " + JSON.stringify(cat) + " in model " + sModelName);
+            process.exit(-1);
+        }
+        categoryDescribedMap[cat.name] = cat;
+        oMdl.categoryDescribed.push(cat);
+        return cat.name;
+    });
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
@@ -126,9 +141,11 @@ function loadModel(modelPath, sModelName, oModel) {
     // check properties of model
     Object.keys(oMdl).sort().forEach(function (sProperty) {
         if (ARR_MODEL_PROPERTIES.indexOf(sProperty) < 0) {
-            throw new Error('Model property "' + sProperty + '" not a known model propperty in model of domain ' + oMdl.domain + ' ');
+            throw new Error('Model property "' + sProperty + '" not a known model property in model of domain ' + oMdl.domain + ' ');
         }
     });
+    oModel.full.domain[oMdl.domain] = { description: oMdl.description,
+        categories: categoryDescribedMap };
     // check that members of wordindex are in categories,
     oMdl.wordindex = oMdl.wordindex || [];
     oMdl.wordindex.forEach(function (sWordIndex) {
@@ -189,6 +206,9 @@ function loadModel(modelPath, sModelName, oModel) {
     if (oMdl.synonyms) {
         Object.keys(oMdl.synonyms).forEach(function (ssynkey) {
             if (oMdl.category.indexOf(ssynkey) >= 0 && ssynkey !== "tool") {
+                if (oModel.full.domain[oMdl.domain].categories[ssynkey]) {
+                    oModel.full.domain[oMdl.domain].categories[ssynkey].synonyms = oMdl.synonyms[ssynkey];
+                }
                 addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
             }
         });
@@ -229,6 +249,7 @@ exports.splitRules = splitRules;
 function loadModels(modelPath) {
     var oModel;
     oModel = {
+        full: { domain: {} },
         domains: [],
         tools: [],
         rules: undefined,

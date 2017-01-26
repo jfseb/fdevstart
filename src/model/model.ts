@@ -46,16 +46,20 @@ export interface IModels {
 
 interface IModel {
     domain: string,
+    description? : string,
     tool: IMatch.ITool,
     toolhidden?: boolean,
     synonyms?: { [key: string]: string[] },
+    categoryDescribed :  { name : string,
+        description? : string,
+        key? : string }[],
     category: string[],
     wordindex: string[],
     exactmatch? : string[],
     hidden: string[]
 };
 
-const ARR_MODEL_PROPERTIES = ["domain", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+const ARR_MODEL_PROPERTIES = ["domain", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 
 function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule[] }) {
     synonyms.forEach(function (syn) {
@@ -165,6 +169,23 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl) as IModel;
 
+    var categoryDescribedMap = {} as { [key: string] : IMatch.ICategoryDesc };
+    oMdl.categoryDescribed = [];
+    // rectify category
+    oMdl.category = oMdl.category.map(function(cat : any) {
+        if(typeof cat === "string") {
+            return cat;
+        }
+        if(typeof cat.name !== "string") {
+            console.log("Missing name in object typed category in " + JSON.stringify(cat) + " in model " + sModelName );
+            process.exit(-1);
+            //throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
+        }
+        categoryDescribedMap[cat.name] = cat;
+        oMdl.categoryDescribed.push(cat);
+        return cat.name;
+    });
+
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
@@ -172,9 +193,15 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
     // check properties of model
     Object.keys(oMdl).sort().forEach(function(sProperty) {
         if(ARR_MODEL_PROPERTIES.indexOf(sProperty) < 0) {
-            throw new Error('Model property "' + sProperty + '" not a known model propperty in model of domain ' + oMdl.domain + ' ');
+            throw new Error('Model property "' + sProperty + '" not a known model property in model of domain ' + oMdl.domain + ' ');
         }
     });
+
+
+    oModel.full.domain[oMdl.domain] = { description : oMdl.description,
+    categories : categoryDescribedMap };
+
+
     // check that members of wordindex are in categories,
     oMdl.wordindex = oMdl.wordindex || [];
     oMdl.wordindex.forEach(function(sWordIndex) {
@@ -242,6 +269,10 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
     if (oMdl.synonyms) {
         Object.keys(oMdl.synonyms).forEach(function (ssynkey) {
             if (oMdl.category.indexOf(ssynkey) >= 0 && ssynkey !== "tool") {
+                if (oModel.full.domain[oMdl.domain].categories[ssynkey])  {
+                   oModel.full.domain[oMdl.domain].categories[ssynkey].synonyms = oMdl.synonyms[ssynkey];
+                }
+
                 addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
             }
         });
@@ -283,6 +314,7 @@ export function splitRules(rules : IMatch.mRule[]) : IMatch.SplitRules {
 export function loadModels(modelPath? : string) : IMatch.IModels {
     var oModel: IMatch.IModels;
     oModel = {
+        full : { domain : {}},
         domains: [],
         tools: [],
         rules : undefined,

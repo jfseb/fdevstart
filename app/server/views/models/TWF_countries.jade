@@ -1,0 +1,67 @@
+
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends ../layout_p
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap domain TWF_countries
+			ul.nav.navbar-nav.navbar-right #{uid}
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+	p  &nbsp;
+	p &nbsp;
+	p
+
+	div.well
+		h3 domain "TWF_countries"
+			span.pull-right 268 records
+		p
+		span a description of numerous facts about countries, courtesy of "The World Factbook", CIA
+
+		table.table.table-condensed.table-striped
+			thead
+				tr
+					th category
+					th(style="width:10%") count
+					th
+						table
+							tr
+								td synonyms
+							tr
+								td description
+							tr
+								td example values
+			tbody
+
+			tr
+					td.cat_count country
+					td 268 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td countries
+							tr.cat_description
+								td name of a country
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "Afghanistan", "Akrotiri", "Albania", "Algeria", "American Samoa", "Andorra" ...
+      
+		p   and 191 other categories
+       
+		h3 Version
+			a.small(href="/whatsnew")
+
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/settings.js')
