@@ -257,7 +257,7 @@ function getRuleMap() {
         {
             type: 1 /* REGEXP */,
             key: "systemObjectId",
-            regexp: /\S+/i,
+            regexp: /^\S+$/i,
             follows: {
                 _ranking: 0.9
             }
@@ -341,7 +341,7 @@ function getIntMRulesSample() {
         {
             type: 1 /* REGEXP */,
             category: "systemObjectId",
-            regexp: /\S+/i,
+            regexp: /^\S+$/i,
             _ranking: 0.5
         },
         {

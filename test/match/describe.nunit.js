@@ -181,7 +181,6 @@ exports.testDescribeDomain = function (test) {
   test.done();
 };
 
-
 exports.testDescribeFactWhichIsADomain = function (test) {
   var oRes = Describe.describeFactInDomain('cusmos', undefined, theModel);
   test.deepEqual(oRes,

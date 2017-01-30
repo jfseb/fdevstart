@@ -45,7 +45,7 @@ exports.testCalcCategoryRecordAppComp = function (test) {
   const rec = Vismodel.calcCategoryRecord(mdl2, 'ApplicationComponent', 'BOM');
   test.deepEqual(rec, {
     otherdomains : ['FioriBOM'],
-    nrDistinctValues : 713,
+    nrDistinctValues : 710,
     nrDistinctValuesInDomain : 0,
     nrRecords : 12779,
     nrRecordsInDomain: 0,

@@ -8,6 +8,8 @@ gen/*
 gen3
 gen_cov
 sensitive
+regress/runs/20*
+test/regress/test/runs
 gen/extern/elizabot/elizabot.js
 sensitive/data.js
 # we check in gen for coveralls source references

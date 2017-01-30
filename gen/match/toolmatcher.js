@@ -71,6 +71,10 @@ var match = require('./match');
 var ToolMatch = match.ToolMatch;
 function matchTools(aSentences, aTool) {
     //var stream = new streamutils.MatchStream();
+    debuglog("matchTools: sentences \n" +
+        aSentences.map(function (oSentence, index) {
+            return (index < 30) ? ("[" + index + "]") + Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence) : "\n";
+        }).join("\n"));
     var result = [];
     aTool.forEach(function (oTool) {
         aSentences.forEach(function (oSentence) {
@@ -88,6 +92,12 @@ function matchTools(aSentences, aTool) {
         });
     });
     result.sort(ToolMatch.compBetterMatch);
+    if (debuglog.enabled) {
+        debuglog("matchTools: ranked toolmatches\n" +
+            result.map(function (otoolmatch) {
+                return Sentence.dumpNice(otoolmatch.sentence) + JSON.stringify(otoolmatch);
+            }).join("\n"));
+    }
     return result;
 }
 exports.matchTools = matchTools;

@@ -10,7 +10,9 @@
  *
  */
 "use strict";
-// const debuglog = debug('toolmatcher')
+// <reference path="../../lib/node-4.d.ts" />
+var debug = require('debug');
+var debuglog = debug('sentence');
 function findWordByCategory(oSentence, sCategory) {
     var res = {};
     oSentence.every(function (oWord, iIndex) {
@@ -58,5 +60,36 @@ function cmpRankingProduct(a, b) {
     return -(rankingProduct(a) - rankingProduct(b));
 }
 exports.cmpRankingProduct = cmpRankingProduct;
+function cutoffSentenceAtRatio(sentences) {
+    if (sentences.length === 0) {
+        return sentences;
+    }
+    var bestRank = rankingProduct(sentences[0]);
+    for (var i = 1; (i < Math.min(sentences.length, 300)) && ((rankingProduct(sentences[i]) / bestRank) > 0.8); ++i) {
+    }
+    debuglog("reduce sentences by " + i + "/" + sentences.length);
+    return sentences.slice(0, i);
+}
+exports.cutoffSentenceAtRatio = cutoffSentenceAtRatio;
+function dumpNice(sentence, fn) {
+    var result = [];
+    sentence.forEach(function (oWord, index) {
+        var sWord = "[" + index + "] : " + (oWord._ranking || 0).toFixed(3) + " " + oWord.category + " \"" + oWord.string + "\" => \"" + oWord.matchedString + "\"";
+        result.push(sWord + "\n");
+    });
+    result.push(".\n");
+    return result.join("");
+}
+exports.dumpNice = dumpNice;
+function dumpNiceArr(sentences, fn) {
+    if (!sentences) {
+        return "";
+    }
+    var res = sentences.reduce(function (prev, oSentence) {
+        return prev + dumpNice(oSentence);
+    }, "");
+    return res;
+}
+exports.dumpNiceArr = dumpNiceArr;
 
 //# sourceMappingURL=sentence.js.map

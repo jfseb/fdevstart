@@ -609,7 +609,6 @@ function makeBot(connector, modelPath?: string) {
       debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
       debuglog('top : ' + Match.ToolMatch.dumpWeightsTop(result, { top: 3 }));
 
-
       if (Analyze.isComplete(result[0])) {
         session.dialogData.result = result[0];
         //    session.send('Showing entity ...');

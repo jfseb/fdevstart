@@ -12,7 +12,7 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 var debuglog = require('debug')('inputFilter.nunit');
 
 const inputFilter = require(root + '/match/inputFilter.js');
-
+const InputFilter = inputFilter;
 
 const utils = require(root + '/utils/utils.js');
 
@@ -219,7 +219,7 @@ exports.test_matchWordAliasMatchOthersFalse = function (test) {
       systemObjectCategory: 'xunit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }
     , ' matched');
@@ -252,7 +252,7 @@ exports.test_matchWordAliasMatchOthersFalseOverride = function (test) {
       systemObjectCategory: 'unit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }
     , ' matched and override');
@@ -295,7 +295,7 @@ exports.test_matchWordAlias = function (test) {
       systemObjectCategory: 'unit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }, ' incorrect result');
   test.done();
@@ -315,7 +315,7 @@ exports.test_matchWordAliasDifferentCat = function (test) {
     systemObjectId: 'ClientSideTargetResolution',
     systemObjectCategory: 'xunit',
     abc: 'ABC',
-    _weight: { 'systemObjectId': 0 }
+    _weight: { 'systemObjectId': 1 }
   }
   /* undefined */, ' no match');
   test.done();
@@ -650,7 +650,7 @@ exports.test_applyRulesLevenBestFitCategory = function (test) {
     }
   ];
   var oContext = {
-    keyA: 'valueabf',
+    keyA: 'valuebbc',
     keyB: 'CategoryB'
   };
   // act
@@ -682,7 +682,7 @@ exports.test_matchWordAliasOverride = function (test) {
       systemObjectCategory: 'unit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }, ' incorrect result');
   test.done();
@@ -706,7 +706,7 @@ exports.test_matchWordAliasOverrideDifferent = function (test) {
       systemObjectCategory: 'unit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }, ' incorrect result');
   test.done();
@@ -823,7 +823,7 @@ exports.test_matchWordLevenClose = function (test) {
       systemObjectCategory: 'unit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 41
+        'systemObjectId':  0.9923076923076923
       }
     }, ' incorrect result ');
   test.done();
@@ -961,7 +961,7 @@ exports.test_matchSthElse = function (test) {
       systemObjectCategory: 'xunit',
       abc: 'ABC',
       _weight: {
-        'systemObjectId': 0
+        'systemObjectId': 1
       }
     }, ' incorrect result');
   test.done();
@@ -990,6 +990,7 @@ exports.test_applyRulesWithCategory = function (test) {
   // act
   var res = ab.applyRules(oContext);
   // test
+  //console.log(JSON.stringify(res,undefined,2));
   test.deepEqual(res[0].systemObjectId, 'ClientSideTargetResolution', ' typo corrected');
   test.deepEqual(res[0].systemObjectCategory, 'unit test', 'category determined ok');
   test.done();
@@ -1102,34 +1103,19 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
   var res = ab.categorizeString2('NavTargetRes', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [
-    {
-      'string': 'NavTargetRes',
-      'matchedString': 'NavTargetResolution',
-      'category': 'unit test',
-      _ranking: 1 * ab.levenPenalty(7),
-      levenmatch: 7
-    },
-    /*  {
-        'string': 'NavTargetRes',
-        'matchedString': 'NavTargetResolutionAdapter',
-        'category': 'unit test',
-        _ranking : 1 * ab.levenPenalty(17),
-        levenmatch : 17
-      }, */
-    {
-      'string': 'NavTargetRes',
-      'matchedString': 'NavTargetRes',
-      'category': 'fiori catalog',
-      _ranking: 0.5
-    },
-    {
-      'string': 'NavTargetRes',
-      'matchedString': 'NavTargetRes',
-      'category': 'systemObjectId',
-      _ranking: 0.5
-    }
-  ], 'what is this nr 2');
+  test.deepEqual(res, [ { string: 'NavTargetRes',
+    matchedString: 'NavTargetResolution',
+    category: 'unit test',
+    _ranking: 0.9263157894736842,
+    levenmatch: 0.9263157894736842 },
+  { string: 'NavTargetRes',
+    matchedString: 'NavTargetRes',
+    category: 'fiori catalog',
+    _ranking: 0.5 },
+  { string: 'NavTargetRes',
+    matchedString: 'NavTargetRes',
+    category: 'systemObjectId',
+    _ranking: 0.5 } ], 'what is this nr 2');
   test.done();
 };
 
@@ -1201,7 +1187,7 @@ delete res[0].levenmatch;
 
 exports.testCategorizeStringDistanceNavTargetInBetween = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))
-  var res = ab.categorizeString2('NavTargetResolutAdapt', false, ifr);
+  var res = ab.categorizeString2('NavTargetResolutioAd', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
   test.deepEqual(res[0].matchedString, 'NavTargetResolution');
@@ -1299,82 +1285,60 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
   var res = ab.analyzeString('UV2 client 120', ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [
-    [
-      [
-        {
-          string: 'UV2 client 120',
-          matchedString: 'UV2 client 120',
-          category: 'systemObjectId',
-          _ranking: 0.5
-        }
-      ]
-    ],
-    [
-      [
-        {
-          string: 'UV2',
-          matchedString: 'UV2',
-          category: 'systemId',
-          _ranking: 1
-        }
-      ],
-      [
-        {
-          string: 'client 120',
-          matchedString: 'client 120',
-          category: 'systemObjectId',
-          _ranking: 0.5
-        }
-      ]
-    ],
-    [
-      [
-        {
-          string: 'UV2 client',
-          matchedString: 'UV2 client',
-          category: 'systemObjectId',
-          _ranking: 0.5
-        }
-      ],
-      [
-        {
-          string: '120',
-          matchedString: '120',
-          category: 'client',
-          _ranking: 0.8
-        }
-      ]
-    ],
-    [
-      [
-        {
-          string: 'UV2',
-          matchedString: 'UV2',
-          category: 'systemId',
-          _ranking: 1
-        }
-      ],
-      [
-        {
-          string: 'client',
-          matchedString: 'client',
-          category: 'category',
-          _ranking: 1
-        }
-      ],
-      [
-        {
-          string: '120',
-          matchedString: '120',
-          category: 'client',
-          _ranking: 0.8
-        }
-      ]
-    ]
-  ], 'correct res');
+  test.deepEqual(res,[ [ [ { string: 'UV2',
+        matchedString: 'UV2',
+        category: 'systemId',
+        _ranking: 1 } ],
+    [ { string: 'client 120',
+        matchedString: 'client',
+        category: 'category',
+        _ranking: 0.92,
+        levenmatch: 0.92 } ] ],
+  [ [ { string: 'UV2 client',
+        matchedString: 'client',
+        category: 'category',
+        _ranking: 0.8666666666666667,
+        levenmatch: 0.8666666666666667 } ],
+    [ { string: '120',
+        matchedString: '120',
+        category: 'client',
+        _ranking: 0.8 } ] ],
+  [ [ { string: 'UV2',
+        matchedString: 'UV2',
+        category: 'systemId',
+        _ranking: 1 } ],
+    [ { string: 'client',
+        matchedString: 'client',
+        category: 'category',
+        _ranking: 1 } ],
+    [ { string: '120',
+        matchedString: '120',
+        category: 'client',
+        _ranking: 0.8 } ] ] ], 'correct res');
   test.done();
 };
+
+
+exports.testAnalyzeStringABC = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  var res = ab.analyzeString('ABC', ifr);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+  test.deepEqual(res, [ [ [ { string: 'ABC',
+        matchedString: 'ABC',
+        category: 'systemId',
+        _ranking: 0.7 },
+      { string: 'ABC',
+        matchedString: 'ABC',
+        category: 'fiori catalog',
+        _ranking: 0.5 },
+      { string: 'ABC',
+        matchedString: 'ABC',
+        category: 'systemObjectId',
+        _ranking: 0.5 } ] ] ], 'correct res');
+  test.done();
+};
+
+
 
 var mRulesStrict = Model.splitRules( [
   {
@@ -1408,20 +1372,19 @@ exports.testAnalyzeStringNoGenerics1 = function (test) {
   var res = ab.analyzeString('unit test 120', mRulesStrict);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [[[{
-    string: 'unit test',
-    matchedString: 'unit test',
-    category: 'category',
-    _ranking: 0.95
-  }],
-    [{
-      string: '120',
-      matchedString: '120',
-      category: 'client',
-      _ranking: 0.95
-    }]
-  ]
-  ], 'correct res');
+  test.deepEqual(res, [ [ [ { string: 'unit test 120',
+        matchedString: 'unit test',
+        category: 'category',
+        _ranking: 0.8915384615384615,
+        levenmatch: 0.9384615384615385 } ] ],
+  [ [ { string: 'unit test',
+        matchedString: 'unit test',
+        category: 'category',
+        _ranking: 0.95 } ],
+    [ { string: '120',
+        matchedString: '120',
+        category: 'client',
+        _ranking: 0.95 } ] ] ], 'correct res');
   test.done();
 };
 
@@ -1630,6 +1593,12 @@ exports.testreinforceSentence = function (test) {
   test.done();
 };
 
+
+exports.testCalcDistnance = function (test) {
+  var res = InputFilter.calcDistance('literary','life');
+  test.equal(res, 0.7666666666666667);
+  test.done();
+}
 
 exports.testreinforceMetaDomainSentence = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))

@@ -63,6 +63,8 @@ export function listAllWithContext(category: string, contextQueryString: string,
     logPerf('listAllWithContext');
     perflog("totalListAllWithContext");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
+    debuglog("listAllWithContext:matching records (s=" + aSentencesReinforced.length + ")...");
+    debuglog("here sentences" + JSON.stringify(aSentencesReinforced,undefined,2));
     perflog("matching records (s=" + aSentencesReinforced.length + ")...");
     var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled){
@@ -280,6 +282,7 @@ export function inferDomain(theModel : IMatch.IModels, contextQueryString: strin
     return undefined;
   }
   var domains = [];
+  //console.log(Sentence.dumpNiceArr(res));
   // do we have a domain ?
   res[0].forEach(function(oWordGroup) {
     if(oWordGroup.category === "domain") {
@@ -287,12 +290,15 @@ export function inferDomain(theModel : IMatch.IModels, contextQueryString: strin
     }
   });
   if(domains.length === 1) {
+    debuglog("got a precise domain " + domains[0]);
     return domains[0];
   }
   if(domains.length > 0 ) {
+    debuglog("got more than one domain, confused  " + domains.join("\n"));
     return undefined;
     // TODOD
   }
+  debuglog("attempting to determine categories")
   // try a category reverse map
   res[0].forEach(function(oWordGroup){
     if(oWordGroup.category === "category") {
@@ -306,7 +312,9 @@ export function inferDomain(theModel : IMatch.IModels, contextQueryString: strin
     }
   });
   if(domains.length === 1) {
+     debuglog("got a precise domain " + domains[0]);
     return domains[0];
   }
+  debuglog("got more than one domain, confused  " + domains.join("\n"));
   return undefined;
 };

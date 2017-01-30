@@ -12,6 +12,7 @@
   "tool": {
   },
   "synonyms" : {
-    "example questions" : ["questions", "sample questions"]
+    "example questions" : ["questions", "sample questions"],
+    "example question" : ["questions", "sample questions", "sample question"]
   }
 }

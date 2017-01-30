@@ -252,6 +252,19 @@ exports.testcmpByNrCategoriesAndSameDomain = function (test) {
 
 
 
+exports.testAnalyzeCategoryElemSingle = function (test) {
+  var res = WhatIs.analyzeCategory('element names', theModel.rules, 'what is unit test wiki for abc');
+  test.deepEqual(res, 'element name');
+  test.done();
+};
+
+
+
+exports.testAnalyzeCategoryElem = function (test) {
+  var res = WhatIs.analyzeCategory('element namess', theModel.rules, 'what is unit test wiki for abc');
+  test.deepEqual(res, 'element name');
+  test.done();
+};
 
 
 
@@ -270,9 +283,23 @@ exports.testAnalyzeCategoryMult2 = function (test) {
 // TODO, this is bullshit, complete cover must be better than sloppy matches!
 exports.testCategorizeMultElement = function (test) {
   var res = WhatIs.analyzeCategoryMult('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');
-  test.deepEqual(res, ['element name', 'element number', 'atomic weight', 'element symbol']);
+  test.deepEqual(res, ['element name', 'element number', 'element symbol']);
   test.done();
 };
+
+
+// TODO, this is bullshit, complete cover must be better than sloppy matches!
+exports.testAnalyzeCusmos = function (test) {
+  var res = WhatIs.analyzeContextString('cusmos', theModel.rules);
+  test.deepEqual(res, [ [ { string: 'cusmos',
+    matchedString: 'Cosmos',
+    category: 'domain',
+    _ranking: 0.855,
+    levenmatch: 0.9 } ] ]
+      );
+  test.done();
+};
+
 
 exports.testCategorizeMultElement2 = function (test) {
   var res = WhatIs.analyzeCategoryMult2('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');

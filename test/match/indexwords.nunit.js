@@ -27,10 +27,11 @@ pg.defaults.ssl = true;
 
 exports.testLoadWords = function (test) {
   if (process.env.ABOT_EMAIL_USER) {
+    test.done();
     return;
   }
-  test.done();
   if(!process.env.ABOT_INDEXWORDS) {
+    test.done();
     return; // not today
   }
   var fut = IndexWords.dumpWords(dburl, m);

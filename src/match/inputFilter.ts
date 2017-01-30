@@ -44,13 +44,57 @@ const debuglogM = debug('inputMFilter')
 import * as matchdata from './matchdata';
 var oUnitTests = matchdata.oUnitTests
 
+function cntChars(str : string, len : number) {
+  var cnt = 0;
+  for(var i = 0; i < len; ++i) {
+    cnt += (str.charAt(i) === 'X')? 1 : 0;
+  }
+  return cnt;
+}
+
 /**
  * @param sText {string} the text to match to NavTargetResolution
  * @param sText2 {string} the query text, e.g. NavTarget
  *
  * @return the distance, note that is is *not* symmetric!
  */
-function calcDistance(sText1: string, sText2: string): number {
+export function calcDistance(sText1: string, sText2: string): number {
+  // console.log("length2" + sText1 + " - " + sText2)
+  var s1len = sText1.length;
+  var s2len = sText2.length;
+  var min = Math.min(s1len,s2len);
+  if(Math.abs(s1len - s2len) > Math.min(s1len,s2len)) {
+    return 0.3;
+  }
+  var dist = distance.jaroWinklerDistance(sText1,sText2);
+  var cnt1 = cntChars(sText1, s1len);
+  var cnt2 = cntChars(sText2, s2len);
+  if(cnt1 !== cnt2) {
+    dist = dist * 0.7;
+  }
+  return dist;
+  /*
+  var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
+  if(debuglogV.enabled) {
+    debuglogV("distance" + a0 + "stripped>" + sText1.substring(0,sText2.length) + "<>" + sText2+ "<");
+  }
+  if(a0 * 50 > 15 * sText2.length) {
+      return 40000;
+  }
+  var a = distance.levenshtein(sText1, sText2)
+  return a0 * 500 / sText2.length + a
+  */
+}
+
+
+
+/**
+ * @param sText {string} the text to match to NavTargetResolution
+ * @param sText2 {string} the query text, e.g. NavTarget
+ *
+ * @return the distance, note that is is *not* symmetric!
+ */
+export function calcDistanceLeven(sText1: string, sText2: string): number {
   // console.log("length2" + sText1 + " - " + sText2)
    if(((sText1.length - sText2.length) > Algol.calcDist.lengthDelta1)
     || (sText2.length > 1.5 * sText1.length )
@@ -67,6 +111,9 @@ function calcDistance(sText1: string, sText2: string): number {
   var a = distance.levenshtein(sText1, sText2)
   return a0 * 500 / sText2.length + a
 }
+
+
+
 
 import * as IFMatch from '../match/ifmatch';
 
@@ -88,9 +135,10 @@ interface IMatchCount {
 
 type EnumRuleType = IFMatch.EnumRuleType
 
-const levenCutoff = Algol.Cutoff_LevenShtein;
+//const levenCutoff = Algol.Cutoff_LevenShtein;
 
-export function levenPenalty(i: number): number {
+
+export function levenPenaltyOld(i: number): number {
   // 0-> 1
   // 1 -> 0.1
   // 150 ->  0.8
@@ -100,6 +148,14 @@ export function levenPenalty(i: number): number {
   // reverse may be better than linear
   return 1 + i * (0.8 - 1) / 150
 }
+
+export function levenPenalty(i: number): number {
+  // 1 -> 1
+  // cutOff => 0.8
+  return i;
+  //return   1 -  (1 - i) *0.2/Algol.Cutoff_WordMatch;
+}
+
 
 function nonPrivateKeys(oA) {
   return Object.keys(oA).filter(key => {
@@ -189,6 +245,9 @@ oRule : IMatch.mRule, cntRec? : ICntRec ) {
           throw new Error('rule without a lowercase variant' + JSON.stringify(oRule, undefined, 2));
          };
         if (exact && oRule.word === string || oRule.lowercaseword === lcString) {
+          if(debuglog.enabled) {
+            debuglog("\n!matched exact " + string + "="  + oRule.lowercaseword  + " => " + oRule.matchedString + "/" + oRule.category);
+          }
           res.push({
             string: string,
             matchedString: oRule.matchedString,
@@ -199,22 +258,31 @@ oRule : IMatch.mRule, cntRec? : ICntRec ) {
         if (!exact && !oRule.exactOnly) {
           var levenmatch = calcDistance(oRule.lowercaseword, lcString);
 
+/*
           addCntRec(cntRec,"calcDistance", 1);
-          if(levenmatch < 50000) {
+          if(levenmatch < 50) {
             addCntRec(cntRec,"calcDistanceExp", 1);
           }
           if(levenmatch < 40000) {
             addCntRec(cntRec,"calcDistanceBelow40k", 1);
           }
-          if (levenmatch < levenCutoff) {
+          */
+          //if(oRule.lowercaseword === "cosmos") {
+          //  console.log("here ranking " + levenmatch + " " + oRule.lowercaseword + " " + lcString);
+          //}
+          if (levenmatch >= Algol.Cutoff_WordMatch) { // levenCutoff) {
             addCntRec(cntRec,"calcDistanceOk", 1);
-            res.push({
+            var rec = {
               string: string,
               matchedString: oRule.matchedString,
               category: oRule.category,
               _ranking: (oRule._ranking || 1.0) * levenPenalty(levenmatch),
               levenmatch: levenmatch
-            })
+            };
+            if(debuglog) {
+              debuglog("\n!fuzzy " + (levenmatch).toFixed(3) + " " + rec._ranking.toFixed(3) + "  " + string + "="  + oRule.lowercaseword  + " => " + oRule.matchedString + "/" + oRule.category);
+            }
+            res.push(rec);
           }
         }
         break;
@@ -250,35 +318,69 @@ function addCntRec(cntRec : ICntRec, member : string, number : number) {
   cntRec[member] = (cntRec[member] || 0) + number;
 }
 
-export function categorizeString(string: string, exact: boolean, oRules: Array<IMatch.mRule>,
+export function categorizeString(word: string, exact: boolean, oRules: Array<IMatch.mRule>,
  cntRec? : ICntRec): Array<IFMatch.ICategorizedString> {
   // simply apply all rules
   if(debuglogM.enabled )  {
     debuglogM("rules : " + JSON.stringify(oRules, undefined, 2));
   }
-  var lcString = string.toLowerCase();
+  var lcString = word.toLowerCase();
   var res: Array<IMatch.ICategorizedString> = []
   oRules.forEach(function (oRule) {
-    checkOneRule(string,lcString,exact,res,oRule,cntRec);
+    checkOneRule(word,lcString,exact,res,oRule,cntRec);
   });
   res.sort(sortByRank);
   return res;
 }
 
-export function categorizeString2(string: string, exact: boolean,  rules : IMatch.SplitRules
+export function postFilter(res : Array<IFMatch.ICategorizedString>) : Array<IFMatch.ICategorizedString> {
+  res.sort(sortByRank);
+  var bestRank = 0;
+  //console.log("\npiltered " + JSON.stringify(res));
+  if(debuglog.enabled) {
+    debuglog(" preFilter : \n" + res.map(function(word) {
+      return ` ${word._ranking}  => "${word.category}" ${word.matchedString} \n`;
+    }).join("\n"));
+  }
+  var r = res.filter(function(resx,index) {
+    if(index === 0) {
+      bestRank = resx._ranking;
+      return true;
+    }
+    // 1-0.9 = 0.1
+    // 1- 0.93 = 0.7
+    // 1/7
+    var delta = bestRank / resx._ranking;
+    if((resx.matchedString === res[index-1].matchedString)
+      && (resx.category === res[index-1].category)) {
+      return false;
+    }
+    //console.log("\n delta for " + delta + "  " + resx._ranking);
+    if (resx.levenmatch && (delta > 1.03)) {
+      return false;
+    }
+    return true;
+  });
+  if(debuglog.enabled) {
+      debuglog(`\nfiltered ${r.length}/${res.length}` + JSON.stringify(r));
+  }
+  return r;
+}
+
+export function categorizeString2(word: string, exact: boolean,  rules : IMatch.SplitRules
   , cntRec? :ICntRec): Array<IFMatch.ICategorizedString> {
   // simply apply all rules
   if (debuglogM.enabled )  {
     debuglogM("rules : " + JSON.stringify(rules,undefined, 2));
   }
-  var lcString = string.toLowerCase();
+  var lcString = word.toLowerCase();
   var res: Array<IMatch.ICategorizedString> = [];
   if (exact) {
     var r = rules.wordMap[lcString];
     if (r) {
       r.forEach(function(oRule) {
         res.push({
-            string: string,
+            string: word,
             matchedString: oRule.matchedString,
             category: oRule.category,
             _ranking: oRule._ranking || 1.0
@@ -286,11 +388,11 @@ export function categorizeString2(string: string, exact: boolean,  rules : IMatc
      });
     }
     rules.nonWordRules.forEach(function (oRule) {
-      checkOneRule(string,lcString,exact,res,oRule,cntRec);
+      checkOneRule(word,lcString,exact,res,oRule,cntRec);
     });
   } else {
-    debuglog("categorize non exact" + string + " xx  " + rules.allRules.length);
-    return categorizeString(string, exact, rules.allRules, cntRec);
+    debuglog("categorize non exact" + word + " xx  " + rules.allRules.length);
+    return postFilter(categorizeString(word, exact, rules.allRules, cntRec));
   }
   res.sort(sortByRank);
   return res;
@@ -325,7 +427,7 @@ export function matchWord(oRule: IRule, context: IFMatch.context, options?: IMat
   if(debuglog.enabled) {
     debuglog(" s1 <> s2 " + s1 + "<>" + s2 + "  =>: " + c);
   }
-  if (c < 150) {
+  if (c > 0.80) {
     var res = AnyObject.assign({}, oRule.follows) as any;
     res = AnyObject.assign(res, context);
     if (options.override) {
@@ -759,7 +861,7 @@ export function sortByWeight(sKey: string, oContextA: IFMatch.context, oContextB
 
   var weightA = oContextA["_weight"] && oContextA["_weight"][sKey] || 0;
   var weightB = oContextB["_weight"] && oContextB["_weight"][sKey] || 0;
-  return +(weightA - weightB);
+  return +(weightB - weightA);
 }
 
 
@@ -795,6 +897,7 @@ export function augmentContext1(context: IFMatch.context, oRules: Array<IRule>, 
   }).sort(
     sortByWeight.bind(this, sKey)
     );
+    //debuglog("hassorted" + JSON.stringify(res,undefined,2));
   return res;
   // Object.keys().forEach(function (sKey) {
   // });

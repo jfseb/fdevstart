@@ -22,12 +22,15 @@ export const Cutoff_Sentences = 120;
 */
 
 export const calcDist  = {
-  lengthDelta1 : 8,
+  lengthDelta1 : 15,
 }
 /**
  * levenshtein distances above this will not be considered valid
  */
 export const Cutoff_LevenShtein : number = 150;
+
+export const Cutoff_WordMatch = 0.85; // 0.98
+
 
 /**
  * Maximum amount of spaces permitted in a combined word

@@ -302,7 +302,7 @@ export function getRuleMap() {
     {
       type: IMatch.EnumRuleType.REGEXP,
       key: "systemObjectId",
-      regexp: /\S+/i,
+      regexp: /^\S+$/i,
       follows: {
         _ranking: 0.9
       }
@@ -395,7 +395,7 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "systemObjectId",
-      regexp: /\S+/i,
+      regexp: /^\S+$/i,
       _ranking: 0.5
     },
     {

@@ -204,6 +204,11 @@ intended to work ;-)
    done
 * todo: what is is X
 
+
+* listme should separate by domain, e.g. list all element names
+    now lists earth (!)
+
+
 * add descriptions to the categories and domains.
 
 * add linsk to the FioriSAP model
@@ -221,9 +226,20 @@ http://stackoverflow.com/questions/22887524/how-can-i-get-a-plain-text-postgres-
 
 
 import a dump:
+clean the database
+
+E:\projects\nodejs\botbuilder\abot>psql -p 5433 --username=postgres --dbname=wosap_repl
+delete from logconv;
+delete from users;
+delete from sessions;
+
 E:\projects\nodejs\botbuilder\abot>psql -p 5433 --username=postgres --dbname=wosap_repl <heroku_db
 
 dump from heroku:
 
+heroku config,
+
+then parse db string
+
 pg_dump --host=exxxxxx.compute-1.amazonaws.com --port=5432  -f heroku_db --username=iyyyyyyyyyyyyyyy --passsword=xxx
- --dbname=dcicct7om3vohl
+ --dbname=yyyyyyyy

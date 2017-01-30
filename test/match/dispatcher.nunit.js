@@ -251,7 +251,7 @@ exports.test_filterShowEntity = function (test) {
   test.deepEqual(aMerged, {
     context: {
       _ranking: 0.9,
-      _weight: { systemObjectCategory: 0 },
+      _weight: { systemObjectCategory: 1 },
       systemId: 'uv2',
       client: '120',
       systemObjectCategory: 'fiori catalog',
@@ -288,7 +288,7 @@ exports.test_filterShowEntityMoreContext = function (test) {
       systemtype: 'ABAPFES',
       tool: 'FLPD',
       _ranking: 0.9,
-      _weight: { systemObjectCategory: 0 }
+      _weight: { systemObjectCategory: 1 }
     },
     result: {
       type: 'URL',
@@ -307,7 +307,7 @@ exports.test_filterShowEntityUnitTestX = function (test) {
   test.deepEqual(aMerged, {
     context: {
       _weight: {
-        systemObjectCategory: 0, systemObjectId: 0
+        systemObjectCategory: 1, systemObjectId: 1
       },
       systemObjectCategory: 'unit test',
       systemObjectId: 'NavTargetResolution',
@@ -327,11 +327,12 @@ exports.test_filterShowEntityUnitSloppy = function (test) {
     systemObjectCategory: 'unit',
     systemObjectId: 'NavTargetResol'
   }, dispatcher._test._aShowEntityActions);
-
+  test.equal(aMerged.context._weight.systemObjectId <= 1, true, 'proper weight'); // 1.055
+  aMerged.context._weight.systemObjectId = 4;
   test.deepEqual(aMerged, {
     context: {
       _weight: {
-        systemObjectCategory: 0, systemObjectId: 5
+        systemObjectCategory: 1, systemObjectId: 4
       },
       systemObjectCategory: 'unit test',
       systemObjectId: 'NavTargetResolution',
@@ -355,7 +356,7 @@ exports.test_filterShowEntityFLPD = function (test) {
 
   test.deepEqual(aMerged, {
     context: {
-      _weight: { systemObjectId: 0 },
+      _weight: { systemObjectId: 1 },
       systemObjectId: 'flpd',
       client: '120',
       systemId: 'uv2',
@@ -379,10 +380,13 @@ exports.test_filterShowEntityUnitTestSthNull = function (test) {
     systemObjectId: 'NavTargetResolution'
   }, dispatcher._test._aShowEntityActions);
 
+ //?? test.equal(aMerged.context._weight.systemObjectId > 1, true);
+ //?? aMerged.context._weight.systemObjectId = 1.02;
+
   test.deepEqual(aMerged, {
     context: {
       systemObjectCategory: 'unit test',
-      _weight: { systemObjectCategory: 0, systemObjectId: 0 },
+      _weight: { systemObjectCategory: 1, systemObjectId: 1 },
       //   systemId: undefined,
       systemObjectId: 'NavTargetResolution',
       path: 'sap/bc/ui5_ui5/ui2/ushell/test-resources/sap/ushell/qunit/services/NavTargetResolution.qunit.html'
@@ -401,11 +405,12 @@ exports.test_filterShowEntityWiki = function (test) {
     systemObjectCategory: 'wiki',
     systemObjectId: 'UI2 Support pages'
   }, dispatcher._test._aShowEntityActions);
-
+  test.equal(aMerged.context._weight.systemObjectId < 1, true);
+  aMerged.context._weight.systemObjectId = 0.98;
   test.deepEqual(aMerged, {
     context: {
       systemObjectCategory: 'wiki',
-      _weight: { systemObjectCategory: 0, systemObjectId: 517 / 17 },
+      _weight: { systemObjectCategory: 1, /*0, */ systemObjectId: 0.98},
       //   systemId: undefined,
       systemObjectId: 'CA-UI2-INT-FE support',
       path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
@@ -414,7 +419,7 @@ exports.test_filterShowEntityWiki = function (test) {
       type: 'URL',
       pattern: 'https://wiki.wdf.sap.corp/{path}'
     }
-  }, 'wiki resolved');
+  }, 'wiki resolved FilterShowEntityWiki');
   test.done();
 };
 

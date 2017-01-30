@@ -69,7 +69,7 @@ export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => v
   debuglog("here user id of message session.message.address " +
   JSON.stringify(session.message.address.user));
   var oLogEntry : ILogEntry = {
-    botid : this.name,
+    botid : (session.message && session.message.address && session.message.address.bot && session.message.address.bot.id ) || this.name,
     userid: session.message.address
     && session.message.address.user
     && session.message.address.user.id || "",

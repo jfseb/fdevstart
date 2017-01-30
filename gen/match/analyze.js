@@ -26,17 +26,26 @@ function analyzeAll(sString, rules, aTools, words) {
         perf('expand');
         debuglog("After matched " + JSON.stringify(matched));
         var aSentences = InputFilter.expandMatchArr(matched);
+        aSentences.sort(Sentence.cmpRankingProduct);
         debuglog("after expand" + aSentences.map(function (oSentence) {
-            return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+            return Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence);
         }).join("\n"));
+        if (debuglog.enabled) {
+            debuglog(" after expand:" + Sentence.dumpNiceArr(aSentencesReinforced, Sentence.rankingProduct));
+        }
         perf('expand');
         var aSentencesReinforced = InputFilter.reinForce(aSentences);
         //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
-        debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
-            return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+        aSentencesReinforced.sort(Sentence.cmpRankingProduct);
+        debuglog("after reinforce \n" + aSentencesReinforced.map(function (oSentence) {
+            return Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence);
         }).join("\n"));
+        if (debuglog.enabled) {
+            debuglog(" after reinforce:" + Sentence.dumpNiceArr(aSentencesReinforced, Sentence.rankingProduct));
+        }
+        aSentencesReinforced = Sentence.cutoffSentenceAtRatio(aSentencesReinforced);
         perf('matchTools');
-        var matchedTools = Toolmatcher.matchTools(aSentences, aTools); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+        var matchedTools = Toolmatcher.matchTools(aSentencesReinforced, aTools); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
         perf('matchTools');
         debuglog(" matchedTools" + JSON.stringify(matchedTools, undefined, 2));
         return matchedTools;

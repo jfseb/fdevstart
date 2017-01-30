@@ -44,7 +44,7 @@ var HTMLConnector = (function () {
     if (typeof id === 'string') {
       id = {
         conversationid : id,
-        user : id
+        user : id,
       };
     }
     if (this.handler) {

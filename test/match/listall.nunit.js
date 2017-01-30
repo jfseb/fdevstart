@@ -137,6 +137,7 @@ exports.testinferDomainTwoDomains = function (test) {
 
 exports.testinferDomainDomainByCategory = function (test) {
   var domain = ListAll.inferDomain(theModel, 'element symbol');
+
   test.equal(domain, 'IUPAC', ' correct domain inferred');
   test.done();
 };
@@ -156,6 +157,7 @@ exports.testinferDomainDomainByCategoryAmbiguous = function (test) {
 
 exports.testinferDomainTwoDomainsByCategory = function (test) {
   var domain = ListAll.inferDomain(theModel, 'element name country');
+  //console.log('here domain: ' + domain);
   test.equal(domain, undefined, ' correct domain inferred');
   test.done();
 };

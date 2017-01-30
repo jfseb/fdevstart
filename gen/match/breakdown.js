@@ -14,6 +14,8 @@ function cleanseString(sString) {
         sString = sString.replace(/\s\s+/g, ' ');
         sString = sString.replace(/^\s+/, '');
         sString = sString.replace(/\s+$/, '');
+        sString = sString.replace(/^[,;.]+/, '');
+        sString = sString.replace(/[,;.]+$/, '');
     }
     return sString;
 }
@@ -33,7 +35,7 @@ function trimQuoted(sString) {
     if (m) {
         return m[1];
     }
-    return sString;
+    return cleanseString(sString);
 }
 exports.trimQuoted = trimQuoted;
 function trimQuotedSpaced(sString) {

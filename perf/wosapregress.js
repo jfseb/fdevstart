@@ -49,7 +49,26 @@ var modelpath = 'sensitive';
 
 // Create bot and bind to console
 function getBotInstance() {
-  var connector = new HTMLConnector.HTMLConnector();
+  var botversion = 0;
+
+  // increase the generation
+  try {
+    var a = fs.readFileSync('./regress/botversion');
+    botversion = parseInt(a);
+    if(!botversion) {
+      throw new Error('unkonwn botversion');
+    }
+    botversion = botversion + 1;
+    fs.writeFileSync('./regress/botversion', '' + botversion);
+  } catch(e) {
+    console.log('could not get botversion' + e);
+    process.exit(-1);
+  }
+
+  var options = {
+    bot : 'regress_' + botversion
+  };
+  var connector = new HTMLConnector.HTMLConnector(options);
   botdialog.makeBot(connector,modelpath);
   return connector;
 }

@@ -16,6 +16,8 @@ export function cleanseString(sString: string): string {
         sString = sString.replace(/\s\s+/g, ' ');
         sString = sString.replace(/^\s+/, '');
         sString = sString.replace(/\s+$/, '');
+        sString = sString.replace(/^[,;.]+/, '');
+        sString = sString.replace(/[,;.]+$/, '');
     }
     return sString
 }
@@ -37,7 +39,7 @@ export function trimQuoted(sString: string): string {
     if (m) {
         return m[1];
     }
-    return sString;
+    return cleanseString(sString);
 }
 
 

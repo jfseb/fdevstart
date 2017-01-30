@@ -14,12 +14,13 @@ exports.Cutoff_Sentences = 120;
  instead of 8, 1.5
 */
 exports.calcDist = {
-    lengthDelta1: 8,
+    lengthDelta1: 15,
 };
 /**
  * levenshtein distances above this will not be considered valid
  */
 exports.Cutoff_LevenShtein = 150;
+exports.Cutoff_WordMatch = 0.85; // 0.98
 /**
  * Maximum amount of spaces permitted in a combined word
  *
