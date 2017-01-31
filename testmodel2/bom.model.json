@@ -35,7 +35,7 @@
     "releaseName",
     "releaseId",
     { "name" :  "BusinessCatalog",
-      "description": "The SAP BUsiness catalog which references the application in a \"TechnicalCatalog\" or \"BackendCatalog\" (for GUI/WDA transactions"
+      "description": "The SAP Business catalog which references the application in a \"TechnicalCatalog\" or \"BackendCatalog\" (for GUI/WDA transactions"
     },
     {
       "name" : "TechnicalCatalog",
