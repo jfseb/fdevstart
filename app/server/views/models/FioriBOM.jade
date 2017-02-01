@@ -24,7 +24,7 @@ block content
 		h3 domain "FioriBOM"
 			span.pull-right 12779 records
 		p
-		span 
+		span Information about Fiori apps with links to the Fiori Reference apps library
 
 		table.table.table-condensed.table-striped
 			thead
@@ -119,7 +119,7 @@ block content
       
 			tr
 					td.cat_count ArtifactId
-					td 3833 distinct values in 30.0% of records
+					td 3830 distinct values in 30.0% of records
 					td
 						table
 							tr.cat_synonyms
@@ -129,11 +129,11 @@ block content
 							tr.cat_samplevalues
 								td Possible values are ...
 											br
-											| "?", "CreateIncident", "MyIncidents", "MySAPNotes", "NA", "SystemMonitoring" ...
+											| "", "?", "ai.shl.edb", "an.aqd.querydesigner.manage" ...
       
 			tr
 					td.cat_count BSPName
-					td 5148 distinct values in 40.3% of records
+					td 5144 distinct values in 40.3% of records
 					td
 						table
 							tr.cat_synonyms
@@ -147,7 +147,7 @@ block content
       
 			tr
 					td.cat_count BSPApplicationURL
-					td 5622 distinct values in 44.0% of records
+					td 5596 distinct values in 43.8% of records
 					td
 						table
 							tr.cat_synonyms
@@ -173,7 +173,7 @@ block content
 							tr.cat_synonyms
 								td &nbsp;
 							tr.cat_description
-								td The SAP BUsiness catalog which references the application in a "TechnicalCatalog" or "BackendCatalog" (for GUI/WDA transactions
+								td The SAP Business catalog which references the application in a "TechnicalCatalog" or "BackendCatalog" (for GUI/WDA transactions
 							tr.cat_samplevalues
 								td Possible values are ...
 											br
@@ -242,12 +242,40 @@ block content
 											| "Academic Advisor", "Access Control Administrator", "Accounts Payable Accountant" ...
       
 			tr
+					td.cat_count SemanticAction
+					td 10613 distinct values in 83.1% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td The second part of the "fiori intent", identifying the action, e.g. "maintain", "create" 
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "", "#Specification-manage", "*", "AnalyzeForecastDemand" ...
+      
+			tr
+					td.cat_count SemanticObject
+					td 10619 distinct values in 83.1% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td The first part of the "fiori intent", identifying the Business entity, e.g. "SalesOrder","GLAcount" used for generic navigation 
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "", "*", "ABOPRun", "ABOPSegment", "ABOPVariant", "APSProductionConfirmation" ...
+      
+			tr
 					td.cat_count TransactionCodes
 					td 5699 distinct values in 44.6% of records
 					td
 						table
 							tr.cat_synonyms
-								td &nbsp;
+								td Transactions, TransactionCode and TransactionCodes
 							tr.cat_description
 								td For GUI based transaction, the transaciton code behind intent, a classical R/3 SAPGUi transaction
 							tr.cat_samplevalues
@@ -261,8 +289,8 @@ block content
 											br
 											| ...
       
-		p   and 17 other categories
-		| AppDocumentationLinkKW, BSPPackage, BusinessGroupDescription, BusinessGroupName, BusinessRoleName, detailsurl, ExternalReleaseName, FrontendSoftwareComponent, isPublished, LPDCustInstance, PrimaryODataPFCGRole, releaseId, releaseName, SemanticAction, SemanticObject, uri and URLParameters
+		p   and 15 other categories
+		| AppDocumentationLinkKW, BSPPackage, BusinessGroupDescription, BusinessGroupName, BusinessRoleName, detailsurl, ExternalReleaseName, FrontendSoftwareComponent, isPublished, LPDCustInstance, PrimaryODataPFCGRole, releaseId, releaseName, uri and URLParameters
        
 		h3 Version
 			a.small(href="/whatsnew")

@@ -8,6 +8,8 @@ var debug = require('debug');
 var debuglog = debug('routes');
 var uuid = require('node-uuid');
 
+var cookieTime = 32*24*60*60; // 32 days in seconds
+
 module.exports = function(app) {
 
 // main login page
@@ -48,15 +50,16 @@ module.exports = function(app) {
   });
 
   app.post('/login', function(req, res){
-    AM.manualLogin(req.body['user'], req.body['pass'], function(e, o){
+    AM.manualLogin(req.body['Username'], req.body['Password'], function(e, o){
       if (!o){
         res.status(400).send(e);
       }	else{
         debuglog('got user' + JSON.stringify(o));
         req.session.user = o;
         if (req.body['remember-me'] == 'true'){
-          res.cookie('user', o.user, { maxAge: 900000 });
-          res.cookie('pass', o.pass, { maxAge: 900000 });
+          //console.log('seeting cookie time to ' + cookieTime + ' ' + new Date(Date.now()+cookieTime) );
+          res.cookie('user', o.user, { expires : new Date(Date.now()+cookieTime*1000) });
+          res.cookie('pass', o.pass, { expires : new Date(Date.now()+cookieTime*1000) });
         }
         res.status(200).send(o);
       }
@@ -64,14 +67,14 @@ module.exports = function(app) {
   });
 
   app.post('/', function(req, res){
-    AM.manualLogin(req.body['user'], req.body['pass'], function(e, o){
+    AM.manualLogin(req.body['Username'], req.body['Password'], function(e, o){
       if (!o){
         res.status(400).send(e);
       }	else{
         req.session.user = o;
         if (req.body['remember-me'] == 'true'){
-          res.cookie('user', o.user, { maxAge: 900000 });
-          res.cookie('pass', o.pass, { maxAge: 900000 });
+          res.cookie('user', o.user, {  expires : new Date(Date.now()+cookieTime*1000) });
+          res.cookie('pass', o.pass, {  expires : new Date(Date.now()+cookieTime*1000) });
         }
         res.status(200).send(o);
       }
@@ -170,9 +173,9 @@ module.exports = function(app) {
       debuglog('here the user' + JSON.stringify(req.session.user));
       AM.updateAccount({
         id		: req.session.user.id,
-        user	: req.body['user'],
+        user	: req.body['Username'],
         email	: req.body['email'],
-        pass	: req.body['pass']
+        pass	: req.body['Password']
       }, function(e, o){
         if (e){
           res.status(400).send('error-updating-account');
@@ -180,8 +183,8 @@ module.exports = function(app) {
           req.session.user = o;
 			// update the user's login cookies if they exists //
           if (req.cookies.user != undefined && req.cookies.pass != undefined){
-            res.cookie('user', o.user, { maxAge: 900000 });
-            res.cookie('pass', o.pass, { maxAge: 900000 });
+            res.cookie('user', o.user, {  expires : new Date(Date.now()+cookieTime*1000) });
+            res.cookie('pass', o.pass, {  expires : new Date(Date.now()+cookieTime*1000) });
           }
           res.status(200).send('ok');
         }
@@ -214,8 +217,8 @@ module.exports = function(app) {
   app.post('/signup', function(req, res){
     AM.addNewAccount({
       email 	: req.body['email'],
-      user 	: req.body['user'],
-      pass	: req.body['pass']
+      user 	: req.body['Username'],
+      pass	: req.body['Password']
     }, function(e){
       if (e){
         res.status(400).send(e);
@@ -262,7 +265,7 @@ module.exports = function(app) {
   });
 
   app.post('/reset-password', function(req, res) {
-    var nPass = req.body['pass'];
+    var nPass = req.body['Password'];
 	// retrieve the user's email from the session to lookup their account and reset password //
     var email = req.session.reset.email;
 	// destory the session immediately after retrieving the stored email //

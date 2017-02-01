@@ -318,9 +318,12 @@ exports.addNewAccount = function (newData, callback) {
 };
 
 exports.updateAccount = function (newData, callback) {
-  console.log('trying to update' + newData.id + ' with ' + JSON.stringify(newData));
+  // we never output a password
+  // console.log('trying to update' + newData.id + ' with ' + JSON.stringify(newData));
   accounts.findOne({ id: getObjectId(newData.id) }, function (e, o) {
-		//o.name 		= newData.name;
+    if(newData.user)  {
+      o.user 	= newData.user;
+    }
     o.email = newData.email;
     if (newData.pass == '') {
       accounts.save(o, { safe: true }, function (e) {

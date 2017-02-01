@@ -10,7 +10,7 @@ block content
 					th(style='width:200px') username
 					th creation date
 			tbody
-			- for (var i = 0; i < accts.length; i++)
+			- for (var i = 0; i < (accts || []).length; i++)
 				tr
 					td= i+1
 					td= accts[i].user
