@@ -7,7 +7,7 @@
  * Judging function for a match
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('match');
 function weakenByN(a, n) {
     return 1.0 + (a - 1.0) / n;
@@ -38,7 +38,7 @@ function rankToolMatch(a) {
     var optional = Object.keys(a.optional || {}).length;
     var spurious = Object.keys(a.spurious || {}).length;
     var matching = required + optional;
-    debuglog("caluclating rank of " + JSON.stringify(a));
+    debuglog(debuglog.enabled ? ("caluclating rank of " + JSON.stringify(a)) : '-');
     var rankingRequired = calcGeometricMeansOfRanking(a.required);
     var rankingOptional = calcGeometricMeansOfRanking(a.optional);
     // 1.1 for every optional;

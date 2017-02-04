@@ -4,31 +4,32 @@
  * @file
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('model');
-var logger = require('../utils/logger');
+var logger = require("../utils/logger");
 var loadlog = logger.logger('modelload', '');
-var IMatch = require('../match/ifmatch');
-var InputFilterRules = require('../match/inputFilterRules');
-var Tools = require('../match/tools');
-var fs = require('fs');
-var Meta = require('./meta');
-var Utils = require('../utils/utils');
-var process = require('process');
-var _ = require('lodash');
+var IMatch = require("../match/ifmatch");
+var InputFilterRules = require("../match/inputFilterRules");
+var Tools = require("../match/tools");
+var fs = require("fs");
+var Meta = require("./meta");
+var Utils = require("../utils/utils");
+var process = require("process");
+var _ = require("lodash");
 /**
  * the model path, may be controlled via environment variable
  */
 var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
 ;
-var ARR_MODEL_PROPERTIES = ["domain", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
-function addSynonyms(synonyms, category, synonymFor, mRules, seen) {
+var ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+function addSynonyms(synonyms, category, synonymFor, bitindex, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
             category: category,
             matchedString: synonymFor,
             type: 0 /* WORD */,
             word: syn,
+            bitindex: bitindex,
             _ranking: 0.95
         };
         debuglog("inserting synonym" + JSON.stringify(oRule));
@@ -70,6 +71,7 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
 function loadModelData(modelPath, oMdl, sModelName, oModel) {
     // read the data ->
     // data is processed into mRules directly,
+    var bitindex = oMdl.bitindex;
     var sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
@@ -101,6 +103,7 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
                     matchedString: sString,
                     type: 0 /* WORD */,
                     word: sString,
+                    bitindex: bitindex,
                     _ranking: 0.95
                 };
                 if (oMdl.exactmatch && oMdl.exactmatch.indexOf(category) >= 0) {
@@ -108,10 +111,10 @@ function loadModelData(modelPath, oMdl, sModelName, oModel) {
                 }
                 insertRuleIfNotPresent(oModel.mRules, oRule, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
-                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
+                    addSynonyms(oMdlData.synonyms[category], category, sString, bitindex, oModel.mRules, oModel.seenRules);
                 }
                 if (oEntry.synonyms && oEntry.synonyms[category]) {
-                    addSynonyms(oEntry.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
+                    addSynonyms(oEntry.synonyms[category], category, sString, bitindex, oModel.mRules, oModel.seenRules);
                 }
             }
         });
@@ -121,7 +124,23 @@ function loadModel(modelPath, sModelName, oModel) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl);
+    mergeModelJson(sModelName, oMdl, oModel);
+    loadModelData(modelPath, oMdl, sModelName, oModel);
+}
+function getDomainBitIndex(domain, oModel) {
+    var index = oModel.domains.indexOf(domain);
+    if (index < 0) {
+        index = oModel.domains.length;
+    }
+    if (index >= 32) {
+        throw new Error("too many domain for single 32 bit index");
+    }
+    return 0x0001 << index;
+}
+exports.getDomainBitIndex = getDomainBitIndex;
+function mergeModelJson(sModelName, oMdl, oModel) {
     var categoryDescribedMap = {};
+    oMdl.bitindex = getDomainBitIndex(oMdl.domain, oModel);
     oMdl.categoryDescribed = [];
     // rectify category
     oMdl.category = oMdl.category.map(function (cat) {
@@ -136,6 +155,18 @@ function loadModel(modelPath, sModelName, oModel) {
         oMdl.categoryDescribed.push(cat);
         return cat.name;
     });
+    // add the categories to the model:
+    oMdl.category.forEach(function (category) {
+        insertRuleIfNotPresent(oModel.mRules, {
+            category: "category",
+            matchedString: category,
+            type: 0 /* WORD */,
+            word: category,
+            lowercaseword: category.toLowerCase(),
+            bitindex: oMdl.bitindex,
+            _ranking: 0.95
+        }, oModel.seenRules);
+    });
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
@@ -146,8 +177,11 @@ function loadModel(modelPath, sModelName, oModel) {
             throw new Error('Model property "' + sProperty + '" not a known model property in model of domain ' + oMdl.domain + ' ');
         }
     });
-    oModel.full.domain[oMdl.domain] = { description: oMdl.description,
-        categories: categoryDescribedMap };
+    oModel.full.domain[oMdl.domain] = {
+        description: oMdl.description,
+        categories: categoryDescribedMap,
+        bitindex: oMdl.bitindex
+    };
     // check that members of wordindex are in categories,
     oMdl.wordindex = oMdl.wordindex || [];
     oMdl.wordindex.forEach(function (sWordIndex) {
@@ -180,6 +214,7 @@ function loadModel(modelPath, sModelName, oModel) {
         matchedString: oMdl.domain,
         type: 0 /* WORD */,
         word: oMdl.domain,
+        bitindex: oMdl.bitindex,
         _ranking: 0.95
     }, oModel.seenRules);
     // check the tool
@@ -187,19 +222,19 @@ function loadModel(modelPath, sModelName, oModel) {
         var requires = Object.keys(oMdl.tool.requires || {});
         var diff = _.difference(requires, oMdl.category);
         if (diff.length > 0) {
-            console.log((" " + oMdl.domain + " : Unkown category in requires of tool: \"") + diff.join('"') + '"');
+            console.log(" " + oMdl.domain + " : Unkown category in requires of tool: \"" + diff.join('"') + '"');
             process.exit(-1);
         }
         var optional = Object.keys(oMdl.tool.optional);
         diff = _.difference(optional, oMdl.category);
         if (diff.length > 0) {
-            console.log((" " + oMdl.domain + " : Unkown category optional of tool: \"") + diff.join('"') + '"');
+            console.log(" " + oMdl.domain + " : Unkown category optional of tool: \"" + diff.join('"') + '"');
             process.exit(-1);
         }
         Object.keys(oMdl.tool.sets || {}).forEach(function (setID) {
             var diff = _.difference(oMdl.tool.sets[setID].set, oMdl.category);
             if (diff.length > 0) {
-                console.log((" " + oMdl.domain + " : Unkown category in setId " + setID + " of tool: \"") + diff.join('"') + '"');
+                console.log(" " + oMdl.domain + " : Unkown category in setId " + setID + " of tool: \"" + diff.join('"') + '"');
                 process.exit(-1);
             }
         });
@@ -223,12 +258,13 @@ function loadModel(modelPath, sModelName, oModel) {
             matchedString: oMdl.tool.name,
             type: 0 /* WORD */,
             word: oMdl.tool.name,
+            bitindex: oMdl.bitindex,
             _ranking: 0.95
         }, oModel.seenRules);
     }
     ;
     if (oMdl.synonyms && oMdl.synonyms["tool"]) {
-        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules, oModel.seenRules);
+        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oMdl.bitindex, oModel.mRules, oModel.seenRules);
     }
     ;
     if (oMdl.synonyms) {
@@ -237,7 +273,7 @@ function loadModel(modelPath, sModelName, oModel) {
                 if (oModel.full.domain[oMdl.domain].categories[ssynkey]) {
                     oModel.full.domain[oMdl.domain].categories[ssynkey].synonyms = oMdl.synonyms[ssynkey];
                 }
-                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
+                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oMdl.bitindex, oModel.mRules, oModel.seenRules);
             }
         });
     }
@@ -250,7 +286,6 @@ function loadModel(modelPath, sModelName, oModel) {
     oModel.category = oModel.category.filter(function (string, index) {
         return oModel.category[index] !== oModel.category[index + 1];
     });
-    loadModelData(modelPath, oMdl, sModelName, oModel);
 } // loadmodel
 function splitRules(rules) {
     var res = {};
@@ -260,8 +295,9 @@ function splitRules(rules) {
             if (!rule.lowercaseword) {
                 throw new Error("Rule has no member lowercaseword" + JSON.stringify(rule));
             }
-            res[rule.lowercaseword] = res[rule.lowercaseword] || [];
-            res[rule.lowercaseword].push(rule);
+            res[rule.lowercaseword] = res[rule.lowercaseword] || { bitindex: 0, rules: [] };
+            res[rule.lowercaseword].bitindex = res[rule.lowercaseword].bitindex | rule.bitindex;
+            res[rule.lowercaseword].rules.push(rule);
         }
         else {
             nonWordRules.push(rule);
@@ -295,24 +331,30 @@ function loadModels(modelPath) {
         loadModel(modelPath, sModelName, oModel);
     });
     // add the categories to the model:
+    /*
     oModel.category.forEach(function (category) {
         insertRuleIfNotPresent(oModel.mRules, {
             category: "category",
             matchedString: category,
-            type: 0 /* WORD */,
+            type: IMatch.EnumRuleType.WORD,
             word: category,
             lowercaseword: category.toLowerCase(),
+            bitindex : oMdl.
             _ranking: 0.95
         }, oModel.seenRules);
     });
+    */
+    var metaBitIndex = getDomainBitIndex('meta', oModel);
     // add the domain meta rule
     insertRuleIfNotPresent(oModel.mRules, {
         category: "meta",
         matchedString: "domain",
         type: 0 /* WORD */,
         word: "domain",
+        bitindex: metaBitIndex,
         _ranking: 0.95
     }, oModel.seenRules);
+    var fillerBitIndex = getDomainBitIndex('meta', oModel);
     //add a filler rule
     var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
     var fillers = JSON.parse(sfillers);
@@ -322,11 +364,13 @@ function loadModels(modelPath) {
         type: 1 /* REGEXP */,
         regexp: new RegExp(re, "i"),
         matchedString: "filler",
+        bitindex: fillerBitIndex,
         _ranking: 0.9
     });
     //add operators
     var sOperators = fs.readFileSync('./resources/model/operators.json', 'utf-8');
     var operators = JSON.parse(sOperators);
+    var operatorBitIndex = getDomainBitIndex('operators', oModel);
     Object.keys(operators.operators).forEach(function (operator) {
         if (IMatch.aOperatorNames.indexOf(operator) < 0) {
             debuglog("unknown operator " + operator);
@@ -342,6 +386,7 @@ function loadModels(modelPath) {
             lowercaseword: word.toLowerCase(),
             type: 0 /* WORD */,
             matchedString: word,
+            bitindex: operatorBitIndex,
             _ranking: 0.9
         }, oModel.seenRules);
         // add all synonyms
@@ -353,6 +398,7 @@ function loadModels(modelPath) {
                     lowercaseword: synonym.toLowerCase(),
                     type: 0 /* WORD */,
                     matchedString: operator,
+                    bitindex: operatorBitIndex,
                     _ranking: 0.9
                 }, oModel.seenRules);
             });

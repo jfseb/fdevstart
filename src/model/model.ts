@@ -46,6 +46,7 @@ export interface IModels {
 
 interface IModel {
     domain: string,
+    bitindex : number,
     description? : string,
     tool: IMatch.ITool,
     toolhidden?: boolean,
@@ -59,15 +60,16 @@ interface IModel {
     hidden: string[]
 };
 
-const ARR_MODEL_PROPERTIES = ["domain", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+const ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 
-function addSynonyms(synonyms: string[], category: string, synonymFor: string, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule[] }) {
+function addSynonyms(synonyms: string[], category: string, synonymFor: string, bitindex : number, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule[] }) {
     synonyms.forEach(function (syn) {
         var oRule = {
             category: category,
             matchedString: synonymFor,
             type: IMatch.EnumRuleType.WORD,
             word: syn,
+            bitindex : bitindex,
             _ranking: 0.95
         };
         debuglog("inserting synonym" + JSON.stringify(oRule));
@@ -114,6 +116,7 @@ function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
 function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oModel: IMatch.IModels) {
     // read the data ->
     // data is processed into mRules directly,
+    var bitindex = oMdl.bitindex;
     const sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
     var mdldata = fs.readFileSync(sFileName, 'utf-8');
     var oMdlData = JSON.parse(mdldata);
@@ -149,6 +152,7 @@ function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oMod
                         matchedString: sString,
                         type: IMatch.EnumRuleType.WORD,
                         word: sString,
+                        bitindex : bitindex,
                         _ranking: 0.95
                     } as IMatch.mRule;
                 if(oMdl.exactmatch && oMdl.exactmatch.indexOf(category) >= 0) {
@@ -156,22 +160,41 @@ function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oMod
                 }
                 insertRuleIfNotPresent(oModel.mRules,oRule, oModel.seenRules);
                 if (oMdlData.synonyms && oMdlData.synonyms[category]) {
-                    addSynonyms(oMdlData.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
+                    addSynonyms(oMdlData.synonyms[category], category, sString, bitindex, oModel.mRules, oModel.seenRules);
                 }
                 if (oEntry.synonyms && oEntry.synonyms[category]) {
-                    addSynonyms(oEntry.synonyms[category], category, sString, oModel.mRules, oModel.seenRules);
+                    addSynonyms(oEntry.synonyms[category], category, sString, bitindex, oModel.mRules, oModel.seenRules);
                 }
             }
         });
     });
 }
 
+
+
+
 function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModels) {
     debuglog(" loading " + sModelName + " ....");
     var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
     var oMdl = JSON.parse(mdl) as IModel;
+    mergeModelJson(sModelName, oMdl, oModel);
+    loadModelData(modelPath, oMdl, sModelName, oModel);
+}
 
+export function getDomainBitIndex(domain: string, oModel: IMatch.IModels) : number {
+    var index = oModel.domains.indexOf(domain);
+    if(index < 0) {
+        index = oModel.domains.length;
+    }
+    if(index >= 32) {
+        throw new Error("too many domain for single 32 bit index");
+    }
+    return 0x0001 << index;
+}
+
+function mergeModelJson(sModelName: string, oMdl: IModel, oModel: IMatch.IModels) {
     var categoryDescribedMap = {} as { [key: string] : IMatch.ICategoryDesc };
+    oMdl.bitindex = getDomainBitIndex(oMdl.domain, oModel);
     oMdl.categoryDescribed = [];
     // rectify category
     oMdl.category = oMdl.category.map(function(cat : any) {
@@ -188,6 +211,19 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
         return cat.name;
     });
 
+       // add the categories to the model:
+    oMdl.category.forEach(function (category) {
+        insertRuleIfNotPresent(oModel.mRules, {
+            category: "category",
+            matchedString: category,
+            type: IMatch.EnumRuleType.WORD,
+            word: category,
+            lowercaseword: category.toLowerCase(),
+            bitindex : oMdl.bitindex,
+            _ranking: 0.95
+        }, oModel.seenRules);
+    });
+
     if (oModel.domains.indexOf(oMdl.domain) >= 0) {
         debuglog("***********here mdl" + JSON.stringify(oMdl, undefined, 2));
         throw new Error('Domain ' + oMdl.domain + ' already loaded while loading ' + sModelName + '?');
@@ -198,10 +234,11 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
             throw new Error('Model property "' + sProperty + '" not a known model property in model of domain ' + oMdl.domain + ' ');
         }
     });
-
-
-    oModel.full.domain[oMdl.domain] = { description : oMdl.description,
-    categories : categoryDescribedMap };
+    oModel.full.domain[oMdl.domain] = {
+        description : oMdl.description,
+        categories : categoryDescribedMap,
+        bitindex : oMdl.bitindex
+    };
 
 
     // check that members of wordindex are in categories,
@@ -242,6 +279,7 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
             matchedString: oMdl.domain,
             type: IMatch.EnumRuleType.WORD,
             word: oMdl.domain,
+            bitindex : oMdl.bitindex,
             _ranking: 0.95
         }, oModel.seenRules);
 
@@ -286,11 +324,12 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
             matchedString: oMdl.tool.name,
             type: IMatch.EnumRuleType.WORD,
             word: oMdl.tool.name,
+            bitindex : oMdl.bitindex,
             _ranking: 0.95
         }, oModel.seenRules);
     };
     if (oMdl.synonyms && oMdl.synonyms["tool"]) {
-        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oModel.mRules, oModel.seenRules);
+        addSynonyms(oMdl.synonyms["tool"], "tool", oMdl.tool.name, oMdl.bitindex, oModel.mRules, oModel.seenRules);
     };
     if (oMdl.synonyms) {
         Object.keys(oMdl.synonyms).forEach(function (ssynkey) {
@@ -299,7 +338,7 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
                    oModel.full.domain[oMdl.domain].categories[ssynkey].synonyms = oMdl.synonyms[ssynkey];
                 }
 
-                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oModel.mRules, oModel.seenRules);
+                addSynonyms(oMdl.synonyms[ssynkey], "category", ssynkey, oMdl.bitindex, oModel.mRules, oModel.seenRules);
             }
         });
     }
@@ -312,9 +351,8 @@ function loadModel(modelPath : string, sModelName: string, oModel: IMatch.IModel
     oModel.category = oModel.category.filter(function (string, index) {
         return oModel.category[index] !== oModel.category[index + 1];
     });
-    loadModelData(modelPath, oMdl, sModelName, oModel);
-} // loadmodel
 
+} // loadmodel
 
 export function splitRules(rules : IMatch.mRule[]) : IMatch.SplitRules {
     var res = {};
@@ -324,8 +362,9 @@ export function splitRules(rules : IMatch.mRule[]) : IMatch.SplitRules {
             if(!rule.lowercaseword) {
                 throw new Error("Rule has no member lowercaseword" + JSON.stringify(rule));
             }
-            res[rule.lowercaseword] = res[rule.lowercaseword] || [];
-            res[rule.lowercaseword].push(rule);
+            res[rule.lowercaseword] = res[rule.lowercaseword] || { bitindex : 0, rules :[] };
+            res[rule.lowercaseword].bitindex = res[rule.lowercaseword].bitindex | rule.bitindex;
+            res[rule.lowercaseword].rules.push(rule);
         } else {
             nonWordRules.push(rule);
         }
@@ -359,6 +398,7 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
     });
 
     // add the categories to the model:
+    /*
     oModel.category.forEach(function (category) {
         insertRuleIfNotPresent(oModel.mRules, {
             category: "category",
@@ -366,9 +406,13 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
             type: IMatch.EnumRuleType.WORD,
             word: category,
             lowercaseword: category.toLowerCase(),
+            bitindex : oMdl.
             _ranking: 0.95
         }, oModel.seenRules);
     });
+    */
+
+    var metaBitIndex = getDomainBitIndex('meta',oModel);
 
     // add the domain meta rule
     insertRuleIfNotPresent(oModel.mRules, {
@@ -376,11 +420,12 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
             matchedString: "domain",
             type: IMatch.EnumRuleType.WORD,
             word: "domain",
+            bitindex : metaBitIndex,
             _ranking: 0.95
         }, oModel.seenRules);
 
 
-
+    var fillerBitIndex = getDomainBitIndex('meta',oModel);
     //add a filler rule
     var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
     var fillers = JSON.parse(sfillers);
@@ -390,12 +435,14 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
         type: IMatch.EnumRuleType.REGEXP,
         regexp: new RegExp(re, "i"),
         matchedString: "filler",
+        bitindex : fillerBitIndex,
         _ranking: 0.9
     });
 
     //add operators
     var sOperators = fs.readFileSync('./resources/model/operators.json', 'utf-8');
     var operators = JSON.parse(sOperators);
+    var operatorBitIndex = getDomainBitIndex('operators',oModel);
     Object.keys(operators.operators).forEach(function(operator) {
         if(IMatch.aOperatorNames.indexOf(operator) < 0) {
             debuglog("unknown operator " + operator);
@@ -411,6 +458,7 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
             lowercaseword : word.toLowerCase(),
             type: IMatch.EnumRuleType.WORD,
             matchedString : word,
+            bitindex : operatorBitIndex,
             _ranking: 0.9
         }, oModel.seenRules);
         // add all synonyms
@@ -422,6 +470,7 @@ export function loadModels(modelPath? : string) : IMatch.IModels {
                     lowercaseword : synonym.toLowerCase(),
                     type: IMatch.EnumRuleType.WORD,
                     matchedString : operator,
+                    bitindex : operatorBitIndex,
                     _ranking: 0.9
                 }, oModel.seenRules);
             });

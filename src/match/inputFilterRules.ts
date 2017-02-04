@@ -154,7 +154,8 @@ var mUnitTestWords = UnitTestList.map(function (sEntry) {
   return {
     category: "unit test",
     matchedString: sString,
-    type: 0,
+    type: IMatch.EnumRuleType.WORD,
+    bitindex : 0x03,
     word: sString,
     _ranking: 0.95
   };
@@ -396,48 +397,56 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       type: IMatch.EnumRuleType.REGEXP,
       category: "systemObjectId",
       regexp: /^\S+$/i,
+      bitindex : 0x01,
       _ranking: 0.5
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^[A-Z0-9a-z_\/]+$/i,
+      bitindex : 0x01,
       _ranking: 0.5
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "client",
       regexp: /^\d{3,3}$/i,
+      bitindex : 0x01,
       _ranking: 0.8
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "systemId",
       regexp: /^[A-Z][A-Z0-9][A-Z0-9]$/i,
+      bitindex : 0x01,
       _ranking: 0.7
     },
     {
       type: IMatch.EnumRuleType.WORD,
       category: "systemId",
       word: "UV2",
+      bitindex : 0x01,
       matchedString: "UV2"
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "transaction",
       regexp: /^[A-Z][A-Z0-9_]{3,3}$/i,
+      bitindex : 0x01,
       _ranking: 0.7
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^SAP_BC[A-Z][A-Z0-9_]*$/,
+      bitindex : 0x01,
       _ranking: 0.85
     },
     {
       type: IMatch.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^SAP_TC[A-Z][A-Z0-9_]*$/,
+      bitindex : 0x01,
       _ranking: 0.85
     },
     // a few unit tests
@@ -445,12 +454,14 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       category: "unit test",
       matchedString: "NavTargetResolution",
       type: 0,
+      bitindex : 0x01,
       word: "NavTargetResolution"
     },
     {
       category: "unit test",
       matchedString: "NavTargetResolutionAdapter",
       type: 0,
+      bitindex : 0x01,
       word: "NavTargetResolutionAdapter"
     },
     // a few unit tests
@@ -458,12 +469,14 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       category: "wiki",
       matchedString: "UI2 Integration",
       type: 0,
+      bitindex : 0x01,
       word: "UI2 Integration"
     },
     {
       category: "wiki",
       matchedString: "UI2 Support pages",
       type: 0,
+      bitindex : 0x01,
       word: "UI2 Support pages"
     },
     // categories of this model
@@ -471,36 +484,42 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       category: "category",
       matchedString: "wiki",
       type: 0,
+      bitindex : 0x01,
       word: "wiki",
     },
     {
       category: "category",
       matchedString: "unit test",
       type: 0,
+      bitindex : 0x01,
       word: "unit test",
     },
     {
       category: "category",
       matchedString: "url",
       type: 0,
+      bitindex : 0x01,
       word: "url",
     },
     {
       category: "category",
       matchedString: "transaction",
       type: 0,
+      bitindex : 0x01,
       word: "transaction",
     },
     {
       category: "category",
       matchedString: "transaction",
       type: 0,
+      bitindex : 0x01,
       word: "ta",
     },
     {
       category: "category",
       matchedString: "fiori catalog",
       type: 0,
+      bitindex : 0x01,
       word: "fiori catalog",
     },
     {
@@ -508,18 +527,21 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       matchedString: "fiori catalog",
       type: 0,
       _ranking: 0.8,
+      bitindex : 0x01,
       word: "catalog",
     },
     {
       category: "category",
       matchedString: "systemId",
       type: 0,
+      bitindex : 0x01,
       word: "system",
     },
     {
       category: "category",
       matchedString: "client",
       type: 0,
+      bitindex : 0x01,
       word: "client",
     },
     // tools of the sample model
@@ -527,30 +549,35 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       category: "tool",
       matchedString: "FLPD",
       type: 0,
+      bitindex : 0x01,
       word: "flpd",
     },
     {
       category: "operator",
       matchedString: "starts with",
       type: 0,
+      bitindex : 0x01,
       word: "starting with",
     },
     {
       category: "tool",
       matchedString: "FLP",
       type: 0,
+      bitindex : 0x01,
       word: "flp",
     },
     {
       category: "tool",
       matchedString: "FLP",
       type: 0,
+      bitindex : 0x01,
       word: "Fiori Launchpad",
     },
     {
       category: "tool",
       matchedString: "wiki",
       type: 0,
+      bitindex : 0x01,
       word: "wiki",
     },
 
@@ -561,6 +588,7 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       type: 1,
       regexp: /^((start)|(show)|(from)|(in))$/i,
       matchedString: "filler",
+      bitindex : 0x02,
       _ranking: 0.9
     },
   ]

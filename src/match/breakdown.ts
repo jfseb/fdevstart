@@ -12,8 +12,7 @@ export function cleanseString(sString: string): string {
     var len = 0;
     while (len !== sString.length) {
         len = sString.length;
-        sString = sString.replace(/\s\s+/g, ' ');
-        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s+/g, ' ');
         sString = sString.replace(/^\s+/, '');
         sString = sString.replace(/\s+$/, '');
         sString = sString.replace(/^[,;.]+/, '');
@@ -21,6 +20,21 @@ export function cleanseString(sString: string): string {
     }
     return sString
 }
+
+export function cleanseQuotedString(sString: string): string {
+    var len = 0;
+    while (len !== sString.length) {
+        len = sString.length;
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s+/g, ' ');
+        sString = sString.replace(/^\s+/, '');
+        sString = sString.replace(/\s+$/, '');
+        sString = sString.replace(/^[,;.]+/, '');
+        sString = sString.replace(/[,;.]+$/, '');
+    }
+    return sString
+}
+
 
 
 const regexpRemoveDouble = new RegExp(/^\"(\".*\")\"$/);
@@ -41,6 +55,7 @@ export function trimQuoted(sString: string): string {
     }
     return cleanseString(sString);
 }
+
 
 
 export function trimQuotedSpaced(sString: string): string {
@@ -95,6 +110,131 @@ export function countSpaces(sString: string) {
     return r;
 }
 
+interface ITokenizedString {
+    tokens : string[],
+    fusable : boolean[];
+    //indexMap : { [key:number] : { fuse: boolean}};
+}
+
+var Quotes = /^"([^"]+)"/;
+
+export function swallowQuote(str : string, i : number) : { token : string, nextpos : number} {
+     var m = Quotes.exec(str.substring(i));
+     if(!m) {
+          return { token: undefined,
+                nextpos : i
+         }
+     }
+     return {
+         token : cleanseString(m[1]),
+         nextpos : (i + m[0].length)
+     }
+}
+
+var Word = /^(([-#A-Z_a-z0-9\/\\\%\$&](\'[-#A-Z_a-z0-9\/\\\%\$&])*)+)/;
+export function swallowWord(str : string, i : number) : { token : string, nextpos : number} {
+     var m = Word.exec(str.substring(i));
+     if(!m) {
+         return { token: undefined,
+                nextpos : i
+         }
+     }
+     return {
+         token : m[1],
+         nextpos : (i + m[0].length)
+     }
+}
+
+function pushToken(res : ITokenizedString, token : string) {
+    res.tokens.push(token);
+    res.fusable[res.tokens.length] = true;
+}
+
+/**
+ *@param {string} sString , e.g. "a,b c;d O'Hara and "murph'ys"
+ *@return {Array<String>} broken down array, e.g.
+ * [["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
+ */
+export function tokenizeString(sString: string, spacesLimit?: number): ITokenizedString {
+    var res = {
+        tokens: [],
+        fusable :[false]
+    } as ITokenizedString;
+    var i = 0;
+    var seenSep= false;
+    while (i <sString.length ) {
+        switch(sString.charAt(i)) {
+            case '"':
+                var { token, nextpos } = swallowQuote(sString,i);
+                if(nextpos === i) {
+                    // unterminated quote, treat like separator
+                    res.fusable[res.tokens.length] = false;
+                    seenSep = true;
+                    ++i;
+                } else if(token === "") {
+                    res.fusable[res.tokens.length] = false;
+                    seenSep = true;
+                    i = nextpos;
+                } else {
+                    res.fusable[res.tokens.length] = false;
+                    pushToken(res,token);
+                    res.fusable[res.tokens.length] = false;
+                    i = nextpos;
+                }
+            break;
+            case '\t':
+            case '\n':
+            case '\r':
+            case ' ':
+                i++;
+            break;
+            case ':':
+            case ',':
+            case '.':
+            case '?':
+            case '!':
+            case ';':
+                res.fusable[res.tokens.length] = false;
+                seenSep = true;
+                ++i;
+            break;
+            default:
+                var {token, nextpos} = swallowWord(sString,i);
+                if(token) {
+                    pushToken(res,token);
+                    i = nextpos;
+                } else {
+                    res.fusable[res.tokens.length] = false;
+                    i++
+                }
+            break;
+        }
+    }
+    res.fusable[res.tokens.length] = false;
+    return res;
+}
+
+export function makeMatchPattern(str: string) {
+    var tokens = tokenizeString(str);
+    var bestlen = 0;
+    var best = {
+        longestToken : "",
+        span: {low: 0, high: 0}
+    };
+    if(tokens.tokens.length > 1) {
+        tokens.tokens.forEach(function(token,index) {
+            var len = token.length;
+            if (len > bestlen) {
+                bestlen = len;
+                best.longestToken = token;
+                best.span.low = -index;
+            }
+        });
+        best.span.high = tokens.tokens.length + best.span.low - 1;
+        return best;
+    }
+    return undefined;
+}
 
 /**
  *@param {string} sString , e.g. "a b c"

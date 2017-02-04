@@ -6,8 +6,15 @@ logs
 gen/**
 gen/*
 gen3
+testmodel/*.bak
+testmodel/graph/*
+testmodel/*.gv
+testmodel2/graph/*
+testmodel2/*.gv
+testmodel2/*.bak
 gen_cov
 sensitive
+app/public/css/cssorig/*
 regress/runs/20*
 test/regress/test/runs
 gen/extern/elizabot/elizabot.js

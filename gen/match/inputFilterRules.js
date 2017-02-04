@@ -1,6 +1,6 @@
 "use strict";
-var IMatch = require('./ifmatch');
-var Model = require('../model/model');
+var IMatch = require("./ifmatch");
+var Model = require("../model/model");
 exports.oKeyOrder = ["systemObjectCategory", "systemId", "systemObjectId"];
 var mUnitTestURLMap = {};
 var aregex = /\/([^/]*).qunit.html/;
@@ -128,7 +128,8 @@ var mUnitTestWords = UnitTestList.map(function (sEntry) {
     return {
         category: "unit test",
         matchedString: sString,
-        type: 0,
+        type: 0 /* WORD */,
+        bitindex: 0x03,
         word: sString,
         _ranking: 0.95
     };
@@ -342,48 +343,56 @@ function getIntMRulesSample() {
             type: 1 /* REGEXP */,
             category: "systemObjectId",
             regexp: /^\S+$/i,
+            bitindex: 0x01,
             _ranking: 0.5
         },
         {
             type: 1 /* REGEXP */,
             category: "fiori catalog",
             regexp: /^[A-Z0-9a-z_\/]+$/i,
+            bitindex: 0x01,
             _ranking: 0.5
         },
         {
             type: 1 /* REGEXP */,
             category: "client",
             regexp: /^\d{3,3}$/i,
+            bitindex: 0x01,
             _ranking: 0.8
         },
         {
             type: 1 /* REGEXP */,
             category: "systemId",
             regexp: /^[A-Z][A-Z0-9][A-Z0-9]$/i,
+            bitindex: 0x01,
             _ranking: 0.7
         },
         {
             type: 0 /* WORD */,
             category: "systemId",
             word: "UV2",
+            bitindex: 0x01,
             matchedString: "UV2"
         },
         {
             type: 1 /* REGEXP */,
             category: "transaction",
             regexp: /^[A-Z][A-Z0-9_]{3,3}$/i,
+            bitindex: 0x01,
             _ranking: 0.7
         },
         {
             type: 1 /* REGEXP */,
             category: "fiori catalog",
             regexp: /^SAP_BC[A-Z][A-Z0-9_]*$/,
+            bitindex: 0x01,
             _ranking: 0.85
         },
         {
             type: 1 /* REGEXP */,
             category: "fiori catalog",
             regexp: /^SAP_TC[A-Z][A-Z0-9_]*$/,
+            bitindex: 0x01,
             _ranking: 0.85
         },
         // a few unit tests
@@ -391,12 +400,14 @@ function getIntMRulesSample() {
             category: "unit test",
             matchedString: "NavTargetResolution",
             type: 0,
+            bitindex: 0x01,
             word: "NavTargetResolution"
         },
         {
             category: "unit test",
             matchedString: "NavTargetResolutionAdapter",
             type: 0,
+            bitindex: 0x01,
             word: "NavTargetResolutionAdapter"
         },
         // a few unit tests
@@ -404,12 +415,14 @@ function getIntMRulesSample() {
             category: "wiki",
             matchedString: "UI2 Integration",
             type: 0,
+            bitindex: 0x01,
             word: "UI2 Integration"
         },
         {
             category: "wiki",
             matchedString: "UI2 Support pages",
             type: 0,
+            bitindex: 0x01,
             word: "UI2 Support pages"
         },
         // categories of this model
@@ -417,36 +430,42 @@ function getIntMRulesSample() {
             category: "category",
             matchedString: "wiki",
             type: 0,
+            bitindex: 0x01,
             word: "wiki",
         },
         {
             category: "category",
             matchedString: "unit test",
             type: 0,
+            bitindex: 0x01,
             word: "unit test",
         },
         {
             category: "category",
             matchedString: "url",
             type: 0,
+            bitindex: 0x01,
             word: "url",
         },
         {
             category: "category",
             matchedString: "transaction",
             type: 0,
+            bitindex: 0x01,
             word: "transaction",
         },
         {
             category: "category",
             matchedString: "transaction",
             type: 0,
+            bitindex: 0x01,
             word: "ta",
         },
         {
             category: "category",
             matchedString: "fiori catalog",
             type: 0,
+            bitindex: 0x01,
             word: "fiori catalog",
         },
         {
@@ -454,18 +473,21 @@ function getIntMRulesSample() {
             matchedString: "fiori catalog",
             type: 0,
             _ranking: 0.8,
+            bitindex: 0x01,
             word: "catalog",
         },
         {
             category: "category",
             matchedString: "systemId",
             type: 0,
+            bitindex: 0x01,
             word: "system",
         },
         {
             category: "category",
             matchedString: "client",
             type: 0,
+            bitindex: 0x01,
             word: "client",
         },
         // tools of the sample model
@@ -473,30 +495,35 @@ function getIntMRulesSample() {
             category: "tool",
             matchedString: "FLPD",
             type: 0,
+            bitindex: 0x01,
             word: "flpd",
         },
         {
             category: "operator",
             matchedString: "starts with",
             type: 0,
+            bitindex: 0x01,
             word: "starting with",
         },
         {
             category: "tool",
             matchedString: "FLP",
             type: 0,
+            bitindex: 0x01,
             word: "flp",
         },
         {
             category: "tool",
             matchedString: "FLP",
             type: 0,
+            bitindex: 0x01,
             word: "Fiori Launchpad",
         },
         {
             category: "tool",
             matchedString: "wiki",
             type: 0,
+            bitindex: 0x01,
             word: "wiki",
         },
         // fillers
@@ -506,6 +533,7 @@ function getIntMRulesSample() {
             type: 1,
             regexp: /^((start)|(show)|(from)|(in))$/i,
             matchedString: "filler",
+            bitindex: 0x02,
             _ranking: 0.9
         },
     ]);

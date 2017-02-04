@@ -4,14 +4,13 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('dispatcher');
 function cleanseString(sString) {
     var len = 0;
     while (len !== sString.length) {
         len = sString.length;
-        sString = sString.replace(/\s\s+/g, ' ');
-        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s+/g, ' ');
         sString = sString.replace(/^\s+/, '');
         sString = sString.replace(/\s+$/, '');
         sString = sString.replace(/^[,;.]+/, '');
@@ -20,6 +19,20 @@ function cleanseString(sString) {
     return sString;
 }
 exports.cleanseString = cleanseString;
+function cleanseQuotedString(sString) {
+    var len = 0;
+    while (len !== sString.length) {
+        len = sString.length;
+        sString = sString.replace(/\s\s+/g, ' ');
+        sString = sString.replace(/\s+/g, ' ');
+        sString = sString.replace(/^\s+/, '');
+        sString = sString.replace(/\s+$/, '');
+        sString = sString.replace(/^[,;.]+/, '');
+        sString = sString.replace(/[,;.]+$/, '');
+    }
+    return sString;
+}
+exports.cleanseQuotedString = cleanseQuotedString;
 var regexpRemoveDouble = new RegExp(/^\"(\".*\")\"$/);
 var striptail = new RegExp(/^\"([^\"]+)"$/);
 function trimQuoted(sString) {
@@ -90,6 +103,127 @@ function countSpaces(sString) {
     return r;
 }
 exports.countSpaces = countSpaces;
+var Quotes = /^"([^"]+)"/;
+function swallowQuote(str, i) {
+    var m = Quotes.exec(str.substring(i));
+    if (!m) {
+        return { token: undefined,
+            nextpos: i
+        };
+    }
+    return {
+        token: cleanseString(m[1]),
+        nextpos: (i + m[0].length)
+    };
+}
+exports.swallowQuote = swallowQuote;
+var Word = /^(([-#A-Z_a-z0-9\/\\\%\$&](\'[-#A-Z_a-z0-9\/\\\%\$&])*)+)/;
+function swallowWord(str, i) {
+    var m = Word.exec(str.substring(i));
+    if (!m) {
+        return { token: undefined,
+            nextpos: i
+        };
+    }
+    return {
+        token: m[1],
+        nextpos: (i + m[0].length)
+    };
+}
+exports.swallowWord = swallowWord;
+function pushToken(res, token) {
+    res.tokens.push(token);
+    res.fusable[res.tokens.length] = true;
+}
+/**
+ *@param {string} sString , e.g. "a,b c;d O'Hara and "murph'ys"
+ *@return {Array<String>} broken down array, e.g.
+ * [["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
+ */
+function tokenizeString(sString, spacesLimit) {
+    var res = {
+        tokens: [],
+        fusable: [false]
+    };
+    var i = 0;
+    var seenSep = false;
+    while (i < sString.length) {
+        switch (sString.charAt(i)) {
+            case '"':
+                var _a = swallowQuote(sString, i), token = _a.token, nextpos = _a.nextpos;
+                if (nextpos === i) {
+                    // unterminated quote, treat like separator
+                    res.fusable[res.tokens.length] = false;
+                    seenSep = true;
+                    ++i;
+                }
+                else if (token === "") {
+                    res.fusable[res.tokens.length] = false;
+                    seenSep = true;
+                    i = nextpos;
+                }
+                else {
+                    res.fusable[res.tokens.length] = false;
+                    pushToken(res, token);
+                    res.fusable[res.tokens.length] = false;
+                    i = nextpos;
+                }
+                break;
+            case '\t':
+            case '\n':
+            case '\r':
+            case ' ':
+                i++;
+                break;
+            case ':':
+            case ',':
+            case '.':
+            case '?':
+            case '!':
+            case ';':
+                res.fusable[res.tokens.length] = false;
+                seenSep = true;
+                ++i;
+                break;
+            default:
+                var _b = swallowWord(sString, i), token = _b.token, nextpos = _b.nextpos;
+                if (token) {
+                    pushToken(res, token);
+                    i = nextpos;
+                }
+                else {
+                    res.fusable[res.tokens.length] = false;
+                    i++;
+                }
+                break;
+        }
+    }
+    res.fusable[res.tokens.length] = false;
+    return res;
+}
+exports.tokenizeString = tokenizeString;
+function makeMatchPattern(str) {
+    var tokens = tokenizeString(str);
+    var bestlen = 0;
+    var best = {
+        longestToken: "",
+        span: { low: 0, high: 0 }
+    };
+    if (tokens.tokens.length > 1) {
+        tokens.tokens.forEach(function (token, index) {
+            var len = token.length;
+            if (len > bestlen) {
+                bestlen = len;
+                best.longestToken = token;
+                best.span.low = -index;
+            }
+        });
+        best.span.high = tokens.tokens.length + best.span.low - 1;
+        return best;
+    }
+    return undefined;
+}
+exports.makeMatchPattern = makeMatchPattern;
 /**
  *@param {string} sString , e.g. "a b c"
  *@return {Array<Array<String>>} broken down array, e.g.

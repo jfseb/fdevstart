@@ -20,10 +20,6 @@ exports.testRecombineQuoted = function (test) {
   test.done();
 };
 
-
-
-
-
 exports.testRecombineQuotedUnterminated = function (test) {
   const res = breakdown.recombineQuoted('A "My quoted string'.split(' '));
   // test.expect(3)
@@ -122,6 +118,118 @@ exports.testBreakDownLimitSpaces2 = function (test) {
   test.deepEqual(res.length, 7);
   test.done();
 };
+
+
+exports.testSwallowQuote = function (test) {
+  const res = breakdown.swallowQuote('abc"hij  klm"',3);
+  test.deepEqual(res,{ token: 'hij klm', nextpos : 13});
+  test.done();
+};
+
+
+exports.testSwallowQuoteUnterminated = function (test) {
+  const res = breakdown.swallowQuote('abc"hij  klm',3);
+  test.deepEqual(res,{ token: undefined, nextpos : 3});
+  test.done();
+};
+
+
+exports.testSwallowWord = function (test) {
+  const res = breakdown.swallowWord('   def ',3);
+  test.deepEqual(res,{ token: 'def', nextpos : 6});
+  test.done();
+};
+
+exports.testSwallowWordWithQuote = function (test) {
+  const res = breakdown.swallowWord('   O\'hara   ',3);
+  test.deepEqual(res,{ token: 'O\'hara', nextpos : 9});
+  test.done();
+};
+
+
+exports.testSwallowWordWithEndQuote = function (test) {
+  const res = breakdown.swallowWord('   O\'hara\' ',3);
+  test.deepEqual(res,{ token: 'O\'hara', nextpos : 9});
+  test.done();
+};
+
+exports.testSwallowWordWithEndQuote2 = function (test) {
+  const res = breakdown.swallowWord('   O\'\'Hara ',3);
+  test.deepEqual(res,{ token: 'O', nextpos : 4});
+  test.done();
+};
+
+
+exports.testSwallowWordWithEndQuote3= function (test) {
+  const res = breakdown.swallowWord('   O\'H\'Hara',3);
+  test.deepEqual(res,{ token: 'O\'H\'Hara', nextpos : 11});
+  test.done();
+};
+
+
+/**
+ * Breakdown a string into tokens, marking elements which are not
+ * combinable, but keeping O'Hara together
+ */
+
+exports.testBreakDownDirect = function (test) {
+  const res = breakdown.tokenizeString('A   C0,E%M;F. and What\'s up?in O\'Hara "tod\tay.a t" A?');
+  // test.expect(3)
+  debuglog(res.tokens.map(function(o,index) {
+    return `${res.fusable[index]? ' ' : '|' }`
+      + o
+      + `${res.fusable[index+1]? ' ' : '|' }`;
+  }));
+  test.deepEqual(res.tokens.length+1, res.fusable.length);
+  test.deepEqual(res,
+    { tokens: [ 'A', 'C0','E%M', 'F', 'and', 'What\'s', 'up', 'in' , 'O\'Hara', 'tod ay.a t', 'A'],
+      fusable : [false,true,false,false,false,true,true,false,true,false,false,false]
+    }
+    , 'one string');
+  test.done();
+};
+
+exports.testBreakDownDirect2 = function (test) {
+  const res = breakdown.tokenizeString('A""BCDEF"AND');
+  // test.expect(3)
+  debuglog(res.tokens.map(function(o,index) {
+    return `${res.fusable[index]? ' ' : '|' }`
+      + o
+      + `${res.fusable[index+1]? ' ' : '|' }`;
+  }));
+  test.deepEqual(res.tokens.length+1, res.fusable.length);
+  test.deepEqual(res,
+    { tokens: [ 'A', 'BCDEF','AND'],
+      fusable : [false,false,false,false]
+    }
+    , 'one string');
+  test.done();
+};
+
+
+exports.testMakeMatchPattern = function(test) {
+  var res = breakdown.makeMatchPattern('abc');
+  test.deepEqual(res,undefined);
+  test.done();
+};
+
+
+exports.testMakeMatchPattern0 = function(test) {
+  var res = breakdown.makeMatchPattern('Life is shorter');
+  test.deepEqual(res,{ longestToken: 'shorter',
+    span: { low : -2, high : 0}}
+    );
+  test.done();
+};
+
+exports.testMakeMatchPattern1 = function(test) {
+  var res = breakdown.makeMatchPattern('Lifer is short');
+  test.deepEqual(res,{ longestToken: 'Lifer',
+    span: { low : -0, high : 2} });
+  test.done();
+};
+
+
 
 
 

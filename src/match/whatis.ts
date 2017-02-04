@@ -871,7 +871,7 @@ export function analyzeCategoryMult(categorylist: string, rules: IMatch.SplitRul
 //  debuglog("resulting category sentences", JSON.stringify(res));
   var res2 = filterAcceptingOnly(res, ["category", "filler"]);
   res2.sort(Sentence.cmpRankingProduct);
-  debuglog("resulting category sentences: \n", Sentence.dumpNiceArr(res2.slice(0,3),Sentence.rankingProduct));
+  debuglog("resulting category sentences: \n", debuglog.enabled? (Sentence.dumpNiceArr(res2.slice(0,3),Sentence.rankingProduct)) : '-');
  // TODO:   res2 = filterAcceptingOnlySameDomain(res2);
   //debuglog("resulting category sentences", JSON.stringify(res2, undefined, 2));
   // expect only categories
@@ -900,7 +900,7 @@ export function resolveCategory(category: string, contextQueryString: string,
     return [];
   } else {
     var matched = InputFilter.analyzeString(contextQueryString, rules);
-    debuglog("after matched " + JSON.stringify(matched));
+    debuglog(debuglog.enabled ? ("after matched " + JSON.stringify(matched)): '-');
     var aSentences = InputFilter.expandMatchArr(matched);
     if(debuglog.enabled) {
       debuglog("after expand" + aSentences.map(function (oSentence) {
@@ -909,11 +909,11 @@ export function resolveCategory(category: string, contextQueryString: string,
     }
     var aSentencesReinforced = InputFilter.reinForce(aSentences);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
-    debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
+    debuglog(debuglog.enabled ? ("after reinforce" + aSentencesReinforced.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
+    }).join("\n")): '-');
     var matchedAnswers = matchRecords(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
-    debuglog(" matchedAnswers" + JSON.stringify(matchedAnswers, undefined, 2));
+    debuglog(debuglog.enabled ? (" matchedAnswers" + JSON.stringify(matchedAnswers, undefined, 2)): '-');
     return matchedAnswers;
   }
 }
@@ -928,18 +928,18 @@ export function resolveCategories(categories: string[], contextQueryString: stri
     return [];
   } else {
     var matched = InputFilter.analyzeString(contextQueryString, rules);
-    debuglog("after matched " + JSON.stringify(matched));
+    debuglog(debuglog.enabled? ("after matched " + JSON.stringify(matched)): '-');
     var aSentences = InputFilter.expandMatchArr(matched);
     if(debuglog.enabled) {
-      debuglog("after expand" + aSentences.map(function (oSentence) {
+      debuglog(debuglog.enabled ? ("after expand" + aSentences.map(function (oSentence) {
         return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n"));
+      }).join("\n")): '-');
     }
     var aSentencesReinforced = InputFilter.reinForce(aSentences);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
-    debuglog("after reinforce" + aSentencesReinforced.map(function (oSentence) {
+    debuglog(debuglog.enabled? ("after reinforce" + aSentencesReinforced.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-    }).join("\n"));
+    }).join("\n")): '-');
     //var matchedAnswers = matchRecordsQuick(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     var categorySet = {};
     categories.forEach(function(category) {

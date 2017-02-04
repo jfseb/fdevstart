@@ -378,7 +378,7 @@ export function categorizeString2(word: string, exact: boolean,  rules : IMatch.
   if (exact) {
     var r = rules.wordMap[lcString];
     if (r) {
-      r.forEach(function(oRule) {
+      r.rules.forEach(function(oRule) {
         res.push({
             string: word,
             matchedString: oRule.matchedString,
@@ -688,7 +688,7 @@ export function expandMatchArr(deep: Array<Array<any>>): Array<Array<any>> {
       });
     });
   })
-  debuglog(JSON.stringify(line));
+  debuglog(debuglog.enabled ? JSON.stringify(line) : '-');
   var res = [];
   var nvecs = [];
   for (var i = 0; i < line.length; ++i) {
@@ -743,7 +743,7 @@ export function reinforceDistWeight(dist: number, category: string): number {
  */
 export function extractCategoryMap(oSentence: Array<IFMatch.IWord>): { [key: string]: Array<{ pos: number }> } {
   var res = {};
-  debuglog('extractCategoryMap ' + JSON.stringify(oSentence));
+  debuglog(debuglog.enabled ? ('extractCategoryMap ' + JSON.stringify(oSentence)) : '-');
   oSentence.forEach(function (oWord, iIndex) {
     if (oWord.category === IFMatch.CAT_CATEGORY) {
       res[oWord.matchedString] = res[oWord.matchedString] || [];
@@ -841,7 +841,7 @@ export function matchRegExp(oRule: IRule, context: IFMatch.context, options?: IM
     res = AnyObject.assign(res, oExtractedContext)
   }
   Object.freeze(res);
-  debuglog('Found one' + JSON.stringify(res, undefined, 2));
+  debuglog(debuglog.enabled ? ('Found one' + JSON.stringify(res, undefined, 2)) : '-');
   return res;
 }
 
@@ -964,7 +964,7 @@ export function applyRules(context: IFMatch.context): Array<IFMatch.context> {
       if (oContext[sKey]) {
         debuglog('** applying rules for ' + sKey)
         var res = augmentContext(oContext, getRMOnce()[sKey] || [])
-        debuglog('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2))
+        debuglog(debuglog.enabled ? ('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2)): '-');
         bestNext.push(res || [])
       } else {
         // rule not relevant

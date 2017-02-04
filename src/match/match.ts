@@ -44,7 +44,7 @@ export function rankToolMatch(a: IMatch.IToolMatchResult) : number {
   var optional = Object.keys(a.optional || {}) .length;
   var spurious = Object.keys(a.spurious || {}).length;
   var matching = required + optional;
-  debuglog("caluclating rank of " + JSON.stringify(a));
+  debuglog(debuglog.enabled? ("caluclating rank of " + JSON.stringify(a)) : '-');
   var rankingRequired = calcGeometricMeansOfRanking(a.required);
   var rankingOptional = calcGeometricMeansOfRanking(a.optional);
 

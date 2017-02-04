@@ -152,6 +152,8 @@ export interface mRule {
   matchedString?: string,
   matchIndex?: number,
   category: string,
+  bitindex : number,
+  range? : { low: number, high: number},
   /**
    * only use an exact match
    */
@@ -159,10 +161,15 @@ export interface mRule {
   _ranking?: number
 }
 
+export interface IWordRules {
+  rules : Array<mRule>,
+  bitindex: number
+}
+
 export interface SplitRules {
   allRules: Array<mRule>,
   nonWordRules : Array<mRule>,
-  wordMap: { [key : string] : Array<mRule> }
+  wordMap: { [key : string] : IWordRules }
 };
 
 export interface ICategorizedString {
@@ -225,6 +232,7 @@ export interface IModels {
     full : {
       domain : { [key : string] : {
           description: string,
+          bitindex : number,
           categories : { [key : string] : ICategoryDesc }
         }
       }

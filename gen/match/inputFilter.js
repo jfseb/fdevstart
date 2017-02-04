@@ -16,19 +16,19 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 // <reference path="../../lib/node-4.d.ts" />
-var distance = require('../utils/damerauLevenshtein');
-var Logger = require('../utils/logger');
+var distance = require("../utils/damerauLevenshtein");
+var Logger = require("../utils/logger");
 var logger = Logger.logger('inputFilter');
-var debug = require('debug');
+var debug = require("debug");
 var debugperf = debug('perf');
-var utils = require('../utils/utils');
-var Algol = require('./algol');
-var breakdown = require('./breakdown');
+var utils = require("../utils/utils");
+var Algol = require("./algol");
+var breakdown = require("./breakdown");
 var AnyObject = Object;
 var debuglog = debug('inputFilter');
 var debuglogV = debug('inputVFilter');
 var debuglogM = debug('inputMFilter');
-var matchdata = require('./matchdata');
+var matchdata = require("./matchdata");
 var oUnitTests = matchdata.oUnitTests;
 function cntChars(str, len) {
     var cnt = 0;
@@ -95,7 +95,7 @@ function calcDistanceLeven(sText1, sText2) {
     return a0 * 500 / sText2.length + a;
 }
 exports.calcDistanceLeven = calcDistanceLeven;
-var IFMatch = require('../match/ifmatch');
+var IFMatch = require("../match/ifmatch");
 //const levenCutoff = Algol.Cutoff_LevenShtein;
 function levenPenaltyOld(i) {
     // 0-> 1
@@ -309,7 +309,7 @@ function postFilter(res) {
         return true;
     });
     if (debuglog.enabled) {
-        debuglog(("\nfiltered " + r.length + "/" + res.length) + JSON.stringify(r));
+        debuglog("\nfiltered " + r.length + "/" + res.length + JSON.stringify(r));
     }
     return r;
 }
@@ -324,7 +324,7 @@ function categorizeString2(word, exact, rules, cntRec) {
     if (exact) {
         var r = rules.wordMap[lcString];
         if (r) {
-            r.forEach(function (oRule) {
+            r.rules.forEach(function (oRule) {
                 res.push({
                     string: word,
                     matchedString: oRule.matchedString,
@@ -612,7 +612,7 @@ function expandMatchArr(deep) {
             });
         });
     });
-    debuglog(JSON.stringify(line));
+    debuglog(debuglog.enabled ? JSON.stringify(line) : '-');
     var res = [];
     var nvecs = [];
     for (var i = 0; i < line.length; ++i) {
@@ -663,7 +663,7 @@ exports.reinforceDistWeight = reinforceDistWeight;
  */
 function extractCategoryMap(oSentence) {
     var res = {};
-    debuglog('extractCategoryMap ' + JSON.stringify(oSentence));
+    debuglog(debuglog.enabled ? ('extractCategoryMap ' + JSON.stringify(oSentence)) : '-');
     oSentence.forEach(function (oWord, iIndex) {
         if (oWord.category === IFMatch.CAT_CATEGORY) {
             res[oWord.matchedString] = res[oWord.matchedString] || [];
@@ -700,7 +700,7 @@ function reinForceSentence(oSentence) {
     return oSentence;
 }
 exports.reinForceSentence = reinForceSentence;
-var Sentence = require('./sentence');
+var Sentence = require("./sentence");
 function reinForce(aCategorizedArray) {
     "use strict";
     aCategorizedArray.forEach(function (oSentence) {
@@ -756,7 +756,7 @@ function matchRegExp(oRule, context, options) {
         res = AnyObject.assign(res, oExtractedContext);
     }
     Object.freeze(res);
-    debuglog('Found one' + JSON.stringify(res, undefined, 2));
+    debuglog(debuglog.enabled ? ('Found one' + JSON.stringify(res, undefined, 2)) : '-');
     return res;
 }
 exports.matchRegExp = matchRegExp;
@@ -847,7 +847,7 @@ function takeTopN(arr) {
     return res;
 }
 exports.takeTopN = takeTopN;
-var inputFilterRules = require('./inputFilterRules');
+var inputFilterRules = require("./inputFilterRules");
 var rm;
 function getRMOnce() {
     if (!rm) {
@@ -863,7 +863,7 @@ function applyRules(context) {
             if (oContext[sKey]) {
                 debuglog('** applying rules for ' + sKey);
                 var res = augmentContext(oContext, getRMOnce()[sKey] || []);
-                debuglog('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2));
+                debuglog(debuglog.enabled ? ('** result for ' + sKey + ' = ' + JSON.stringify(res, undefined, 2)) : '-');
                 bestNext.push(res || []);
             }
             else {

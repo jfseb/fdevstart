@@ -591,7 +591,7 @@ function makeBot(connector, modelPath) {
             // expecting entity A1
             var message = session.message.text;
             debuglog("WhatIs Entities");
-            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            debuglog(debuglog.enabled ? ('raw: ' + JSON.stringify(args.entities, undefined, 2)) : '-');
             var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'category');
             var category = categoryEntity.entity;
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
@@ -622,7 +622,7 @@ function makeBot(connector, modelPath) {
             if (cats.length === 1) {
                 debuglog('category identified:' + cat);
                 var result = WhatIs.resolveCategory(cat, a1.entity, theModel.rules, theModel.records);
-                debuglog('whatis result:' + JSON.stringify(result));
+                debuglog(debuglog.enabled ? ('whatis result:' + JSON.stringify(result)) : '-');
                 logQueryWhatIs(session, 'WhatIs', result);
                 var indis = WhatIs.isIndiscriminateResult(result);
                 if (indis) {
@@ -637,8 +637,8 @@ function makeBot(connector, modelPath) {
                 }
                 else {
                     // debuglog('result : ' + JSON.stringify(result, undefined, 2));
-                    debuglog('best result : ' + JSON.stringify(result[0] || {}, undefined, 2));
-                    debuglog('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 }));
+                    debuglog(debuglog.enabled ? ('best result : ' + JSON.stringify(result[0] || {}, undefined, 2)) : '-');
+                    debuglog(debuglog.enabled ? ('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 })) : '-');
                     // TODO cleansed sentence
                     dialoglog("WhatIs", session, send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n")); //  + JSON.stringify(result[0]));
                 }
@@ -646,7 +646,7 @@ function makeBot(connector, modelPath) {
             else {
                 debuglog('categories identified:' + cats.join(","));
                 var resultArr = WhatIs.resolveCategories(cats, a1.entity, theModel);
-                debuglog('whatis result:' + JSON.stringify(resultArr));
+                debuglog(debuglog.enabled ? ('whatis result:' + JSON.stringify(resultArr)) : '-');
                 logQueryWhatIsTupel(session, 'WhatIs', resultArr);
                 var indis = WhatIs.isIndiscriminateResultTupel(resultArr);
                 if (indis) {
@@ -661,7 +661,7 @@ function makeBot(connector, modelPath) {
                 }
                 else {
                     // debuglog('result : ' + JSON.stringify(result, undefined, 2));
-                    debuglog('best result : ' + JSON.stringify(resultArr[0] || {}, undefined, 2));
+                    debuglog(debuglog.enabled ? ('best result : ' + JSON.stringify(resultArr[0] || {}, undefined, 2)) : '-');
                     //debuglog('top : ' + WhatIs.dumpWeightsTop(resultArr, { top: 3 }));
                     // TODO cleansed sentence
                     dialoglog("WhatIs", session, send('The ' + Utils.listToQuotedCommaAnd(cats) + ' of ' + a1.entity + ' are ' + Utils.listToQuotedCommaAnd(resultArr[0].result) + '\n')); //  + JSON.stringify(result[0]));
@@ -676,7 +676,7 @@ function makeBot(connector, modelPath) {
             // expecting entity A1
             var message = session.message.text;
             debuglog("Intent : ListAll");
-            debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+            debuglog(debuglog.enabled ? ('raw: ' + JSON.stringify(args.entities, undefined, 2)) : '-');
             var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
             var category = categoryEntity.entity;
             var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
@@ -749,7 +749,7 @@ function makeBot(connector, modelPath) {
                         var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
                         result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules, theModel.records, categorySetFull);
                     }
-                    debuglog('listall result:' + JSON.stringify(result1));
+                    debuglog(debuglog ? ('listall result:' + JSON.stringify(result1)) : '-');
                     var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
                     logQueryWhatIs(session, 'ListAll', result1);
                     if (joinresults.length) {
@@ -767,7 +767,7 @@ function makeBot(connector, modelPath) {
                     var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
                     logQueryWhatIs(session, 'ListAll', result);
                     if (result.length) {
-                        debuglog('listall result:' + JSON.stringify(result));
+                        debuglog(debuglog.enabled ? ('listall result:' + JSON.stringify(result)) : '-');
                         var joinresults = [];
                         debuglog("here is cat>" + cat);
                         if (cat !== "example question") {
@@ -807,7 +807,7 @@ function makeBot(connector, modelPath) {
                         var categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
                         result1T = ListAll.listAllTupelHavingContext(cats, a1.entity, theModel.rules, theModel.records, categorySetFull);
                     }
-                    debuglog('listall result:' + JSON.stringify(result1T));
+                    debuglog(debuglog.enabled ? ('listall result:' + JSON.stringify(result1T)) : '-');
                     var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T));
                     logQueryWhatIsTupel(session, 'ListAll', result1T);
                     if (joinresults.length) {
@@ -834,7 +834,7 @@ function makeBot(connector, modelPath) {
                     var resultT = ListAll.listAllTupelHavingContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
                     logQueryWhatIsTupel(session, 'ListAll', resultT);
                     if (resultT.length) {
-                        debuglog('listall result:' + JSON.stringify(resultT));
+                        debuglog(debuglog.enabled ? ('listall result:' + JSON.stringify(resultT)) : '-');
                         var joinresults = [];
                         debuglog("here is cat>" + cats.join(", "));
                         if (cat !== "example question") {
@@ -1206,11 +1206,12 @@ function makeBot(connector, modelPath) {
     ]);
     dialog.matches('Wrong', [
         function (session, args, next) {
+            /*
             dialogLogger({
-                session: session,
-                intent: "Wrong",
-                response: '<begin updown>'
-            });
+              session: session,
+              intent: "Wrong",
+              response: '<begin updown>'
+            }); */
             session.beginDialog('/updown', session.userData.count);
         },
         function (session, results, next) {

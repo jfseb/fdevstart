@@ -294,7 +294,7 @@ export function inferDomain(theModel : IMatch.IModels, contextQueryString: strin
     return domains[0];
   }
   if(domains.length > 0 ) {
-    debuglog("got more than one domain, confused  " + domains.join("\n"));
+    debuglog(debuglog.enabled? ("got more than one domain, confused  " + domains.join("\n")):'-');
     return undefined;
     // TODOD
   }
@@ -315,6 +315,6 @@ export function inferDomain(theModel : IMatch.IModels, contextQueryString: strin
      debuglog("got a precise domain " + domains[0]);
     return domains[0];
   }
-  debuglog("got more than one domain, confused  " + domains.join("\n"));
+  debuglog(debuglog.enabled ? ("got more than one domain, confused  " + domains.join("\n")) :'-');
   return undefined;
 };

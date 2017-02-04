@@ -89,6 +89,78 @@ exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 };
 
 
+exports.testModelGetDomainIndex = function (test) {
+  var res = Model.getDomainBitIndex('IUPAC', theModel);
+  test.equal(res, 0x0020);
+  test.done();
+};
+exports.testModelGetDomainIndexNotPresent = function (test) {
+  var res = Model.getDomainBitIndex('NOTPRESENT', theModel);
+  test.equal(res, 0x00100, 'abc');
+  test.done();
+};
+
+
+exports.testModelGetDomainIndexThrows = function (test) {
+  var a = [];
+  for(var i = 0; i < 32; ++i) {
+    a.push('xx');
+  }
+  try {
+    Model.getDomainBitIndex('IUPAC', { domains : a });
+    test.equal(1,0);
+  } catch(e) {
+    test.equal(1,1);
+  }
+  test.done();
+};
+
+
+
+exports.testModelHasDomainIndexinRules = function (test) {
+  var a = [];
+  for(var i = 0; i < 32; ++i) {
+    a.push('xx');
+  }
+  try {
+    Model.getDomainBitIndex('IUPAC', { domains : a });
+    test.equal(1,0);
+  } catch(e) {
+    test.equal(1,1);
+  }
+  test.done();
+};
+
+
+exports.testModelHasDomainIndexInDomains = function (test) {
+  // check that every domain has an index which is distinct
+  var all = 0;
+  theModel.domains.forEach(function(o) {
+    var idx = theModel.full.domain[o].bitindex;
+    test.equal(idx !== 0, true);
+    //console.log(all);
+    all = all | idx;
+  });
+  test.equal(all, 0x000FF);
+  test.done();
+};
+
+
+exports.testModelHasDomainIndexInAllRules = function (test) {
+  // check that every domain has an index which is distinct
+  var all = 0;
+  theModel.domains.forEach(function(o) {
+    var idx = theModel.full.domain[o].bitindex;
+    test.equal(idx !== 0, true);
+    //console.log(all);
+    all = all | idx;
+  });
+  test.equal(all, 0x000FF);
+  test.done();
+};
+
+
+
 exports.testgetAllRecordCategoriesForTargetCategories1 = function (test) {
 
   try {
@@ -205,30 +277,34 @@ exports.testModelCheckExactOnly = function (test) {
 
 exports.testMakeWordMap = function(test) {
   var rules  = [
-    { type : 0, lowercaseword : 'abc', category : '1'},
-    { type : 1, lowercaseword : 'def', category : '2'},
-    { type : 0 , lowercaseword : 'klm', category : '4'},
-    { type : 0 , lowercaseword : 'abc', category : '3'},
+    { type : 0, lowercaseword : 'abc', category : '1', bitindex : 0x1 },
+    { type : 1, lowercaseword : 'def', category : '2', bitindex : 0x10 },
+    { type : 0 , lowercaseword : 'klm', category : '4', bitindex : 0x100},
+    { type : 0 , lowercaseword : 'abc', category : '3', bitindex : 0x80},
   ];
   var res = Model.splitRules(rules);
 
   test.deepEqual(res,
     { allRules : [
-    { type : 0, lowercaseword : 'abc', category : '1'},
-    { type : 1, lowercaseword : 'def', category : '2'},
-    { type : 0 , lowercaseword : 'klm', category : '4'},
-    { type : 0 , lowercaseword : 'abc', category : '3'},
+      { type : 0, lowercaseword : 'abc', category : '1', bitindex : 0x1 },
+    { type : 1, lowercaseword : 'def', category : '2', bitindex : 0x10},
+    { type : 0 , lowercaseword : 'klm', category : '4', bitindex : 0x100},
+    { type : 0 , lowercaseword : 'abc', category : '3', bitindex : 0x80},
     ],
       wordMap : {
-        'abc' : [
-        { type : 0, lowercaseword : 'abc', category : '1'},
-        { type : 0 , lowercaseword : 'abc', category : '3'}
-        ],
-        'klm' : [
-        { type : 0 , lowercaseword : 'klm', category : '4'}
-        ]
+        'abc' : { bitindex : 0x81,
+          rules: [
+            { type : 0, lowercaseword : 'abc', category : '1', bitindex : 0x1 },
+            { type : 0 , lowercaseword : 'abc', category : '3', bitindex : 0x80 }
+          ]
+        },
+        'klm' : { bitindex : 0x100,
+          rules: [
+           { type : 0 , lowercaseword : 'klm', category : '4', bitindex : 0x100 }
+          ]
+        }
       },
-      nonWordRules : [ { type : 1, lowercaseword : 'def', category : '2'} ]
+      nonWordRules : [ { type : 1, lowercaseword : 'def', category : '2', bitindex : 0x10 } ]
     }
  );
   test.done();
