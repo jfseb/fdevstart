@@ -4,30 +4,34 @@ var process = require('process');
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 var dl = require(root + '/utils/damerauLevenshtein.js');
-var dlsh = dl.levenshteinDamerau;
+
+//var dlsh = dl.levenshteinDamerau;
 
 exports.testDLSH = function (test) {
-  var fn = dlsh;
+  var fn = dl.calcDistanceAdjusted;
   // test.expect(3);
-  test.deepEqual(fn('abcdef', ''), 6, 'empty b');
-  test.deepEqual(fn('', ''), 0, 'both empty');
-  test.deepEqual(fn('abc', 'abc'), 0, 'a is a');
-  test.deepEqual(fn('', 'abc'), 3, ' empty a');
-  test.deepEqual(fn('abcdef', 'abcde'), 1, 'a is a');
-  test.deepEqual(fn('abcdef', 'abcdef'), 0, 'a is a');
-  test.deepEqual(fn('hijk', 'abcd'), 4, 'a is a');
-  test.deepEqual(fn('fabcde', 'abcdef'), 2, 'shift');
-  test.deepEqual(fn('abc', 'acb'), 1, ' abc acb');
-  test.deepEqual(fn('Shell.controller.js', 'Shell'), 14, 'Shell.controller.js, Shell');
-  test.deepEqual(fn('Emma3', 'Shell'), 5, ' Emma3, Shell');
+  test.deepEqual(fn('abcdef', '').toFixed(2), '0.63', 'empty b');
+  test.deepEqual(fn('', '').toFixed(2), '1.00', 'both empty');
+  test.deepEqual(fn('abc', 'abc').toFixed(2), '1.00', 'a is a');
+  test.deepEqual(fn('', 'abc').toFixed(2), '0.63', ' empty a');
+  test.deepEqual(fn('abcdef', 'abcde').toFixed(2),  '0.98', 'a is a');
+  test.deepEqual(fn('abcdef', 'abcdef').toFixed(2),  '1.00', 'a is a');
+  test.deepEqual(fn('hijk', 'abcd').toFixed(2), '0.41', 'a is a');
+  test.deepEqual(fn('fabcde', 'abcdef').toFixed(2), '0.93', 'shift');
+  test.deepEqual(fn('abc', 'acb').toFixed(2), '0.77', ' abc acb');
+  test.deepEqual(fn('Shell.controller.js', 'Shell').toFixed(2), '0.58', 'Shell.controller.js, Shell');
+  test.deepEqual(fn('Emma3', 'Shell').toFixed(2), '0.40', ' Emma3, Shell');
   test.done();
 };
 
+/*
 exports.testDLSHGen = function (test) {
   var fn = dl.levenshtein('abc','abc');
   test.equal(fn,0);
   test.done();
 };
+*/
+
 
 exports.testCDA = function (test) {
   var fn = dl.calcDistanceAdjusted;
@@ -37,6 +41,7 @@ exports.testCDA = function (test) {
   test.done();
 };
 
+/*
 exports.testsift3 = function (test) {
   var fn = dl.sift3Distance;
   // test.expect(3);
@@ -76,4 +81,4 @@ exports.testsift3 = function (test) {
 
   test.done();
 };
-
+*/

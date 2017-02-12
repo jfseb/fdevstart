@@ -39,7 +39,17 @@ exports.testdeepFreeze = function (test) {
   test.done();
 };
 
-
+exports.testStripQuotes = function(test) {
+  var u = utils.stripQuotes('"abc"');
+  test.equal(u,'abc');
+  var u2 = utils.stripQuotes('abc');
+  test.equal(u2,'abc');
+  var u3 = utils.stripQuotes('"abc');
+  test.equal(u3,'"abc');
+  var u4 = utils.stripQuotes('abc"');
+  test.equal(u4,'abc"');
+  test.done();
+};
 
 /**
  * Unit test for sth

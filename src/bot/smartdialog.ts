@@ -786,17 +786,19 @@ function makeBot(connector, modelPath?: string, options? : any ) {
       debuglog(debuglog.enabled? ('raw: ' + JSON.stringify(args.entities, undefined, 2)) :'-');
       var categoryEntity = builder.EntityRecognizer.findEntity(args.entities, 'categories');
       var category = categoryEntity.entity;
-      var a1 = builder.EntityRecognizer.findEntity(args.entities, 'insth');
+      var inSthEntity = builder.EntityRecognizer.findEntity(args.entities, 'insth')
+      var inSomething = inSthEntity && inSthEntity.entity;
+      // some metaqueries:
       if (category === "categories") {
         // do we have a filter ?
         var domain = undefined;
-        if (a1 && a1.entity) {
-          domain = ListAll.inferDomain(theModel, a1.entity);
+        if (inSomething) {
+          domain = ListAll.inferDomain(theModel, inSomething);
         }
         if (!domain) {
           var res = restrictLoggedOn(session, theModel.category).join(";\n");
-          if (a1 && a1.entity) {
-            dialoglog("ListAll", session, send("I did not infer a domain restriction from \"" + a1.entity + "\", all my categories are ...\n" + res));
+          if (inSomething) {
+            dialoglog("ListAll", session, send("I did not infer a domain restriction from \"" + Utils.stripQuotes(inSomething) + "\", all my categories are ...\n" + res));
           } else {
             dialoglog("ListAll", session, send("my categories are ...\n" + res));
           }
@@ -842,26 +844,31 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         cat = cats[0];
       }
       if (cats.length === 1) {
-        debuglog('category identified:' + cat);
-        if (a1 && a1.entity) {
-          debuglog('got filter:' + a1.entity);
+        debuglog('single category identified:' + cat);
+        if (inSomething) {
+          debuglog('got filter:' + inSomething);
           var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
-          var result1 = ListAll.listAllWithContext(cat, a1.entity,
+          var result1 = ListAll.listAllWithContext(cat, inSomething,
             theModel.rules, theModel.records, categorySet);
           // TODO classifying the string twice is a terrible waste
-          if (!result1.length) {
+          if (!result1.answers.length) {
             debuglog('going for having');
             var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
-            result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules,
-              theModel.records, categorySetFull).answers;
+            result1 = ListAll.listAllHavingContext(cat, inSomething, theModel.rules,
+              theModel.records, categorySetFull);
           }
-          debuglog(debuglog? ('listall result:' + JSON.stringify(result1)):'-');
-          var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
-          logQueryWhatIs(session, 'ListAll', result1);
+          debuglog(debuglog? ('listall result >:' + JSON.stringify(result1)):'-');
+          var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1.answers));
+          logQueryWhatIs(session, 'ListAll', result1.answers);
+          debuglog(debuglog? ('listall result2 >:' + JSON.stringify(result1)):'-');
           if (joinresults.length) {
-            dialoglog("ListAll", session, send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+            dialoglog("ListAll", session, send("the " + category + " for " + inSomething + " are ...\n" + joinresults.join(";\n")));
           } else {
-            dialoglog("ListAll", session, send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+            var errprefix = "";
+            if (result1.errors.length) {
+              errprefix = ErError.explainError(result1.errors);
+            }
+            dialoglog("ListAll", session, send("i did not find any " + category + " for " + inSomething + ".\n" + joinresults.join(";\n") + "" + errprefix));
           }
           return;
         } else {
@@ -891,8 +898,8 @@ function makeBot(connector, modelPath?: string, options? : any ) {
       } else {
         // multiple categories
         debuglog('categories identified:' + cats.join(","));
-        if (a1 && a1.entity) {
-          debuglog('got filter:' + a1.entity);
+        if (inSomething) {
+          debuglog('got filter:' + inSomething);
           try {
             var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
           } catch (e) {
@@ -900,22 +907,25 @@ function makeBot(connector, modelPath?: string, options? : any ) {
             dialoglog("WhatIs", session, send('I cannot combine "' + category + '(' + e.toString() + ')'));
             return;
           }
-          var result1T = ListAll.listAllTupelWithContext(cats, a1.entity,
+          var result1T = ListAll.listAllTupelWithContext(cats, inSomething,
             theModel.rules, theModel.records, categorySet);
           // TODO classifying the string twice is a terrible waste
-          if (!result1T.length) {
+          if (!result1T.tupelanswers.length) {
             debuglog('going for having');
             var categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
-            result1T = ListAll.listAllTupelHavingContext(cats, a1.entity, theModel.rules,
+            result1T = ListAll.listAllTupelHavingContext(cats, inSomething, theModel.rules,
               theModel.records, categorySetFull);
           }
           debuglog(debuglog.enabled? ('listall result:' + JSON.stringify(result1T)) : '-');
-          var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T));
-          logQueryWhatIsTupel(session, 'ListAll', result1T);
+          var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T.tupelanswers));
+          logQueryWhatIsTupel(session, 'ListAll', result1T.tupelanswers);
           if (joinresults.length) {
-            dialoglog("ListAll", session, send("the " + category + " for " + a1.entity + " are ...\n" + joinresults.join(";\n")));
+            dialoglog("ListAll", session, send("the " + category + " for " + inSomething + " are ...\n" + joinresults.join(";\n")));
           } else {
-            dialoglog("ListAll", session, send("i did not find any " + category + " for " + a1.entity + ".\n" + joinresults.join(";\n")));
+            if (result1T.errors.length) {
+              errprefix = ErError.explainError(result1T.errors);
+            }
+            dialoglog("ListAll", session, send("i did not find any " + category + " for " + inSomething + ".\n" + joinresults.join(";\n") + errprefix));
           }
           return;
         } else {
@@ -931,15 +941,15 @@ function makeBot(connector, modelPath?: string, options? : any ) {
             return;
           }
           var resultT = ListAll.listAllTupelHavingContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
-          logQueryWhatIsTupel(session, 'ListAll', resultT);
-          if (resultT.length) {
+          logQueryWhatIsTupel(session, 'ListAll', resultT.tupelanswers);
+          if (resultT.tupelanswers.length) {
             debuglog(debuglog.enabled? ('listall result:' + JSON.stringify(resultT)):'-');
             var joinresults = [];
             debuglog("here is cat>" + cats.join(", "));
             if (cat !== "example question") {
-              joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(resultT));
+              joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(resultT.tupelanswers));
             } else {
-              joinresults = ListAll.joinResultsTupel(resultT);
+              joinresults = ListAll.joinResultsTupel(resultT.tupelanswers);
             }
             var response = "the " + category + " are ...\n" + joinresults.join(";\n");
             dialoglog("ListAll", session, send(response));

@@ -67,6 +67,8 @@ export interface IProcessedWhatIsAnswers extends IProcessed {
   answers : IWhatIsAnswer[]
 }
 
+
+
 export interface IProcessedWhatIsTupelAnswers extends IProcessed {
   sentences? : ISentence[],
   tupelanswers : Array<IWhatIsTupelAnswer>
@@ -80,6 +82,7 @@ export interface IWhatIsTupelAnswer {
   result: string[],
   _ranking : number
 }
+
 
 export interface IMatchedSetRecord {
   setId : string,
@@ -238,7 +241,7 @@ export interface ICategorizedStringRanged extends ICategorizedString{
 
 export interface IProcessed {
   tokens : string[],
-  errors? : any
+  errors? : IERError[]
 }
 
 export interface IProcessedSentences extends IProcessed {

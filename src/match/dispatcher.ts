@@ -27,29 +27,35 @@ import * as exectemplate from '../exec/exectemplate';
   //var leven = require('../utils/damerauLevenshtein.js')
 import * as matchdata from './matchdata';
 
+import * as Algol from '../match/algol';
+
 const oUnitTests = matchdata.oUnitTests
 const oWikis = matchdata.oWikis
 
   function calcDistance (sText1, sText2) {
+    return distance.calcDistance(sText1.toLowerCase(), sText2);
+    /*
     debuglog("length2" + sText1 + " - " + sText2)
     var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
     var a = distance.levenshtein(sText1.toLowerCase(), sText2)
     return a0 * 500 / sText2.length + a
+    */
   }
 
   function fnFindMatch (sKeyword, oContext, oMap) {
     // return a better context if there is a match
     // sKeyword = sKeyword.toLowerCase();
+    var sKeywordLc = sKeyword.toLowerCase();
     oMap.sort(function (oEntry1, oEntry2) {
-      var u1 = calcDistance(oEntry1.key.toLowerCase(), sKeyword)
-      var u2 = calcDistance(oEntry2.key.toLowerCase(), sKeyword)
-      return u1 - u2
+      var u1 = calcDistance(oEntry1.key, sKeywordLc)
+      var u2 = calcDistance(oEntry2.key, sKeywordLc)
+      return u2 - u1;
     })
     // later: in case of conflicts, ask,
     // now:
-    var dist = calcDistance(oMap[0].key.toLowerCase(), sKeyword)
-    debuglog('best dist' + dist + ' /  ' + dist * sKeyword.length + ' ' + sKeyword)
-    if (dist < 150) {
+    var dist = calcDistance(oMap[0].key, sKeywordLc)
+    debuglog('best dist' + dist + ' /  ' + oMap[0].key + ' ' + sKeyword)
+    if (dist > Algol.Cutoff_WordMatch) {
       var o1 = (<any>Object).assign({}, oContext)
       var o2
       o1.context = (<any>Object).assign({}, o1.context)
@@ -369,7 +375,7 @@ import * as inputFilter from './inputFilter';
       nrNoMatches: nrNoMatches,
       expandParametersInURL: expandParametersInURL,
       filterShowEntity: filterShowEntity,
-      fnFindUnitTest: fnFindUnitTest,
+    //  fnFindUnitTest: fnFindUnitTest,
       calcDistance: calcDistance,
       _aShowEntityActions: aShowEntityActions
     }

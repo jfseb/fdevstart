@@ -30,6 +30,7 @@ import * as Word from './word';
 import * as Operator from './operator';
 
 import * as WhatIs from './whatis';
+import * as ErError from './ererror';
 
 import * as Model from '../model/model';
 import * as Match from './match';
@@ -56,9 +57,14 @@ export function analyzeContextString(contextQueryString : string,  rules: IMatch
 //   theModel.mRules, theModel.tools, theModel.records);
 
 export function listAllWithContext(category: string, contextQueryString: string,
-  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): Array<IMatch.IWhatIsAnswer> {
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): IMatch.IProcessedWhatIsAnswers
+ {
   if (contextQueryString.length === 0) {
-    return [];
+    return {
+      answers : [],
+      errors : [ErError.makeError_EMPTY_INPUT()] ,
+      tokens :[]
+    };
   } else {
     logPerf('listAllWithContext');
     perflog("totalListAllWithContext");
@@ -77,17 +83,20 @@ export function listAllWithContext(category: string, contextQueryString: string,
     }
     perflog("totalListAllWithContext (a=" + matchedFiltered.length + ")");
     logPerf('listAllWithContext');
-    return matchedFiltered; // ??? Answers;
-  }
+    return {
+     answers :  matchedFiltered, // ??? Answers;
+     errors : aSentencesReinforced.errors,
+     tokens : aSentencesReinforced.tokens
+    }
+ }
 }
 
-import * as ErError from './ererror';
 export function listAllHavingContext(category: string, contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
   categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsAnswers {
   if (contextQueryString.length === 0) {
     return {
-      errors : [ErError.makeError_EMPTY_INPUT] ,
+      errors : [ErError.makeError_EMPTY_INPUT()] ,
       tokens :[],
       answers:[]
    };
@@ -111,9 +120,13 @@ export function listAllHavingContext(category: string, contextQueryString: strin
 
 
 export function listAllTupelWithContext(categories: string[], contextQueryString: string,
-  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): Array<IMatch.IWhatIsTupelAnswer> {
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): IMatch.IProcessedWhatIsTupelAnswers {
   if (contextQueryString.length === 0) {
-    return [];
+    return {
+      tupelanswers : [],
+      errors : [ErError.makeError_EMPTY_INPUT()] ,
+      tokens :[],
+    };
   } else {
     logPerf('listAllWithContext');
     perflog("totalListAllWithContext");
@@ -130,16 +143,24 @@ export function listAllTupelWithContext(categories: string[], contextQueryString
     }
     perflog("totalListAllWithContext (a=" + matchedFiltered.length + ")");
     logPerf('listAllWithContext');
-    return matchedFiltered; // ??? Answers;
+    return {
+      tupelanswers : matchedFiltered, // ??? Answers;
+      errors : aSentencesReinforced.errors,
+      tokens: aSentencesReinforced.tokens
+    }
   }
 }
 
 
 export function listAllTupelHavingContext(categories: string[], contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
-  categorySet : { [key:string] : boolean }): Array<IMatch.IWhatIsTupelAnswer> {
+  categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsTupelAnswers {
   if (contextQueryString.length === 0) {
-    return [];
+    return {
+      tupelanswers : [],
+      errors : [ErError.makeError_EMPTY_INPUT()] ,
+      tokens :[],
+    };
   } else {
     perflog("analyzeContextString ...");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
@@ -154,11 +175,13 @@ export function listAllTupelHavingContext(categories: string[], contextQueryStri
       debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
     }
     perflog("totalListAllHavingContext (a=" + matchedFiltered.length + ")");
-    return matchedFiltered;
+    return {
+      tupelanswers :  matchedFiltered,
+      errors : aSentencesReinforced.errors,
+      tokens: aSentencesReinforced.tokens
+    }
   }
 }
-
-
 
 export function filterStringListByOp(operator: IMatch.IOperator, fragment : string,  srcarr : string[] ) : string[] {
   var fragmentLC = BreakDown.trimQuotedSpaced(fragment.toLowerCase());
@@ -222,7 +245,6 @@ export function likelyPluralDiff(a : string, pluralOfa : string) : boolean {
 export function listAllWithCategory(category: string, records: Array<IMatch.IRecord>): Array<IMatch.IRecord> {
   var matchedAnswers = matchRecordHavingCategory(category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
   debuglog(" listAllWithCategory:" + JSON.stringify(matchedAnswers, undefined, 2));
-
   return matchedAnswers;
 }
 

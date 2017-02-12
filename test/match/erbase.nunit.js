@@ -258,6 +258,41 @@ var res = Erbase.expandTokenMatchesToSentences([],src);
   test.done();
 };
 
+exports.testExpandEmtpyErrors = function (test) {
+  test.ok(1);
+  var src = [
+    [{ string: 'a', a: 1 },
+    { string: 'xx', a: 1 }],
+    [],
+    [{ string: '3', a: 1 }]
+  ];
+var res = Erbase.expandTokenMatchesToSentences(['a','b','c','d'],src);
+  test.deepEqual(res.sentences, []);
+  test.deepEqual(res.errors.length, 1);
+  //console.log(JSON.stringify(res.errors,undefined,2));
+  test.deepEqual(res.errors[0].context.token, 'b');
+  test.done();
+};
+
+
+exports.testExpandEmtpy2Errors = function (test) {
+  test.ok(1);
+  var src = [
+    [{ string: 'a', a: 1 },
+    { string: 'b', a: 1 }],
+    [],
+    [],
+    [{ string: '3', a: 1 }]
+  ];
+var res = Erbase.expandTokenMatchesToSentences(['a','b','c','d','e'],src);
+  test.deepEqual(res.sentences, []);
+  test.deepEqual(res.errors.length, 2);
+  test.deepEqual(res.errors[0].context.token, 'b');
+  test.deepEqual(res.errors[1].context.token, 'c');
+  test.done();
+};
+
+
 
 exports.testExpand0 = function (test) {
   test.ok(1);

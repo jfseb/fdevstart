@@ -51,10 +51,10 @@ exports.testListAllWithContext = function (test) {
     mRules, records);
 
   test.deepEqual(ListAll.formatDistinctFromWhatIfResult([]), '');
-  var res3 = ListAll.joinResults(res);
+  var res3 = ListAll.joinResults(res.answers);
   test.deepEqual(res3, ['com.sap.NTA' ]);
 
-  var res2 = ListAll.formatDistinctFromWhatIfResult(res);
+  var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
 
   test.deepEqual(res2, '"com.sap.NTA"');
   test.done();
@@ -77,7 +77,7 @@ exports.testJoinResultsTupel = function (test) {
 exports.testListAllWithContextEmpty = function (test) {
   var res = ListAll.listAllWithContext('url', '',
     mRules, records);
-  test.deepEqual(res,[]);
+  test.deepEqual(res.answers,[]);
   test.done();
 };
 

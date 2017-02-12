@@ -36,6 +36,14 @@ export function listToQuotedCommaOr(list : string[], quote? : string) {
     return  listToQuotedCommaWord(list,'"', 'or');
 }
 
+
+export function stripQuotes(str : string) : string {
+    if(str.length > 2 && str.charAt(0) === '"' && str.charAt(str.length - 1) === '"') {
+        return str.substring(1,str.length-1);
+    }
+    return str;
+}
+
 // courtesy of
 // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
 export function cloneDeep(item : any) : any  {

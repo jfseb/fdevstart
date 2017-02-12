@@ -64,6 +64,7 @@ export function calcDistance(sText1: string, sText2: string): number {
  *
  * @return the distance, note that is is *not* symmetric!
  */
+/*
 export function calcDistanceLevenXXX(sText1: string, sText2: string): number {
   // console.log("length2" + sText1 + " - " + sText2)
    if(((sText1.length - sText2.length) > Algol.calcDist.lengthDelta1)
@@ -81,7 +82,7 @@ export function calcDistanceLevenXXX(sText1: string, sText2: string): number {
   var a = distance.levenshtein(sText1, sText2)
   return a0 * 500 / sText2.length + a
 }
-
+*/
 
 
 

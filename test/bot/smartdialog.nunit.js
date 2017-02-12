@@ -161,8 +161,18 @@ exports.testWhatIsNonParseable = function (test) {
     var sRes = oRes;
     debuglog(JSON.stringify(oRes));
 
-    test.deepEqual(sRes, 'I don\'t know anything about "atomic weight, element name" ("atomic weight" and "element name")"'
-  + ' in relation to "element name silver sowasgibts nicht"\nI do not understand "sowasgibts".');
+    test.deepEqual(sRes, 'I don\'t know anything about "atomic weight, element name" ("atomic weight" and "element name")" in relation to "element name silver sowasgibts nicht"\nI do not understand "sowasgibts".\nI do not understand "nicht".');
+    test.done();
+  });
+};
+
+exports.testListAllNonParseableSingleCat = function (test) {
+  testOne('List all atomic weight for element name silver sowasgibts nicht',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+ 'i did not find any atomic weight for element name silver sowasgibts nicht.\n\nI do not understand "sowasgibts".\nI do not understand "nicht".'
+ );
     test.done();
   });
 };

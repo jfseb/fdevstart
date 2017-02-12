@@ -261,9 +261,9 @@ export function expandTokenMatchesToSentences(tokens: string[], tokenMatches: Ar
     var lenMatches = tokenMatches[tokenIndex].length;
     if (nextBase.length === 0 && lenMatches === 0) {
       // the word at index I cannot be understood
-      if (result.errors.length === 0) {
-        result.errors.push(ERError.makeError_NO_KNOWN_WORD(tokenIndex, tokens));
-      }
+      //if (result.errors.length === 0) {
+      result.errors.push(ERError.makeError_NO_KNOWN_WORD(tokenIndex, tokens));
+      //}
     }
     for (var l = 0; l < lenMatches; ++l) { // for each variant present at index k
       //debuglog("vecs now" + JSON.stringify(vecs));
