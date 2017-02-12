@@ -59,6 +59,6 @@ export function makeTable(categories : string[], theModel: IMatch.IModels ) : { 
   text += "Creating and starting table with "+ Utils.listToQuotedCommaAnd(usedMap);
   return {
     text : text,
-  action :{ url : `table_${domain.toLowerCase()}?c${indexMap.join(',')}` }
+  action :{ url : `table_${domain.toLowerCase().replace(/[^a-z0-9_]/g,'_')}?c${indexMap.join(',')}` }
   };
 }
