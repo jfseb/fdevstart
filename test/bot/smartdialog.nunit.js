@@ -54,13 +54,20 @@ exports.testUpDownRecognizerUp = function (test) {
   });
 };
 
+exports.testUpDownRecognizerNothing = function (test) {
+  doRecognize('this aint nothing', function(err, res) {
+    test.deepEqual(res.intent,  'None');
+    test.done();
+  });
+};
 
-exports.testUpDownRecognizerUp = function (test) {
+exports.testUpDownRecognizerDown = function (test) {
   doRecognize('down', function(err, res) {
     test.deepEqual(res.intent,  'intent.down');
     test.done();
   });
 };
+
 exports.testUpDownRecognizerDone = function (test) {
   doRecognize('done', function(err, res) {
     test.deepEqual(res.intent,  'intent.up');
@@ -342,6 +349,9 @@ exports.testTrain = function (test) {
     });
   });
 };
+
+
+
 
 exports.testListAllNotACat = function (test) {
   testOne('list all NOTACATEGORY',function(oRes) {

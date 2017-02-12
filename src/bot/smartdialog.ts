@@ -1400,6 +1400,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
     }
   ]);
 
+/*
   // Add intent handlers
   dialog.matches('train', [
     function (session, args, next) {
@@ -1462,6 +1463,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
       }
     }
   ]);
+*/
 
   dialog.onDefault(function (session) {
     logQuery(session, "onDefault");
