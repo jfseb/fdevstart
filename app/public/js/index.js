@@ -6,6 +6,23 @@ function doExpand() {
   console.log('expanded');
 }
 
+
+// polyfill for matches
+if (!Element.prototype.matches) {
+  Element.prototype.matches =
+        Element.prototype.matchesSelector ||
+        Element.prototype.mozMatchesSelector ||
+        Element.prototype.msMatchesSelector ||
+        Element.prototype.oMatchesSelector ||
+        Element.prototype.webkitMatchesSelector ||
+        function(s) {
+          var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+            i = matches.length;
+          while (--i >= 0 && matches.item(i) !== this) {}
+          return i > -1;
+        };
+}
+
 // Close the dropdown if the user clicks outside of it
 window.onclick = function(e) {
   if (!e.target.matches('.dropbtn')) {
@@ -185,6 +202,13 @@ window.inputHistory = new  window.MyHistory({
   o.rows=e.rows||1,o.lineHeight=e.scrollHeight/o.rows-n/o.rows,o.maxAllowedHeight=o.lineHeight*t-n,e.addEventListener('input',o.autogrowFn);};});
 
 
+function encodeStrAsHTML(rawstr) {
+  var encodedStr = rawstr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+    return '&#'+i.charCodeAt(0)+';';
+  });
+  return encodedStr.replace(/\n/g,'<br/>');
+}
+
 //
 
 // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
@@ -219,6 +243,7 @@ function makeLi(value, sType) {
   div.classList.add('common');
   div.classList.add(sType);
   div.innerText = value;
+  div.innerHTML = encodeStrAsHTML(value);
   textarea.parentNode.parentNode.insertBefore(li,textarea.parentNode);
   window.scrollTo(0,document.body.scrollHeight);
 }
@@ -280,7 +305,7 @@ textarea.addEventListener('keydown',function(e) {
     }, 10);
   }
   else
- if ( e.key === 'ArrowUp') {
+ if ( e.key === 'ArrowUp' || e.key === 'Up') {
    var r = inputHistory.backward(textarea.value);
    if(r !== undefined) {
      textarea.value = r;
@@ -288,7 +313,7 @@ textarea.addEventListener('keydown',function(e) {
    }
  }
  else
- if ( e.key === 'ArrowDown') {
+ if ( e.key === 'ArrowDown' || e.key === 'Down') {
    var res = inputHistory.forward(textarea.value);
    if(res !== undefined ) {
      textarea.value = res;

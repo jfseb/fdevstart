@@ -119,18 +119,6 @@ io.use(sharedsession(l_session, {
 
 //https://github.com/xpepermint/socket.io-express-session
 
-//var app = express();
-
-//var botdialog = require('./gen/bot/dialog.js');
-
-var htmlconnector = require('./gen/ui/htmlconnector.js');
-// Create bot and bind to console
-var connector = new htmlconnector.HTMLConnector();
-
-botdialog.makeBot(connector);
-
-//botdialog.makeBot(connector);
-
 
 app.use(express.static(__dirname + '/public'));
 
@@ -141,67 +129,80 @@ app.get('/', function (req, res) {
 
 server.listen(process.env.PORT || 42042);
 
-//io.use(sharedsession(l_session));
 
-io.sockets.on('connection', function (socket) {
-  var id = uuid.v4().toString(); // '' + Date.now();
-  socket.id = id; //uuid.v4();// id;
+// heroku requires the socket to be taken within 60 seconds,
+// so we start the server early even if the bot initialization blocks
+// it
+
+setTimeout(function() {
+
+  var htmlconnector = require('./gen/ui/htmlconnector.js');
+// Create bot and bind to console
+  var connector = new htmlconnector.HTMLConnector();
+
+  botdialog.makeBot(connector);
+
+
+
+  io.sockets.on('connection', function (socket) {
+    var id = uuid.v4().toString(); // '' + Date.now();
+    socket.id = id; //uuid.v4();// id;
   //console.log('here session on connect ' + socket.handshake.session);
   //console.log(socket.handshake.session);
   //console.log(JSON.stringify(socket.handshake.session));
 
-  var user = socket.handshake.session &&
+    var user = socket.handshake.session &&
   socket.handshake.session.user &&
   socket.handshake.session.user &&
   socket.handshake.session.user.user;
-  if (!user) {
-    user = 'ano:' + uuid.v4();
-  }
-  debuglog('Client connected for user ' + user + ' ' + Object.keys(io.clients).join(' '));
+    if (!user) {
+      user = 'ano:' + uuid.v4();
+    }
+    debuglog('Client connected for user ' + user + ' ' + Object.keys(io.clients).join(' '));
        // console.log('Got answer : ' + sAnswer + '\n');
 // not now  htmlconnector.startConversation({ id : id } , function() {});
-  socket.on('login', function(userdata) {
-    debuglog('Got a login event with ' + JSON.stringify(userdata));
-    socket.handshake.session.userdata = userdata;
-  });
-  socket.on('logout', function(userdata) {
-    debuglog('Got a logout event with ' + JSON.stringify(userdata));
-    if (socket.handshake.session.userdata) {
-      delete socket.handshake.session.userdata;
-    }
-  });
-  socket.on('error', (err) => {
-    console.log(err);
-  });
-  socket.on('reconnect_failed', (err) => {
-    console.log(err);
-  });
-  connector.setAnswerHook(function (sAnswer, oCommand, sId) {
-    debuglog('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
-    socket.emit('wosap',{ time : new Date(),
-      name : 'unknown' ,
-      command : oCommand,
-      text : sAnswer
+    socket.on('login', function(userdata) {
+      debuglog('Got a login event with ' + JSON.stringify(userdata));
+      socket.handshake.session.userdata = userdata;
     });
-  }, id);
+    socket.on('logout', function(userdata) {
+      debuglog('Got a logout event with ' + JSON.stringify(userdata));
+      if (socket.handshake.session.userdata) {
+        delete socket.handshake.session.userdata;
+      }
+    });
+    socket.on('error', (err) => {
+      console.log(err);
+    });
+    socket.on('reconnect_failed', (err) => {
+      console.log(err);
+    });
+    connector.setAnswerHook(function (sAnswer, oCommand, sId) {
+      debuglog('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
+      socket.emit('wosap',{ time : new Date(),
+        name : 'unknown' ,
+        command : oCommand,
+        text : sAnswer
+      });
+    }, id);
 
   //socket.emit('register', { id : id });
    // io.clients(0).send('chat' ,{ time  : new Date(), name : 'HUGO', text: 'something'});
-  socket.on('disconnect', () => {
-    debuglog('Client disconnected');  });
+    socket.on('disconnect', () => {
+      debuglog('Client disconnected');  });
 	// der Client ist verbunden
-  socket.emit('wosap', { time : new Date(), text: 'Indicate your query or wish:' });
-  debuglog('got a message from ' + user + ' ' + id  );
+    socket.emit('wosap', { time : new Date(), text: 'Indicate your query or wish:' });
+    debuglog('got a message from ' + user + ' ' + id  );
 	// wenn ein Benutzer einen Text senden
-  socket.on('wosap', function (data) {
+    socket.on('wosap', function (data) {
 		// so wird dieser Text an alle anderen Benutzer gesendet
     //console.log('Here data on request' + JSON.stringify(socket.handshake.session));
     //console.log(data);
     //var user = getUser(socket.handshake.session)
-    var conversationid = data.conversationid || id;
-    debuglog('user' + user + ' conv: ' + conversationid + ' asks '  + data.text);
-    connector.processMessage(data.text, { conversationid :conversationid,
-      user : user});
+      var conversationid = data.conversationid || id;
+      debuglog('user' + user + ' conv: ' + conversationid + ' asks '  + data.text);
+      connector.processMessage(data.text, { conversationid :conversationid,
+        user : user});
 // echo request:
 //    socket.emit('chat', { time : new Date(), name: data.name || 'Anonym', text: data.text
 
@@ -213,5 +214,7 @@ io.sockets.on('connection', function (socket) {
 
  //   io.sockets.connected[Object.keys(io.sockets.connected)[0]].emit('chat', {time  : new Date(), name : 'curosr',
  //     text : ' you are ' + Object.keys(io.sockets.connected)[0]});
+    });
   });
-});
+
+}, 3000);

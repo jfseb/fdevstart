@@ -58,6 +58,8 @@ export function makeLunrIndex(modelpath: string, output: string) {
   //console.log("\nhere data objects" + JSON.stringify(qbeDataObjects));
   var qbeDataNames = qbeDataObjects.map(cat => cat.name);
 
+  qbeDataNames = _.union(qbeDataNames, mdl.columns)
+
 
   var LUNRIndex = cats.filter(cat => cat.LUNRIndex).map(cat => cat.name);
   //var elasticlunr = require('lunr');
@@ -101,6 +103,8 @@ export function makeLunrIndex(modelpath: string, output: string) {
     return res[0];
   });
 
+  var columnNames = columns.map(col => col.name);
+
   var jsonp = `var mdldata = {};\n//columns \n mdldata.columns = ['${columns.map(col => col.name).join("','")}'];`;
 
   // jsonp += `\n mdldata.fulldata = ${JSON.stringify(bomdata)};\n`;
@@ -136,8 +140,11 @@ export function makeLunrIndex(modelpath: string, output: string) {
 
   console.log("dumping " + output);
   console.log("length of index str" + theIndexStr.length)
-  console.log("available " + columns.length + " columns");
-  console.log("indexing " + qbeDataNames.length + " columns");
+  console.log("available          " + columns.length + " columns");
+  console.log("returning as data  " + qbeDataNames.length + " columns");
+  console.log("indexing           " + LUNRIndex.length + " columns");
+  console.log('returned but not available' , _.difference(qbeDataNames, columnNames).join(", "));
+  console.log('returned but not indexed' , _.difference(qbeDataNames, LUNRIndex).join(", "));
 
   jsonp += "var data=" + JSON.stringify(cleanseddata) + ";";
 

@@ -277,6 +277,8 @@ function mergeModelJson(sModelName: string, oMdl: IModel, oModel: IMatch.IModels
         bitindex : oMdl.bitindex
     };
 
+    // check that
+
 
     // check that members of wordindex are in categories,
     oMdl.wordindex = oMdl.wordindex || [];
@@ -289,6 +291,12 @@ function mergeModelJson(sModelName: string, oMdl: IModel, oModel: IMatch.IModels
     oMdl.exactmatch.forEach(function(sExactMatch) {
         if(oMdl.category.indexOf(sExactMatch) < 0) {
             throw new Error('Model exactmatch "' + sExactMatch + '" not a category of domain ' + oMdl.domain + ' ');
+        }
+    });
+    oMdl.columns = oMdl.columns || [];
+    oMdl.columns.forEach(function(sExactMatch) {
+        if(oMdl.category.indexOf(sExactMatch) < 0) {
+            throw new Error('Model column "' + sExactMatch + '" not a category of domain ' + oMdl.domain + ' ');
         }
     });
 
@@ -554,6 +562,7 @@ export function loadModels(modelPath? : string, addSplits? : boolean) : IMatch.I
         records: [],
         meta : { t3 : {} }
     }
+    var t = Date.now();
     global_AddSplits = true; // addSplits || !process.env.ABOT_OLDMATCH;
     modelPath = modelPath || envModelPath;
 
@@ -563,6 +572,9 @@ export function loadModels(modelPath? : string, addSplits? : boolean) : IMatch.I
        //a = undefined;
        if(a) {
            debuglog(" return preparese model ");
+           if(process.env.ABOT_EMAIL_USER) {
+               console.log("loaded models from cache in " + (Date.now()-t) + " ");
+           }
            return a;
        }
     } catch (e) {
@@ -667,12 +679,26 @@ export function loadModels(modelPath? : string, addSplits? : boolean) : IMatch.I
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
     addCloseExactRangeRules(oModel.mRules, oModel.seenRules);
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
-
+    if(global && global.gc) {
+        global.gc();
+    }
     oModel.rules = splitRules(oModel.mRules);
+    if(global && global.gc) {
+        global.gc();
+    }
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
     delete oModel.seenRules;
     debuglog('saving');
+    if(global && global.gc) {
+        global.gc();
+    }
     CircularSer.save('./' + modelPath + '/_cache' + !!addSplits + '.js',oModel);
+    if(global && global.gc) {
+        global.gc();
+    }
+    if (process.env.ABOT_EMAIL_USER) {
+        console.log("loaded models by calculation in " + (Date.now()-t) + " ");
+    }
     return oModel;
 }
 

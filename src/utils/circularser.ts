@@ -78,7 +78,13 @@ export function load(fn: string) {
         var s = '' + unzipData(d);
         debuglog('loaded file' + s.length);
         debuglog("end unzip");
+        if(global && global.gc) {
+            global.gc();
+        }
         obj = parse(s);
+        if(global && global.gc) {
+            global.gc();
+        }
         debuglog("end parse");
     } catch (e) {
         debuglog('here e :' +e);
