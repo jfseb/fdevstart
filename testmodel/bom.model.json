@@ -1,0 +1,356 @@
+{
+  "domain": "FioriBOM",
+  "description": "Information about Fiori apps with links to the Fiori Reference apps library",
+  "category": [
+    {
+      "name": "uri",
+      "description": "link to fiori app reference library",
+      "QBE": false,
+      "QBEInclude": true,
+      "LUNRIndex": false
+    },
+    {
+      "name": "AppKey",
+      "description": "a technical key, combination of appId and releaseId",
+      "key": true,
+      "importance": 0.1,
+      "QBE": true,
+      "LUNRIndex": false
+    },
+    {
+      "name": "ArtifactId",
+      "description": " for UI5 based applications, name of the UI5 Component, e.g. \"ui.s2p.mm.supconf.monitors1\". ",
+      "importance": 0.10,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "appId",
+      "description": "the Fiori appId, note that multiple records exists, as the same ID may change over time with verions",
+      "importance": 0.12,
+      "QBE": true,
+      "defaultWidth": 80,
+      "LUNRIndex": true
+    },
+    {
+      "name": "fiori intent",
+      "description": "A combination of \"#\" <SemanticObject> - <Semanticaction> which appears in the URL of the Fiori Launchpad when addressing the application",
+      "importance": 0.13,
+      "defaultWidth": 180,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "AppName",
+      "description": "Human legible Application name",
+      "importance": 0.15,
+      "defaultWidth": 200,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "ApplicationComponent",
+      "description": "Support component for the Frontend application, typically",
+      "importance": 0.25,
+      "defaultWidth": 100,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "RoleName",
+      "description": " A business role name, e.g. \"Purchaser\", for a technical role (PFCG), try BusinessRoleName",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "ApplicationType",
+      "description": "Whether the application is classical or not",
+      "QBE": true,
+      "defaultWidth": 100,
+      "LUNRIndex": true
+    },
+    {
+      "name": "BSPName",
+      "description": "Name of the Business Server Page ",
+      "importance": 0.35,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "BSPApplicationURL",
+      "description": "url of the BSP application in an ABAP system, see BSP name for the technical storage  /sab/bc/ui5_ui5/.. ",
+      "importance": 0.36,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "releaseName",
+      "description": "release name",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    "releaseId",
+    {
+      "name": "BusinessCatalog",
+      "description": "The SAP Business catalog which references the application in a \"TechnicalCatalog\" or \"BackendCatalog\" (for GUI/WDA transactions",
+      "importance": 0.45,
+      "LUNRIndex": true
+    },
+    {
+      "name": "TechnicalCatalog",
+      "description": "Technical catalog, basic definition of \"TargetMapping\" and \"Tile\" for fiori (UI5) Applications",
+      "importance": 0.46,
+      "LUNRIndex": true
+    },
+    "detailsurl",
+    "isPublished",
+    {
+      "name": "BSPPackage",
+      "description": "Package (DevClass) of the BSP Application",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    "AppDocumentationLinkKW",
+    {
+      "name": "BusinessRoleName",
+      "description": "Package (DevClass) of the BSP Application",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "BusinessGroupName",
+      "description": "Package (DevClass) of the BSP Application",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    "BusinessGroupDescription",
+    {
+      "name": "PrimaryODataServiceName",
+      "description": "OData service : Technical name of the OData Service operating on a Gateway server (and implemented in the R/3 Backend) serving data for UI5 based Fiori Apps",
+      "importance": 0.47,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "SemanticObject",
+      "description": "The first part of the \"fiori intent\", identifying the Business entity, e.g. \"SalesOrder\",\"GLAcount\" used for generic navigation ",
+      "defaultWidth": 100,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "SemanticAction",
+      "description": "The second part of the \"fiori intent\", identifying the action, e.g. \"maintain\", \"create\" ",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "FrontendSoftwareComponent",
+      "description": "Frontend Software Component",
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    {
+      "name": "TransactionCodes",
+      "description": "For GUI based transaction, the transaciton code behind intent, a classical R/3 SAPGUi transaction",
+      "defaultWidth": 80,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+    "URLParameters",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    {
+      "name": "ExternalReleaseName",
+      "description": "External Release name",
+      "QBE": true,
+      "LUNRIndex": true
+    }
+  ],
+  "wordindex": [
+    "AppKey",
+    "appId",
+    "ArtifactId",
+    "fiori intent",
+    "AppName",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "BSPApplicationURL",
+    "releaseName",
+    "releaseId",
+    "BusinessCatalog",
+    "TechnicalCatalog",
+    "BSPPackage",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "BusinessGroupDescription",
+    "PrimaryODataServiceName",
+    "SemanticObject",
+    "SemanticAction",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    "ExternalReleaseName"
+  ],
+  "exactmatch": [
+    "appId",
+    "AppKey",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "releaseName",
+    "releaseId",
+    "BusinessCatalog",
+    "TechnicalCatalog",
+    "BSPPackage",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "PrimaryODataServiceName",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "LPDCustInstance",
+    "PrimaryODataPFCGRole",
+    "ExternalReleaseName"
+  ],
+  "hidden": [
+    "uri",
+    "detailsurl",
+    "_urlpattern1",
+    "_urlpattern2",
+    "_urlpattern3"
+  ],
+  "columns": [
+    "AppKey",
+    "ArtifactId",
+    "appId",
+    "fiori intent",
+    "AppName",
+    "ApplicationComponent",
+    "RoleName",
+    "ApplicationType",
+    "BSPName",
+    "BSPApplicationURL",
+    "releaseName",
+    "BSPPackage",
+    "BusinessRoleName",
+    "BusinessGroupName",
+    "PrimaryODataServiceName",
+    "SemanticObject",
+    "SemanticAction",
+    "FrontendSoftwareComponent",
+    "TransactionCodes",
+    "ExternalReleaseName",
+    "BusinessCatalog",
+    "TechnicalCatalog"
+  ],
+  "tool": {
+    "name": "BOMEditor",
+    "requires": {},
+    "optional": {
+      "appId": {},
+      "AppName": {},
+      "fiori intent": {}
+    },
+    "sets": {
+      "intent": {
+        "set": [
+          "appId"
+        ],
+        "response": "uri"
+      },
+      "none": {
+        "set": [
+          "AppName"
+        ],
+        "response": "uri"
+      },
+      "fintent": {
+        "set": [
+          "fiori intent"
+        ],
+        "response": "uri"
+      },
+      "soAction": {
+        "set": [
+          "SemanticObject",
+          "SemanticAction"
+        ],
+        "response": "uri"
+      }
+    }
+  },
+  "synonyms": {
+    "tool": [
+      "BOM Editor"
+    ],
+    "BOMEditor": [
+      "BOM Editor",
+      "Fiori Application Library"
+    ],
+    "SemanticObject": [
+      "Semantic Object"
+    ],
+    "SemanticAction": [
+      "Semantic Action"
+    ],
+    "BSPApplicationURL": [
+      "BSP Path",
+      "BSP Url",
+      "BSP Urls",
+      "Resource Path"
+    ],
+    "TransactionCodes": [
+      "Transactions",
+      "TransactionCode",
+      "TransactionCodes"
+    ],
+    "PrimaryODataServiceName": [
+      "ODataService",
+      "Primary OData Service",
+      "OData Service Name",
+      "OData Service"
+    ],
+    "AppName" : [ "Fiori App"],
+    "BSPName": [
+      "BSP",
+      "BSP Name",
+      "BSP repository"
+    ],
+    "RoleName": [
+      "Role Name",
+      "PFCG Role"
+    ],
+    "ArtifactId": [
+      "component name",
+      "ui5 component name",
+      "library name",
+      "javascript name",
+      "javascript id",
+      "manifest id",
+      "appdescriptor id"
+    ],
+    "fiori intent": [
+      "fiori intents",
+      "intents",
+      "intent"
+    ],
+    "ApplicationComponent": [
+      "Application Component",
+      "Application components",
+      "ApplicationComponents",
+      "Support Component",
+      "Component"
+    ],
+    "BusinessRoleName": [
+      "Business Role Name",
+      "Backend PFCG Role"
+    ],
+    "fiori catalog": [
+      "catalog"
+    ]
+  }
+}

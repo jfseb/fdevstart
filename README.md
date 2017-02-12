@@ -204,6 +204,14 @@ intended to work ;-)
    done
 * todo: what is is X
 
+* process a sentence identifying operator sequences,
+        e.g.  domain <domain>          <category> <op> xx
+         or category <cat> <op> <literal>
+
+* ignore some words an go on, just list ignored words
+
+
+
 
 * listme should separate by domain, e.g. list all element names
     now lists earth (!)
@@ -243,6 +251,14 @@ then parse db string
 
 pg_dump --host=exxxxxx.compute-1.amazonaws.com --port=5432  -f heroku_db --username=iyyyyyyyyyyyyyyy --passsword=xxx
  --dbname=yyyyyyyy
+
+
+
+
+
+
+
+
 
 
  todo: descripe Proxima C
@@ -311,6 +327,5 @@ List all AppNames, ApplicationComponents, Fiori Intents for "Manage Sales orders
 the AppNames, ApplicationComponents, Fiori Intents for "Manage Sales orders" are ...
 "Manage Sales Orders", "SD-SLS" and "#SalesOrder-manage";
 "Manage Sales Orders", "SD-SLS" and "#SalesOrder-manageList"
-
 
 

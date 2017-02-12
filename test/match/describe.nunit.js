@@ -201,6 +201,26 @@ exports.testDescribeFactWhichIsADomain = function (test) {
 };
 
 
+exports.testDescribeCategoryStatsInDomain = function (test) {
+  var oRes = Describe.getCategoryStatsInDomain('element name', 'IUPAC', theModel);
+  test.deepEqual(oRes,
+    {
+      categoryDesc:
+      { name: 'element name',
+        description: 'element name',
+        defaultWidth: 120,
+        QBE: true,
+        LUNRIndex: true,
+        synonyms: [ 'name' ] },
+      distinct: '118',
+      delta: '',
+      presentRecords: 118,
+      percPresent: '100.0',
+      sampleValues: 'Possible values are ...\n"actinium", "aluminium", "americium", "antimony", "argon", "arsenic", "astatine" ...' });
+  test.done();
+};
+
+
 exports.testMakeValuesListOne = function (test) {
   var res = Describe.makeValuesListString(['abc'] );
   test.deepEqual(res, 'The sole value is "abc"');

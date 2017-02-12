@@ -1,0 +1,76 @@
+{
+  "domain": "SOBJ Tables",
+  "description" : "R/3 Transport objects and associated tables. This domains allows to quickly lookup up if and in what transport object a given table content is transported, e.g. \"What is the Transport Object, Primary Table for /UIF/LREPDCONT\" ",
+  "category": [
+	"recordKey",
+    {
+      "name" : "TransportObject",
+      "description": "The transport object key (SOBJ)",
+      "importance" : 0.1
+    },
+    {
+      "name" : "ShortText",
+      "description" : "Short text of transport object",
+      "importance" : 0.2
+    },
+	{ "name" : "Table",
+       "description" : " The DDIC Table ",
+       "importance" : 1
+    },
+    { "name" : "TableTransportKeySpec",
+      "description" : "Key specification for the table"
+    },
+    { "name" : "PrimaryTable",
+      "description" : "Primary table of transport object, if existing",
+      "importance" : 0.9
+	},
+    { "name": "clientSpecific",
+      "description" : "Whether the object is client specific"
+    },
+    { "name" : "Object name length",
+      "description" : "Length of transport key",
+      "importance" : 0.89
+    },
+    { "name" : "Category",
+      "description"  : "Category of the transport"
+    },
+    { "name" : "TranslationRelevant",
+      "description" : "Boolean (\"true\",\"false\") whether object is translation relevant"
+    },
+    "Type"
+     ],
+  "wordindex": [
+	"TransportObject",
+    "Table",
+	"PrimaryTable",
+    "clientSpecific",
+    "TranslationRelevant"
+  ],
+  "exactmatch": [
+	  "TransportObject",
+    "Table",
+    "TableTransportKeySpec",
+    "PrimaryTable",
+    "TranslationRelevant",
+    "clientSpecific",
+    "Object name length",
+    "Category",
+    "Type"
+  ],
+  "hidden": [
+  ],
+  "tool": {
+    "name": "NotthisTool",
+    "requires": {
+    },
+    "optional": {
+    },
+    "sets" : {
+    }
+  },
+  "synonyms" : {
+    "TransportObject" : ["SOBJ","Transport Key"],
+    "Table" : ["Tables", "Database Table", "Transport Table"],
+    "PrimaryTable" : ["Primary Table"]
+  }
+}

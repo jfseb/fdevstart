@@ -37,6 +37,12 @@ export function makeTable(categories : string[], theModel: IMatch.IModels ) : { 
   var domain = aFilteredDomains[0];
   //
   var columns = Model.getTableColumns(theModel, domain);
+  if(columns.length === 0) {
+    return {
+      text :  'Apologies, but i cannot make a table for domain ' + domain + ' ',
+      action : {}
+    }
+  }
   var indexMap = categories.map( category =>   columns.indexOf(category) ).filter(i => i >= 0);
   if(indexMap.length === 0) {
     return  {

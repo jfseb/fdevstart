@@ -117,6 +117,17 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/table_sobj_tables', function(req, res) {
+    res.render('table_sobj_tables', {
+      pagetitle : 'SOBJ Tables search',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'wosap SOBJ Tables search',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
+
+
   app.get('/whatsnew', function(req, res) {
     res.render('whatsnew', {
       pagetitle : 'whatsnew',

@@ -872,7 +872,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
           }
           return;
         } else {
-          // no entity, e.g. list all countries
+          // no filter entity, e.g. list all countries
           //
           var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
           var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);

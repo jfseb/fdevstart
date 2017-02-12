@@ -93,3 +93,9 @@ exports.testMakeTab = function (test) {
 
   test.done();
 };
+
+
+exports.testMakeLUNR = function (test) {
+  Vismodel.makeLunrIndex('testmodel/iupac','./app/public/js/model_iupac', true);
+  test.done();
+};

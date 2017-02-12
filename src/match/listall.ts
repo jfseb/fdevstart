@@ -106,7 +106,7 @@ export function listAllHavingContext(category: string, contextQueryString: strin
     perflog("matching records having (s=" + (aSentencesReinforced.sentences.length) + ")...");
     var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled) {
-      debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
+      debuglog("LAHC matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
     perflog("filteringTopRanked (a=" + matchedAnswers.sentences.length + ")...");
     matchedAnswers.answers = WhatIs.filterOnlyTopRanked(matchedAnswers.answers);
@@ -131,7 +131,7 @@ export function listAllTupelWithContext(categories: string[], contextQueryString
     logPerf('listAllWithContext');
     perflog("totalListAllWithContext");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
-    perflog("matching records (s=" + aSentencesReinforced.sentences.length + ")...");
+    perflog("LATWC matching records (s=" + aSentencesReinforced.sentences.length + ")...");
     var matchedAnswers = WhatIs.matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled){
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
@@ -139,7 +139,7 @@ export function listAllTupelWithContext(categories: string[], contextQueryString
     perflog("filtering topRanked (a=" + matchedAnswers.tupelanswers.length + ")...");
     var matchedFiltered = WhatIs.filterOnlyTopRankedTupel(matchedAnswers.tupelanswers);
     if (debuglog.enabled) {
-      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+      debuglog("LATWC matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
     }
     perflog("totalListAllWithContext (a=" + matchedFiltered.length + ")");
     logPerf('listAllWithContext');

@@ -46,7 +46,7 @@ export function JSONEscape(s: string) {
 };
 
 
-export function makeLunrIndex(modelpath: string, output: string) {
+export function makeLunrIndex(modelpath: string, output: string, silent ? : boolean) {
   var mdl = JSON.parse('' + fs.readFileSync(modelpath + '.model.json'));
   var data = JSON.parse('' + fs.readFileSync(modelpath + '.data.json'));
 
@@ -137,14 +137,15 @@ export function makeLunrIndex(modelpath: string, output: string) {
     return res;
   });
 
-
-  console.log("dumping " + output);
-  console.log("length of index str" + theIndexStr.length)
-  console.log("available          " + columns.length + " columns");
-  console.log("returning as data  " + qbeDataNames.length + " columns");
-  console.log("indexing           " + LUNRIndex.length + " columns");
-  console.log('returned but not available' , _.difference(qbeDataNames, columnNames).join(", "));
-  console.log('returned but not indexed' , _.difference(qbeDataNames, LUNRIndex).join(", "));
+  if(!silent) {
+    console.log("dumping " + output);
+    console.log("length of index str" + theIndexStr.length)
+    console.log("available          " + columns.length + " columns");
+    console.log("returning as data  " + qbeDataNames.length + " columns");
+    console.log("indexing           " + LUNRIndex.length + " columns");
+    console.log('returned but not available' , _.difference(qbeDataNames, columnNames).join(", "));
+    console.log('returned but not indexed' , _.difference(qbeDataNames, LUNRIndex).join(", "));
+  }
 
   jsonp += "var data=" + JSON.stringify(cleanseddata) + ";";
 

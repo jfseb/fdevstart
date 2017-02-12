@@ -16,6 +16,18 @@ const theModel = Model.loadModels();
 
 
 
+exports.testMakeTableNoColumns = function(test) {
+  //console.log(JSON.stringify(theModel));
+  var res = MakeTable.makeTable(['element name', 'element properties'], theModel);
+  test.deepEqual(res,
+    { text: 'Apologies, but i cannot make a table for domain Philosophers elements ',
+      action: {} }
+  );
+  test.done();
+};
+
+
+
 exports.testMakeTableNoCommonDomain = function(test) {
   //console.log(JSON.stringify(theModel));
   var res = MakeTable.makeTable(['element name', 'orbit radius'], theModel);

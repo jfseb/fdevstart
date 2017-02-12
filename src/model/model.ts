@@ -145,15 +145,25 @@ function insertRuleIfNotPresent(mRules: Array<IMatch.mRule>, rule: IMatch.mRule,
     return;
 }
 
+function readFileAsJSON(filename : string) : any {
+    var data = fs.readFileSync(filename, 'utf-8');
+    try {
+        return JSON.parse(data);
+    } catch(e) {
+        console.log("Content of file "+ filename + " is no json" + e);
+        process.exit(-1);
+    }
+    return undefined;
+}
+
 function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oModel: IMatch.IModels) {
     // read the data ->
     // data is processed into mRules directly,
     var bitindex = oMdl.bitindex;
     const sFileName = ('./' + modelPath + '/' + sModelName + ".data.json");
-    var mdldata = fs.readFileSync(sFileName, 'utf-8');
-    var oMdlData = JSON.parse(mdldata);
+    var oMdlData= readFileAsJSON(sFileName);
     oMdlData.forEach(function (oEntry) {
-        if (!oEntry.tool) {
+        if (!oEntry.domain) {
             oEntry._domain = oMdl.domain;
         }
         if (!oEntry.tool && oMdl.tool.name) {
@@ -207,8 +217,7 @@ function loadModelData(modelPath: string, oMdl: IModel, sModelName: string, oMod
 
 function loadModel(modelPath: string, sModelName: string, oModel: IMatch.IModels) {
     debuglog(" loading " + sModelName + " ....");
-    var mdl = fs.readFileSync('./' + modelPath + '/' + sModelName + ".model.json", 'utf-8');
-    var oMdl = JSON.parse(mdl) as IModel;
+    var oMdl = readFileAsJSON('./' + modelPath + '/' + sModelName + ".model.json") as IModel;
     mergeModelJson(sModelName, oMdl, oModel);
     loadModelData(modelPath, oMdl, sModelName, oModel);
 }
@@ -579,8 +588,7 @@ export function loadModels(modelPath?: string): IMatch.IModels {
         //console.log('error' + e);
         // no cache file,
     }
-    var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
-    var mdls = JSON.parse("" + smdls);
+    var mdls = readFileAsJSON('./' + modelPath + '/models.json');
     mdls.forEach(function (sModelName) {
         loadModel(modelPath, sModelName, oModel)
     });
@@ -615,8 +623,7 @@ export function loadModels(modelPath?: string): IMatch.IModels {
 
     var fillerBitIndex = getDomainBitIndex('meta', oModel);
     //add a filler rule
-    var sfillers = fs.readFileSync('./' + modelPath + '/filler.json', 'utf-8');
-    var fillers = JSON.parse(sfillers);
+    var fillers =  readFileAsJSON('./' + modelPath + '/filler.json');
     var re = "^((" + fillers.join(")|(") + "))$";
     oModel.mRules.push({
         category: "filler",
@@ -628,8 +635,7 @@ export function loadModels(modelPath?: string): IMatch.IModels {
     });
 
     //add operators
-    var sOperators = fs.readFileSync('./resources/model/operators.json', 'utf-8');
-    var operators = JSON.parse(sOperators);
+    var operators = readFileAsJSON('./resources/model/operators.json');
     var operatorBitIndex = getDomainBitIndex('operators', oModel);
     Object.keys(operators.operators).forEach(function (operator) {
         if (IMatch.aOperatorNames.indexOf(operator) < 0) {

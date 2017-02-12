@@ -139,6 +139,55 @@ exports.testListAllMultipleCategories = function (test) {
 };
 
 
+exports.testListAllDomainsOBJ = function (test) {
+  testOne('List all Tables in domain SOBJ Tables',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+   'the Tables for domain SOBJ Tables are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nSWOTDI;\nSWOTDQ;\nTZS02'  , 'correct tables');
+    test.done();
+  });
+};
+
+
+//"list all Transport Tables in domain "SOBJ TAbles"
+
+exports.testListAllInDomainsOBJIUPAC = function (test) {
+  testOne('List all Tables in domain IUPAC',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+  'i did not find any Tables for domain IUPAC.\n'  , 'correct tables');
+    test.done();
+  });
+};
+
+
+exports.testListAllInDomainsQuoted = function (test) {
+  testOne('List all Tables in domain "SOBJ Tables"',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+ 'the Tables for domain "SOBJ Tables" are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nSWOTDI;\nSWOTDQ;\nTZS02', 'correct tables');
+    test.done();
+  });
+};
+
+exports.testListAllInImplicitDomainQuoted = function (test) {
+  testOne('List all Tables in "SOBJ Tables"',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+ /*   'the Tables for domain SOBJ Tables are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nTZS02'  */
+    'the Tables for "SOBJ Tables" are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nSWOTDI;\nSWOTDQ;\nTZS02'
+    , 'correct tables');
+    test.done();
+  });
+};
+
+
+
+
 exports.testMakeTable = function (test) {
   testOne('make table for element name, element symbol and atomic weight',function(oRes) {
     var sRes = oRes;
@@ -374,15 +423,23 @@ exports.testListAllMultOnlyCat = function (test) {
 };
 
 
-exports.testListWeirdError = function (test) {
-  testOne('list all Applications',function(oRes) {
+exports.testListWeirdNoCatError = function (test) {
+  testOne('list all silver',function(oRes) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(oRes,
-    'I don\'t know anything about "Applications"(Error: "Applications" is not a category!)');
+    'I don\'t know anything about "silver"(Error: "silver" is not a category!)');
     test.done();
   });
 };
 
+exports.testListWeirdUnknownError = function (test) {
+  testOne('list all NOTANYWHERE',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    'I don\'t know anything about "NOTANYWHERE"(Error: "NOTANYWHERE" is not a category!)');
+    test.done();
+  });
+};
 
 
 exports.testListAllCategories = function (test) {
@@ -516,11 +573,11 @@ exports.testOperatorStartsWith = function (test) {
 exports.testOperatorStartsWithFI = function (test) {
   logPerf('testPerfListAll');
  // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
-  testOne('list all Application Components starting with FI',function(oRes) {
+  testOne('list all KURUMBA LUBUMBA starting with FI',function(oRes) {
   //  var sRes = oRes;
     logPerf('testPerfListAll');
     debuglog(JSON.stringify(oRes));
-    test.deepEqual(oRes, 'I don\'t know anything about \"Application Components\"');
+    test.deepEqual(oRes, 'I don\'t know anything about \"KURUMBA LUBUMBA\"');
     test.done();
   });
 };
