@@ -295,8 +295,8 @@ exports.testAnalyzeCusmos = function (test) {
   test.deepEqual(res.sentences, [ [ { string: 'cusmos',
     matchedString: 'Cosmos',
     category: 'domain',
-    _ranking: 0.855,
-    levenmatch: 0.9 } ] ]
+    _ranking: 0.8913821472645002,
+    levenmatch: 0.9382969971205265 } ] ]
       );
   test.done();
 };

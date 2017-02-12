@@ -93,12 +93,14 @@
     {
       "name": "BusinessCatalog",
       "description": "The SAP Business catalog which references the application in a \"TechnicalCatalog\" or \"BackendCatalog\" (for GUI/WDA transactions",
-      "importance": 0.45
+      "importance": 0.45,
+      "LUNRIndex": true
     },
     {
       "name": "TechnicalCatalog",
       "description": "Technical catalog, basic definition of \"TargetMapping\" and \"Tile\" for fiori (UI5) Applications",
-      "importance": 0.46
+      "importance": 0.46,
+      "LUNRIndex": true
     },
     "detailsurl",
     "isPublished",
@@ -241,7 +243,9 @@
     "SemanticAction",
     "FrontendSoftwareComponent",
     "TransactionCodes",
-    "ExternalReleaseName"
+    "ExternalReleaseName",
+    "BusinessCatalog",
+    "TechnicalCatalog"
   ],
   "tool": {
     "name": "BOMEditor",
@@ -296,6 +300,7 @@
     "BSPApplicationURL": [
       "BSP Path",
       "BSP Url",
+      "BSP Urls",
       "Resource Path"
     ],
     "TransactionCodes": [
@@ -309,6 +314,7 @@
       "OData Service Name",
       "OData Service"
     ],
+    "AppName" : [ "Fiori App"],
     "BSPName": [
       "BSP",
       "BSP Name",

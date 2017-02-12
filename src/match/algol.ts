@@ -29,7 +29,7 @@ export const calcDist  = {
  */
 export const Cutoff_LevenShtein : number = 150;
 
-export const Cutoff_WordMatch = 0.85; // 0.98
+export const Cutoff_WordMatch = 0.935;// 0.85  // 0.98
 
 export const Cutoff_rangeCloseMatch = 0.98;
 

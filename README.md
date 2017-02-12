@@ -246,3 +246,71 @@ pg_dump --host=exxxxxx.compute-1.amazonaws.com --port=5432  -f heroku_db --usern
 
 
  todo: descripe Proxima C
+
+
+ list all fiori intent, AppId, AppName for MAnage Material Coverage
+Oops. Something went wrong and we need to start over.
+
+list all fiori intent for MAnage Material Coverage
+the fiori intent for MAnage Material Coverage are ...
+#BusinessPartner-manageCreditRules;
+#ChangeMaster-manage;
+#HTMLGUI_FIN-manageCreditCase;
+#InventoryReport-executematerialStocksPerperiodGR;
+#MRPMaterial-manage;
+#RELandUse-manageParcelUpdate;
+#REMasterData-manageRentalObject;
+#SalesOrder-manage;
+#SalesOrder-manageList
+
+
+list all fiori intent, AppId, AppName for "MAnage Material Coverage"
+the fiori intent, AppId, AppName for "MAnage Material Coverage" are ...
+"#MRPMaterial-manage", "F0251" and "Manage Material Coverage"
+
+????
+
+
+what is the fiori intent for MAnage Material Coverage
+The fiori intent of MAnage Material Coverage is #APSOrder-manage
+list all fiori intent for MAnage Material Coverage
+the fiori intent for MAnage Material Coverage are ...
+#BusinessPartner-manageCreditRules;
+#ChangeMaster-manage;
+#HTMLGUI_FIN-manageCreditCase;
+
+Metaqueries on categories:
+list all category containing Catalogs...
+
+
+list all BackendCatalogs, TransactionCode for TransactionCode SM30
+ -> generic list ignoring SM30
+list all BackendCatalogs, TransactionCode for TransactionCode PK13N
+
+
+describe "My Dispute Cases"
+""My Dispute Cases"" has a meaning in 2 domains: "Fiori Backend Catalogs" and "FioriBOM"
+in domain "Fiori Backend Catalogs" ""My Dispute Cases"" (interpreted as "DisputeCase") is a value for category "SemanticObject" present in 2(0.0%) of records;
+in domain "FioriBOM" ""My Dispu
+
+list all AppIds, AppName , fiori intent for SemanticObject "DisputeCase"
+
+the AppIds, AppName , fiori intent for SemanticObject "DisputeCase" are ...
+"F0702", "Manage Dispute Cases" and "#DisputeCase-manageDispute";
+"UDM_AUTOWRITEOFF", "Write-Off Dispute Cases" and "#DisputeCase-wr
+
+
+
+list all Government type, country with "Government type" "Communist state"  -> should return e.g. laos !?
+does not because government type is not indexed.
+
+List all AppNames, ApplicationComponents, Fiori Intents for Manage Sales orders Printing form
+->  Maange cost center groups !?
+
+List all AppNames, ApplicationComponents, Fiori Intents for "Manage Sales orders"
+the AppNames, ApplicationComponents, Fiori Intents for "Manage Sales orders" are ...
+"Manage Sales Orders", "SD-SLS" and "#SalesOrder-manage";
+"Manage Sales Orders", "SD-SLS" and "#SalesOrder-manageList"
+
+
+

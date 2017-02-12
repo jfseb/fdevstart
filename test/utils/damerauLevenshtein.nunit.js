@@ -29,6 +29,14 @@ exports.testDLSHGen = function (test) {
   test.done();
 };
 
+exports.testCDA = function (test) {
+  var fn = dl.calcDistanceAdjusted;
+  // test.expect(3);
+  test.deepEqual(fn('manage sales domains', 'manage sales groups').toFixed(3), '0.912');
+  test.deepEqual(fn('cusmos', 'cosmos').toFixed(3), '0.938');
+  test.done();
+};
+
 exports.testsift3 = function (test) {
   var fn = dl.sift3Distance;
   // test.expect(3);

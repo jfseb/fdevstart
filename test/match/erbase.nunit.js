@@ -102,18 +102,20 @@ exports.testEvaluteRangeRulesToPositionSloppyMatch = function(test) {
     ]
   ];
   Erbase.evaluateRangeRulesToPosition(tokens,fusable,categorizedWords);
-  test.deepEqual(categorizedWords, [[
-    {
-      string : "ABC duf",
-      matchedString : "AbC DeF",
-      category: "uboat",
-      _ranking: 732.6,
-      levenmatch: 0.9428571428571428,
-      span: 2,
-      rule : innerRule
-    }]
-   , []
-  ], 'correct moved and cleansed res');
+  test.deepEqual(categorizedWords,[ [ { string: 'ABC duf',
+      rule:
+       { type: 0,
+         matchedString: 'AbC DeF',
+         lowercaseword: 'abc def',
+         category: 'uboat',
+         _ranking: 777 },
+      matchedString: 'AbC DeF',
+      category: 'uboat',
+      _ranking: 748.8333685768661,
+      levenmatch: 0.9637495091079358,
+      span: 2 } ],
+  [] ]
+  , 'correct moved and cleansed res');
   test.done();
 }
 
@@ -172,7 +174,7 @@ exports.testTokenizeStringElNames = function (test) {
   var res = Erbase.tokenizeString('elament names b', theModel.rules, words);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(simplifyStrings(res.categorizedWords), [
-    ['elament names=>element name/category/2'],
+    [],
     ['names=>element name/category'],
     ['b=>B/element symbol']
     ], ' correct result ');
@@ -186,14 +188,9 @@ exports.testTokenizeStringElNamesAlpha = function (test) {
   var res = Erbase.tokenizeString('Alpha Cantauri B', theModel.rules, words);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(simplifyStrings(res.categorizedWords), [
-   [ 'Alpha Cantauri B=>Alpha Centauri A/object name/3',
-    'Alpha Cantauri B=>Alpha Centauri B/object name/3',
-    'Alpha Cantauri B=>Alpha Centauri C/object name/3',
-    'Alpha Cantauri B=>Alpha Centauri C/orbits/3' ],
-  [],
-  [ 'B=>B/element symbol' ]
-  ], ' correct result ');
+  test.deepEqual(simplifyStrings(res.categorizedWords),
+  [[],[], ['B=>B/element symbol' ] ]
+  , ' correct result ');
   test.done();
 };
 
@@ -210,8 +207,6 @@ exports.testProcessStringelementNames = function (test) {
 
   test.deepEqual(simplifySentence(res.sentences),
     [ [ 'elaement names=>element name/category/2',
-    'nickel=>nickel/element name' ],
-  [ 'elaement names=>element number/category/2',
     'nickel=>nickel/element name' ] ]
     , ' correct result ');
   test.done();
@@ -299,12 +294,6 @@ exports.testTokenizeStringOrbitEbase = function (test) {
   [ 'orbit=>orbits/category',
     'of=>of/filler',
     'the=>the/filler',
-    'earth=>earth/object name' ],
-  [ 'orbit of=>orbital period/category/2',
-    'the=>the/filler',
-    'earth=>earth/element name' ],
-  [ 'orbit of=>orbital period/category/2',
-    'the=>the/filler',
     'earth=>earth/object name' ] ], ' correct result ');
   test.done();
 };
@@ -356,8 +345,8 @@ exports.testProcessStringSemantic = function (test) {
 var res = Erbase.processString('Semantic OBjects', theModel2.rules, {});
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   //console.log('res > ' + JSON.stringify(res, undefined, 2));
-  test.deepEqual(simplifyStrings(res.sentences), [ [ 'Semantic OBjects=>SemanticObject/category/2' ],
-  [ 'Semantic OBjects=>SemanticAction/category/2' ] ], ' correct result ');
+  test.deepEqual(simplifyStrings(res.sentences),
+  [ [ 'Semantic OBjects=>SemanticObject/category/2' ] ], ' correct result ');
   test.done();
 };
 
@@ -402,16 +391,7 @@ var res = Erbase.processString('OData Services for fiori intent', theModel2.rule
   test.deepEqual(simplifyStrings(res.sentences),
   [ [ 'OData Services=>PrimaryODataServiceName/category/2',
     'for=>for/filler',
-    'fiori intent=>fiori intent/category/2' ],
-  [ 'OData Services=>PrimaryODataServiceName/category/2',
-    'for=>for/filler',
-    'fiori=>FioriBOM/domain',
-    'intent=>fiori intent/category' ],
-  [ 'OData Services for=>PrimaryODataServiceName/category/3',
-    'fiori intent=>fiori intent/category/2' ],
-  [ 'OData Services for=>PrimaryODataServiceName/category/3',
-    'fiori=>FioriBOM/domain',
-    'intent=>fiori intent/category' ] ]
+    'fiori intent=>fiori intent/category/2' ]]
   , ' correct result ');
   test.done();
 };
@@ -443,10 +423,6 @@ var res = Erbase.processString('element number 10', theModel2.rules, {});
   test.deepEqual(simplifyStrings(res.sentences), [ [ 'element number=>element number/category/2',
     '10=>10/element number' ],
   [ 'element number=>element name/category/2',
-    '10=>10/element number' ],
-  [ 'element number=>element symbol/category/2',
-    '10=>10/element number' ],
-  [ 'element number=>atomic weight/category/2',
     '10=>10/element number' ] ], ' correct result ');
   test.done();
 };
@@ -465,19 +441,12 @@ exports.testTokenizeStringOrbitWhatis = function (test) {
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
   test.deepEqual(simplifyStrings(res.sentences),
 
-
 [ [ 'orbit=>orbits/category',
     'of=>of/filler',
     'the=>the/filler',
     'earth=>earth/element name' ],
   [ 'orbit=>orbits/category',
     'of=>of/filler',
-    'the=>the/filler',
-    'earth=>earth/object name' ],
-  [ 'orbit of=>orbital period/category/2',
-    'the=>the/filler',
-    'earth=>earth/element name' ],
-  [ 'orbit of=>orbital period/category/2',
     'the=>the/filler',
     'earth=>earth/object name' ] ]
 
@@ -492,6 +461,24 @@ exports.testTokenizeStringOrbitWhatis = function (test) {
   test.done();
 };
 
+/*
+exports.testProcessStringGovernmentType = function (test) {
+  // debuglog(JSON.stringify(ifr, undefined, 2))
+  //console.log(theModel.mRules);
+  var res = Whatis.processString('"Communist state"', theModel2.rules, {});
+  console.log("OBject.keys " + Object.keys(theModel2.rules));
+  console.log("allrues " + JSON.stringify(theModel2.rules.allRules.filter(function(o) {
+    return o.lowercaseword === "communist state";
+  })));
+  console.log(" here rule wormap exact: " + theModel2.rules.wordMap["communist state"]);
+  debuglog('res > ' + JSON.stringify(res, undefined, 2));
+  test.deepEqual(simplifyStrings(res.sentences),
+  [ 'orbit of=>orbital period/category/2',
+    'the=>the/filler',
+    'earth=>earth/element name' ], ' correct exact match');
+    test.done();
+};
+*/
 
 
 exports.testTokenizeStringOrbitCompletelyNothingEbase = function (test) {

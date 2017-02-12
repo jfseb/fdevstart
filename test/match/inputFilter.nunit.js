@@ -1104,11 +1104,11 @@ exports.testCategorizeStringNonExactNoMatch = function (test) {
   var res = ab.categorizeString2('NavTargetRes', false, ifr);
   debuglog('res > ' + JSON.stringify(res, undefined, 2));
 
-  test.deepEqual(res, [ { string: 'NavTargetRes',
+  test.deepEqual(res,[ { string: 'NavTargetRes',
     matchedString: 'NavTargetResolution',
     category: 'unit test',
-    _ranking: 0.9263157894736842,
-    levenmatch: 0.9263157894736842 },
+    _ranking: 0.9456071280563614,
+    levenmatch: 0.9456071280563614 },
   { string: 'NavTargetRes',
     matchedString: 'NavTargetRes',
     category: 'fiori catalog',
@@ -1293,17 +1293,8 @@ exports.testAnalyzeStringUV2Client120 = function (test) {
     [ { string: 'client 120',
         matchedString: 'client',
         category: 'category',
-        _ranking: 0.92,
-        levenmatch: 0.92 } ] ],
-  [ [ { string: 'UV2 client',
-        matchedString: 'client',
-        category: 'category',
-        _ranking: 0.8666666666666667,
-        levenmatch: 0.8666666666666667 } ],
-    [ { string: '120',
-        matchedString: '120',
-        category: 'client',
-        _ranking: 0.8 } ] ],
+        _ranking: 0.9506375976964212,
+        levenmatch: 0.9506375976964212 } ] ],
   [ [ { string: 'UV2',
         matchedString: 'UV2',
         category: 'systemId',
@@ -1376,8 +1367,8 @@ exports.testAnalyzeStringNoGenerics1 = function (test) {
   test.deepEqual(res, [ [ [ { string: 'unit test 120',
         matchedString: 'unit test',
         category: 'category',
-        _ranking: 0.8915384615384615,
-        levenmatch: 0.9384615384615385 } ] ],
+        _ranking: 0.9107025284820489,
+        levenmatch: 0.95863424050742 } ] ],
   [ [ { string: 'unit test',
         matchedString: 'unit test',
         category: 'category',
@@ -1597,7 +1588,7 @@ exports.testreinforceSentence = function (test) {
 
 exports.testCalcDistnance = function (test) {
   var res = InputFilter.calcDistance('literary','life');
-  test.equal(res, 0.7666666666666667);
+  test.equal(res, 0.8634945397815913);
   test.done();
 }
 

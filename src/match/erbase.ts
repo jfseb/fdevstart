@@ -307,7 +307,7 @@ export function processString(query: string, rules: IMatch.SplitRules,
   var aSentences = expandTokenMatchesToSentences(tokenStruct.tokens, tokenStruct.categorizedWords);
   if (debuglog.enabled) {
     debuglog("after expand" + aSentences.sentences.map(function (oSentence) {
-      return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
+    return Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence); //JSON.stringify(oSentence);
     }).join("\n"));
   }
   aSentences.sentences = InputFilter.reinForce(aSentences.sentences);

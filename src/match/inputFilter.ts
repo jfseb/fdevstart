@@ -53,7 +53,7 @@ var oUnitTests = matchdata.oUnitTests
  * @return the distance, note that is is *not* symmetric!
  */
 export function calcDistance(sText1: string, sText2: string): number {
-  return distance.calcDistance(sText1,sText2);
+  return distance.calcDistanceAdjusted(sText1,sText2);
 }
 
 
@@ -64,7 +64,7 @@ export function calcDistance(sText1: string, sText2: string): number {
  *
  * @return the distance, note that is is *not* symmetric!
  */
-export function calcDistanceLeven(sText1: string, sText2: string): number {
+export function calcDistanceLevenXXX(sText1: string, sText2: string): number {
   // console.log("length2" + sText1 + " - " + sText2)
    if(((sText1.length - sText2.length) > Algol.calcDist.lengthDelta1)
     || (sText2.length > 1.5 * sText1.length )
@@ -289,7 +289,7 @@ oRule : IMatch.mRule, cntRec? : ICntRec ) {
         if(!oRule.lowercaseword) {
           throw new Error('rule without a lowercase variant' + JSON.stringify(oRule, undefined, 2));
          };
-        if (exact && oRule.word === string || oRule.lowercaseword === lcString) {
+        if (exact && (oRule.word === string || oRule.lowercaseword === lcString)) {
           if(debuglog.enabled) {
             debuglog("\n!matched exact " + string + "="  + oRule.lowercaseword  + " => " + oRule.matchedString + "/" + oRule.category);
           }

@@ -6,11 +6,23 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 var Model = require(root + '/model/model.js');
 var Meta = require(root + '/model/meta.js');
 
-
+var fs = require('fs');
 
 var Tools = require(root + '/match/tools.js');
 
 var InputFilterRules = require(root + '/match/inputFilterRules.js');
+
+
+/**
+ * clear a cache for the defaut mode for coverage
+ */
+try {
+  fs.unlinkSync('./testmodel/_cachefalse.js.zip');
+  fs.unlinkSync('./testmodel/_cachetrue.js.zip');
+} catch (e) {
+  // empty
+}
+
 
 var theModel = Model.loadModels();
 
@@ -401,7 +413,6 @@ exports.testCategorySorting = function (test) {
   test.done();
 };
 
-var fs = require('fs');
 /**
  * Unit test for sth
  */

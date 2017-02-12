@@ -157,6 +157,36 @@ exports.testTrimValueAdjusting= function(test) {
   test.done();
 };
 
+
+exports.testRecognizerListallID = function (test) {
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'list all applications, def, hij and klm in domain XYZ'
+    }
+  };
+
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      { entities:
+      [{
+        type: 'categories',
+        entity: 'applications, def, hij and klm',
+        startIndex: 9,
+        endIndex: 39 },
+      { type: 'insth',
+        entity: 'domain XYZ',
+        startIndex: 43,
+        endIndex: 53 } ],
+        score: 0.9,
+        intent: 'ListAll' }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
 exports.testRecognizeSome = function (test) {
   var oRules = recognizer.parseRules(oJSON);
   var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
