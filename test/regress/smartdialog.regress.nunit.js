@@ -156,7 +156,7 @@ exports.testRegress1 = function(test) {
 
       test.deepEqual(context.diffs.length,0, 'no diffs');
       context.actual.forEach(function(sActual,iIndex) {
-        test.deepEqual(sActual, context.expected[iIndex], iIndex + ' result differs');
+        test.deepEqual(sActual, context.expected[iIndex], iIndex +  ` result differs: question: >${context.input[iIndex]}<`);
       });
       var rtavg = rtfull / context.input.length;
       var summaryCompact = run + '\t' + context.input.length + '\t' + (rtavg/1000).toFixed(2) + '\t' + context.ok + '\t'

@@ -26,7 +26,7 @@ import * as BreakDown from '../match/breakdown';
 import * as WhatIs from '../match/whatis';
 import * as ListAll from '../match/listall';
 import * as Describe from '../match/describe';
-import * as MakeTable from '../exec/makeTable';
+import * as MakeTable from '../exec/makeqbetable';
 
 import * as Utils from '../utils/utils';
 import * as ErError from '../match/ererror';

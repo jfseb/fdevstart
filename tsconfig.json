@@ -38,7 +38,7 @@
         "src/match/indexwords.ts",
         "src/exec/exec.ts",
         "src/exec/execserver.ts",
-        "src/exec/makeTable.ts",
+        "src/exec/makeqbetable.ts",
         "src/exec/exectemplate.ts",
         "src/bot/smartdialog.ts",
         "src/bot/plainrecognizer.ts",

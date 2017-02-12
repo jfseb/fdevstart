@@ -9,7 +9,7 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 //var debuglog = require('debug')('maketable.nunit');
 
-const MakeTable = require(root + '/exec/makeTable.js');
+const MakeTable = require(root + '/exec/makeqbetable.js');
 const Model = require(root + '/model/model.js');
 
 const theModel = Model.loadModels();
