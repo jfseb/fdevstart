@@ -243,3 +243,6 @@ then parse db string
 
 pg_dump --host=exxxxxx.compute-1.amazonaws.com --port=5432  -f heroku_db --username=iyyyyyyyyyyyyyyy --passsword=xxx
  --dbname=yyyyyyyy
+
+
+ todo: descripe Proxima C

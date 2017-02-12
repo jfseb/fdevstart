@@ -8,8 +8,25 @@ var JSONx = require('circular-json');
 import * as fs from 'fs';
 import * as debug from 'debug';
 
+import * as zlib from 'zlib';
+
 const debuglog = debug('circularser');
 
+
+function zipData(data : string)  : Buffer {
+    var r = zlib.deflateSync(Buffer.from(data,'utf-8'));
+    //console.log("here r" + typeof r + " r" + r.length + " to string" + r.toString().length);
+    var k = zlib.inflateSync(r);
+   //  var k = zlib.inflateSync(Buffer.from(r.toString()));
+    return r;
+}
+
+function unzipData(r : any) : string {
+    //console.log("here data  " + typeof r + " r" + r.length + " to string" + r.toString().length);
+    r = new Buffer(r, 'binary');
+      //console.log("here data  " + typeof r + " r" + r.length + " to string" + r.toString().length);
+    return zlib.inflateSync(r).toString();
+}
 
 /* this from http://stackoverflow.com/questions/12075927/serialization-of-regexp */
 function replacer(key, value) {
@@ -47,18 +64,24 @@ export function parse(s: string) : any {
 
 export function save(fn : string, obj: any) : void {
     var s = stringify(obj);
-    fs.writeFileSync(fn, s, { encoding : 'utf-8'});
+
+    var u = zipData(s);
+    fs.writeFileSync(fn + ".zip", u,  'binary'); // { encoding : 'utf-8'});
 }
 
 export function load(fn: string) {
     var obj;
     try {
-        var s = '' + fs.readFileSync(fn,'utf-8');
+        debuglog("read file " + fn);
+        var d =  fs.readFileSync(fn + ".zip", 'binary'); // utf-8'); //utf-8');
+        debuglog("start unzip : " + (typeof d) + " length ? " + ('' + d).length );
+        var s = '' + unzipData(d);
         debuglog('loaded file' + s.length);
+        debuglog("end unzip");
         obj = parse(s);
-
+        debuglog("end parse");
     } catch (e) {
-        debuglog('here e' +e);
+        debuglog('here e :' +e);
         return undefined;
     }
     return obj;

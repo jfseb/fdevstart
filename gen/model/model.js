@@ -22,7 +22,7 @@ exports.global_AddSplits = true; // false;
  * the model path, may be controlled via environment variable
  */
 var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
-var ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "columns", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+var ARR_MODEL_PROPERTIES = ["domain", "bitindex", "defaultkeycolumn", "defaulturi", "categoryDescribed", "columns", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 function addSynonyms(synonyms, category, synonymFor, bitindex, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
@@ -495,6 +495,7 @@ function loadModels(modelPath, addSplits) {
         //console.log("found a cache ?  " + !!a);
         //a = undefined;
         if (a) {
+            debuglog(" return preparese model ");
             return a;
         }
     }

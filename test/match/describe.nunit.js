@@ -96,7 +96,7 @@ exports.testDescribeFactInDomainProxima2 = function (test) {
   var cmp =`"Proxima Centauri" has a meaning in domain "Cosmos":
 "Proxima Centauri" (interpreted as "Alpha Centauri C") is a value for category "object name" present in 1(14.3%) of records;\n`;
 
-  var cmp = '"Proxima Centauri" has a meaning in domain "Cosmos":\n"Proxima Centauri" (interpreted as "Alpha Centauri C") is a value for category "object name" present in 1(14.3%) of records;\n"Proxima Centauri" (interpreted as "Proxima Centauri b") is a value for category "object name" present in 1(14.3%) of records;\n';
+  cmp = '"Proxima Centauri" has a meaning in domain "Cosmos":\n"Proxima Centauri" (interpreted as "Alpha Centauri C") is a value for category "object name" present in 1(14.3%) of records;\n"Proxima Centauri" (interpreted as "Proxima Centauri b") is a value for category "object name" present in 1(14.3%) of records;\n';
 
 
   debuglog(res);

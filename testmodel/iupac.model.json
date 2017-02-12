@@ -1,5 +1,7 @@
 {
   "domain": "IUPAC",
+  "defaulturi" : "http://kcvs.ca/isotopesmatter/iupacMaterials/javascript/Interactive%20Periodic%20Table%20of%20the%20Isotopes/HTML5/index.html",
+  "defaultkeycolumn" : "element symbol",
   "category": [
    	{
       "name": "element name",

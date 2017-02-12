@@ -80,9 +80,12 @@ var del = require('del');
 
 gulp.task('clean:models', function () {
   return del([
-    'sensitive/_cachefalse.js',
-    'testmodel2/_cachefalse.js',
-    'testmodel/_cachefalse.js',
+    'sensitive/_cachefalse.js.zip',
+    'testmodel2/_cachefalse.js.zip',
+    'testmodel/_cachefalse.js.zip',
+    'sensitive/_cachetrue.js.zip',
+    'testmodel2/_cachetrue.js.zip',
+    'testmodel/_cachetrue.js.zip',
     // here we use a globbing pattern to match everything inside the `mobile` folder
   //  'dist/mobile/**/*',
     // we don't want to clean this file though so we negate the pattern

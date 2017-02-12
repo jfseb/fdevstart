@@ -49,7 +49,7 @@ export interface IModels {
 
 type IModel = IMatch.IModel;
 
-const ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "columns", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+const ARR_MODEL_PROPERTIES = ["domain", "bitindex", "defaultkeycolumn", "defaulturi", "categoryDescribed", "columns", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 
 function addSynonyms(synonyms: string[], category: string, synonymFor: string, bitindex : number, mRules: Array<IMatch.mRule>, seen: { [key: string]: IMatch.mRule[] }) {
     synonyms.forEach(function (syn) {
@@ -562,6 +562,7 @@ export function loadModels(modelPath? : string, addSplits? : boolean) : IMatch.I
        //console.log("found a cache ?  " + !!a);
        //a = undefined;
        if(a) {
+           debuglog(" return preparese model ");
            return a;
        }
     } catch (e) {

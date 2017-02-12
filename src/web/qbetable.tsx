@@ -1073,7 +1073,7 @@ class Picker extends Component<PickerProps, undefined> {
     return (
       <header className="qbeHeaderFuzzy">
         search:
-        <input className="searchInput" type="text" style={{  width : "80%", align:"left"}} onChange={e => onChange(e.target.value)} value={value} />
+        <input className="searchInput" type="text" placeholder="search string" style={{  width : "80%", align:"left"}} onChange={e => onChange(e.target.value)} value={value} />
       </header>
     );
   }
