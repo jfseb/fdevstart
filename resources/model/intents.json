@@ -13,6 +13,9 @@
     "Learn <A1>",
     "understand <A1>"
   ],
+  "buildtable": [
+    "((build)|(show)|(make)|(create)) ((table)|(qbe)) (with|for) <categories>"
+  ],
   "WhatAreYou": [
     "^what are you$",
     "^Tell me about you$",

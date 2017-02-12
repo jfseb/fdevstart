@@ -8,10 +8,10 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('execserver');
-var Toolmatch = require('../match/toolmatch');
-var Exectemplate = require('./exectemplate');
+var Toolmatch = require("../match/toolmatch");
+var Exectemplate = require("./exectemplate");
 function noStar(a, b) {
     if (b === '*') {
         return a;

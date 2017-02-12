@@ -21,6 +21,7 @@ exports.calcDist = {
  */
 exports.Cutoff_LevenShtein = 150;
 exports.Cutoff_WordMatch = 0.85; // 0.98
+exports.Cutoff_rangeCloseMatch = 0.98;
 /**
  * Maximum amount of spaces permitted in a combined word
  *

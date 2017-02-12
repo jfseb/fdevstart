@@ -19,6 +19,7 @@
        // "sourceMap" : true,
         "inlineSourceMap": true,
         "preserveConstEnums": true,
+         //"jsx": "react",
         "suppressImplicitAnyIndexErrors": true
     },
     "filesGlob": [
@@ -37,6 +38,7 @@
         "src/match/indexwords.ts",
         "src/exec/exec.ts",
         "src/exec/execserver.ts",
+        "src/exec/makeTable.ts",
         "src/exec/exectemplate.ts",
         "src/bot/smartdialog.ts",
         "src/bot/plainrecognizer.ts",
@@ -45,6 +47,8 @@
         "src/match/algol.ts",
         "src/match/analyze.ts",
         "src/match/dispatcher.ts",
+        "src/match/erbase.ts",
+        "src/match/ererror.ts",
         "src/match/inputFilterRules.ts",
         "src/match/inputFilter.ts",
         "src/match/listall.ts",
@@ -59,8 +63,11 @@
         "src/match/word.ts",
         "src/utils/logger.ts",
         "src/utils/dialoglogger.ts",
+        "src/utils/circularser.ts",
         "src/utils/damerauLevenshtein.ts",
         "src/utils/utils.ts"
     ],
-    "exclude": []
+    "exclude": [
+//  "!node_modules/**"
+    ]
 }

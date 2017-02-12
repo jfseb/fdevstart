@@ -5,15 +5,15 @@
  */
 "use strict";
 var AnyObject = Object;
-var distance = require('../utils/damerauLevenshtein');
-var debug = require('debug');
+var distance = require("../utils/damerauLevenshtein");
+var debug = require("debug");
 var debuglog = debug('dispatcher');
-var child_process_1 = require('child_process');
+var child_process_1 = require("child_process");
 //  var exec = require('child_process').exec
 //  var leven = require('../utils/damerauLevenshtein.js').levenshtein
-var exectemplate = require('../exec/exectemplate');
+var exectemplate = require("../exec/exectemplate");
 //var leven = require('../utils/damerauLevenshtein.js')
-var matchdata = require('./matchdata');
+var matchdata = require("./matchdata");
 var oUnitTests = matchdata.oUnitTests;
 var oWikis = matchdata.oWikis;
 function calcDistance(sText1, sText2) {
@@ -295,7 +295,7 @@ function filterShowEntityOld(oContext, aShowEntity) {
     }
     return null;
 }
-var inputFilter = require('./inputFilter');
+var inputFilter = require("./inputFilter");
 function filterShowEntity(oContext, aShowEntityActions) {
     Object.keys(oContext).forEach(function (sKey) {
         if (oContext[sKey] === null) {

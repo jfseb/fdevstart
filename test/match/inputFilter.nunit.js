@@ -15,6 +15,7 @@ const inputFilter = require(root + '/match/inputFilter.js');
 const InputFilter = inputFilter;
 
 const utils = require(root + '/utils/utils.js');
+const Algol = require(root + '/match/algol.js');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
@@ -1698,5 +1699,24 @@ exports.testreinforce = function (test) {
   test.deepEqual(res[0], resline, 'line 0 ok');
   test.deepEqual(res[1], resline, 'line 1 ok');
   test.deepEqual(res[2], resline, 'line 2 ok');
+  test.done();
+};
+
+
+const ratherMaybe =  [ ["what" , "waht"],
+["weight", "weigth"] ,
+["semantic objects", "semantic object"] ,
+["Busines catlog", "BusinessCatalog" ]];
+
+const ratherNot = [
+  [ "orbit of", "orbital period" ],
+  [ "semantic objects", "semantic action" ],
+];
+
+exports.testCalcDistanceClasses = function(test) {
+  ratherMaybe.forEach(function(s) {
+    var dist = ab.calcDistance(s[0],s[1]);
+    test.equal(dist > Algol.Cutoff_WordMatch , true, ` ${dist} for ${s[0]} !== ${s[1]} is larger than cutoff`);
+  })
   test.done();
 };

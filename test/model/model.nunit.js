@@ -115,7 +115,78 @@ exports.testModelGetDomainIndexThrows = function (test) {
   test.done();
 };
 
+exports.testAddSplitSingleWord = function(test) {
+  var seenIt = {};
+  var rules = [];
 
+  var newRule =  {
+    category: 'stars',
+    matchedString: 'AlphaCentauriA',
+    type: 0,
+    word: 'Alpha Centauri A',
+    lowercaseword: 'alphacentauria',
+    bitindex : 0x32,
+    _ranking: 0.95
+  };
+  Model.addBestSplit(rules,newRule, seenIt);
+  test.equals(rules.length, 0);
+  test.done();
+};
+
+exports.testAddSplitNotCombinable = function(test) {
+  var seenIt = {};
+  var rules = [];
+  var newRule =  {
+    category: 'stars',
+    matchedString: 'AlphaCentauriA',
+    type: 0,
+    word: 'Peter, Paul and Mary',
+    lowercaseword: 'Peter, Paul and Mary',
+    bitindex : 0x10,
+    _ranking: 0.95
+  };
+  Model.addBestSplit(rules,newRule, seenIt);
+  test.equals(rules.length, 0);
+  test.done();
+};
+
+
+exports.testAddSplit = function(test) {
+
+  var seenIt = {};
+
+  var rules = [];
+
+  var newRule =  {
+    category: 'stars',
+    matchedString: 'Alpha Centauri A',
+    type: 0,
+    word: 'Alpha Centauri A',
+    lowercaseword: 'alpha centauri a',
+    bitindex : 0x20,
+    _ranking: 0.95
+  };
+
+  Model.global_AddSplits = true;
+  Model.addBestSplit(rules, newRule, seenIt);
+  Model.global_AddSplits = false;
+
+  test.deepEqual(rules[0], { category: 'stars',
+    matchedString: 'Alpha Centauri A',
+    bitindex: 32,
+    word: 'centauri',
+    type: 0,
+    lowercaseword: 'centauri',
+    _ranking : 0.95,
+    range:
+    { low: -1,
+      high: 1,
+      rule: newRule }
+  }
+  );
+  test.done();
+
+};
 
 exports.testModelHasDomainIndexinRules = function (test) {
   var a = [];
@@ -390,6 +461,45 @@ exports.testModel2 = function (test) {
 };
 
 
+exports.testFindNextLen = function (test) {
+  var offsets = [0,0,0,0,0,0];
+  Model.findNextLen(0,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,0,0,0,0,0],' target 0');
+  Model.findNextLen(1,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,0,0,0,0,2],' target 1');
+
+  Model.findNextLen(2,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,0,0,0,2,4],' target 2');
+  Model.findNextLen(3,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,0,0,2,4,6],' target 3');
+  Model.findNextLen(4,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,0,2,4,6,8],' target 4');
+  Model.findNextLen(5,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[0,2,4,6,8,8],' target 5');
+  Model.findNextLen(6,['a','a','bb','bb','ccc','ccc','dddd', 'dddd', '123456', '123456'], offsets);
+  test.deepEqual(offsets,[2,4,6,8,8,10],' target 6');
+
+  test.done();
+};
+
+
+
+
+exports.testModelGetColumns = function (test) {
+  test.expect(1);
+  var u = Model.loadModels();
+
+    // we expect a rule "domain" -> meta
+  //console.log(JSON.stringify(u.rawModels));
+  var res = Model.getTableColumns(u,'IUPAC');
+  test.deepEqual(res,
+    [ 'element symbol',
+      'element number',
+      'element name'
+    ] , 'correct data read');
+  test.done();
+
+};
 
 exports.testModelHasDomains = function (test) {
   test.expect(2);
@@ -405,8 +515,11 @@ exports.testModelHasDomains = function (test) {
   var r2 = u.mRules.filter(function(oRule) {
     return oRule.category === 'domain';
   });
-
+  //console.log(JSON.stringify(r2,undefined,2));
   var rx = r2.map(function(oRule) { return oRule.matchedString; });
+  // remove duplicates
+  rx.sort();
+  rx = rx.filter( (u,index) => rx[index-1] !== u);
 
   test.deepEqual(rx.sort(),
     [ 'Cosmos',

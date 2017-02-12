@@ -11,7 +11,7 @@
  */
 "use strict";
 // / <reference path="../../lib/node-4.d.ts" />
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('toolmatch');
 /*
 var oToolFLP = {
@@ -39,7 +39,7 @@ var oToolFLP = {
   }
 };
 */
-var Sentence = require('./sentence');
+var Sentence = require("./sentence");
 function cmpToolSet(sets, a, b) {
     return -(sets[a].set.length - sets[b].set.length);
 }

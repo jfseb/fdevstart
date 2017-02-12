@@ -12,6 +12,24 @@ export const CAT_FILLER = "filler";
 export const CAT_TOOL = "tool";
 
 
+export const ERR_NO_KNOWN_WORD = "NO_KNOWN_WORD";
+export const ERR_EMPTY_INPUT = "EMPTY_INPUT";
+
+export interface IERError {
+  err_code : string,
+  text : string
+};
+
+export interface IERErrorNO_KNOWN_WORD extends IERError{
+  context : {
+    token : string,
+    index: number,
+    tokens : string[]
+  }
+};
+
+
+
 export interface IPromptDescription {
   description: string,
   type: string,
@@ -41,6 +59,17 @@ export interface IWhatIsAnswer {
   category : string,
   result: string,
   _ranking : number
+}
+
+
+export interface IProcessedWhatIsAnswers extends IProcessed {
+  sentences? : ISentence[],
+  answers : IWhatIsAnswer[]
+}
+
+export interface IProcessedWhatIsTupelAnswers extends IProcessed {
+  sentences? : ISentence[],
+  tupelanswers : Array<IWhatIsTupelAnswer>
 }
 
 
@@ -113,10 +142,12 @@ export interface IToolMatch {
 export interface IWord {
   string: string,
   matchedString: string,
-  category?: string,
+  category: string,
   _ranking?: number,
   levenmatch?: number,
-  reinforce?: number
+  reinforce?: number,
+  bitindex? : number,
+  rule? : mRule
 }
 
 export type ISentence = Array<IWord>;
@@ -141,6 +172,13 @@ export interface IntentRule {
   follows?: context
 }
 
+export interface IRange {
+  low: number, high: number,
+};
+
+export interface IWordRange extends IRange
+{
+  rule? : mRule };
 /**
  * A rule matching a single string
  */
@@ -153,7 +191,7 @@ export interface mRule {
   matchIndex?: number,
   category: string,
   bitindex : number,
-  range? : { low: number, high: number},
+  range? :  IWordRange,
   /**
    * only use an exact match
    */
@@ -181,6 +219,38 @@ export interface ICategorizedString {
   _ranking?: number,
   levenmatch?: number  // a distance ranking
 }
+
+export interface ICategorizedStringRanged extends ICategorizedString{
+  string: string,
+  matchedString: string,
+  category: string,
+  breakdown?: Array<any>
+  /**
+   * Length of the entry (for skipping following words)
+   */
+  score?: number,
+  span? : number,
+  rule : mRule,
+  _ranking?: number,
+  levenmatch?: number  // a distance ranking
+}
+
+export interface IProcessed {
+  tokens : string[],
+  errors? : any
+}
+
+export interface IProcessedSentences extends IProcessed {
+  tokens : string[],
+  errors? : any,
+  sentences : ISentence[]
+};
+
+export interface IProcessedExtractedCategories extends IProcessed {
+  categories : string[],
+};
+
+
 
 export type context = { [key: string]: string };
 
@@ -228,6 +298,25 @@ export interface ICategoryDesc {
   synonyms? : string[];
 }
 
+
+
+export interface IModel {
+    domain: string,
+    bitindex : number,
+    description? : string,
+    tool: ITool,
+    toolhidden?: boolean,
+    synonyms?: { [key: string]: string[] },
+    categoryDescribed :  { name : string,
+        description? : string,
+        key? : string }[],
+    category: string[],
+    columns? : string[],
+    wordindex: string[],
+    exactmatch? : string[],
+    hidden: string[]
+};
+
 export interface IModels {
     full : {
       domain : { [key : string] : {
@@ -237,6 +326,7 @@ export interface IModels {
         }
       }
     },
+    rawModels : { [key : string] : IModel};
     domains: string[],
     tools: ITool[],
     category: string[],

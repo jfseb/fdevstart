@@ -11,7 +11,7 @@
  */
 "use strict";
 // <reference path="../../lib/node-4.d.ts" />
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('sentence');
 function findWordByCategory(oSentence, sCategory) {
     var res = {};

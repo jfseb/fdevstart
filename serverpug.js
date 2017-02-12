@@ -25,6 +25,7 @@ var uuid = require('node-uuid');
 var debug = require('debug');
 var debuglog = debug('server');
 var botdialog = require('./gen/bot/smartdialog.js');
+var compression = require('compression');
 
 
 var app = express();
@@ -34,9 +35,10 @@ app.set('port', process.env.PORT || 42042);
 app.set('views', __dirname + '/app/server/views');
 app.set('view engine', 'jade');
 app.use(cookieParser());
+app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
+//app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
 
 //'https://jfseb-abot.herokuapp.com'
 
@@ -47,7 +49,10 @@ app.get('*',function(req,res,next){
     next(); /* Continue to other routes if we're not redirecting */
 });
 
-app.use(express.static(__dirname + '/app/public'));
+var oneDay = 86400000; // in milliseconds
+app.use(express.static(__dirname + '/app/public',{
+  maxage: oneDay
+}));
 
 if (process.env.NODE_ENV === 'development') {
   // only use in development

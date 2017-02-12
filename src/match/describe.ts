@@ -262,7 +262,7 @@ export function describeDomain(fact : string, domain: string, theModel: IMatch.I
 export function describeFactInDomain(fact : string, filterdomain : string, theModel: IMatch.IModels) : string {
   var sentences = WhatIs.analyzeContextString(fact,  theModel.rules);
   //console.log("here sentences " + JSON.stringify(sentences));
-  var lengthOneSentences = sentences.filter(oSentence => oSentence.length === 1);
+  var lengthOneSentences = sentences.sentences.filter(oSentence => oSentence.length === 1);
   var res = '';
   // remove categories and domains
   var onlyFacts = lengthOneSentences.filter(oSentence =>{

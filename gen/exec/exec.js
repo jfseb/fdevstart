@@ -5,17 +5,17 @@
  * @file
  */
 "use strict";
-var debug = require('debug');
-var IFMatch = require('../match/ifmatch');
+var debug = require("debug");
+var IFMatch = require("../match/ifmatch");
 var debuglog = debug('dispatcher');
-var child_process_1 = require('child_process');
-var Match = require('../match/match');
+var child_process_1 = require("child_process");
+var Match = require("../match/match");
+var EnumResponseCode;
 (function (EnumResponseCode) {
     EnumResponseCode[EnumResponseCode["NOMATCH"] = 0] = "NOMATCH";
     EnumResponseCode[EnumResponseCode["EXEC"] = 1] = "EXEC";
     EnumResponseCode[EnumResponseCode["QUERY"] = 2] = "QUERY";
-})(exports.EnumResponseCode || (exports.EnumResponseCode = {}));
-var EnumResponseCode = exports.EnumResponseCode;
+})(EnumResponseCode = exports.EnumResponseCode || (exports.EnumResponseCode = {}));
 /**
  * Defines the interface for an analysis
  * reponse
@@ -109,7 +109,7 @@ function expandParametersInURL(oMergedContextResult) {
     });
     return ptn;
 }
-var inputFilterRules = require('../match/inputFilterRules');
+var inputFilterRules = require("../match/inputFilterRules");
 var toolExecutors = {
     "xFLP": {},
     "xFLPD": {},

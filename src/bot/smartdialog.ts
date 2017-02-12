@@ -26,7 +26,10 @@ import * as BreakDown from '../match/breakdown';
 import * as WhatIs from '../match/whatis';
 import * as ListAll from '../match/listall';
 import * as Describe from '../match/describe';
+import * as MakeTable from '../exec/makeTable';
+
 import * as Utils from '../utils/utils';
+import * as ErError from '../match/ererror';
 
 import * as _ from 'lodash';
 
@@ -132,7 +135,7 @@ var newFlow = true;
 import * as Model from '../model/model';
 import * as ExecServer from '../exec/execserver';
 
-const theDefaultModel = Model.loadModels();
+//const theDefaultModel = Model.loadModels();
 
 var models = {};
 
@@ -509,9 +512,14 @@ var gwords = {};
  * HTMLConnector
  * or connector = new builder.ConsoleConnector().listen()
  */
-function makeBot(connector, modelPath?: string) {
-
+function makeBot(connector, modelPath?: string, options? : any ) {
+  var t = Date.now();
   var theModel = loadModel(modelPath);
+  var t = Date.now() - t;
+  if (options && options.showModelLoadTime) {
+    console.log(`model load time ${(t)}`);
+  }
+
   bot = new builder.UniversalBot(connector);
 
 
@@ -686,7 +694,7 @@ function makeBot(connector, modelPath?: string) {
       var a1 = builder.EntityRecognizer.findEntity(args.entities, 'A1');
       var cats = [];
       try {
-        cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
+        cats = WhatIs.analyzeCategoryMultOnlyAndComma(category, theModel.rules, message);
         debuglog("here cats" + cats.join(","));
       } catch (e) {
         if (e) {
@@ -713,47 +721,55 @@ function makeBot(connector, modelPath?: string) {
         const result = WhatIs.resolveCategory(cat, a1.entity,
           theModel.rules, theModel.records);
         debuglog(debuglog.enabled? ('whatis result:' + JSON.stringify(result)):'-');
-        logQueryWhatIs(session, 'WhatIs', result);
-        var indis = WhatIs.isIndiscriminateResult(result);
+        logQueryWhatIs(session, 'WhatIs', result.answers);
+        var indis = WhatIs.isIndiscriminateResult(result.answers);
         if (indis) {
           session.send(indis);
           // next();
           return;
         }
-        if (!result || result.length === 0) {
-          dialoglog("WhatIs", session, send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + '"'));
+        if (!result || result.answers.length === 0) {
+          var explain = '';
+          if(result.errors.length) {
+            explain = ErError.explainError(result.errors);
+          }
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + cat + " (" + category + ')\" in relation to "' + a1.entity + `".${explain}`));
           // next();
           return;
         } else {
           // debuglog('result : ' + JSON.stringify(result, undefined, 2));
-          debuglog(debuglog.enabled?('best result : ' + JSON.stringify(result[0] || {}, undefined, 2)):'-');
-          debuglog(debuglog.enabled? ('top : ' + WhatIs.dumpWeightsTop(result, { top: 3 })): '-');
+          debuglog(debuglog.enabled?('best result : ' + JSON.stringify(result.answers[0] || {}, undefined, 2)):'-');
+          debuglog(debuglog.enabled? ('top : ' + WhatIs.dumpWeightsTop(result.answers, { top: 3 })): '-');
           // TODO cleansed sentence
-          dialoglog("WhatIs", session, send('The ' + category + ' of ' + a1.entity + ' is ' + result[0].result + "\n")); //  + JSON.stringify(result[0]));
+          dialoglog("WhatIs", session, send('The ' + category + ' of ' + a1.entity + ' is ' + result.answers[0].result + "\n")); //  + JSON.stringify(result[0]));
         }
       } // single category
       else {
         debuglog('categories identified:' + cats.join(","));
         const resultArr = WhatIs.resolveCategories(cats, a1.entity,
           theModel);
-        debuglog(debuglog.enabled ? ('whatis result:' + JSON.stringify(resultArr)):'-');
-        logQueryWhatIsTupel(session, 'WhatIs', resultArr);
-        var indis = WhatIs.isIndiscriminateResultTupel(resultArr);
+        debuglog(debuglog.enabled ? ('mulst whatis result:' + JSON.stringify(resultArr)):'-');
+        logQueryWhatIsTupel(session, 'WhatIs', resultArr.tupelanswers);
+        var indis = WhatIs.isIndiscriminateResultTupel(resultArr.tupelanswers);
         if (indis) {
           session.send(indis);
           // next();
           return;
         }
-        if (!resultArr || resultArr.length === 0) {
-          dialoglog("WhatIs", session, send('I don\'t know anything about "' + category + "\" (" + Utils.listToQuotedCommaAnd(cats) + ')\" in relation to "' + a1.entity + '"'));
+        if (!resultArr || !resultArr.tupelanswers || resultArr.tupelanswers.length === 0) {
+          var explain = '';
+          if(resultArr.errors.length) {
+            explain = ErError.explainError(resultArr.errors);
+          }
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + category + "\" (" + Utils.listToQuotedCommaAnd(cats) + ')\" in relation to "' + a1.entity + `"${explain}`));
           // next();
           return;
         } else {
           // debuglog('result : ' + JSON.stringify(result, undefined, 2));
-          debuglog(debuglog.enabled? ('best result : ' + JSON.stringify(resultArr[0] || {}, undefined, 2)):'-');
+          debuglog(debuglog.enabled? ('best result : ' + JSON.stringify(resultArr.tupelanswers[0] || {}, undefined, 2)):'-');
           //debuglog('top : ' + WhatIs.dumpWeightsTop(resultArr, { top: 3 }));
           // TODO cleansed sentence
-          dialoglog("WhatIs", session, send('The ' + Utils.listToQuotedCommaAnd(cats) + ' of ' + a1.entity + ' are ' + Utils.listToQuotedCommaAnd(resultArr[0].result) + '\n')); //  + JSON.stringify(result[0]));
+          dialoglog("WhatIs", session, send('The ' + Utils.listToQuotedCommaAnd(cats) + ' of ' + a1.entity + ' are ' + Utils.listToQuotedCommaAnd(resultArr.tupelanswers[0].result) + '\n')); //  + JSON.stringify(result[0]));
         }
       } //endif multiple categories
     }
@@ -806,7 +822,7 @@ function makeBot(connector, modelPath?: string) {
       }
       var cats = [];
       try {
-        cats = WhatIs.analyzeCategoryMult2(category, theModel.rules, message);
+        cats = WhatIs.analyzeCategoryMultOnlyAndComma(category, theModel.rules, message);
         debuglog("here cats" + cats.join(","));
       } catch (e) {
         if (e) {
@@ -837,7 +853,7 @@ function makeBot(connector, modelPath?: string) {
             debuglog('going for having');
             var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
             result1 = ListAll.listAllHavingContext(cat, a1.entity, theModel.rules,
-              theModel.records, categorySetFull);
+              theModel.records, categorySetFull).answers;
           }
           debuglog(debuglog? ('listall result:' + JSON.stringify(result1)):'-');
           var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1));
@@ -853,15 +869,15 @@ function makeBot(connector, modelPath?: string) {
           //
           var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
           var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
-          logQueryWhatIs(session, 'ListAll', result);
-          if (result.length) {
+          logQueryWhatIs(session, 'ListAll', result.answers);
+          if (result.answers.length) {
             debuglog(debuglog.enabled ? ('listall result:' + JSON.stringify(result)): '-');
             var joinresults = [];
             debuglog("here is cat>" + cat);
             if (cat !== "example question") {
-              joinresults = restrictLoggedOn(session, ListAll.joinResults(result));
+              joinresults = restrictLoggedOn(session, ListAll.joinResults(result.answers));
             } else {
-              joinresults = ListAll.joinResults(result);
+              joinresults = ListAll.joinResults(result.answers);
             }
             var response = "the " + category + " are ...\n" + joinresults.join(";\n");
             dialoglog("ListAll", session, send(response));
@@ -936,6 +952,46 @@ function makeBot(connector, modelPath?: string) {
         }
       }
     }
+  ]);
+
+
+  dialog.matches('buildtable', [
+    function (session, args, next) {
+      var isCombinedIndex = {};
+      var oNewEntity;
+      // expecting entity A1
+      var message = session.message.text;
+      debuglog("Intent : buildtable");
+      debuglog('raw: ' + JSON.stringify(args.entities), undefined, 2);
+      var categories = builder.EntityRecognizer.findEntity(args.entities, 'categories').entity;
+      debuglog("factOrCat is" + categories);
+      var cats;
+      try {
+        cats = WhatIs.analyzeCategoryMultOnlyAndComma(categories, theModel.rules, message);
+        debuglog("here cats" + cats.join(","));
+      } catch (e) {
+        if (e) {
+          debuglog("here exception" + e);
+          dialoglog("WhatIs", session, send('I don\'t know anything about "' + categories + '"(' + e.toString() + ')'));
+          // next();
+          return;
+        }
+      }
+      if (!cats || (cats.length === 0)) {
+        dialoglog("ListAll", session, send('I did not find a category in "' + categories + '"'));
+        // next();
+        return;
+      }
+      var exec = MakeTable.makeTable(cats,theModel);
+  //      const exec = ExecServer.execTool(session.dialogData.result as IMatch.IToolMatch, theModel.records);
+        var reply = new builder.Message(session)
+          .text(exec.text)
+          .addEntity(exec.action);
+        // .addAttachment({ fallbackText: "I don't know", contentType: 'image/jpeg', contentUrl: "www.wombat.org" });
+        dialoglog("ShowMe", session, send(reply));
+    }
+
+
   ]);
 
   dialog.matches('Describe', [

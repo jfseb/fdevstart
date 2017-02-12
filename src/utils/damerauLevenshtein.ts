@@ -758,3 +758,163 @@ export function jaroWinklerDistance(s1 : string, s2: string) {
 		    return jaro + l * p * (1 - jaro);
 		}
 }
+
+
+
+function cntChars(str : string, len : number) {
+  var cnt = 0;
+  for(var i = 0; i < len; ++i) {
+    cnt += (str.charAt(i) === 'X')? 1 : 0;
+  }
+  return cnt;
+}
+
+/**
+ * @param sText {string} the text to match to NavTargetResolution
+ * @param sText2 {string} the query text, e.g. NavTarget
+ *
+ * @return the distance, note that is is *not* symmetric!
+ */
+export function calcDistance(sText1: string, sText2: string): number {
+  // console.log("length2" + sText1 + " - " + sText2)
+  var s1len = sText1.length;
+  var s2len = sText2.length;
+  var min = Math.min(s1len,s2len);
+  if(Math.abs(s1len - s2len) > Math.min(s1len,s2len)) {
+    return 0.3;
+  }
+  var dist = jaroWinklerDistance(sText1,sText2);
+  var cnt1 = cntChars(sText1, s1len);
+  var cnt2 = cntChars(sText2, s2len);
+  if(cnt1 !== cnt2) {
+    dist = dist * 0.7;
+  }
+  return dist;
+  /*
+  var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
+  if(debuglogV.enabled) {
+    debuglogV("distance" + a0 + "stripped>" + sText1.substring(0,sText2.length) + "<>" + sText2+ "<");
+  }
+  if(a0 * 50 > 15 * sText2.length) {
+      return 40000;
+  }
+  var a = distance.levenshtein(sText1, sText2)
+  return a0 * 500 / sText2.length + a
+  */
+}
+
+/*
+var facAdjustDistance = [];
+var u = "a";
+for(var i = 2; i < 15; ++i) {
+  var un = u + String.fromCharCode('A'.charCodeAt(0) + i + 1 );
+  console.log(un);
+  facAdjustDistance[u.length] = (1-0.9801000)/ (1.0 - calcDistance(u,un));
+  u = un;
+}
+
+export function calcDistanceAdjusted2(a: string, b:string) : number {
+  var dist = calcDistance(a,b);
+  var ml = Math.min(a.length, b.length);
+  if(dist < 1.0 && (ml < 15) &&  (ml > 2)) {
+      return 1.0  -  (1.0- dist) * facAdjustDistance[ml];
+  }
+  return dist;
+}
+*/
+
+/**
+ * The adjustment is chosen in the following way,
+ * a single "added" character at the end of the string fits
+ * is "lifted at length 5" to 0.98
+ *   1.665 =  ( 1 - calcDistance('abcde','abcde_')) / 0.98
+ *
+ * The function is smoothly to merge at length 20;
+ *   fac =((20-len)/(15))*0.665 +1
+ *   res = 1- (1-d)/fac;
+ */
+
+
+
+export function calcDistanceAdjusted(a: string, b:string) : number {
+  var dist = calcDistance(a,b);
+  var ml = Math.min(a.length, b.length);
+  if(dist < 1.0 && (ml < 20)) {
+      var fac =  1 + (0.665/15.0)*(20-ml);
+      return 1.0  -  (1.0 - dist) /fac;
+  }
+  return dist;
+}
+
+/*
+
+function getCharAt(str, n) {
+  if(str.length > n) {
+    return str.charAt(n);
+  }
+  return '';
+}
+
+function getHead(str,u) {
+  u = Math.min(str.length, u);
+  u = Math.max(0,u);
+  return str.substring(0,u);
+}
+
+function getTail(str,p) {
+  return str.substring(p);
+}
+
+var strs = ["A"];
+var u = "A";
+for(var i = 1; i < 25; ++i) {
+  var un = u + String.fromCharCode('A'.charCodeAt(0) + i );
+  strs[un.length-1] = un;
+  console.log(un);
+  facAdjustDistance[u.length] = (1-0.9801000)/ (1.0 - calcDistance(u,un));
+  u = un;
+}
+
+var res = [];
+
+var res2 = [];
+for(var i = 1; i < strs.length; ++i) {
+  var str = strs[i];
+  var nc = String.fromCharCode('a'.charCodeAt(0) + 2*i + 2 );
+  var nc = '_';
+  var addTail = str  + nc;
+  var addFront = nc + str;
+  var nc2 = '/'; //String.fromCharCode('a'.charCodeAt(0) + 2*i + 3 );
+
+  var diffMid = getHead(str,Math.floor(str.length/2))  + nc  + getTail(str, Math.floor(str.length/2)+1);
+  var diffMid2 = strs[i].substring(0, Math.floor(str.length/2)-1) + nc + nc2 + getTail(str,Math.floor(str.length/2)+1);
+  var diffEnd = strs[i].substring(0, strs[i].length - 1) + nc;
+  var diffStart = nc + strs[i].substring(1);
+  var swapFront = str.substring(0,2) + getCharAt(str,3) + getCharAt(str,2) + str.substring(4);
+  var swapMid = getHead(str, Math.floor(str.length/2)-1)  + getCharAt(str,Math.floor(str.length/2)) + getCharAt(str,Math.floor(str.length/2)-1)  + getTail(str,Math.floor(str.length/2)+1);
+  var swapEnd = getHead(str, str.length - 2) + getCharAt(str,str.length-1) + getCharAt(str,str.length-2);
+
+  var r = [diffStart, diffMid, diffEnd, addFront, addTail, diffMid2, swapFront, swapMid, swapEnd ];
+  console.log('****\n' + str +'\n' + r.join("\n"));
+  if( i === 1) {
+    res.push(`i\tdiffStart\tdiffMid\tdiffEnd\taddFront\taddTail\tdiffMid2\tswapFront\tswapMid\tswapEnd\n`);
+    res2.push(`i\tdiffStart\tdiffMid\tdiffEnd\taddFront\taddTail\tdiffMid2\tswapFront\tswapMid\tswapEnd\n`);
+  }
+  res.push(`${str.length}\t` + r.map(s => calcDistance(str,s).toFixed(4)).join("\t") + '\n');
+  res2.push(`${str.length}\t` + r.map(s => calcDistanceAdjusted(str,s).toFixed(4)).join("\t") + '\n');
+}
+
+
+console.log(res.join(''));
+
+console.log('---');
+console.log(res2.join(''));
+
+var fs = require('fs');
+fs.writeFileSync('leven.txt', res.join('') + '\n' + res2.join(''));
+
+*/
+
+
+
+

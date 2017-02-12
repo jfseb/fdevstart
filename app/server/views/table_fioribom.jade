@@ -1,0 +1,37 @@
+
+// preset form values if we receive a userdata object //
+- user = user
+
+extends layout_p
+
+block content
+
+	nav.navbar.navbar-default.navbar-fixed-top
+		.container
+			.navbar-header
+				.navbar-brand(style='bgcolor:orange;color:darkblue;font-family:Arial Black;font-size:15.118px') wosap query FioriBOM
+			ul.nav.navbar-nav.navbar-right #{uid}
+				li
+					.navbar-btn#btn-logout.btn.btn-default(onclick="location.href='/home'")
+						| back to home
+
+	link(rel='stylesheet', href='/css/qbetable/fixed-data-table.css')
+	link(rel='stylesheet', href='/css/qbetable/qbetable.css')
+
+	p  &nbsp;
+	p &nbsp;
+	p
+	div.examplePage(id='container')
+
+
+block scripts
+	script(src='/vendor/react.min.js')
+	script(src='/vendor/react-dom.min.js')
+	script(src='/vendor/elasticlunr.min.js')
+	//script(src='/js/model_bom.data.jsonp')
+	script(src='/js/model_bom.lunr.js')
+	script(src='/js/elastic.js')
+
+	script(src='/js/qbetable.js')
+	//script(src='/vendor/jquery-2.2.3.min.js')
+	//script(src='/vendor/bootstrap.min.js')

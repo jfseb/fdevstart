@@ -45,7 +45,8 @@ exports.testCmbByResult = function (test) {
   test.deepEqual(res[0], { result: 'ABC', _ranking: 1.0 }, 'sort order');
   test.deepEqual(res[1], { result: 'ABC', _ranking: 0.9 }, 'sort order 2nd');
 
-  res = WhatIs.filterRetainTopRankedResult(res);
+  var resx = WhatIs.filterRetainTopRankedResult({ answers: res });
+  res = resx.answers;
 
   debuglog(' after filter: ' + JSON.stringify(res));
   res.sort(WhatIs.cmpByRanking);
@@ -267,7 +268,6 @@ exports.testAnalyzeCategoryElem = function (test) {
 };
 
 
-
 exports.testAnalyzeCategoryMult = function (test) {
   var res = WhatIs.analyzeCategoryMult('unit test and', theModel.rules, 'what is unit test wiki for abc');
   test.deepEqual(res, ['unit test']);
@@ -291,7 +291,8 @@ exports.testCategorizeMultElement = function (test) {
 // TODO, this is bullshit, complete cover must be better than sloppy matches!
 exports.testAnalyzeCusmos = function (test) {
   var res = WhatIs.analyzeContextString('cusmos', theModel.rules);
-  test.deepEqual(res, [ [ { string: 'cusmos',
+  delete res.sentences[0][0].rule;
+  test.deepEqual(res.sentences, [ [ { string: 'cusmos',
     matchedString: 'Cosmos',
     category: 'domain',
     _ranking: 0.855,
@@ -302,7 +303,7 @@ exports.testAnalyzeCusmos = function (test) {
 
 
 exports.testCategorizeMultElement2 = function (test) {
-  var res = WhatIs.analyzeCategoryMult2('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');
+  var res = WhatIs.analyzeCategoryMultOnlyAndComma('element name and element number, element symbol', theModel.rules, 'what is unit test and wiki for abc');
   test.deepEqual(res, ['element name', 'element number', 'element symbol']);
   test.done();
 };
@@ -361,13 +362,14 @@ exports.testResolveCategory = function (test) {
 
   var res = WhatIs.resolveCategory(cat, 'unit test NavTargetResolution',
     mRules, records);
-  test.deepEqual(res, [{
+  res.answers.forEach(function(r) { stripResult(r); });
+  test.deepEqual(res.answers, [{
     sentence:
     [{
       string: 'unit test',
       matchedString: 'unit test',
       category: 'category',
-      _ranking: 1
+      _ranking: 0.95
     },
     {
       string: 'NavTargetResolution',
@@ -380,7 +382,7 @@ exports.testResolveCategory = function (test) {
     record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA' },
     result: 'com.sap.NTA',
     _ranking: 1.6500000000000001
-  }], 'unit test');
+  }], 'compare result');
   test.done();
 };
 
@@ -409,19 +411,19 @@ var recordsNoAmb = [
   }
 ];
 
-exports.testResolveCategoryNoAmb = function (test) {
+exports.testResolveCategoryNoAmb2 = function (test) {
   var cat = WhatIs.analyzeCategory('url', mRules);
   test.equal(cat, 'url', ' category present');
   var res = WhatIs.resolveCategory(cat, 'unit test NavTargetResolution',
     mRules, recordsNoAmb);
-  test.equal(res.length, 1);
-  test.deepEqual(res[0], {
+  test.equal(res.answers.length, 1, ' resolved length ok');
+  test.deepEqual(stripResult(res.answers[0]), {
     sentence:
     [{
       string: 'unit test',
       matchedString: 'unit test',
       category: 'category',
-      _ranking: 1
+      _ranking: 0.95
     },
     {
       string: 'NavTargetResolution',
@@ -431,11 +433,11 @@ exports.testResolveCategoryNoAmb = function (test) {
       reinforce: 1.1
     }],
     category: 'url',
-    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA', 'systemId': 'UV2', 'client': '110' },
+    record: { 'unit test': 'NavTargetResolution', url: 'com.sap.NTA', 'systemId': 'UV2', 'client': '120' },
     result: 'com.sap.NTA',
     _ranking: 1.6500000000000001
-  }, 'unit test');
-  var indis = WhatIs.isIndiscriminateResult(res);
+  }, 'unit test compare 1');
+  var indis = WhatIs.isIndiscriminateResult(res.answers);
   test.equal(indis, undefined, 'correct string');
   test.done();
 };
@@ -464,19 +466,26 @@ var recordsAmb = [
   }
 ];
 
+function stripResult(r) {
+  delete r.sentence.forEach(function(s) { delete s.rule;  delete s.span;});
+  return r;
+}
+
 exports.testResolveCategoryAmb = function (test) {
   var cat = WhatIs.analyzeCategory('url', mRules);
   test.equal(cat, 'url', ' category present');
   var res = WhatIs.resolveCategory(cat, 'unit test NavTargetResolution',
     mRules, recordsAmb);
-  test.equal(res.length, 2);
-  test.deepEqual(res[1], {
+    //TODO
+  //console.log(JSON.stringify(res.answers,undefined, 2));
+  test.equal(res.answers.length, 2);
+  test.deepEqual(stripResult(res.answers[1]), {
     sentence:
     [{
       string: 'unit test',
       matchedString: 'unit test',
       category: 'category',
-      _ranking: 1
+      _ranking: 0.95,
     },
     {
       string: 'NavTargetResolution',
@@ -490,13 +499,13 @@ exports.testResolveCategoryAmb = function (test) {
     result: 'com.sap.NTAUV2120',
     _ranking: 1.6500000000000001
   }, ' result 0');
-  test.deepEqual(res[0], {
+  test.deepEqual(stripResult(res.answers[0]), {
     sentence:
     [{
       string: 'unit test',
       matchedString: 'unit test',
       category: 'category',
-      _ranking: 1
+      _ranking: 0.95
     },
     {
       string: 'NavTargetResolution',
@@ -510,8 +519,8 @@ exports.testResolveCategoryAmb = function (test) {
     result: 'com.sap.NTAUV2110',
     _ranking: 1.6500000000000001
   }, 'result 2');
-  var dmp = WhatIs.dumpWeightsTop(res, { top: 3 });
-  var indis = WhatIs.isIndiscriminateResult(res);
+  var dmp = WhatIs.dumpWeightsTop(res.answers, { top: 3 });
+  var indis = WhatIs.isIndiscriminateResult(res.answers);
   test.equal(indis, 'Many comparable results, perhaps you want to specify a discriminating client', 'correct string');
   test.equal(dmp.indexOf('category'), 32, 'correct dump');
   test.done();

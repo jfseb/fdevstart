@@ -17,7 +17,8 @@ var dburl = process.env.DATABASE_URL || pglocalurl;
 //var dbName = process.env.DB_NAME || 'node-login';
 //var dbHost = process.env.DB_HOST || 'localhost'
 //var dbPort = process.env.DB_PORT || 27017;
-
+var debug= require('debug');
+var debuglog= debug('accountmanager');
 // user
 // email
 // passHash
@@ -50,7 +51,7 @@ var fieldnamesNew = ['user', 'email', 'pass', 'id'];
 var accounts = {
   save: function (orec, flags, cb) {
 		// TODO: better do a modify
-    console.log('saving ' + JSON.stringify(orec));
+    debuglog('saving ' + JSON.stringify(orec));
     accounts.remove({ id: orec.id }, function (err) {
       accounts.insert(orec, flags, cb);
     });
@@ -78,7 +79,7 @@ var accounts = {
 		//						return ' \'' + (orec[fn] || "" )+ '\'';
 		//				}).join(',');
 		//				str = str  + ');';
-    console.log(query);
+    debuglog(query);
     pg.connect(dburl, function (err, client, done) {
       client.query(query, values, function (err, result) {
         done();
@@ -145,7 +146,7 @@ var accounts = {
             return true;
           }
         });
-        console.log('looking for ' + JSON.stringify(obj) + ' found' + JSON.stringify(filterResult));
+        debuglog('looking for ' + JSON.stringify(obj) + ' found' + JSON.stringify(filterResult));
         if (filterResult.length) {
           done();
           cb(undefined, filterResult[0]);
@@ -173,7 +174,7 @@ var accounts = {
             console.log('or not implemented');
           } else if (Array.isArray(obj)) {
 				// filter for all present values
-            console.log('get every : ' + obj);
+            debuglog('get every : ' + obj);
             var r = obj.every(function (o) {
               var s = Object.getOwnPropertyNames(o)[0];
               return (oRow[s] == obj[s]);

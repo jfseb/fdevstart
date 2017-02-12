@@ -1,10 +1,34 @@
 {
   "domain": "IUPAC",
   "category": [
-    "element name",
-    "element symbol",
-    "atomic weight",
-    "element number"
+   	{
+      "name": "element name",
+      "description": "element name",
+      "defaultWidth": 120,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+   	{
+      "name": "element symbol",
+      "description": "element symbol",
+      "defaultWidth": 60,
+      "QBE": true,
+      "LUNRIndex": true
+    },
+  	{
+      "name": "atomic weight",
+      "description": "weigth of the element",
+      "defaultWidth": 80,
+      "QBE": true,
+      "LUNRIndex": false
+    },
+  	{
+      "name": "element number",
+      "description": "weigth of the element",
+      "defaultWidth": 60,
+      "QBE": true,
+      "LUNRIndex": true
+    }
   ],
   "wordindex": [
     "element name", "element number", "element symbol"
@@ -12,6 +36,11 @@
    "exactmatch" : [
      "element symbol"
    ],
+	"columns": [
+    "element symbol",
+  	"element number",
+ 	  "element name"
+	],
   "hidden": [
     "_urlpattern"
   ],

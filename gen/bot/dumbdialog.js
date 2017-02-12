@@ -12,7 +12,7 @@
 //  'proxy': 'http://proxy:8080',
 //  'https-proxy': 'https://proxy:8080'
 // })
-var builder = require('botbuilder');
+var builder = require("botbuilder");
 //var builder = require('botbuilder');
 var dispatcher = require('../match/dispatcher.js').dispatcher;
 var SimpleRecognizer = (function () {
@@ -202,7 +202,8 @@ function makeBot(connector) {
         },
         function (session, results) {
             session.endDialogWithResult({
-                response: { res: "down", u: session.dialogData.abc } });
+                response: { res: "down", u: session.dialogData.abc }
+            });
         }
     ]);
     bot.dialog('/train', [

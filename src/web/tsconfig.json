@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "outDir": "./apps/public/js/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es5",
+        "jsx": "react"
+    },
+ "files": [
+        "./qbetable.tsx"
+ ],
+    "include": [
+        "./src/**/*"
+    ],
+"exclude": [
+        "node_modules",
+        "node_modules/@types/core-js/*",
+        "**/*.spec.ts"
+    ]
+}

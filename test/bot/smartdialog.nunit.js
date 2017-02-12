@@ -131,6 +131,56 @@ exports.testListAllMultipleCategories = function (test) {
   });
 };
 
+
+exports.testMakeTable = function (test) {
+  testOne('make table for element name, element symbol and atomic weight',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,
+     'I had to drop "atomic weight". But here you go ...\nCreating and starting table with "element name" and "element symbol"', 'wiki present');
+    test.done();
+  });
+};
+
+
+
+exports.testListAllSingleSimple = function (test) {
+  testOne('List all element names with element number 10',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,  'the element names for element number 10 are ...\nneon');
+    test.done();
+  });
+};
+
+
+
+
+exports.testWhatIsNonParseable = function (test) {
+  testOne('What is the atomic weight, element name for element name silver sowasgibts nicht',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+
+    test.deepEqual(sRes, 'I don\'t know anything about "atomic weight, element name" ("atomic weight" and "element name")"'
+  + ' in relation to "element name silver sowasgibts nicht"\nI do not understand "sowasgibts".');
+    test.done();
+  });
+};
+
+
+
+exports.testListAllMultipleCategoriesJunk = function (test) {
+  testOne('List all atomic weight, sowasgibtsgarnicht, element symbol for element name silver',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,  'I don\'t know anything about "atomic weight, sowasgibtsgarnicht, element symbol"(Error: "sowasgibtsgarnicht" is not a category!)' );
+    test.done();
+  });
+};
+
+
+
+
 exports.testListAllMultipleCategories2 = function (test) {
   testOne('What is the atomic weight and element symbol for gold',function(oRes) {
     var sRes = oRes;

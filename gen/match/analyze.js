@@ -5,13 +5,13 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-var InputFilter = require('./inputFilter');
-var debug = require('debug');
+var InputFilter = require("./inputFilter");
+var debug = require("debug");
 var debuglog = debug('analyze');
-var logger = require('../utils/logger');
+var logger = require("../utils/logger");
 var perf = logger.perf('analyze');
-var Toolmatcher = require('./toolmatcher');
-var Sentence = require('./sentence');
+var Toolmatcher = require("./toolmatcher");
+var Sentence = require("./sentence");
 function analyzeAll(sString, rules, aTools, words) {
     "use strict";
     if (sString.length === 0) {

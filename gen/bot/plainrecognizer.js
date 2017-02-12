@@ -5,7 +5,7 @@
  * A recognizer parametrized by regex expressions
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('plainrecognizer');
 var AnyObject = Object;
 function recognize(sString, mRules) {
@@ -248,7 +248,7 @@ var RegExpRecognizer = (function () {
         callback(undefined, u);
     };
     return RegExpRecognizer;
-}());
-exports.RegExpRecognizer = RegExpRecognizer; // class
+}()); // class
+exports.RegExpRecognizer = RegExpRecognizer;
 
 //# sourceMappingURL=plainrecognizer.js.map

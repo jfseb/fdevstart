@@ -101,7 +101,7 @@ History.prototype.push = function (oNext) {
   // we add the record unless it's identical to the last one
   if (this._data.length && oNext === this._data[this._data.length - 1]) {
     // do not push
-    this._pos = this.data.length;
+    this._pos = this._data.length;
     return;
   } else {
     this._data.push(oNext);

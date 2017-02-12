@@ -21,6 +21,20 @@ export function cleanseString(sString: string): string {
     return sString
 }
 
+export function cleanseStringLeaveDots(sString: string): string {
+    var len = 0;
+    while (len !== sString.length) {
+        len = sString.length;
+        sString = sString.replace(/\s+/g, ' ');
+        sString = sString.replace(/^\s+/, '');
+        sString = sString.replace(/\s+$/, '');
+        sString = sString.replace(/^[,;!?]+/, '');
+        sString = sString.replace(/[,;!?]+$/, '');
+    }
+    return sString
+}
+
+
 export function cleanseQuotedString(sString: string): string {
     var len = 0;
     while (len !== sString.length) {
@@ -34,8 +48,6 @@ export function cleanseQuotedString(sString: string): string {
     }
     return sString
 }
-
-
 
 const regexpRemoveDouble = new RegExp(/^\"(\".*\")\"$/);
 const striptail = new RegExp(/^\"([^\"]+)"$/)
@@ -126,12 +138,13 @@ export function swallowQuote(str : string, i : number) : { token : string, nextp
          }
      }
      return {
-         token : cleanseString(m[1]),
+         token : cleanseStringLeaveDots(m[1]),
          nextpos : (i + m[0].length)
      }
 }
 
-var Word = /^(([-#A-Z_a-z0-9\/\\\%\$&](\'[-#A-Z_a-z0-9\/\\\%\$&])*)+)/;
+var Word2 = /^([.]?([-#A-Z_a-z0-9\/\\\%\$&]([\'.][-#A-Z_a-z0-9\/\\\%\$&])*)+)/;
+var Word = /^(([^.,;\'\"]|(\.[^ ,;\'\"]))([^. ,;?!\"']|(\.[^ ,;?!\"'])|(\'[^. ,;?!\"\'])*)+)/;
 export function swallowWord(str : string, i : number) : { token : string, nextpos : number} {
      var m = Word.exec(str.substring(i));
      if(!m) {
@@ -151,6 +164,54 @@ function pushToken(res : ITokenizedString, token : string) {
 }
 
 /**
+ * Returns true iff tokenized represents multiple words, which
+ * can potenially be added together;
+ */
+export function isCombinableSplit(tokenized : ITokenizedString) {
+   if(tokenized.tokens.length <= 1) {
+      return false;
+   }
+   for(var i = 1; i < tokenized.tokens.length; ++i) {
+       if(!tokenized.fusable[i]) {
+           return false;
+       }
+   }
+   return true;
+}
+
+/**
+ * return true iff  range @ index is a suitable combinable overlap
+ *
+ * (typically in the parsed real string)
+ * return the targetindex or -1 if impossible
+ */
+export function isCombinableRangeReturnIndex(range : IMatch.IRange , fusable: boolean[], index: number) {
+    var start = index + range.low;
+    var end = index + range.high;
+    // example range = -1, 0             index = 1  => start = 0, end = 1, test fusable[1]
+    for(var i = start; i < end; ++i) {
+        if(!fusable[i+1]) {
+            return -1;
+        }
+    }
+    return start;
+}
+
+export function combineTokens(range : IMatch.IRange , index: number, tokens : string[]) {
+    var start = index + range.low;
+    var end = index + range.high;
+    var res = [];
+    for(var i = start; i <= end; ++i) {
+        res.push(tokens[i]);
+    }
+    return res.join(" ");
+}
+
+
+/**
+ *
+ * Note: this tokenizer recognized .gitigore or .a.b.c as one token
+ * trailing . is stripped!
  *@param {string} sString , e.g. "a,b c;d O'Hara and "murph'ys"
  *@return {Array<String>} broken down array, e.g.
  * [["a b c"], ["a", "b c"], ["a b", "c"], ....["a", "b", "c"]]
@@ -190,7 +251,6 @@ export function tokenizeString(sString: string, spacesLimit?: number): ITokenize
             break;
             case ':':
             case ',':
-            case '.':
             case '?':
             case '!':
             case ';':
@@ -198,6 +258,7 @@ export function tokenizeString(sString: string, spacesLimit?: number): ITokenize
                 seenSep = true;
                 ++i;
             break;
+            case '.':
             default:
                 var {token, nextpos} = swallowWord(sString,i);
                 if(token) {
@@ -217,10 +278,14 @@ export function tokenizeString(sString: string, spacesLimit?: number): ITokenize
 export function makeMatchPattern(str: string) {
     var tokens = tokenizeString(str);
     var bestlen = 0;
+    if(!isCombinableSplit(tokens)) {
+        return undefined;
+    }
     var best = {
         longestToken : "",
         span: {low: 0, high: 0}
     };
+
     if(tokens.tokens.length > 1) {
         tokens.tokens.forEach(function(token,index) {
             var len = token.length;

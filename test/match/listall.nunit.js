@@ -81,7 +81,7 @@ exports.testListAllWithContextEmpty = function (test) {
 exports.testListAllHavingContext = function (test) {
   var res = ListAll.listAllHavingContext('url', 'unit test',
     mRules, records);
-  var res2 = ListAll.formatDistinctFromWhatIfResult(res);
+  var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
 
   test.deepEqual(res2, '"com.sap.NTA"; "com.sap.SNav"');
   test.done();
@@ -90,7 +90,7 @@ exports.testListAllHavingContext = function (test) {
 
 exports.testListAllHavingContextEmpty = function (test) {
   var res = ListAll.listAllHavingContext('url', '', mRules, records);
-  var res2 = ListAll.formatDistinctFromWhatIfResult(res);
+  var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
   test.deepEqual(res2, '');
   test.done();
 };

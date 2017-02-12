@@ -14,14 +14,15 @@ var Tools = require("../match/tools");
 var fs = require("fs");
 var Meta = require("./meta");
 var Utils = require("../utils/utils");
+var CircularSer = require("../utils/circularser");
 var process = require("process");
 var _ = require("lodash");
+exports.global_AddSplits = true; // false;
 /**
  * the model path, may be controlled via environment variable
  */
 var envModelPath = process.env["ABOT_MODELPATH"] || "testmodel";
-;
-var ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
+var ARR_MODEL_PROPERTIES = ["domain", "bitindex", "categoryDescribed", "columns", "description", "tool", "toolhidden", "synonyms", "category", "wordindex", "exactmatch", "hidden"];
 function addSynonyms(synonyms, category, synonymFor, bitindex, mRules, seen) {
     synonyms.forEach(function (syn) {
         var oRule = {
@@ -32,13 +33,50 @@ function addSynonyms(synonyms, category, synonymFor, bitindex, mRules, seen) {
             bitindex: bitindex,
             _ranking: 0.95
         };
-        debuglog("inserting synonym" + JSON.stringify(oRule));
+        debuglog(debuglog.enabled ? ("inserting synonym" + JSON.stringify(oRule)) : '-');
         insertRuleIfNotPresent(mRules, oRule, seen);
     });
 }
 function getRuleKey(rule) {
-    return rule.matchedString + "-|-" + rule.category + " -|- " + rule.type + " -|- " + rule.word + " ";
+    var r1 = rule.matchedString + "-|-" + rule.category + " -|- " + rule.type + " -|- " + rule.word + " ";
+    if (rule.range) {
+        var r2 = getRuleKey(rule.range.rule);
+        r1 += " -|- " + rule.range.low + "/" + rule.range.high + " -|- " + r2;
+    }
+    return r1;
 }
+var Breakdown = require("../match/breakdown");
+/* given a rule which represents a word sequence which is split during tokenization */
+function addBestSplit(mRules, rule, seenRules) {
+    if (!exports.global_AddSplits) {
+        return;
+    }
+    if (rule.type !== 0 /* WORD */) {
+        return;
+    }
+    var best = Breakdown.makeMatchPattern(rule.lowercaseword);
+    if (!best) {
+        return;
+    }
+    var newRule = {
+        category: rule.category,
+        matchedString: rule.matchedString,
+        bitindex: rule.bitindex,
+        word: best.longestToken,
+        type: 0,
+        lowercaseword: best.longestToken,
+        _ranking: 0.95,
+        //    exactOnly : rule.exactOnly,
+        range: best.span
+    };
+    if (rule.exactOnly) {
+        newRule.exactOnly = rule.exactOnly;
+    }
+    ;
+    newRule.range.rule = rule;
+    insertRuleIfNotPresent(mRules, newRule, seenRules);
+}
+exports.addBestSplit = addBestSplit;
 function insertRuleIfNotPresent(mRules, rule, seenRules) {
     if (rule.type !== 0 /* WORD */) {
         mRules.push(rule);
@@ -48,9 +86,13 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
         throw new Error('illegal rule' + JSON.stringify(rule, undefined, 2));
     }
     var r = getRuleKey(rule);
+    /* if( (rule.word === "service" || rule.word=== "services") && r.indexOf('OData') >= 0) {
+         console.log("rulekey is" + r);
+         console.log("presence is " + JSON.stringify(seenRules[r]));
+     }*/
     rule.lowercaseword = rule.word.toLowerCase();
     if (seenRules[r]) {
-        debuglog("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2));
+        debuglog(debuglog.enabled ? ("Attempting to insert duplicate" + JSON.stringify(rule, undefined, 2)) : "-");
         var duplicates = seenRules[r].filter(function (oEntry) {
             return 0 === InputFilterRules.compareMRuleFull(oEntry, rule);
         });
@@ -61,11 +103,12 @@ function insertRuleIfNotPresent(mRules, rule, seenRules) {
     seenRules[r] = (seenRules[r] || []);
     seenRules[r].push(rule);
     if (rule.word === "") {
-        debuglog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
+        debuglog(debuglog.enabled ? ('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2)) : '-');
         loadlog('Skipping rule with emtpy word ' + JSON.stringify(rule, undefined, 2));
         return;
     }
     mRules.push(rule);
+    addBestSplit(mRules, rule, seenRules);
     return;
 }
 function loadModelData(modelPath, oMdl, sModelName, oModel) {
@@ -177,6 +220,8 @@ function mergeModelJson(sModelName, oMdl, oModel) {
             throw new Error('Model property "' + sProperty + '" not a known model property in model of domain ' + oMdl.domain + ' ');
         }
     });
+    // consider streamlining the categories
+    oModel.rawModels[oMdl.domain] = oMdl;
     oModel.full.domain[oMdl.domain] = {
         description: oMdl.description,
         categories: categoryDescribedMap,
@@ -310,10 +355,129 @@ function splitRules(rules) {
     };
 }
 exports.splitRules = splitRules;
-function loadModels(modelPath) {
+function cmpLengthSort(a, b) {
+    var d = a.length - b.length;
+    if (d) {
+        return d;
+    }
+    return a.localeCompare(b);
+}
+var Distance = require("../utils/damerauLevenshtein");
+var Algol = require("../match/algol");
+// offset[0] : len-2
+//             len -1
+//             len
+//             len +1
+//             len +2
+//             len +3
+function findNextLen(targetLen, arr, offsets) {
+    offsets.shift();
+    for (var i = offsets[4]; (i < arr.length) && (arr[i].length <= targetLen); ++i) {
+    }
+    //console.log("pushing " + i);
+    offsets.push(i);
+}
+exports.findNextLen = findNextLen;
+function addRangeRulesUnlessPresent(rules, lcword, rangeRules, presentRulesForKey, seenRules) {
+    rangeRules.forEach(function (rangeRule) {
+        var newRule = Object.assign({}, rangeRule);
+        newRule.lowercaseword = lcword;
+        newRule.word = lcword;
+        //if((lcword === 'services' || lcword === 'service') && newRule.range.rule.lowercaseword.indexOf('odata')>=0) {
+        //    console.log("adding "+ JSON.stringify(newRule) + "\n");
+        //}
+        //todo: check whether an equivalent rule is already present?
+        var cnt = rules.length;
+        insertRuleIfNotPresent(rules, newRule, seenRules);
+    });
+}
+exports.addRangeRulesUnlessPresent = addRangeRulesUnlessPresent;
+function addCloseExactRangeRules(rules, seenRules) {
+    var keysMap = {};
+    var rangeKeysMap = {};
+    rules.forEach(function (rule) {
+        if (rule.type === 0 /* WORD */) {
+            //keysMap[rule.lowercaseword] = 1;
+            keysMap[rule.lowercaseword] = keysMap[rule.lowercaseword] || [];
+            keysMap[rule.lowercaseword].push(rule);
+            if (!rule.exactOnly && rule.range) {
+                rangeKeysMap[rule.lowercaseword] = rangeKeysMap[rule.lowercaseword] || [];
+                rangeKeysMap[rule.lowercaseword].push(rule);
+            }
+        }
+    });
+    var keys = Object.keys(keysMap);
+    keys.sort(cmpLengthSort);
+    var len = 0;
+    keys.forEach(function (key, index) {
+        if (key.length != len) {
+        }
+        len = key.length;
+    });
+    //   keys = keys.slice(0,2000);
+    var rangeKeys = Object.keys(rangeKeysMap);
+    rangeKeys.sort(cmpLengthSort);
+    //console.log(` ${keys.length} keys and ${rangeKeys.length} rangekeys `);
+    var low = 0;
+    var high = 0;
+    var lastlen = 0;
+    var offsets = [0, 0, 0, 0, 0, 0];
+    var len = rangeKeys.length;
+    findNextLen(0, keys, offsets);
+    findNextLen(1, keys, offsets);
+    findNextLen(2, keys, offsets);
+    rangeKeys.forEach(function (rangeKey) {
+        if (rangeKey.length !== lastlen) {
+            for (i = lastlen + 1; i <= rangeKey.length; ++i) {
+                findNextLen(i + 2, keys, offsets);
+            }
+            //   console.log(` shifted to ${rangeKey.length} with offsets beeing ${offsets.join(' ')}`);
+            //   console.log(` here 0 ${offsets[0]} : ${keys[Math.min(keys.length-1, offsets[0])].length}  ${keys[Math.min(keys.length-1, offsets[0])]} `);
+            //  console.log(` here 5-1  ${keys[offsets[5]-1].length}  ${keys[offsets[5]-1]} `);
+            //   console.log(` here 5 ${offsets[5]} : ${keys[Math.min(keys.length-1, offsets[5])].length}  ${keys[Math.min(keys.length-1, offsets[5])]} `);
+            lastlen = rangeKey.length;
+        }
+        for (var i = offsets[0]; i < offsets[5]; ++i) {
+            var d = Distance.calcDistanceAdjusted(rangeKey, keys[i]);
+            // console.log(`${rangeKey.length-keys[i].length} ${d} ${rangeKey} and ${keys[i]}  `);
+            if ((d !== 1.0) && (d >= Algol.Cutoff_rangeCloseMatch)) {
+                //console.log(`would add ${rangeKey} for ${keys[i]} ${d}`);
+                var cnt = rules.length;
+                // we only have to add if there is not yet a match rule here which points to the same
+                addRangeRulesUnlessPresent(rules, keys[i], rangeKeysMap[rangeKey], keysMap[keys[i]], seenRules);
+                if (rules.length > cnt) {
+                }
+            }
+        }
+    });
+    /*
+    [
+        ['aEFG','aEFGH'],
+        ['aEFGH','aEFGHI'],
+        ['Odata','ODatas'],
+   ['Odata','Odatas'],
+   ['Odata','Odatb'],
+   ['Odata','UData'],
+   ['service','services'],
+   ['this isfunny and more','this isfunny and mores'],
+    ].forEach(rec => {
+        console.log(`distance ${rec[0]} ${rec[1]} : ${Distance.calcDistance(rec[0],rec[1])}  adf ${Distance.calcDistanceAdjusted(rec[0],rec[1])} `);
+
+    });
+    console.log("distance Odata Udata"+ Distance.calcDistance('OData','UData'));
+    console.log("distance Odata Odatb"+ Distance.calcDistance('OData','ODatb'));
+    console.log("distance Odatas Odata"+ Distance.calcDistance('OData','ODataa'));
+    console.log("distance Odatas abcde"+ Distance.calcDistance('abcde','abcdef'));
+    console.log("distance services "+ Distance.calcDistance('services','service'));
+    */
+}
+exports.addCloseExactRangeRules = addCloseExactRangeRules;
+var n = 0;
+function loadModels(modelPath, addSplits) {
     var oModel;
     oModel = {
         full: { domain: {} },
+        rawModels: {},
         domains: [],
         tools: [],
         rules: undefined,
@@ -324,7 +488,18 @@ function loadModels(modelPath) {
         records: [],
         meta: { t3: {} }
     };
+    exports.global_AddSplits = true; // addSplits || !process.env.ABOT_OLDMATCH;
     modelPath = modelPath || envModelPath;
+    try {
+        var a = CircularSer.load('./' + modelPath + '/_cache' + !!addSplits + '.js');
+        //console.log("found a cache ?  " + !!a);
+        //a = undefined;
+        if (a) {
+            return a;
+        }
+    }
+    catch (e) {
+    }
     var smdls = fs.readFileSync('./' + modelPath + '/models.json', 'utf-8');
     var mdls = JSON.parse("" + smdls);
     mdls.forEach(function (sModelName) {
@@ -415,9 +590,13 @@ function loadModels(modelPath) {
         },
     */
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
+    addCloseExactRangeRules(oModel.mRules, oModel.seenRules);
+    oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
     oModel.rules = splitRules(oModel.mRules);
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
     delete oModel.seenRules;
+    debuglog('saving');
+    CircularSer.save('./' + modelPath + '/_cache' + !!addSplits + '.js', oModel);
     return oModel;
 }
 exports.loadModels = loadModels;
@@ -475,6 +654,13 @@ function getCategoriesForDomain(theModel, domain) {
     return Meta.getStringArray(res);
 }
 exports.getCategoriesForDomain = getCategoriesForDomain;
+function getTableColumns(theModel, domain) {
+    if (theModel.domains.indexOf(domain) < 0) {
+        throw new Error("Domain \"" + domain + "\" not part of model");
+    }
+    return theModel.rawModels[domain].columns.slice(0);
+}
+exports.getTableColumns = getTableColumns;
 /**
  * Return all categories of a domain which can appear on a word,
  * these are typically the wordindex domains + entries generated by generic rules

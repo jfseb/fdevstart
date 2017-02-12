@@ -8,7 +8,7 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 "use strict";
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('exectemplate');
 function expandTemplate(context, template) {
     var pattern = template;

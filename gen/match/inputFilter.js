@@ -30,13 +30,6 @@ var debuglogV = debug('inputVFilter');
 var debuglogM = debug('inputMFilter');
 var matchdata = require("./matchdata");
 var oUnitTests = matchdata.oUnitTests;
-function cntChars(str, len) {
-    var cnt = 0;
-    for (var i = 0; i < len; ++i) {
-        cnt += (str.charAt(i) === 'X') ? 1 : 0;
-    }
-    return cnt;
-}
 /**
  * @param sText {string} the text to match to NavTargetResolution
  * @param sText2 {string} the query text, e.g. NavTarget
@@ -44,31 +37,7 @@ function cntChars(str, len) {
  * @return the distance, note that is is *not* symmetric!
  */
 function calcDistance(sText1, sText2) {
-    // console.log("length2" + sText1 + " - " + sText2)
-    var s1len = sText1.length;
-    var s2len = sText2.length;
-    var min = Math.min(s1len, s2len);
-    if (Math.abs(s1len - s2len) > Math.min(s1len, s2len)) {
-        return 0.3;
-    }
-    var dist = distance.jaroWinklerDistance(sText1, sText2);
-    var cnt1 = cntChars(sText1, s1len);
-    var cnt2 = cntChars(sText2, s2len);
-    if (cnt1 !== cnt2) {
-        dist = dist * 0.7;
-    }
-    return dist;
-    /*
-    var a0 = distance.levenshtein(sText1.substring(0, sText2.length), sText2)
-    if(debuglogV.enabled) {
-      debuglogV("distance" + a0 + "stripped>" + sText1.substring(0,sText2.length) + "<>" + sText2+ "<");
-    }
-    if(a0 * 50 > 15 * sText2.length) {
-        return 40000;
-    }
-    var a = distance.levenshtein(sText1, sText2)
-    return a0 * 500 / sText2.length + a
-    */
+    return distance.calcDistance(sText1, sText2);
 }
 exports.calcDistance = calcDistance;
 /**
@@ -259,6 +228,82 @@ function checkOneRule(string, lcString, exact, res, oRule, cntRec) {
     }
 }
 exports.checkOneRule = checkOneRule;
+function checkOneRuleWithOffset(string, lcString, exact, res, oRule, cntRec) {
+    if (debuglogV.enabled) {
+        debuglogV('attempting to match rule ' + JSON.stringify(oRule) + " to string \"" + string + "\"");
+    }
+    switch (oRule.type) {
+        case 0 /* WORD */:
+            if (!oRule.lowercaseword) {
+                throw new Error('rule without a lowercase variant' + JSON.stringify(oRule, undefined, 2));
+            }
+            ;
+            if (exact && oRule.word === string || oRule.lowercaseword === lcString) {
+                if (debuglog.enabled) {
+                    debuglog("\n!matched exact " + string + "=" + oRule.lowercaseword + " => " + oRule.matchedString + "/" + oRule.category);
+                }
+                res.push({
+                    string: string,
+                    matchedString: oRule.matchedString,
+                    category: oRule.category,
+                    rule: oRule,
+                    _ranking: oRule._ranking || 1.0
+                });
+            }
+            if (!exact && !oRule.exactOnly) {
+                var levenmatch = calcDistance(oRule.lowercaseword, lcString);
+                /*
+                          addCntRec(cntRec,"calcDistance", 1);
+                          if(levenmatch < 50) {
+                            addCntRec(cntRec,"calcDistanceExp", 1);
+                          }
+                          if(levenmatch < 40000) {
+                            addCntRec(cntRec,"calcDistanceBelow40k", 1);
+                          }
+                          */
+                //if(oRule.lowercaseword === "cosmos") {
+                //  console.log("here ranking " + levenmatch + " " + oRule.lowercaseword + " " + lcString);
+                //}
+                if (levenmatch >= Algol.Cutoff_WordMatch) {
+                    //console.log("found rec");
+                    addCntRec(cntRec, "calcDistanceOk", 1);
+                    var rec = {
+                        string: string,
+                        rule: oRule,
+                        matchedString: oRule.matchedString,
+                        category: oRule.category,
+                        _ranking: (oRule._ranking || 1.0) * levenPenalty(levenmatch),
+                        levenmatch: levenmatch
+                    };
+                    if (debuglog) {
+                        debuglog("\n!CORO: fuzzy " + (levenmatch).toFixed(3) + " " + rec._ranking.toFixed(3) + "  \"" + string + "\"=" + oRule.lowercaseword + " => " + oRule.matchedString + "/" + oRule.category);
+                    }
+                    res.push(rec);
+                }
+            }
+            break;
+        case 1 /* REGEXP */:
+            {
+                if (debuglog.enabled) {
+                    debuglog(JSON.stringify(" here regexp" + JSON.stringify(oRule, undefined, 2)));
+                }
+                var m = oRule.regexp.exec(string);
+                if (m) {
+                    res.push({
+                        string: string,
+                        rule: oRule,
+                        matchedString: (oRule.matchIndex !== undefined && m[oRule.matchIndex]) || string,
+                        category: oRule.category,
+                        _ranking: oRule._ranking || 1.0
+                    });
+                }
+            }
+            break;
+        default:
+            throw new Error("unknown type" + JSON.stringify(oRule, undefined, 2));
+    }
+}
+exports.checkOneRuleWithOffset = checkOneRuleWithOffset;
 ;
 function addCntRec(cntRec, member, number) {
     if ((!cntRec) || (number === 0)) {
@@ -280,13 +325,27 @@ function categorizeString(word, exact, oRules, cntRec) {
     return res;
 }
 exports.categorizeString = categorizeString;
+function categorizeSingleWordWithOffset(word, lcword, exact, oRules, cntRec) {
+    // simply apply all rules
+    if (debuglogM.enabled) {
+        debuglogM("rules : " + JSON.stringify(oRules, undefined, 2));
+    }
+    var res = [];
+    oRules.forEach(function (oRule) {
+        checkOneRuleWithOffset(word, lcword, exact, res, oRule, cntRec);
+    });
+    debuglog("CSWWO: got results for " + lcword + "  " + res.length);
+    res.sort(sortByRank);
+    return res;
+}
+exports.categorizeSingleWordWithOffset = categorizeSingleWordWithOffset;
 function postFilter(res) {
     res.sort(sortByRank);
     var bestRank = 0;
     //console.log("\npiltered " + JSON.stringify(res));
     if (debuglog.enabled) {
-        debuglog(" preFilter : \n" + res.map(function (word) {
-            return " " + word._ranking + "  => \"" + word.category + "\" " + word.matchedString + " \n";
+        debuglog("preFilter : \n" + res.map(function (word, index) {
+            return index + " " + word._ranking + "  => \"" + word.category + "\" " + word.matchedString;
         }).join("\n"));
     }
     var r = res.filter(function (resx, index) {
@@ -314,6 +373,42 @@ function postFilter(res) {
     return r;
 }
 exports.postFilter = postFilter;
+function postFilterWithOffset(res) {
+    res.sort(sortByRank);
+    var bestRank = 0;
+    //console.log("\npiltered " + JSON.stringify(res));
+    if (debuglog.enabled) {
+        debuglog(" preFilter : \n" + res.map(function (word) {
+            return " " + word._ranking + "  => \"" + word.category + "\" " + word.matchedString + " ";
+        }).join("\n"));
+    }
+    var r = res.filter(function (resx, index) {
+        if (index === 0) {
+            bestRank = resx._ranking;
+            return true;
+        }
+        // 1-0.9 = 0.1
+        // 1- 0.93 = 0.7
+        // 1/7
+        var delta = bestRank / resx._ranking;
+        if (!(resx.rule && resx.rule.range)
+            && !(res[index - 1].rule && res[index - 1].rule.range)
+            && (resx.matchedString === res[index - 1].matchedString)
+            && (resx.category === res[index - 1].category)) {
+            return false;
+        }
+        //console.log("\n delta for " + delta + "  " + resx._ranking);
+        if (resx.levenmatch && (delta > 1.03)) {
+            return false;
+        }
+        return true;
+    });
+    if (debuglog.enabled) {
+        debuglog("\nfiltered " + r.length + "/" + res.length + JSON.stringify(r));
+    }
+    return r;
+}
+exports.postFilterWithOffset = postFilterWithOffset;
 function categorizeString2(word, exact, rules, cntRec) {
     // simply apply all rules
     if (debuglogM.enabled) {
@@ -336,15 +431,54 @@ function categorizeString2(word, exact, rules, cntRec) {
         rules.nonWordRules.forEach(function (oRule) {
             checkOneRule(word, lcString, exact, res, oRule, cntRec);
         });
+        res.sort(sortByRank);
+        return res;
     }
     else {
         debuglog("categorize non exact" + word + " xx  " + rules.allRules.length);
         return postFilter(categorizeString(word, exact, rules.allRules, cntRec));
     }
-    res.sort(sortByRank);
-    return res;
 }
 exports.categorizeString2 = categorizeString2;
+function categorizeWordInternalWithOffsets(word, lcword, exact, rules, cntRec) {
+    debuglogM("categorize " + lcword + " with offset!!!!!!!!!!!!!!!!!" + exact);
+    // simply apply all rules
+    if (debuglogM.enabled) {
+        debuglogM("rules : " + JSON.stringify(rules, undefined, 2));
+    }
+    var res = [];
+    if (exact) {
+        var r = rules.wordMap[lcword];
+        if (r) {
+            debuglogM(" ....pushing n rules exact for " + lcword + ":" + r.rules.length);
+            debuglogM(r.rules.map(function (r, index) { return '' + index + ' ' + JSON.stringify(r); }).join("\n"));
+            r.rules.forEach(function (oRule) {
+                res.push({
+                    string: word,
+                    matchedString: oRule.matchedString,
+                    category: oRule.category,
+                    rule: oRule,
+                    _ranking: oRule._ranking || 1.0
+                });
+            });
+        }
+        rules.nonWordRules.forEach(function (oRule) {
+            checkOneRuleWithOffset(word, lcword, exact, res, oRule, cntRec);
+        });
+        res = postFilterWithOffset(res);
+        debuglog("here results for" + word + " res " + res.length);
+        debuglogM("here results for" + word + " res " + res.length);
+        res.sort(sortByRank);
+        return res;
+    }
+    else {
+        debuglog("categorize non exact" + word + " xx  " + rules.allRules.length);
+        var rr = categorizeSingleWordWithOffset(word, lcword, exact, rules.allRules, cntRec);
+        //debulogM("fuzzy res " + JSON.stringify(rr));
+        return postFilterWithOffset(rr);
+    }
+}
+exports.categorizeWordInternalWithOffsets = categorizeWordInternalWithOffsets;
 /**
  *
  * Options may be {
@@ -414,9 +548,15 @@ exports.RankWord = {
         });
     },
     takeFirstN: function (lst, n) {
+        var lastRanking = 1.0;
+        var cntRanged = 0;
         return lst.filter(function (oMember, iIndex) {
-            var lastRanking = 1.0;
-            if ((iIndex < n) || oMember._ranking === lastRanking) {
+            var isRanged = !!(oMember["rule"] && oMember["rule"].range);
+            if (isRanged) {
+                cntRanged += 1;
+                return true;
+            }
+            if (((iIndex - cntRanged) < n) || (oMember._ranking === lastRanking)) {
                 lastRanking = oMember._ranking;
                 return true;
             }
@@ -474,6 +614,66 @@ function categorizeWordWithRankCutoff(sWordGroup, splitRules, cntRec) {
     return seenIt;
 }
 exports.categorizeWordWithRankCutoff = categorizeWordWithRankCutoff;
+/* if we have a  "Run like the Wind"
+  an a user type fun like  a Rind , and Rind is an exact match,
+  we will not start looking for the long sentence
+
+  this is to be fixed by "spreading" the range indication accross very similar words in the vincinity of the
+  target words
+*/
+function categorizeWordWithOffsetWithRankCutoff(sWordGroup, splitRules, cntRec) {
+    var sWordGroupLC = sWordGroup.toLowerCase();
+    var seenIt = categorizeWordInternalWithOffsets(sWordGroup, sWordGroupLC, true, splitRules, cntRec);
+    //console.log("SEENIT" + JSON.stringify(seenIt));
+    //totalCnt += 1;
+    // exactLen += seenIt.length;
+    //console.log("first run exact " + JSON.stringify(seenIt));
+    addCntRec(cntRec, 'cntCatExact', 1);
+    addCntRec(cntRec, 'cntCatExactRes', seenIt.length);
+    if (exports.RankWord.hasAbove(seenIt, 0.8)) {
+        if (cntRec) {
+            addCntRec(cntRec, 'exactPriorTake', seenIt.length);
+        }
+        seenIt = exports.RankWord.takeAbove(seenIt, 0.8);
+        if (cntRec) {
+            addCntRec(cntRec, 'exactAfterTake', seenIt.length);
+        }
+    }
+    else {
+        seenIt = categorizeWordInternalWithOffsets(sWordGroup, sWordGroupLC, false, splitRules, cntRec);
+        addCntRec(cntRec, 'cntNonExact', 1);
+        addCntRec(cntRec, 'cntNonExactRes', seenIt.length);
+    }
+    // totalLen += seenIt.length;
+    debuglog(debuglog.enabled ? (seenIt.length + " with " + seenIt.reduce(function (prev, obj) { return prev + (obj.rule.range ? 1 : 0); }, 0) + " ranged !") : '-');
+    //  var cntRanged = seenIt.reduce( (prev,obj) => prev + (obj.rule.range ? 1 : 0),0);
+    //  console.log(`*********** ${seenIt.length} with ${cntRanged} ranged !`);
+    seenIt = exports.RankWord.takeFirstN(seenIt, Algol.Top_N_WordCategorizations);
+    // retainedCnt += seenIt.length;
+    //console.log("final res of categorizeWordWithOffsetWithRankCutoff" + JSON.stringify(seenIt));
+    return seenIt;
+}
+exports.categorizeWordWithOffsetWithRankCutoff = categorizeWordWithOffsetWithRankCutoff;
+function categorizeWordWithOffsetWithRankCutoffSingle(word, rule) {
+    var lcword = word.toLowerCase();
+    if (lcword === rule.lowercaseword) {
+        return {
+            string: word,
+            matchedString: rule.matchedString,
+            category: rule.category,
+            rule: rule,
+            _ranking: rule._ranking || 1.0
+        };
+    }
+    var res = [];
+    checkOneRuleWithOffset(word, lcword, false, res, rule);
+    debuglog("catWWOWRCS " + lcword);
+    if (res.length) {
+        return res[0];
+    }
+    return undefined;
+}
+exports.categorizeWordWithOffsetWithRankCutoffSingle = categorizeWordWithOffsetWithRankCutoffSingle;
 /*
 export function dumpCnt() {
   console.log(`
@@ -579,6 +779,29 @@ function analyzeString(sString, rules, words) {
     return res;
 }
 exports.analyzeString = analyzeString;
+function categorizeAWordWithOffsets(sWordGroup, rules, sentence, words, cntRec) {
+    var seenIt = words[sWordGroup];
+    if (seenIt === undefined) {
+        seenIt = categorizeWordWithOffsetWithRankCutoff(sWordGroup, rules, cntRec);
+        utils.deepFreeze(seenIt);
+        words[sWordGroup] = seenIt;
+    }
+    if (!seenIt || seenIt.length === 0) {
+        logger("***WARNING: Did not find any categorization for \"" + sWordGroup + "\" in sentence \""
+            + sentence + "\"");
+        if (sWordGroup.indexOf(" ") <= 0) {
+            debuglog("***WARNING: Did not find any categorization for primitive (!)" + sWordGroup);
+        }
+        debuglog("***WARNING: Did not find any categorization for " + sWordGroup);
+        if (!seenIt) {
+            throw new Error("Expecting emtpy list, not undefined for \"" + sWordGroup + "\"");
+        }
+        words[sWordGroup] = [];
+        return [];
+    }
+    return utils.cloneDeep(seenIt);
+}
+exports.categorizeAWordWithOffsets = categorizeAWordWithOffsets;
 /*
 [ [a,b], [c,d]]
 

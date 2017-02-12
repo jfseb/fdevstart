@@ -11,4 +11,4 @@ var connector = new builder.ConsoleConnector().listen();
 
 var botdialog = require('./gen/bot/smartdialog.js');
 
-botdialog.makeBot(connector);
+botdialog.makeBot(connector, undefined, { showModelLoadTime: true});

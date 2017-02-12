@@ -32,6 +32,9 @@ try {
 }
 
 var mdlsens = Model.loadModels('sensitive');
+
+Vismodel.makeLunrIndex('testmodel/iupac','./app/public/js/model_iupac');
+Vismodel.makeLunrIndex('sensitive/bom','./app/public/js/model_bom');
 Vismodel.tabModels(mdlsens, './app/server/views/models');
 
 

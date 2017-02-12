@@ -56,6 +56,20 @@ block content
 											| "/AIF/CUST/S6OP", "/AIF/EDCHANGES/S6OP", "/AIF/IFB/S6OP" ...
       
 			tr
+					td.cat_count ArtifactId
+					td 3830 distinct values in 30.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td component name, ui5 component name, library name, javascript name, javascript id, manifest id and appdescriptor id
+							tr.cat_description
+								td  for UI5 based applications, name of the UI5 Component, e.g. "ui.s2p.mm.supconf.monitors1". 
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "", "?", "ai.shl.edb", "an.aqd.querydesigner.manage" ...
+      
+			tr
 					td.cat_count appId
 					td 12779 distinct values in 100.0% of records
 					td
@@ -116,20 +130,6 @@ block content
 								td Possible values are ...
 											br
 											| "AC-INT", "AP-MD-BP", "AP-MD-BP-UI", "AP-PPE", "BC-ABA-SC", "BC-BMT-OM" ...
-      
-			tr
-					td.cat_count ArtifactId
-					td 3830 distinct values in 30.0% of records
-					td
-						table
-							tr.cat_synonyms
-								td component name, ui5 component name, library name, javascript name, javascript id, manifest id and appdescriptor id
-							tr.cat_description
-								td  for UI5 based applications, name of the UI5 Component, e.g. "ui.s2p.mm.supconf.monitors1". 
-							tr.cat_samplevalues
-								td Possible values are ...
-											br
-											| "", "?", "ai.shl.edb", "an.aqd.querydesigner.manage" ...
       
 			tr
 					td.cat_count BSPName
@@ -228,6 +228,108 @@ block content
 											| "Analytical", "Analytical, Design Studio", "Analytical, FPM/WebDynpro" ...
       
 			tr
+					td.cat_count BSPPackage
+					td 5146 distinct values in 40.3% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Package (DevClass) of the BSP Application
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "/DDF/UI5_ADU", "/DDF/UI5_EM", "/DDF/UI5_MRG", "AF_FND_ADHOC_ANALYTICS" ...
+      
+			tr
+					td.cat_count BusinessGroupName
+					td 4938 distinct values in 38.6% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Package (DevClass) of the BSP Application
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "FIN_BCG_GL_PERIOD_ACT"
+											br
+											| (2): "Risk Management"
+											br
+											| (3): "SAP_ACS_BCG_DETECTION, SAP_ACS_BCG_DETECTION"
+											br
+											| ...
+      
+			tr
+					td.cat_count BusinessRoleName
+					td 5960 distinct values in 46.6% of records
+					td
+						table
+							tr.cat_synonyms
+								td Business Role Name and Backend PFCG Role
+							tr.cat_description
+								td Package (DevClass) of the BSP Application
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "EMPLOYEE-SERVICE REQUEST (CRM)", "Internal Auditor", "Risk Manager" ...
+      
+			tr
+					td.cat_count ExternalReleaseName
+					td 6308 distinct values in 49.4% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td External Release name
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "Delivery Date 01/2015 (SFIN 1.0)"
+											br
+											| (2): "Delivery Date 02/2015 (SFIN 1.0)"
+											br
+											| (3): "Delivery Q1/2014"
+											br
+											| ...
+      
+			tr
+					td.cat_count FrontendSoftwareComponent
+					td 10619 distinct values in 83.1% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td Frontend Software Component
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "FSUI 400", "FSUI 500", "SAPSCORE 103", "SAPSCORE 104", "SAPSCORE 105" ...
+      
+			tr
+					td.cat_count releaseName
+					td 12779 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td release name
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "Delivery Date 01/2015 (SFIN 1.0)"
+											br
+											| (2): "Delivery Q1/2015"
+											br
+											| (3): "Delivery Q1/2016"
+											br
+											| ...
+      
+			tr
 					td.cat_count RoleName
 					td 12602 distinct values in 98.6% of records
 					td
@@ -247,7 +349,7 @@ block content
 					td
 						table
 							tr.cat_synonyms
-								td &nbsp;
+								td Semantic Action
 							tr.cat_description
 								td The second part of the "fiori intent", identifying the action, e.g. "maintain", "create" 
 							tr.cat_samplevalues
@@ -261,7 +363,7 @@ block content
 					td
 						table
 							tr.cat_synonyms
-								td &nbsp;
+								td Semantic Object
 							tr.cat_description
 								td The first part of the "fiori intent", identifying the Business entity, e.g. "SalesOrder","GLAcount" used for generic navigation 
 							tr.cat_samplevalues
@@ -289,8 +391,28 @@ block content
 											br
 											| ...
       
-		p   and 15 other categories
-		| AppDocumentationLinkKW, BSPPackage, BusinessGroupDescription, BusinessGroupName, BusinessRoleName, detailsurl, ExternalReleaseName, FrontendSoftwareComponent, isPublished, LPDCustInstance, PrimaryODataPFCGRole, releaseId, releaseName, uri and URLParameters
+			tr
+					td.cat_count uri
+					td 12779 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td &nbsp;
+							tr.cat_description
+								td link to fiori app reference library
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| (1): "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('/AIF/CUST')/S6OP"
+											br
+											| (2): "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('/AIF/EDCHANGES')/S6OP"
+											br
+											| (3): "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('/AIF/IFB')/S6OP"
+											br
+											| ...
+      
+		p   and 8 other categories
+		| AppDocumentationLinkKW, BusinessGroupDescription, detailsurl, isPublished, LPDCustInstance, PrimaryODataPFCGRole, releaseId and URLParameters
        
 		h3 Version
 			a.small(href="/whatsnew")

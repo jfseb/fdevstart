@@ -570,6 +570,37 @@ exports.testRecognizeSomeMore = function (test) {
 };
 
 
+exports.testRecognizeBuildTable = function (test) {
+
+  var oRules = recognizer.parseRules(oJSON);
+  var Recognizer = new (recognizer.RegExpRecognizer)(oRules);
+
+  var oContext = {
+    message: {
+      text: 'build table with appId, fiori intent, AppNAme, AppplicaitonComponent, BSPName, OData Service, BUsinessCatalog, TechnicalCatalog and ApplicationComponent'
+    }
+  };
+  Recognizer.recognize(oContext, function (err, res) {
+    test.deepEqual(res,
+      {
+        entities:
+        [{
+          type: 'categories',
+          entity: 'appId, fiori intent, AppNAme, AppplicaitonComponent, BSPName, OData Service, BUsinessCatalog, TechnicalCatalog and ApplicationComponent',
+          startIndex: 17,
+          endIndex: 152
+        }
+        ],
+        score: 0.9,
+        intent: 'buildtable'
+      }
+      , 'correct result');
+    test.done();
+  });
+};
+
+
+
 
 exports.testRecognizeListAllBinOp = function (test) {
 

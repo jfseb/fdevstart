@@ -6,7 +6,7 @@
  */
 "use strict";
 // <reference path="../../lib/node-4.d.ts" />
-var debug = require('debug');
+var debug = require("debug");
 var debuglog = debug('logger');
 ;
 var perfs = {};
@@ -44,7 +44,7 @@ function perf(string) {
     return logPerf.bind(perfs[string]);
 }
 exports.perf = perf;
-var fs = require('fs');
+var fs = require("fs");
 var loggers = {};
 var os = require('os');
 function getWritableDir() {

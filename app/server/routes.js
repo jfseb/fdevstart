@@ -107,6 +107,16 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/table_fioribom', function(req, res) {
+    res.render('table_fioribom', {
+      pagetitle : 'Fiori BOM Table search',
+      user : (req.session.user && req.session.user.user) || undefined,
+      title : 'wosap Fiori BOM Table search',
+      udata : req.session.user,
+      altData : req.session.altData
+    });
+  });
+
   app.get('/whatsnew', function(req, res) {
     res.render('whatsnew', {
       pagetitle : 'whatsnew',

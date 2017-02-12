@@ -28,8 +28,8 @@ var srcDir = 'src';
 var testDir = 'test';
 
 gulp.task('watch', function () {
-  gulp.watch([srcDir + '/**/*.js', testDir + '/**/*.js', srcDir + '/**/*.ts', 'gulpfile.js'],
-    ['tsc', 'babel', 'standard']);
+  gulp.watch([srcDir + '/**/*.js', testDir + '/**/*.js', srcDir + '/**/*.tsx',  srcDir + '/**/*.ts', 'gulpfile.js'],
+    ['tsc', 'babel', 'webpack','standard']);
 });
 
 const babel = require('gulp-babel');
@@ -65,6 +65,72 @@ gulp.task('tsc', function () {
       // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('gen'));
 });
+
+
+var webpacks = require('webpack-stream');
+gulp.task('webpack_notinuse', function() {
+  return gulp.src('./src/web/qbetable.tsx')
+    .pipe(webpacks( require('./webpack.config.js') ))
+    .pipe(gulp.dest('/app/public/js/'));
+});
+
+
+
+var del = require('del');
+
+gulp.task('clean:models', function () {
+  return del([
+    'sensitive/_cachefalse.js',
+    'testmodel2/_cachefalse.js',
+    'testmodel/_cachefalse.js',
+    // here we use a globbing pattern to match everything inside the `mobile` folder
+  //  'dist/mobile/**/*',
+    // we don't want to clean this file though so we negate the pattern
+//    '!dist/mobile/deploy.json'
+  ]);
+});
+
+
+gulp.task('clean', ['clean:models']);
+
+
+var gutil = require('gulp-util');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config.js');
+
+
+
+// Production build
+
+gulp.task('webpack', function(callback) {
+	// modify some webpack config options
+  var myConfig = Object.create(webpackConfig);
+  myConfig.plugins = myConfig.plugins.concat(
+		new webpack.DefinePlugin({
+  'process.env': {
+				// This has effect on the react lib size
+    'NODE_ENV': JSON.stringify('production')
+  }
+}),
+		new webpack.optimize.UglifyJsPlugin()
+	);
+
+	// run webpack
+  webpack(myConfig, function(err, stats) {
+    if(err) throw new gutil.PluginError('webpack_build', err);
+    gutil.log('[webpack_build]', stats.toString({
+      colors: true
+    }));
+    callback();
+  });
+});
+
+
+
+
+
+
+
 
 
 /**
@@ -311,6 +377,6 @@ gulp.task('graphviz', function () {
 // gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
 
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'doc', 'test', 'babel2', 'tsc2']);
-gulp.task('build', ['tsc', 'babel', 'standard', 'babel2', 'tsc2']);
+gulp.task('default', ['tsc', 'babel', 'standard', 'webpack', 'doc', 'test', 'babel2', 'tsc2']);
+gulp.task('build', ['tsc', 'webpack', 'babel', 'standard', 'babel2', 'tsc2']);
 gulp.task('allhome', ['default', 'graphviz']);

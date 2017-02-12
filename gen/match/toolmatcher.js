@@ -11,10 +11,10 @@
  */
 "use strict";
 // / <reference path="../../lib/node-4.d.ts" />
-var debug = require('debug');
-var utils = require('../utils/utils');
-var Sentence = require('./sentence');
-var OpsWord = require('./word');
+var debug = require("debug");
+var utils = require("../utils/utils");
+var Sentence = require("./sentence");
+var OpsWord = require("./word");
 var Word = OpsWord.Word;
 var Category = OpsWord.Category;
 var debuglog = debug('toolmatcher');
@@ -67,13 +67,13 @@ function matchTool(oSentence, oTool) {
     };
 }
 exports.matchTool = matchTool;
-var match = require('./match');
+var match = require("./match");
 var ToolMatch = match.ToolMatch;
 function matchTools(aSentences, aTool) {
     //var stream = new streamutils.MatchStream();
     debuglog("matchTools: sentences \n" +
         aSentences.map(function (oSentence, index) {
-            return (index < 30) ? ("[" + index + "]") + Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence) : "\n";
+            return (index < 30) ? "[" + index + "]" + Sentence.rankingProduct(oSentence) + ":" + Sentence.dumpNice(oSentence) : "\n";
         }).join("\n"));
     var result = [];
     aTool.forEach(function (oTool) {
