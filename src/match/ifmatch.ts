@@ -207,7 +207,8 @@ export interface IWordRules {
 export interface SplitRules {
   allRules: Array<mRule>,
   nonWordRules : Array<mRule>,
-  wordMap: { [key : string] : IWordRules }
+  wordMap: { [key : string] : IWordRules },
+  wordCache :  { [key: string]: Array<ICategorizedString> }
 };
 
 export interface ICategorizedString {

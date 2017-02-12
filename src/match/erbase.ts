@@ -86,7 +86,7 @@ interface ITokenizedString {
  *
  */
 export function tokenizeString(sString: string, rules: IMatch.SplitRules,
-  words?: { [key: string]: Array<IMatch.ICategorizedString> })
+  words: { [key: string]: Array<IMatch.ICategorizedString> })
   : ITokenizedString {
   var cnt = 0;
   var fac = 1;
@@ -294,10 +294,11 @@ export function expandTokenMatchesToSentences(tokens: string[], tokenMatches: Ar
 }
 
 
-var sWords = {};
-
-export function processString(query: string, rules: IMatch.SplitRules):  IMatch.IProcessedSentences {
-  var tokenStruct = tokenizeString(query, rules, sWords);
+export function processString(query: string, rules: IMatch.SplitRules,
+ words: { [key: string]: Array<IMatch.ICategorizedString> }
+):  IMatch.IProcessedSentences {
+  words = words || {};
+  var tokenStruct = tokenizeString(query, rules, words);
   evaluateRangeRulesToPosition(tokenStruct.tokens, tokenStruct.fusable,
     tokenStruct.categorizedWords);
   if (debuglog.enabled) {

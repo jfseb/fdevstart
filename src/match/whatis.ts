@@ -827,10 +827,15 @@ import * as Erbase from './erbase';
 
 var sWords = {};
 
-export function processString(query: string, rules: IMatch.SplitRules): IMatch.IProcessedSentences {
+export function resetCache() : void {
+  sWords = {};
+}
+
+export function processString(query: string, rules: IMatch.SplitRules
+): IMatch.IProcessedSentences {
 
   if (!process.env.ABOT_OLDMATCH) {
-    return Erbase.processString(query, rules);
+    return Erbase.processString(query, rules, rules.wordCache);
   }
 
   var matched = InputFilter.analyzeString(query, rules, sWords);
@@ -891,13 +896,15 @@ export function analyzeCategoryMult(categorylist: string, rules: IMatch.SplitRul
   var res = analyzeContextString(categorylist, rules);
   //  debuglog("resulting category sentences", JSON.stringify(res));
   var res2 = filterAcceptingOnly(res.sentences, ["category", "filler"]);
+//  console.log("here res2" + JSON.stringify(res2) );
+//  console.log("here undefined ! + " + res2.filter(o => !o).length);
   res2.sort(Sentence.cmpRankingProduct);
   debuglog("resulting category sentences: \n", debuglog.enabled ? (Sentence.dumpNiceArr(res2.slice(0, 3), Sentence.rankingProduct)) : '-');
   // TODO:   res2 = filterAcceptingOnlySameDomain(res2);
   //debuglog("resulting category sentences", JSON.stringify(res2, undefined, 2));
   // expect only categories
   // we could rank now by common domains , but for now we only take the first one
-  if (!res.sentences.length) {
+  if (!res2.length) {
     return undefined;
   }
   //res.sort(cmpByNrCategoriesAndSameDomain);

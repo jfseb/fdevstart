@@ -375,7 +375,8 @@ exports.testMakeWordMap = function(test) {
           ]
         }
       },
-      nonWordRules : [ { type : 1, lowercaseword : 'def', category : '2', bitindex : 0x10 } ]
+      nonWordRules : [ { type : 1, lowercaseword : 'def', category : '2', bitindex : 0x10 } ],
+      wordCache : {}
     }
  );
   test.done();
