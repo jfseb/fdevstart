@@ -26,20 +26,11 @@ var HTMLConnector = (function () {
   HTMLConnector.prototype.setQuitHook = function (quitHook) {
     this.quitHook = quitHook;
   };
-
-  HTMLConnector.prototype.process = function (line) {
-    // var that = this;
-    line = line || '';
-    /*
-    if (line.toLowerCase() === 'quit') {
-      that.quitHook();
-      process.exit();
-    } else {*/
+  /*
     this.processMessage(line);
-    /*}
-    */
     return this;
   };
+  */
   HTMLConnector.prototype.processMessage = function (line, id) {
     if (typeof id === 'string') {
       id = {
@@ -81,16 +72,17 @@ var HTMLConnector = (function () {
         } else {
           this.answerHook(msg.text, command, this.conversationID);
         }
-        log(msg.text);
+        //log(msg.text);
       }
+      /*
       if (msg.attachments && msg.attachments.length > 0) {
         for (var k = 0; i < msg.attachments.length; i++) {
           if (k > 0) {
             //console.log();
           }
-          renderAttachment(msg.attachments[k]);
+          //renderAttachment(msg.attachments[k]);
         }
-      }
+      }*/
     }
     done(null);
   };
@@ -103,6 +95,9 @@ var HTMLConnector = (function () {
 } ());
 
 exports.HTMLConnector = HTMLConnector;
+
+
+/*
 function renderAttachment(a) {
   switch (a.contentType) {
   case 'application/vnd.microsoft.card.hero':
@@ -213,3 +208,4 @@ function repeat(char, length) {
 function log(text) {
   //console.log('XXXXXXXXXXXXXXXXXXX' + text);
 }
+*/

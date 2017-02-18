@@ -56,7 +56,32 @@ export function analyzeContextString(contextQueryString : string,  rules: IMatch
 // const result = WhatIs.resolveCategory(cat, a1.entity,
 //   theModel.mRules, theModel.tools, theModel.records);
 
+
+
 export function listAllWithContext(category: string, contextQueryString: string,
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key: string]: boolean }): IMatch.IProcessedWhatIsAnswers {
+  var res = listAllTupelWithContext([category], contextQueryString, aRules, records, categorySet);
+
+  var answers = res.tupelanswers.map(function (o): IMatch.IWhatIsAnswer {
+    return {
+      sentence: o.sentence,
+      record: o.record,
+      category: o.categories[0],
+      result: o.result[0],
+      _ranking: o._ranking
+    };
+  }
+  );
+  return {
+    sentences: res.sentences,
+    errors: res.errors,
+    tokens: res.tokens,
+    answers: answers
+  };
+}
+
+/*
+export function listAllWithContextXX(category: string, contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): IMatch.IProcessedWhatIsAnswers
  {
   if (contextQueryString.length === 0) {
@@ -72,7 +97,8 @@ export function listAllWithContext(category: string, contextQueryString: string,
     debuglog("listAllWithContext:matching records (s=" + aSentencesReinforced.sentences.length + ")...");
     debuglog("here sentences" + JSON.stringify(aSentencesReinforced,undefined,2));
     perflog("matching records (s=" + aSentencesReinforced.sentences.length + ")...");
-    var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = WhatIs.matchRecordsQuick(aSentencesReinforced, category, records, categorySet);
+    //aTool: Array<IMatch.ITool>): any / * objectstream* / {
     if(debuglog.enabled){
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
@@ -90,8 +116,33 @@ export function listAllWithContext(category: string, contextQueryString: string,
     }
  }
 }
+*/
+
 
 export function listAllHavingContext(category: string, contextQueryString: string,
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
+  categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsAnswers {
+  var res = listAllTupelHavingContext([category], contextQueryString, aRules, records, categorySet);
+  var answers = res.tupelanswers.map(function (o): IMatch.IWhatIsAnswer {
+    return {
+      sentence: o.sentence,
+      record: o.record,
+      category: o.categories[0],
+      result: o.result[0],
+      _ranking: o._ranking
+    };
+  }
+  );
+  return {
+    sentences: res.sentences,
+    errors: res.errors,
+    tokens: res.tokens,
+    answers: answers
+  };
+}
+
+/*
+export function listAllHavingContextXX(category: string, contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
   categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsAnswers {
   if (contextQueryString.length === 0) {
@@ -104,7 +155,7 @@ export function listAllHavingContext(category: string, contextQueryString: strin
     perflog("analyzeContextString ...");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
     perflog("matching records having (s=" + (aSentencesReinforced.sentences.length) + ")...");
-    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = WhatIs.matchRecordsHavingContext(aSentencesReinforced, category, records, categorySet); //aTool: Array<IMatch.ITool>): any / * objectstream* / {
     if(debuglog.enabled) {
       debuglog("LAHC matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
@@ -117,7 +168,7 @@ export function listAllHavingContext(category: string, contextQueryString: strin
     return matchedAnswers;
   }
 }
-
+*/
 
 export function listAllTupelWithContext(categories: string[], contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): IMatch.IProcessedWhatIsTupelAnswers {

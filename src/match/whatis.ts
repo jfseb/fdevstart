@@ -15,6 +15,7 @@ const debuglogV = debug('whatVis');
 const perflog = debug('perf');
 
 import * as utils from '../utils/utils';
+import * as _ from 'lodash';
 
 import * as IMatch from './ifmatch';
 
@@ -214,14 +215,14 @@ export function filterRetainTopRankedResultTupel(res: IMatch.IProcessedWhatIsTup
     if (debuglog.enabled) {
       debuglog(' retain tupel ' + index + ' ' + JSON.stringify(iRes));
     }
-    if (iRes.result === (res[index - 1] && res[index - 1].result)) {
+    if (_.isEqual(iRes.result, res.tupelanswers[index - 1] && res.tupelanswers[index - 1].result)) {
       debuglog('skip');
-      return false;
+      return false
     }
     return true;
   });
   result.sort(cmpByRankingTupel);
-  return Object.assign({ tupelanswers: result }, res);
+  return Object.assign(res, { tupelanswers: result });
 }
 
 

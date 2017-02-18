@@ -26,20 +26,11 @@ var HTMLConnector = function () {
   HTMLConnector.prototype.setQuitHook = function (quitHook) {
     this.quitHook = quitHook;
   };
-
-  HTMLConnector.prototype.process = function (line) {
-    // var that = this;
-    line = line || '';
-    /*
-    if (line.toLowerCase() === 'quit') {
-      that.quitHook();
-      process.exit();
-    } else {*/
+  /*
     this.processMessage(line);
-    /*}
-    */
     return this;
   };
+  */
   HTMLConnector.prototype.processMessage = function (line, id) {
     if (typeof id === 'string') {
       id = {
@@ -77,16 +68,17 @@ var HTMLConnector = function () {
         } else {
           this.answerHook(msg.text, command, this.conversationID);
         }
-        log(msg.text);
+        //log(msg.text);
       }
+      /*
       if (msg.attachments && msg.attachments.length > 0) {
         for (var k = 0; i < msg.attachments.length; i++) {
           if (k > 0) {
             //console.log();
           }
-          renderAttachment(msg.attachments[k]);
+          //renderAttachment(msg.attachments[k]);
         }
-      }
+      }*/
     }
     done(null);
   };
@@ -99,40 +91,41 @@ var HTMLConnector = function () {
 }();
 
 exports.HTMLConnector = HTMLConnector;
+
+/*
 function renderAttachment(a) {
   switch (a.contentType) {
-    case 'application/vnd.microsoft.card.hero':
-    case 'application/vnd.microsoft.card.thumbnail':
-      {
-        var tc = a.content;
-        if (tc.title) {
-          if (tc.title.length <= 40) {
-            line('=', 60, tc.title);
-          } else {
-            line('=', 60);
-            wrap(tc.title, 60, 3);
-          }
-        }
-        if (tc.subtitle) {
-          wrap(tc.subtitle, 60, 3);
-        }
-        if (tc.text) {
-          wrap(tc.text, 60, 3);
-        }
-        renderImages(tc.images);
-        renderButtons(tc.buttons);
-        break;
-      }
-    case 'application/vnd.microsoft.card.signin':
-    case 'application/vnd.microsoft.card.receipt':
-    default:
-      line('.', 60, a.contentType);
-      if (a.contentUrl) {
-        wrap(a.contentUrl, 60, 3);
+  case 'application/vnd.microsoft.card.hero':
+  case 'application/vnd.microsoft.card.thumbnail': {
+    var tc = a.content;
+    if (tc.title) {
+      if (tc.title.length <= 40) {
+        line('=', 60, tc.title);
       } else {
-        log(JSON.stringify(a.content));
+        line('=', 60);
+        wrap(tc.title, 60, 3);
       }
-      break;
+    }
+    if (tc.subtitle) {
+      wrap(tc.subtitle, 60, 3);
+    }
+    if (tc.text) {
+      wrap(tc.text, 60, 3);
+    }
+    renderImages(tc.images);
+    renderButtons(tc.buttons);
+    break;
+  }
+  case 'application/vnd.microsoft.card.signin':
+  case 'application/vnd.microsoft.card.receipt':
+  default:
+    line('.', 60, a.contentType);
+    if (a.contentUrl) {
+      wrap(a.contentUrl, 60, 3);
+    } else {
+      log(JSON.stringify(a.content));
+    }
+    break;
   }
 }
 function renderImages(images) {
@@ -176,9 +169,7 @@ function line(char, length, title) {
   }
 }
 function wrap(text, length, indent) {
-  if (indent === void 0) {
-    indent = 0;
-  }
+  if (indent === void 0) { indent = 0; }
   var buffer = '';
   var pad = indent ? repeat(' ', indent) : '';
   var tokens = text.split(' ');
@@ -186,7 +177,7 @@ function wrap(text, length, indent) {
   for (var i = 0; i < tokens.length; i++) {
     var t = tokens[i];
     if (buffer.length) {
-      if (buffer.length + 1 + t.length > length) {
+      if ((buffer.length + 1 + t.length) > length) {
         log(pad + buffer);
         buffer = t;
       } else {
@@ -212,3 +203,4 @@ function repeat(char, length) {
 function log(text) {
   //console.log('XXXXXXXXXXXXXXXXXXX' + text);
 }
+*/

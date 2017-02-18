@@ -295,6 +295,9 @@ the fiori intent for MAnage Material Coverage are ...
 #ChangeMaster-manage;
 #HTMLGUI_FIN-manageCreditCase;
 
+
+TODO: !!!! list all categories in domain Fiori BOM
+
 Metaqueries on categories:
 list all category containing Catalogs...
 
