@@ -426,7 +426,7 @@ exports.testModelCheckExactOnly = function (test) {
   var res = u.mRules.filter(function(oRule) {
     return oRule.exactOnly === true;
   });
-  test.equal(res.length, 356 , 'correct flag applied');
+  test.equal(res.length, 386 , 'correct flag applied');
   test.done();
 };
 

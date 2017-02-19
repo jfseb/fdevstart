@@ -33,7 +33,7 @@
     "ProjectPortalLink": "n/a",
     "AppKey": "W0052/S7(i)"
   },
-  
+
 
 {
     "uri": "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('F2316')/S7",
@@ -171,7 +171,7 @@
     "ProjectPortalLink": "https://projectportal.neo.ondemand.com/projects/i2d.pp.stockchampions1",
     "AppKey": "F2311/S7(i)"
   },
-  
+
 
 
   {
@@ -233,5 +233,73 @@
     "BusinessCatalog": "SAP_CA_BC_COM",
     "TechnicalCatalog": "SAP_TC_CA_AIF_BE_APPS:S4CA",
     "AppKey": "/AIF/CUST/S6OP"
+  },
+   {
+    "uri": "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('CBGLWB')/S6OP",
+    "fiori intent": "#ProductLabel-manage",
+    "appId": "CBGLWB",
+    "AppName": "Manage Labels",
+    "ApplicationComponent": "EHS-SAF",
+    "RoleName": "Product Stewardship Specialist",
+    "ApplicationType": "GUI",
+    "BSPName": "n/a",
+    "BSPApplicationURL": "n/a",
+    "releaseName": "S/4HANA 1610",
+    "releaseId": "S6OP",
+    "BusinessCatalog": "SAP_PSS_BC_GLM",
+    "TechnicalCatalog": "SAP_TC_PSS_GLM_BE_APPS:S4PSS",
+    "detailsurl": "https://boma0d717969.hana.ondemand.com:443/sap/fix/externalViewer/services/SingleApp.xsodata/Details(fioriId='CBGLWB',releaseId='S6OP')",
+    "isPublished": "Published",
+    "BSPPackage": "n/a",
+    "AppDocumentationLinkKW": "n/a",
+    "BusinessRoleName": "SAP_BR_PROD_STWRDSHP_SPECLST",
+    "BusinessGroupName": "SAP_PSS_BCG_GLM",
+    "BusinessGroupDescription": "Global Label Management",
+    "PrimaryODataServiceName": "n/a",
+    "SemanticObject": "ProductLabel",
+    "SemanticAction": "manage",
+    "FrontendSoftwareComponent": "UIS4HOP1 200",
+    "TransactionCodes": "CBGLWB",
+    "URLParameters": "n/a",
+    "LPDCustInstance": "n/a",
+    "PrimaryODataPFCGRole": "n/a",
+    "ExternalReleaseName": "n/a",
+    "AppKey": "CBGLWB/S6OP",
+    "UITechnology": "GUI"
+  },
+  {
+    "uri": "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/#/detail/Apps('F1638')/W14",
+    "fiori intent": "#ComplianceAlerts-manage",
+    "appId": "F1638",
+    "AppName": "Manage Alerts",
+    "ApplicationComponent": "GRC-FRA",
+    "RoleName": "Fraud Investigator",
+    "ApplicationType": "Transactional",
+    "BSPName": "FRA_ALERT_MAN",
+    "BSPApplicationURL": "/sap/bc/ui5_ui5/sap/fra_alert_man",
+    "releaseName": "Wave 14",
+    "releaseId": "W14",
+    "BusinessCatalog": "SAP_ACS_BC_MANAGE_ALERTS, SAP_ACS_BC_MANAGE_ALERTS, SAP_ACS_BC_MANAGE_ALERTS, SAP_ACS_BC_MANAGE_ALERTS, SAP_ACS_BC_MANAGE_ALERTS, SAP_ACS_BC_MANAGE_ALERTS",
+    "TechnicalCatalog": "SAP_TC_ACS_COMMON",
+    "detailsurl": "n/a",
+    "isPublished": "Published",
+    "BSPPackage": "FRA_UI_ALERT_APP",
+    "AppDocumentationLinkKW": "https://uacp2.hana.ondemand.com/http.svc/outputlink?product=SAP_ASSURANCE_AND_COMPLIANCE_SOFTWARE_-_SAP_FRAUD_MANAGEMENT&version=1.2.4.0&topic=3EF85556808CDE21E10000000A4450E5&state=DRAFT",
+    "BusinessRoleName": "SAP_BR_ACS_CE, SAP_BR_ACS_CM, SAP_BR_ACS_BA, SAP_BR_ACS_CRO, SAP_BR_ACS_INVESTIGATOR, SAP_BR_ACS_MANAGER",
+    "BusinessGroupName": "SAP_ACS_BCG_INVESTIGATION, SAP_ACS_BCG_INVESTIGATION, SAP_ACS_BCG_INVESTIGATION, SAP_ACS_BCG_INVESTIGATION, SAP_ACS_BCG_INVESTIGATION, SAP_ACS_BCG_INVESTIGATION",
+    "BusinessGroupDescription": "Alert investigation, Investigate Alerts, , , ,",
+    "PrimaryODataServiceName": "FRA_MANAGE_ALERTS_SRV",
+    "SemanticObject": "ComplianceAlerts",
+    "SemanticAction": "manage",
+    "FrontendSoftwareComponent": "UIACS 120",
+    "TransactionCodes": "n/a",
+    "URLParameters": "n/a",
+    "LPDCustInstance": "n/a",
+    "PrimaryODataPFCGRole": "SAP_BPCM_CE,SAP_BPCM_CM,SAP_FRA_BUSINESS_ANALYST,SAP_FRA_CHIEF_RISK_OFFICER,SAP_FRA_FRAUD_INVESTIGATOR,SAP_FRA_FRAUD_MANAGER",
+    "ExternalReleaseName": "Delivery Q4/2016",
+    "ArtifactId": "grc.acs.fraud.alertworklist",
+    "ProjectPortalLink": "https://projectportal.neo.ondemand.com/projects/grc.acs.fraud.alertworklist",
+    "AppKey": "F1638/W14",
+    "UITechnology": "UI5"
   }
 ]

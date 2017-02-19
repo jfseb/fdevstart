@@ -84,14 +84,78 @@ exports.testUpDownRecognizerExit = function (test) {
 
 exports.testUpDownRecognizer2 = function (test) {
   doRecognize('donenothing', function(err, res) {
-    test.deepEqual(res.intent,  'nothing');
+    test.deepEqual(res.intent,  'intent.up');
     test.done();
   });
 };
 
-exports.testUpDownRecognizer2 = function (test) {
-  doRecognize('exit', function(err, res) {
-    test.deepEqual(res.intent,  'intent.up');
+exports.testdescribeDontKnowQuotes = function (test) {
+  testOne('describe "ABASDFSR"', function(res) {
+    test.deepEqual(res,  'I don\'t know anything about "ABASDFSR".\n');
+    test.done();
+  });
+};
+
+//I don't know anything about ""DDF/DDEL_MON"".
+
+exports.testUpDownWhatIsBSPNameManageLables = function (test) {
+  testOne('what is the bspname for manage labels', function(res) {
+    test.deepEqual(res, 'The bspname of manage labels is n/a\n' , ' correct stream');
+    test.done();
+  });
+};
+
+
+exports.testUpDownWhatIsBSPNameManageLablesQuote = function (test) {
+  testOne('what is the bspname for "manage labels"', function(res) {
+    test.deepEqual(res,  'The bspname of "manage labels" is n/a\n', 'correct string');
+    test.done();
+  });
+};
+
+
+exports.testUpDownWhatIsBSPNameFioriIntentManageLabels = function (test) {
+  testOne('what is the bspname, fiori intent, appname for manage labels', function(res) {
+    test.deepEqual(res,
+'The "BSPName", "fiori intent" and "AppName" of manage labels are "n/a", "#ProductLabel-manage" and "Manage Labels"\n' ,
+
+//    'Many comparable results, perhaps you want to specify a discriminating uri,appId,ApplicationComponent,RoleName,ApplicationType,BSPApplicationURL,releaseName,releaseId,BusinessCatalog,TechnicalCatalog,detailsurl,BSPPackage,AppDocumentationLinkKW,BusinessRoleName,BusinessGroupName,BusinessGroupDescription,PrimaryODataServiceName,SemanticObject,FrontendSoftwareComponent,TransactionCodes,PrimaryODataPFCGRole,ExternalReleaseName,ArtifactId,ProjectPortalLink,AppKey,UITechnology or use "list all ..."' );
+    'correct result');
+    test.done();
+  });
+};
+
+exports.testUpDownWhatIsBSPNameFioriIntentManageLablesQuote = function (test) {
+  testOne('what is the bspname, fiori intent, appname for "manage labels"', function(res) {
+    test.deepEqual(res,  'The "BSPName", "fiori intent" and "AppName" of "manage labels" are "n/a", "#ProductLabel-manage" and "Manage Labels"\n');
+    test.done();
+  });
+};
+
+
+exports.testUpDownListAllBSPName = function (test) {
+  testOne('list all bspname, fiori intent, appname for manage labels', function(res) {
+    test.deepEqual(res,
+     'the bspname, fiori intent, appname for manage labels are ...\n"FRA_ALERT_MAN", "#ComplianceAlerts-manage" and "Manage Alerts";\n"n/a", "#ProductLabel-manage" and "Manage Labels"' );
+    test.done();
+  });
+};
+
+
+exports.testUpDownListAllBSPNameManageLAables = function (test) {
+  testOne('list all bspname, fiori intent, appname for "manage labels"', function(res) {
+    test.deepEqual(res,
+     'the bspname, fiori intent, appname for "manage labels" are ...\n"n/a", "#ProductLabel-manage" and "Manage Labels"' );
+    test.done();
+  });
+};
+
+
+exports.testListAllMultipleCategories = function (test) {
+  testOne('List all atomic weight, element name, element symbol for element name silver',function(oRes) {
+    var sRes = oRes;
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(sRes,  'the atomic weight, element name, element symbol for element name silver are ...\n"107.8682(2)", "silver" and "Ag"' );
     test.done();
   });
 };

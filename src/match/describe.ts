@@ -352,10 +352,11 @@ export function describeFactInDomain(fact : string, filterdomain : string, theMo
     if(res) {
       return res;
     }
+    var factclean = Utils.stripQuotes(fact);
     if(filterdomain) {
-      return `"${fact}" is no known fact in domain "${filterdomain}".\n`;
+      return `"${factclean}" is no known fact in domain "${filterdomain}".\n`;
     }
-    return `I don't know anything about "${fact}".\n`;
+    return `I don't know anything about "${factclean}".\n`;
   }
   res += resNext + "\n"; // ...\n";
   domains.forEach(function(domain) {

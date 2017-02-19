@@ -54,18 +54,24 @@ block content
 				div.row(style="padding-left:0px !important")
 					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
 						div.panel.panel-sm.panel-warning(tyle="cursor:pointer;cursor:hand" onclick="javscript:window.location.href='domains/FioriBOM'")
-							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: Fiori BOM
+							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: Fiori BOM (
+								a(href="/table_fioribom?c3,4,5,20,21,8,14") Tabular view
+								|)
 							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:4px !important") Information on Fiori applications
-							| with links to the
-							a(href="https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/") Fiori Reference library
+								| with links to the &nbsp;
+								a(href="https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/") Fiori Reference library
+									
 					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
 						div.panel.panel-sm.panel-warning(style="cursor:pointer;cursor:hand" onclick="javscript:window.location.href='domains/Fiori_Backend_Catalogs'")
 							div.panel-heading.bg-success.text-center(style="cursor:pointer;background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: Fiori Backend Catalogs
 							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:4px !important") Information on Fiori Content delivered via Backend catalogs ( SUI_TM_MM_APP, /UI2/APPDESC_GET ) and the relation to Frontend applications
 					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
 						div.panel.panel-sm.panel-warning(style="cursor:pointer;cursor:hand" onclick="javscript:window.location.href='domains/SOBJ_Tables'")
-							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: SOBJ Tables
+							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: SOBJ Tables (
+								a(href="/table_sobj_tables?c0,1,2") Tabular view
+								| )
 							div.panel-body.bg-success.text-center(style="background-color:#fcf8e3;padding:4px !important") Information on R/3 Transport objects
+				
 					div.col-sm-2(style="padding-left:5px !important;padding-right:5px")
 						div.panel.panel-sm.panel-warning(onclick="javscript:window.location.href='./domains/TWF_countries'")
 							div.panel-heading.bg-success.text-center(style="background-color:#e6ffff;color:darkblue;font-weight:bold;padding:2px") Domain: The world factbook
