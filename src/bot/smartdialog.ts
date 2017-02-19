@@ -160,21 +160,25 @@ function isAnonymous(userid: string): boolean {
   return userid.indexOf("ano:") === 0;
 }
 
+export function restrictData(arr: any[]) : any[] {
+  if (arr.length < 6) {
+    return arr;
+  }
+  var len = arr.length;
+  var res = arr.slice(0, Math.min(Math.max(Math.floor(arr.length / 3), 7), arr.length));
+  if (typeof arr[0] === "string") {
+    var delta = len - res.length;
+    res.push("... and " + delta + " more entries for registered users");
+  }
+  return res;
+}
+
 function restrictLoggedOn(session: builder.Session, arr: any[]): any[] {
   var userid = session.message.address
     && session.message.address.user
     && session.message.address.user.id || "";
   if (process.env.ABOT_EMAIL_USER && isAnonymous(userid)) {
-    if (arr.length < 6) {
-      return arr;
-    }
-    var len = arr.length;
-    var res = arr.slice(0, Math.min(Math.max(Math.floor(arr.length / 3), 7), arr.length));
-    if (typeof arr[0] === "string") {
-      var delta = len - res.length;
-      res.push("... and " + delta + " more entries for registered users");
-    }
-    return res;
+    return restrictData(arr);
   }
   return arr;
 }
@@ -308,7 +312,7 @@ const aBackFromTraining = [
 
 
 const aTrainNoKlingon = [
-  "He who master the dark arts of SAP must not dwell in the earthly realms of Start Trek.",
+  "He who masters the dark arts of SAP must not dwell in the earthly realms of Start Trek.",
   "SAP is a cloud company, not a space company.",
   "The depth of R/3 are deeper than Deep Space 42.",
   "My brainpower is fully absorbed with mastering other realms.",
@@ -580,7 +584,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
     dialoglog("TrainMe", session, send(res));
   });
 
-
+/*
   bot.dialog('/train', [
     function (session, args, next) {
       session.dialgoData.abc = args || {};
@@ -593,7 +597,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
       session.endDialogWithResult({ response: session.DialogData.abc });
     }
   ]);
-
+*/
 
   bot.dialog('/', dialog);
 
@@ -1497,6 +1501,10 @@ function makeBot(connector, modelPath?: string, options? : any ) {
 
 if (module) {
   module.exports = {
+    aTrainNoKlingon : aTrainNoKlingon,
+    aTrainReplies:  aTrainReplies,
+    restrictData : restrictData,
+    isAnonymous : isAnonymous,
     SimpleUpDownRecognizer: SimpleUpDownRecognizer,
     aResponsesOnTooLong: aResponsesOnTooLong,
     metawordsDescriptions : metawordsDescriptions,

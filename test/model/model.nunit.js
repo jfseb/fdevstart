@@ -345,6 +345,17 @@ exports.testgetAllRecordCategoriesForTargetCategories2 = function (test) {
 
 const MetaF = Meta.getMetaFactory();
 
+
+exports.testgetTableColumnsThrows = function (test) {
+  try {
+    Model.getTableColumns({ domains : [] },'adomain');
+    test.equal(true,false, 'everything ok');
+  } catch(e) {
+    test.deepEqual(e.toString().indexOf('Domain \"adomain') >= 0, true, ' execption text ');
+  }
+  test.done();
+};
+
 exports.testgetResultAsArrayBad = function (test) {
   try {
     Model.getResultAsArray({}, MetaF.Domain('abc'), MetaF.Domain('def'));
@@ -353,6 +364,16 @@ exports.testgetResultAsArrayBad = function (test) {
     //console.log(e.toString());
     test.deepEqual(e.toString().indexOf('relation') >= 0, true, '2nd arg not a relation');
   }
+  test.done();
+};
+
+exports.testgetResultAsArrayNotThere = function (test) {
+  var res = Model.getResultAsArray({ meta : {
+    t3 : { 'domain -:- abc': {
+      'relation -:- def' : { 'category -:- kkk' : {} }
+    }}
+  }}, MetaF.Domain('abcd'), MetaF.Relation('def'));
+  test.deepEqual(res,[]);
   test.done();
 };
 

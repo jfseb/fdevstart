@@ -625,6 +625,28 @@ exports.testDescribeEcc = function (test) {
   });
 };
 
+exports.testIsAnyonymous = function(test) {
+  test.deepEqual(SmartDialog.isAnonymous('ano:abc'),true);
+  test.deepEqual(SmartDialog.isAnonymous('somebody'),false);
+  test.deepEqual(SmartDialog.isAnonymous('somano:xx'),false);
+  test.done();
+};
+
+
+
+exports.testRestrictData = function (test) {
+
+  test.deepEqual(SmartDialog.restrictData([1,2,3,4]), [1,2,3,4]);
+
+  test.deepEqual(SmartDialog.restrictData([1,2,3,4,5,6,7,8,9]), [1,2,3,4,5,6,7]);
+
+  test.deepEqual(SmartDialog.restrictData([1,2,3,4,5,6,7,8,9].map(i => '' + i)),
+
+  [1,2,3,4,5,6,7,].map(i=> ''+i).concat('... and 2 more entries for registered users'));
+  test.done();
+};
+
+
 exports.testDescribe = function (test) {
   testOne('describe silver',function(oRes) {
     debuglog(JSON.stringify(oRes));
@@ -634,6 +656,7 @@ exports.testDescribe = function (test) {
     test.done();
   });
 };
+
 
 
 exports.testDescribeEarth = function (test) {
@@ -716,6 +739,34 @@ exports.testOperatorCatEndingUPAC = function (test) {
     test.done();
   });
 };
+
+
+
+exports.testTrainMe = function (test) {
+  //logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('I think ABC is related to DEF', function(oRes) {
+  //  var sRes = oRes;
+    //logPerf('testPerfListAll');
+    test.deepEqual(SmartDialog.aTrainReplies.indexOf(oRes) >= 0, true);
+    test.done();
+  });
+};
+
+
+
+exports.testTrainMeKlingon = function (test) {
+  logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('I think Klingon is related to kronos', function(oRes) {
+  //  var sRes = oRes;
+    logPerf('testPerfListAll');
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(SmartDialog.aTrainNoKlingon.indexOf(oRes) >= 0, true);
+    test.done();
+  });
+};
+
 
 
 

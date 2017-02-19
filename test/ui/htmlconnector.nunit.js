@@ -12,6 +12,20 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 const HtmlConnector = require(root + '/ui/htmlconnector.js');
 
 exports.testWithIdHook = function (test) {
+  test.expect(4);
+  var address = { user: 'abc'};
+  var out = new HtmlConnector.HTMLConnector({ user : "auser", bot : "bbot"});
+  out.startConversation(address, function(err, adr){
+    test.equal(err,null);
+    test.equal(adr.user,'abc');
+    test.equal(adr.conversation.id,'Convo1');
+    test.equal(adr=== address, false);
+    test.done();
+  });
+}
+
+
+exports.testWithIdHook = function (test) {
 
   var out = new HtmlConnector.HTMLConnector({ user : "auser", bot : "bbot"});
 

@@ -683,23 +683,15 @@ export function loadModels(modelPath?: string): IMatch.IModels {
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
     addCloseExactRangeRules(oModel.mRules, oModel.seenRules);
     oModel.mRules = oModel.mRules.sort(InputFilterRules.cmpMRule);
-    if (global && global.gc) {
-        global.gc();
-    }
+    forceGC();
     oModel.rules = splitRules(oModel.mRules);
-    if (global && global.gc) {
-        global.gc();
-    }
+    forceGC();
     oModel.tools = oModel.tools.sort(Tools.cmpTools);
     delete oModel.seenRules;
     debuglog('saving');
-    if (global && global.gc) {
-        global.gc();
-    }
+    forceGC();
     CircularSer.save('./' + modelPath + '/_cachefalse.js', oModel);
-    if (global && global.gc) {
-        global.gc();
-    }
+    forceGC();
     if (process.env.ABOT_EMAIL_USER) {
         console.log("loaded models by calculation in " + (Date.now() - t) + " ");
     }
@@ -770,6 +762,11 @@ export function getTableColumns(theModel: IMatch.IModels, domain: string): strin
     return theModel.rawModels[domain].columns.slice(0);
 }
 
+function forceGC() {
+    if(global && global.gc) {
+        global.gc();
+    }
+}
 
 /**
  * Return all categories of a domain which can appear on a word,
