@@ -13,7 +13,7 @@ export const Cutoff_Sentences = 120;
 
 
 
-
+export const RANKING_EPSILON = 0.000000001;
 
 /*
  try 4, 1.2

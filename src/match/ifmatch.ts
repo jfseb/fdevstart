@@ -250,6 +250,15 @@ export interface IProcessedSentences extends IProcessed {
   sentences : ISentence[]
 };
 
+export type ICategoryFilter = { [key: string]: boolean };
+
+
+export type IDomainCategoryFilter = {
+  domains : string[],
+  categorySet : { [key: string]: boolean }
+}
+
+
 export interface IProcessedExtractedCategories extends IProcessed {
   categories : string[],
 };

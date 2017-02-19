@@ -787,7 +787,7 @@ export function getDomainsForCategory(theModel: IMatch.IModels, category: string
     return Meta.getStringArray(res);
 }
 
-
+/*
 export function getAllRecordCategoriesForTargetCategory(model: IMatch.IModels, category: string, wordsonly: boolean): { [key: string]: boolean } {
     var res = {};
     //
@@ -825,6 +825,46 @@ export function getAllRecordCategoriesForTargetCategories(model: IMatch.IModels,
     });
     Object.freeze(res);
     return res;
+}
+*/
+
+/**
+ * givena  set  of categories, return a structure
+ *
+ *
+ * { domains : ["DOMAIN1", "DOMAIN2"],
+ *   categorySet : {   cat1 : true, cat2 : true, ...}
+ * }
+ */
+export function getDomainCategoryFilterForTargetCategories(model: IMatch.IModels, categories: string[], wordsonly: boolean): IMatch.IDomainCategoryFilter  {
+    var res = {};
+    //
+    var fn = wordsonly ? getPotentialWordCategoriesForDomain : getCategoriesForDomain;
+    var domains = undefined as string[];
+    categories.forEach(function (category) {
+        var catdomains = getDomainsForCategory(model, category)
+        if (!domains) {
+            domains = catdomains;
+        } else {
+            domains = _.intersection(domains, catdomains);
+        }
+    });
+    if (domains.length === 0) {
+        throw new Error('categories ' + Utils.listToQuotedCommaAnd(categories) + ' have no common domain.')
+    }
+    domains.forEach(function (domain) {
+        fn(model, domain).forEach(function (wordcat) {
+            res[wordcat] = true;
+        });
+    });
+    Object.freeze(res);
+    return { domains: domains,
+             categorySet : res};
+}
+
+
+export function getDomainCategoryFilterForTargetCategory(model: IMatch.IModels, category: string, wordsonly: boolean): IMatch.IDomainCategoryFilter  {
+    return getDomainCategoryFilterForTargetCategories(model, [category],wordsonly);
 }
 
 

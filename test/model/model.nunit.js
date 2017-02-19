@@ -62,7 +62,6 @@ var cats = [
   'TechnicalCatalog',
   'TechnicalCatalogSystemAlias',
   'TransactionCode',
-  'TransactionCodes',
   'TranslationRelevant',
   'TransportObject',
   'Type',
@@ -172,18 +171,113 @@ exports.testModelGetOperator = function (test) {
 };
 
 
-exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 
-  var res = Model.getAllRecordCategoriesForTargetCategory(theModel, 'element name');
-  test.deepEqual(res, {
-    'element name': true,
-    'element symbol' : true,
-    'atomic weight' : true,
-    'element properties': true,
-    'element number' : true
-  });
+
+exports.testgetAllRecordCategoriesForTargetCategories1 = function (test) {
+
+  try {
+    Model.getDomainCategoryFilterForTargetCategories(theModel, ['element name', 'wiki' ]);
+    test.equal(true,false);
+  } catch(e) {
+    test.equal(e.toString(), 'Error: categories "element name" and "wiki" have no common domain.');
+  }
   test.done();
 };
+
+
+exports.testgetAllRecordCategoriesForTargetCategories2 = function (test) {
+
+  var res = Model.getDomainCategoryFilterForTargetCategories(theModel, ['element name', 'element symbol']);
+  test.deepEqual(res,{ domains: [ 'IUPAC' ],
+    categorySet:
+    { 'atomic weight': true,
+      'element name': true,
+      'element number': true,
+      'element symbol': true } });
+  test.done();
+};
+
+
+exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
+
+  var res = Model.getDomainCategoryFilterForTargetCategory(theModel, 'element name');
+  test.deepEqual(res,{ domains: [ 'IUPAC', 'Philosophers elements' ],
+    categorySet:
+    { 'atomic weight': true,
+      'element name': true,
+      'element number': true,
+      'element symbol': true,
+      'element properties': true } });
+  test.done();
+};
+
+
+
+exports.testgetCAtegoryFilterMultDomains = function (test) {
+
+  var res = Model.getDomainCategoryFilterForTargetCategories(theModel, ['ApplicationComponent', 'TransactionCode'] , true);
+  test.deepEqual(res,
+    { domains: [ 'Fiori Backend Catalogs', 'FioriBOM' ],
+      categorySet:
+      { ApplicationComponent: true,
+        BackendCatalogId: true,
+        BusinessCatalog: true,
+        SemanticAction: true,
+        SemanticObject: true,
+        SoftwareComponent: true,
+        TechnicalCatalogSystemAlias: true,
+        TransactionCode: true,
+        WebDynproApplication: true,
+        devclass: true,
+        'fiori intent': true,
+        AppDocumentationLinkKW: true,
+        AppKey: true,
+        AppName: true,
+        ApplicationType: true,
+        ArtifactId: true,
+        BSPApplicationURL: true,
+        BSPName: true,
+        BSPPackage: true,
+        BusinessGroupDescription: true,
+        BusinessGroupName: true,
+        BusinessRoleName: true,
+        ExternalReleaseName: true,
+        FrontendSoftwareComponent: true,
+        LPDCustInstance: true,
+        PrimaryODataPFCGRole: true,
+        PrimaryODataServiceName: true,
+        RoleName: true,
+        TechnicalCatalog: true,
+        URLParameters: true,
+        appId: true,
+        detailsurl: true,
+        isPublished: true,
+        releaseId: true,
+        releaseName: true,
+        uri: true } });
+  test.done();
+};
+
+
+exports.testgetCAtegoryFilterOneDomain = function (test) {
+
+  var res = Model.getDomainCategoryFilterForTargetCategories(theModel, ['ApplicationComponent','devclass', 'TransactionCode'] , true);
+  test.deepEqual(res,{ domains: [ 'Fiori Backend Catalogs' ],
+    categorySet:
+    { ApplicationComponent: true,
+      BackendCatalogId: true,
+      BusinessCatalog: true,
+      SemanticAction: true,
+      SemanticObject: true,
+      SoftwareComponent: true,
+      TechnicalCatalogSystemAlias: true,
+      TransactionCode: true,
+      WebDynproApplication: true,
+      devclass: true,
+      'fiori intent': true } });
+  test.done();
+};
+
 
 
 exports.testModelGetDomainIndex = function (test) {
@@ -328,31 +422,6 @@ exports.testModelHasDomainIndexInAllRules = function (test) {
 };
 
 
-
-exports.testgetAllRecordCategoriesForTargetCategories1 = function (test) {
-
-  try {
-    Model.getAllRecordCategoriesForTargetCategories(theModel, ['element name', 'wiki' ]);
-    test.equal(true,false);
-  } catch(e) {
-    test.equal(e.toString(), 'Error: categories "element name" and "wiki" have no common domain.');
-  }
-  test.done();
-};
-
-
-exports.testgetAllRecordCategoriesForTargetCategories2 = function (test) {
-
-  var res = Model.getAllRecordCategoriesForTargetCategories(theModel, ['element name', 'element symbol']);
-  test.deepEqual(res, {
-    'element name': true,
-    'element symbol' : true,
-    'atomic weight' : true,
-    'element number' : true
-  });
-  test.done();
-};
-
 const MetaF = Meta.getMetaFactory();
 
 
@@ -457,7 +526,7 @@ exports.testModelCheckExactOnly = function (test) {
   var res = u.mRules.filter(function(oRule) {
     return oRule.exactOnly === true;
   });
-  test.equal(res.length, 413 , 'correct flag applied');
+  test.equal(res.length, 431 , 'correct flag applied');
   test.done();
 };
 

@@ -127,16 +127,44 @@ exports.testUpDownWhatIsBSPNameFioriIntentManageLabels = function (test) {
 
 exports.testUpDownWhatIsBSPNameFioriIntentManageLablesQuote = function (test) {
   testOne('what is the bspname, fiori intent, appname for "manage labels"', function(res) {
-    test.deepEqual(res,  'The "BSPName", "fiori intent" and "AppName" of "manage labels" are "n/a", "#ProductLabel-manage" and "Manage Labels"\n');
+    test.deepEqual(res,
+    // 'the bspname, fiori intent, appname for manage labels are ...\n"n/a", "#ProductLabel-manage" and "Manage Labels"'
+    'The "BSPName", "fiori intent" and "AppName" of "manage labels" are "n/a", "#ProductLabel-manage" and "Manage Labels"\n'
+    );
+    test.done();
+  });
+};
+
+exports.testListAllSemObjFI = function (test) {
+  testOne('list all SemanticObject  for FI-FIO-GL with ApplicationType "FPM/WEbDynpro" Maintain', function(res) {
+    test.deepEqual(res,
+  'the SemanticObject for FI-FIO-GL with ApplicationType "FPM/WEbDynpro" Maintain are ...\nGLAccount'
+
+    // 'the bspname, fiori intent, appname for manage labels are ...\n"n/a", "#ProductLabel-manage" and "Manage Labels"'
+  // 'the SemanticObject for FI-FIO-GL with ApplicationType "FPM/WEbDynpro" Maintain are ...\nGLAccount;\nProfitCenter'
+    );
+    test.done();
+  });
+};
+
+exports.testUpDWhatisTransactionCodeALR = function (test) {
+  testOne('What is the TransactionCodes for S_ALR_87012394 "PrepareTax Report"', function(res) {
+    test.deepEqual(res,
+     'The TransactionCodes of S_ALR_87012394 "PrepareTax Report" is S_ALR_87012394\n'
+    // 'the bspname, fiori intent, appname for manage labels are ...\n"FRA_ALERT_MAN", "#ComplianceAlerts-manage" and "Manage Alerts";\n"n/a", "#ProductLabel-manage" and "Manage Labels"'
+    );
     test.done();
   });
 };
 
 
+
 exports.testUpDownListAllBSPName = function (test) {
   testOne('list all bspname, fiori intent, appname for manage labels', function(res) {
     test.deepEqual(res,
-     'the bspname, fiori intent, appname for manage labels are ...\n"FRA_ALERT_MAN", "#ComplianceAlerts-manage" and "Manage Alerts";\n"n/a", "#ProductLabel-manage" and "Manage Labels"' );
+     'the bspname, fiori intent, appname for manage labels are ...\n"n/a", "#ProductLabel-manage" and "Manage Labels"'
+    // 'the bspname, fiori intent, appname for manage labels are ...\n"FRA_ALERT_MAN", "#ComplianceAlerts-manage" and "Manage Alerts";\n"n/a", "#ProductLabel-manage" and "Manage Labels"'
+    );
     test.done();
   });
 };
@@ -271,7 +299,7 @@ exports.testListAllCAtegoryInDomainNonDomain = function (test) {
  /*   'the Tables for domain SOBJ Tables are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nTZS02'  */
 /*  'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTransactionCodes;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
   */
-   'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBackendCatalogId;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nSoftwareComponent;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTechnicalCatalogSystemAlias;\nTransactionCode;\nTransactionCodes;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\nWebDynproApplication;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
+   'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBackendCatalogId;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nSoftwareComponent;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTechnicalCatalogSystemAlias;\nTransactionCode;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\nWebDynproApplication;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
 
     , 'correct tables');
     test.done();

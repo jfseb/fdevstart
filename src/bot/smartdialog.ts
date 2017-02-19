@@ -851,13 +851,13 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         debuglog('single category identified:' + cat);
         if (inSomething) {
           debuglog('got filter:' + inSomething);
-          var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
+          var categorySet = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, true);
           var result1 = ListAll.listAllWithContext(cat, inSomething,
             theModel.rules, theModel.records, categorySet);
           // TODO classifying the string twice is a terrible waste
           if (!result1.answers.length) {
             debuglog('going for having');
-            var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+            var categorySetFull = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, false);
             result1 = ListAll.listAllHavingContext(cat, inSomething, theModel.rules,
               theModel.records, categorySetFull);
           }
@@ -878,7 +878,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         } else {
           // no filter entity, e.g. list all countries
           //
-          var categorySetFull = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, false);
+          var categorySetFull = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, false);
           var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
           logQueryWhatIs(session, 'ListAll', result.answers);
           if (result.answers.length) {
@@ -905,20 +905,20 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         if (inSomething) {
           debuglog('got filter:' + inSomething);
           try {
-            var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+            var domainCategoryFilter = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
           } catch (e) {
             debuglog("here exception" + e);
             dialoglog("WhatIs", session, send('I cannot combine "' + category + '(' + e.toString() + ')'));
             return;
           }
           var result1T = ListAll.listAllTupelWithContext(cats, inSomething,
-            theModel.rules, theModel.records, categorySet);
+            theModel.rules, theModel.records, domainCategoryFilter);
           // TODO classifying the string twice is a terrible waste
           if (!result1T.tupelanswers.length) {
             debuglog('going for having');
-            var categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+            var categorySetFull = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, false);
             result1T = ListAll.listAllTupelHavingContext(cats, inSomething, theModel.rules,
-              theModel.records, categorySetFull);
+              theModel.records, domainCategoryFilter);
           }
           debuglog(debuglog.enabled? ('listall result:' + JSON.stringify(result1T)) : '-');
           var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T.tupelanswers));
@@ -935,9 +935,9 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         } else {
           // no entity, e.g. list all countries
           //
-          var categorySetFull = {} as { [key: string]: boolean };
+          var categorySetFull = {} as IMatch.IDomainCategoryFilter; //{ [key: string]: boolean };
           try {
-            categorySetFull = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, false);
+            categorySetFull = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, false);
           } catch (e) {
             debuglog("here exception" + e);
             dialoglog("WhatIs", session, send('I cannot combine "' + category + '(' + e.toString() + ')'));

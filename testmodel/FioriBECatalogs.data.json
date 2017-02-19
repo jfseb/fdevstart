@@ -112,6 +112,18 @@
     "SoftwareComponent": "S4CORE",
     "BusinessCatalog": "SAP_FIN_BC_GL_REPORTING_CA_PC",
     "TechnicalCatalogSystemAlias": "S4FIN"
+  },
+  {
+    "objectkey": "42F2E9AFC3DF1EE6B7A89F7BD303D681",
+    "BackendCatalogId": "SAP_TC_LE_DSD_BE_APPS",
+    "Title": "Maintain Visit List",
+    "Tile_keywords": "/DSD/VC_VL",
+    "SemanticObject": "VisitList",
+    "SemanticAction": "maintain",
+    "fiori intent": "#VisitList-maintain",
+    "TransactionCode": "/DSD/VC_VL",
+    "WebDynproApplication": "",
+    "Reuse Text": "false",
+    "Catalog Description": ""
   }
-
 ]

@@ -151,7 +151,7 @@
       "LUNRIndex": true
     },
     {
-      "name": "TransactionCodes",
+      "name": "TransactionCode",
       "description": "For GUI based transaction, the transaciton code behind intent, a classical R/3 SAPGUi transaction",
       "defaultWidth": 80,
       "QBE": true,
@@ -190,7 +190,7 @@
     "SemanticObject",
     "SemanticAction",
     "FrontendSoftwareComponent",
-    "TransactionCodes",
+    "TransactionCode",
     "LPDCustInstance",
     "PrimaryODataPFCGRole",
     "ExternalReleaseName"
@@ -211,7 +211,7 @@
     "BusinessGroupName",
     "PrimaryODataServiceName",
     "FrontendSoftwareComponent",
-    "TransactionCodes",
+    "TransactionCode",
     "LPDCustInstance",
     "PrimaryODataPFCGRole",
     "ExternalReleaseName"
@@ -242,7 +242,7 @@
     "SemanticObject",
     "SemanticAction",
     "FrontendSoftwareComponent",
-    "TransactionCodes",
+    "TransactionCode",
     "ExternalReleaseName",
     "BusinessCatalog",
     "TechnicalCatalog"
@@ -303,7 +303,7 @@
       "BSP Urls",
       "Resource Path"
     ],
-    "TransactionCodes": [
+    "TransactionCode": [
       "Transactions",
       "TransactionCode",
       "TransactionCodes"

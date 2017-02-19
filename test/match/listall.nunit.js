@@ -10,7 +10,7 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 //var debuglog = require('debug')('listall.nunit');
 
 const ListAll = require(root + '/match/listall.js');
-const WhatIs = require(root + '/match/whatis');
+//const WhatIs = require(root + '/match/whatis');
 const InputFilterRules = require(root + '/match/inputFilterRules.js');
 
 
@@ -46,17 +46,17 @@ var records = [
 //WhatIs.resetCache();
 
 exports.testListAllWithContext = function (test) {
-  WhatIs.resetCache();
   var res = ListAll.listAllWithContext('url', 'unit test NavTargetResolution',
     mRules, records);
 
   test.deepEqual(ListAll.formatDistinctFromWhatIfResult([]), '');
   var res3 = ListAll.joinResults(res.answers);
-  test.deepEqual(res3, ['com.sap.NTA' ]);
+  //test.deepEqual(res3, ['com.sap.NTA' ]);
+  test.deepEqual(res3, [ ]);
 
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
 
-  test.deepEqual(res2, '"com.sap.NTA"');
+  test.deepEqual(res2, ''); // '"com.sap.NTA"');
   test.done();
 };
 
@@ -87,21 +87,6 @@ exports.testListAllMultWithCompareOneBadCat = function (test) {
 };
 
 
-exports.testListAllMultWithCompareBECategories = function (test) {
-//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
-  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
-    theModel.rules, theModel.records);
-  //console.log(JSON.stringify(res));
-  test.deepEqual(res.tupelanswers.map(o => o.result),
-    [ [ 'CA', 'n/a', 'n/a' ],
-    [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
-      [ 'FI-LOC-FI',
-        'ODATA_GLO_FIN_APP_DESCRIPTORS',
-        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
-   'correct result');
-  test.done();
-};
-
 
 exports.testListAllMultHavingCompareOneBadCat = function (test) {
 //"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
@@ -116,10 +101,31 @@ exports.testListAllMultHavingCompareOneBadCat = function (test) {
   test.done();
 };
 
-
 exports.testListAllMultHavingCompareBECategories = function (test) {
 //"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+
+  theModel.rules.wordCache = {};
+
   var res = ListAll.listAllTupelHavingContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records);
+
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'CA', 'n/a', 'n/a' ],
+    [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+exports.testListAllMultWithCompareBECategories = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."4
+
+  theModel.rules.wordCache = {};
+
+  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
@@ -136,16 +142,17 @@ exports.testListAllMultHavingCompareBECategories = function (test) {
 ///// with category set !
 
 
-
 exports.testListAllMultWithCompareBECategoriesWithSet = function (test) {
 //"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
   var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
-  var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+  var categorySet = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
   var res = ListAll.listAllTupelWithContext(cats, 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records,categorySet);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
-    [ [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+    [
+
+       [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
       [ 'FI-LOC-FI',
         'ODATA_GLO_FIN_APP_DESCRIPTORS',
         'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
@@ -153,22 +160,64 @@ exports.testListAllMultWithCompareBECategoriesWithSet = function (test) {
   test.done();
 };
 
+
+exports.testListAllMultWithCompareBECategoriesWithSetDomain = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
+  var categoryFilter = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
+  var res = ListAll.listAllTupelWithContext(cats, 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records, categoryFilter);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [
+       [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+
+
+
 exports.testListAllMultHavingCompareBECategoriesWithSet = function (test) {
 //"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
   var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
-  var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+  var categorySet = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
 
   var res = ListAll.listAllTupelHavingContext(cats, 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records, categorySet);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
-    [ [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+    [
+
+      [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
       [ 'FI-LOC-FI',
         'ODATA_GLO_FIN_APP_DESCRIPTORS',
         'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
    'correct result');
   test.done();
 };
+
+
+exports.testListAllMultHavingCompareBECategoriesWithSetOrder = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var cats = ['devclass', 'ApplicationComponent', 'BackendCatalogId'];
+  var categorySet = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
+
+  var res = ListAll.listAllTupelHavingContext(cats, 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records, categorySet);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ ['APPL_FIN_APP_DESCRIPTORS', 'FI-AR',  'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'ODATA_GLO_FIN_APP_DESCRIPTORS','FI-LOC-FI',
+
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
 
 //===
 
@@ -185,7 +234,6 @@ exports.testListAllWithContextEmpty = function (test) {
 };
 
 exports.testListAllHavingContext = function (test) {
-  WhatIs.resetCache();
   var res = ListAll.listAllHavingContext('url', 'unit test',
     mRules, records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
@@ -205,7 +253,6 @@ exports.testListAllHavingContextEmpty = function (test) {
 
 
 exports.testListAllWithContextDomainOPLike = function (test) {
-  WhatIs.resetCache();
   var res = ListAll.listAllWithContext('Table', 'domain "SOBJ Tables"',
     theModel.rules, theModel.records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
@@ -215,7 +262,6 @@ exports.testListAllWithContextDomainOPLike = function (test) {
 
 
 exports.testListAllWithContextDomainLike = function (test) {
-  WhatIs.resetCache();
   var res = ListAll.listAllWithContext('Table', '"SOBJ Tables"',
     theModel.rules, theModel.records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
@@ -226,7 +272,6 @@ exports.testListAllWithContextDomainLike = function (test) {
 
 
 exports.testListAllWithContextDomainLikeAmbiguous = function (test) {
-  WhatIs.resetCache();
   var res = ListAll.listAllWithContext('Table', 'SOBJ Tables',
     theModel.rules, theModel.records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);

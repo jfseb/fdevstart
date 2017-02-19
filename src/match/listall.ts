@@ -59,8 +59,8 @@ export function analyzeContextString(contextQueryString : string,  rules: IMatch
 
 
 export function listAllWithContext(category: string, contextQueryString: string,
-  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key: string]: boolean }): IMatch.IProcessedWhatIsAnswers {
-  var res = listAllTupelWithContext([category], contextQueryString, aRules, records, categorySet);
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, domainCategoryFilter?: IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsAnswers {
+  var res = listAllTupelWithContext([category], contextQueryString, aRules, records, domainCategoryFilter);
 
   var answers = res.tupelanswers.map(function (o): IMatch.IWhatIsAnswer {
     return {
@@ -121,8 +121,8 @@ export function listAllWithContextXX(category: string, contextQueryString: strin
 
 export function listAllHavingContext(category: string, contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
-  categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsAnswers {
-  var res = listAllTupelHavingContext([category], contextQueryString, aRules, records, categorySet);
+  domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsAnswers {
+  var res = listAllTupelHavingContext([category], contextQueryString, aRules, records, domainCategoryFilter);
   var answers = res.tupelanswers.map(function (o): IMatch.IWhatIsAnswer {
     return {
       sentence: o.sentence,
@@ -171,7 +171,7 @@ export function listAllHavingContextXX(category: string, contextQueryString: str
 */
 
 export function listAllTupelWithContext(categories: string[], contextQueryString: string,
-  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, categorySet?: { [key : string] : boolean }): IMatch.IProcessedWhatIsTupelAnswers {
+  aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>, domainCategoryFilter?: IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {
   if (contextQueryString.length === 0) {
     return {
       tupelanswers : [],
@@ -183,7 +183,7 @@ export function listAllTupelWithContext(categories: string[], contextQueryString
     perflog("totalListAllWithContext");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
     perflog("LATWC matching records (s=" + aSentencesReinforced.sentences.length + ")...");
-    var matchedAnswers = WhatIs.matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = WhatIs.matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, domainCategoryFilter); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled){
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
@@ -205,7 +205,7 @@ export function listAllTupelWithContext(categories: string[], contextQueryString
 
 export function listAllTupelHavingContext(categories: string[], contextQueryString: string,
   aRules: IMatch.SplitRules, records: Array<IMatch.IRecord>,
-  categorySet : { [key:string] : boolean }): IMatch.IProcessedWhatIsTupelAnswers {
+  domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {
   if (contextQueryString.length === 0) {
     return {
       tupelanswers : [],
@@ -216,14 +216,15 @@ export function listAllTupelHavingContext(categories: string[], contextQueryStri
     perflog("analyzeContextString ...");
     var aSentencesReinforced = analyzeContextString(contextQueryString, aRules);
     perflog("matching records having (s=" + (aSentencesReinforced.sentences.length) + ")...");
-    var matchedAnswers = WhatIs.matchRecordsTupelHavingContext(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = WhatIs.matchRecordsTupelHavingContext(aSentencesReinforced, categories, records, domainCategoryFilter); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
     if(debuglog.enabled) {
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
     perflog("filteringTopRanked (a=" + matchedAnswers.tupelanswers.length + ")...");
+    //console.log(matchedAnswers.tupelanswers.slice(0,2).map(o=> JSON.stringify(o)).join("\n"));
     var matchedFiltered = WhatIs.filterOnlyTopRankedTupel(matchedAnswers.tupelanswers);
     if (debuglog.enabled) {
-      debuglog(" matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
+      debuglog("LATHC matched top-ranked Answers" + JSON.stringify(matchedFiltered, undefined, 2));
     }
     perflog("totalListAllHavingContext (a=" + matchedFiltered.length + ")");
     return {

@@ -84,6 +84,20 @@ block content
 											| "/AIF/CUST", "/AIF/EDCHANGES", "/AIF/IFB", "/AIF/IFMON", "/AIF/IFTEST" ...
       
 			tr
+					td.cat_count UITechnology
+					td 12779 distinct values in 100.0% of records
+					td
+						table
+							tr.cat_synonyms
+								td UI Technology
+							tr.cat_description
+								td Indicates whether the application is GUI / WebDynpro / UI5 based
+							tr.cat_samplevalues
+								td Possible values are ...
+											br
+											| "GUI", "UI5" or "WebDynpro"
+      
+			tr
 					td.cat_count fiori intent
 					td 10370 distinct values in 81.1% of records
 					td
@@ -147,7 +161,7 @@ block content
       
 			tr
 					td.cat_count BSPApplicationURL
-					td 5596 distinct values in 43.8% of records
+					td 5595 distinct values in 43.8% of records
 					td
 						table
 							tr.cat_synonyms
@@ -157,11 +171,11 @@ block content
 							tr.cat_samplevalues
 								td Possible values are ...
 											br
-											| (1): "#DetectionMethod-managePredictiveRule"
+											| (1): "/sap/bc/bsp/sap/MM_SUPPIV_REFS1"
 											br
-											| (2): "/sap/bc/bsp/sap/MM_SUPPIV_REFS1"
+											| (2): "/sap/bc/bsp/sap/cpm_comm_mons1"
 											br
-											| (3): "/sap/bc/bsp/sap/cpm_comm_mons1"
+											| (3): "/sap/bc/bsp/sap/sd_sva_s1"
 											br
 											| ...
       
@@ -219,7 +233,7 @@ block content
 					td
 						table
 							tr.cat_synonyms
-								td &nbsp;
+								td Application Type
 							tr.cat_description
 								td Whether the application is classical or not
 							tr.cat_samplevalues
@@ -355,7 +369,7 @@ block content
 							tr.cat_samplevalues
 								td Possible values are ...
 											br
-											| "", "#Specification-manage", "*", "AnalyzeForecastDemand" ...
+											| "", "*", "AnalyzeForecastDemand", "AnalyzeKPIDetials", "AnalyzeLogs", "Approve" ...
       
 			tr
 					td.cat_count SemanticObject
@@ -372,7 +386,7 @@ block content
 											| "", "*", "ABOPRun", "ABOPSegment", "ABOPVariant", "APSProductionConfirmation" ...
       
 			tr
-					td.cat_count TransactionCodes
+					td.cat_count TransactionCode
 					td 5699 distinct values in 44.6% of records
 					td
 						table
