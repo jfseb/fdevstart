@@ -255,6 +255,7 @@ export function filterRetainTopRankedResultTupel(res: IMatch.IProcessedWhatIsTup
  * A ranking which is purely based on the numbers of matched entities,
  * disregarding exactness of match
  */
+/*
 export function calcRankingSimple(matched: number,
   mismatched: number, nouse: number,
   relevantCount: number): number {
@@ -265,7 +266,7 @@ export function calcRankingSimple(matched: number,
   var factor3 = Math.pow(0.4, nouse);
   return Math.pow(factor2 * factor * factor3, 1 / (mismatched + matched + nouse));
 }
-
+*/
 
 export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord },
   hasCategory: { [key: string]: number },

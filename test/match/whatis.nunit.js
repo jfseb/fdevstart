@@ -563,6 +563,58 @@ exports.testUpDownWhatIsBSPNameManageLabels = function (test) {
 };
 */
 
+
+
+exports.testcmpByRankingTupel= function (test) {
+  var a1 = {
+    _ranking : 1.0,
+    record : { 'a' : '1', 'b' : '2'},
+    result : ['a']
+  };
+  var b1 = {
+    _ranking : 1.0,
+    record : { 'a' : '1', 'b' : '3'},
+    result : ['a']
+  };
+  var c1 = {
+    _ranking : 1.0,
+    record : { 'a' : '1'},
+    result : ['a']
+  };
+
+  var res = WhatIs.cmpByRankingTupel(a1,a1);
+  test.equal(res, 0);
+  res = WhatIs.cmpByRankingTupel(a1,b1);
+  test.equal(res < 0, true);
+  res = WhatIs.cmpByRankingTupel(b1,a1);
+  test.equal(res < 0, false);
+  res = WhatIs.cmpByRankingTupel(c1,a1);
+  test.equal(res < 0, false);
+  res = WhatIs.cmpByRankingTupel(a1,c1);
+  test.equal(res < 0, true);
+
+
+  test.done();
+};
+
+
+exports.testcmpByRankingTupelSameRes = function (test) {
+  var a1 = {
+    _ranking : 1.0,
+    record : { 'a' : 1, 'b' : 2},
+    result : ['a']
+  };
+  var b1 = {
+    _ranking : 1.0,
+    record : { 'a' : 1, 'b' : 2},
+    result : ['a']
+  };
+  var res = WhatIs.cmpByRankingTupel(a1,a1);
+  test.equal(res, 0);
+  test.done();
+};
+
+
 exports.testUpDownWhatIsBSPNameManageLabelsNew = function (test) {
   doRecognizeNew('BSPName', 'manage labels', function(err, res) {
     test.deepEqual(res.answers[0].result,  'n/a' ,' correct results');
