@@ -475,7 +475,7 @@ function stripResult(r) {
   return r;
 }
 
-
+/*
 function doRecognize(cat, str , fn) {
   var res = WhatIs.resolveCategoryOld(cat, str,
     theModel2.rules, theModel2.records);
@@ -486,6 +486,7 @@ function doRecognize(cat, str , fn) {
   }).join(' \n**\n'));
   fn(undefined, res);
 }
+*/
 
 function doRecognizeNew(cat, str , fn) {
   var res = WhatIs.resolveCategory(cat, str,
@@ -498,6 +499,7 @@ function doRecognizeNew(cat, str , fn) {
   fn(undefined, res);
 }
 
+/*
 function doRecognizeMult(cats, str , fn) {
   var resultArr = WhatIs.resolveCategoriesOld(cats, str,
           theModel2);
@@ -507,7 +509,7 @@ function doRecognizeMult(cats, str , fn) {
     return JSON.stringify(u);
   }).join(' \n**\n'));
   fn(undefined, resultArr);
-}
+}*/
 
 function doRecognizeMultNew(cats, str , fn) {
   var resultArr = WhatIs.resolveCategories(cats, str,
@@ -520,7 +522,7 @@ function doRecognizeMultNew(cats, str , fn) {
   fn(undefined, resultArr);
 }
 
-
+/*
 exports.testUpDownWhatIsBSPNameManageLabels = function (test) {
   doRecognize('BSPName', 'manage labels', function(err, res) {
     test.deepEqual(res.answers[0].result,  'n/a' ,' correct results');
@@ -536,6 +538,7 @@ exports.testUpDownWhatIsBSPNameManageLabels = function (test) {
     test.done();
   });
 };
+*/
 
 exports.testUpDownWhatIsBSPNameManageLabelsNew = function (test) {
   doRecognizeNew('BSPName', 'manage labels', function(err, res) {
@@ -553,6 +556,7 @@ exports.testUpDownWhatIsBSPNameManageLabelsNew = function (test) {
   });
 };
 
+/*
 exports.testUpDownWhatIsBSPNameManageLablesQuote = function (test) {
   doRecognize('BSPName', '"manage labels"', function(err, res) {
     test.deepEqual(res.answers[0].result,  'n/a' ,' correct results');
@@ -566,6 +570,7 @@ exports.testUpDownWhatIsBSPNameManageLablesQuote = function (test) {
     test.done();
   });
 };
+*/
 
 exports.testUpDownWhatIsBSPNameManageLabelQuoteNew = function (test) {
   doRecognizeNew('BSPName', '"manage labels"', function(err, res) {
@@ -584,6 +589,7 @@ exports.testUpDownWhatIsBSPNameManageLabelQuoteNew = function (test) {
   });
 };
 
+/*
 exports.testWhatIsBSPNameFioriIntentManageLabels = function (test) {
   doRecognizeMult(['BSPName','fiori intent', 'AppName'],'manage labels', function(err, resultArr) {
     test.deepEqual(resultArr.tupelanswers[1].result[0],  'n/a');
@@ -608,7 +614,7 @@ exports.testUpWhatIsBSPNameFioriIntentManageLablesQuote = function (test) {
     test.done();
   });
 };
-
+*/
 
 exports.testWhatIsBSPNameFioriIntentManageLabelsNew = function (test) {
   doRecognizeMultNew(['BSPName','fiori intent', 'AppName'],'manage labels', function(err, resultArr) {

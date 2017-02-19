@@ -1104,32 +1104,23 @@ export function resolveCategory(category: string, contextQueryString: string,
  }
 }
 
-
+/*
 export function resolveCategoryOld(category: string, contextQueryString: string,
   rules: IMatch.SplitRules, records: Array<IMatch.IRecord>): IMatch.IProcessedWhatIsAnswers {
-
   if (contextQueryString.length === 0) {
     return { errors: [ErError.makeError_EMPTY_INPUT()], tokens: [], answers: [] };
   } else {
-    /*
-        var matched = InputFilter.analyzeString(contextQueryString, rules);
-        debuglog(debuglog.enabled ? ("after matched " + JSON.stringify(matched)): '-');
-        var aSentences = InputFilter.expandMatchArr(matched);
-        if(debuglog.enabled) {
-          debuglog("after expand" + aSentences.map(function (oSentence) {
-            return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-          }).join("\n"));
-      } */
     var aSentencesReinforced = processString(contextQueryString, rules);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
     debuglog(debuglog.enabled ? ("after reinforce" + aSentencesReinforced.sentences.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
     }).join("\n")) : '-');
-    var matchedAnswers = matchRecords(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = matchRecords(aSentencesReinforced, category, records); //aTool: Array<IMatch.ITool>): any / * objectstream* / {
     debuglog(debuglog.enabled ? (" matchedAnswers" + JSON.stringify(matchedAnswers, undefined, 2)) : '-');
     return matchedAnswers;
   }
 }
+*/
 
 import * as Model from '../model/model';
 
@@ -1155,7 +1146,7 @@ export function resolveCategories(categories: string[], contextQueryString: stri
   }
 }
 
-
+/*
 export function resolveCategoriesOld(categories: string[], contextQueryString: string,
   theModel: IMatch.IModels): IMatch.IProcessedWhatIsTupelAnswers {
   var records = theModel.records;
@@ -1167,21 +1158,12 @@ export function resolveCategoriesOld(categories: string[], contextQueryString: s
       tokens: []
     }
   } else {
-    /*
-    var matched = InputFilter.analyzeString(contextQueryString, rules);
-    debuglog(debuglog.enabled? ("after matched " + JSON.stringify(matched)): '-');
-    var aSentences = InputFilter.expandMatchArr(matched);
-    if(debuglog.enabled) {
-      debuglog(debuglog.enabled ? ("after expand" + aSentences.map(function (oSentence) {
-        return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
-      }).join("\n")): '-');
-  } */
     var aSentencesReinforced = processString(contextQueryString, theModel.rules);
     //aSentences.map(function(oSentence) { return InputFilter.reinForce(oSentence); });
     debuglog(debuglog.enabled ? ("after reinforce" + aSentencesReinforced.sentences.map(function (oSentence) {
       return Sentence.rankingProduct(oSentence) + ":" + JSON.stringify(oSentence);
     }).join("\n")) : '-');
-    //var matchedAnswers = matchRecordsQuick(aSentences, category, records); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    //var matchedAnswers = matchRecordsQuick(aSentences, category, records); //aTool: Array<IMatch.ITool>): any / * objectstream* / {
     var categorySet = {};
     categories.forEach(function (category) {
       categorySet[category] = true;
@@ -1189,7 +1171,7 @@ export function resolveCategoriesOld(categories: string[], contextQueryString: s
       Object.assign(categorySet, categorySetLocal);
     });
 
-    var matchedAnswers = matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any /* objectstream*/ {
+    var matchedAnswers = matchRecordsQuickMultipleCategories(aSentencesReinforced, categories, records, categorySet); //aTool: Array<IMatch.ITool>): any / * objectstream * / {
     if (debuglog.enabled) {
       debuglog(" matched Answers" + JSON.stringify(matchedAnswers, undefined, 2));
     }
@@ -1204,6 +1186,7 @@ export function resolveCategoriesOld(categories: string[], contextQueryString: s
     return matchedFiltered; // ??? Answers;
   }
 }
+*/
 
 export function filterOnlyTopRanked(results: Array<IMatch.IWhatIsAnswer>): Array<IMatch.IWhatIsAnswer> {
   var res = results.filter(function (result) {
