@@ -60,5 +60,58 @@
     "SoftwareComponent": "SAP_BASIS",
     "BusinessCatalog": "SAP_CORE_BC_ILM",
     "TechnicalCatalogSystemAlias": "NW"
+  },
+    {
+    "objectkey": "FA163EDF73161EE685D7022AC6730468",
+    "BackendCatalogId": "SAP_TC_PS_BE_APPS",
+    "Title": "Assign WBS Elements Using List",
+    "Tile_keywords": "GRM3",
+    "SemanticObject": "WBSElement",
+    "SemanticAction": "assignToGroupingWBSElementCollectively",
+    "fiori intent": "#WBSElement-assignToGroupingWBSElementCollectively",
+    "TransactionCode": "GRM3",
+    "WebDynproApplication": "",
+    "Reuse Text": "false",
+    "Catalog Description": "",
+    "devclass": "ODATA_PS_APP_DESCRIPTORS",
+    "ApplicationComponent": "PS",
+    "SoftwareComponent": "S4CORE"
+  },
+   {
+    "objectkey": "FA163EDF73161EE59DCA93ED9A0B4DAE",
+    "BackendCatalogId": "SAP_TC_FIN_ACC_BE_APPS",
+    "Title": "PrepareTax Report",
+    "Tile_keywords": "S_ALR_87012394",
+    "SemanticObject": "TaxReport",
+    "SemanticAction": "prepareSalesUseTaxesReportUSA",
+    "fiori intent": "#TaxReport-prepareSalesUseTaxesReportUSA",
+    "TransactionCode": "S_ALR_87012394",
+    "WebDynproApplication": "",
+    "Reuse Text": "false",
+    "Catalog Description": "",
+    "devclass": "APPL_FIN_APP_DESCRIPTORS",
+    "ApplicationComponent": "FI-AR",
+    "SoftwareComponent": "S4CORE",
+    "BusinessCatalog": "SAP_FIN_BC_GL_REPORTING_US",
+    "TechnicalCatalogSystemAlias": "S4FIN"
+  },
+  {
+    "objectkey": "42F2E9AFC5FF1EE69BEB34D34D794984",
+    "BackendCatalogId": "SAP_TC_FIN_GLO_AC_BE_APPS",
+    "Title": "Prepare Tax Report",
+    "Tile_keywords": "S_ALR_87012394",
+    "SemanticObject": "TaxReport",
+    "SemanticAction": "prepareSalesUseTaxesReportCA",
+    "fiori intent": "#TaxReport-prepareSalesUseTaxesReportCA",
+    "TransactionCode": "S_ALR_87012394",
+    "WebDynproApplication": "",
+    "Reuse Text": "false",
+    "Catalog Description": "",
+    "devclass": "ODATA_GLO_FIN_APP_DESCRIPTORS",
+    "ApplicationComponent": "FI-LOC-FI",
+    "SoftwareComponent": "S4CORE",
+    "BusinessCatalog": "SAP_FIN_BC_GL_REPORTING_CA_PC",
+    "TechnicalCatalogSystemAlias": "S4FIN"
   }
- ]
+
+]

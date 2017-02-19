@@ -26,87 +26,97 @@ try {
 
 var theModel = Model.loadModels();
 
+
+var TOOLCOUNT = 9;
+
+var cats = [
+  'AppDocumentationLinkKW',
+  'AppKey',
+  'AppName',
+  'ApplicationComponent',
+  'ApplicationType',
+  'ArtifactId',
+  'BSPApplicationURL',
+  'BSPName',
+  'BSPPackage',
+  'BackendCatalogId',
+  'BusinessCatalog',
+  'BusinessGroupDescription',
+  'BusinessGroupName',
+  'BusinessRoleName',
+  'Category',
+  'ExternalReleaseName',
+  'FrontendSoftwareComponent',
+  'LPDCustInstance',
+  'Object name length',
+  'PrimaryODataPFCGRole',
+  'PrimaryODataServiceName',
+  'PrimaryTable',
+  'RoleName',
+  'SemanticAction',
+  'SemanticObject',
+  'ShortText',
+  'SoftwareComponent',
+  'Table',
+  'TableTransportKeySpec',
+  'TechnicalCatalog',
+  'TechnicalCatalogSystemAlias',
+  'TransactionCode',
+  'TransactionCodes',
+  'TranslationRelevant',
+  'TransportObject',
+  'Type',
+  'URLParameters',
+  'WebDynproApplication',
+  '_url',
+  'albedo',
+  'appId',
+  'atomic weight',
+  'client',
+  'clientSpecific',
+  'detailsurl',
+  'devclass',
+  'distance',
+  'eccentricity',
+  'element name',
+  'element number',
+  'element properties',
+  'element symbol',
+  'fiori catalog',
+  'fiori group',
+  'fiori intent',
+  'isPublished',
+  'mass',
+  'object name',
+  'object type',
+  'orbit radius',
+  'orbital period',
+  'orbits',
+  'radius',
+  'recordKey',
+  'releaseId',
+  'releaseName',
+  'systemId',
+  'tcode',
+  'tool',
+  'transaction',
+  'transaction description',
+  'unit test',
+  'uri',
+  'url',
+  'visual luminosity',
+  'visual magnitude',
+  'wiki' ];
+
 /**
  * Unit test for sth
  */
 exports.testModel = function (test) {
   test.expect(2);
   var u = theModel;
-  test.equal(u.tools.length, 8, 'no error');
+  test.equal(u.tools.length, TOOLCOUNT, ' tool count ');
   test.deepEqual(u.category.sort(),
-
-    [ 'AppDocumentationLinkKW',
-      'AppKey',
-      'AppName',
-      'ApplicationComponent',
-      'ApplicationType',
-      'ArtifactId',
-      'BSPApplicationURL',
-      'BSPName',
-      'BSPPackage',
-      'BusinessCatalog',
-      'BusinessGroupDescription',
-      'BusinessGroupName',
-      'BusinessRoleName',
-      'Category',
-      'ExternalReleaseName',
-      'FrontendSoftwareComponent',
-      'LPDCustInstance',
-      'Object name length',
-      'PrimaryODataPFCGRole',
-      'PrimaryODataServiceName',
-      'PrimaryTable',
-      'RoleName',
-      'SemanticAction',
-      'SemanticObject',
-      'ShortText',
-      'Table',
-      'TableTransportKeySpec',
-      'TechnicalCatalog',
-      'TransactionCodes',
-      'TranslationRelevant',
-      'TransportObject',
-      'Type',
-      'URLParameters',
-      '_url',
-      'albedo',
-      'appId',
-      'atomic weight',
-      'client',
-      'clientSpecific',
-      'detailsurl',
-      'devclass',
-      'distance',
-      'eccentricity',
-      'element name',
-      'element number',
-      'element properties',
-      'element symbol',
-      'fiori catalog',
-      'fiori group',
-      'fiori intent',
-      'isPublished',
-      'mass',
-      'object name',
-      'object type',
-      'orbit radius',
-      'orbital period',
-      'orbits',
-      'radius',
-      'recordKey',
-      'releaseId',
-      'releaseName',
-      'systemId',
-      'tcode',
-      'tool',
-      'transaction',
-      'transaction description',
-      'unit test',
-      'uri',
-      'url',
-      'visual luminosity',
-      'visual magnitude',
-      'wiki' ]
+  cats
   /*
 
     [ '_url',
@@ -178,12 +188,12 @@ exports.testgetAllRecordCategoriesForTargetCategory = function (test) {
 
 exports.testModelGetDomainIndex = function (test) {
   var res = Model.getDomainBitIndex('IUPAC', theModel);
-  test.equal(res, 0x0020);
+  test.equal(res, 0x0020, 'IUPAC code ');
   test.done();
 };
 exports.testModelGetDomainIndexNotPresent = function (test) {
   var res = Model.getDomainBitIndex('NOTPRESENT', theModel);
-  test.equal(res, 0x0800, 'abc');
+  test.equal(res, 0x1000, 'abc NOTPRESENT 4096');
   test.done();
 };
 
@@ -299,7 +309,7 @@ exports.testModelHasDomainIndexInDomains = function (test) {
     //console.log(all);
     all = all | idx;
   });
-  test.equal(all, 0x007FF);
+  test.equal(all, 0x00FFF, ' test Inddex in domains 4095');
   test.done();
 };
 
@@ -313,7 +323,7 @@ exports.testModelHasDomainIndexInAllRules = function (test) {
     //console.log(all);
     all = all | idx;
   });
-  test.equal(all, 0x007FF);
+  test.equal(all, 0x00FFF, ' Flags Index In Rules 4095');
   test.done();
 };
 
@@ -447,7 +457,7 @@ exports.testModelCheckExactOnly = function (test) {
   var res = u.mRules.filter(function(oRule) {
     return oRule.exactOnly === true;
   });
-  test.equal(res.length, 386 , 'correct flag applied');
+  test.equal(res.length, 413 , 'correct flag applied');
   test.done();
 };
 
@@ -529,111 +539,8 @@ exports.testModel2 = function (test) {
 
   fs.writeFileSync('logs/model.all.json', JSON.stringify(u, undefined,2));
 
-  test.equal(u.tools.length, 8, 'correct tools length');
-  test.deepEqual(u.category.sort(),
-
-    [ 'AppDocumentationLinkKW',
-      'AppKey',
-      'AppName',
-      'ApplicationComponent',
-      'ApplicationType',
-      'ArtifactId',
-      'BSPApplicationURL',
-      'BSPName',
-      'BSPPackage',
-      'BusinessCatalog',
-      'BusinessGroupDescription',
-      'BusinessGroupName',
-      'BusinessRoleName',
-      'Category',
-      'ExternalReleaseName',
-      'FrontendSoftwareComponent',
-      'LPDCustInstance',
-      'Object name length',
-      'PrimaryODataPFCGRole',
-      'PrimaryODataServiceName',
-      'PrimaryTable',
-      'RoleName',
-      'SemanticAction',
-      'SemanticObject',
-      'ShortText',
-      'Table',
-      'TableTransportKeySpec',
-      'TechnicalCatalog',
-      'TransactionCodes',
-      'TranslationRelevant',
-      'TransportObject',
-      'Type',
-      'URLParameters',
-      '_url',
-      'albedo',
-      'appId',
-      'atomic weight',
-      'client',
-      'clientSpecific',
-      'detailsurl',
-      'devclass',
-      'distance',
-      'eccentricity',
-      'element name',
-      'element number',
-      'element properties',
-      'element symbol',
-      'fiori catalog',
-      'fiori group',
-      'fiori intent',
-      'isPublished',
-      'mass',
-      'object name',
-      'object type',
-      'orbit radius',
-      'orbital period',
-      'orbits',
-      'radius',
-      'recordKey',
-      'releaseId',
-      'releaseName',
-      'systemId',
-      'tcode',
-      'tool',
-      'transaction',
-      'transaction description',
-      'unit test',
-      'uri',
-      'url',
-      'visual luminosity',
-      'visual magnitude',
-      'wiki' ]
-/*
-    [ '_url',
-      'albedo',
-      'atomic weight',
-      'client',
-      'distance',
-      'eccentricity',
-      'element name',
-      'element number',
-      'element properties',
-      'element symbol',
-      'fiori catalog',
-      'fiori group',
-      'fiori intent',
-      'mass',
-      'object name',
-      'object type',
-      'orbit radius',
-      'orbital period',
-      'orbits',
-      'radius',
-      'systemId',
-      'tool',
-      'transaction',
-      'unit test',
-      'url',
-      'visual luminosity',
-      'visual magnitude',
-      'wiki' ] */
- , 'correct data read');
+  test.equal(u.tools.length, TOOLCOUNT, 'correct tools length');
+  test.deepEqual(u.category.sort(),cats, 'correct data read');
   test.done();
 
 };
@@ -701,6 +608,7 @@ exports.testModelHasDomains = function (test) {
 
   test.deepEqual(rx.sort(),
     [ 'Cosmos',
+      'Fiori Backend Catalogs',
       'Fiori FLPD',
       'FioriBOM',
       'FioriFLP',

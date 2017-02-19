@@ -420,7 +420,7 @@ export function matchRecordsTupelHavingContext(
   var res = [] as IMatch.IWhatIsTupelAnswer[];
   debuglog("relevant records nr:" + relevantRecords.length);
   debuglog(debuglog.enabled ? ("sentences are : " + JSON.stringify(pSentences, undefined, 2)) : "-");
-  if (process.env.ABOT_FAST && categorySet) {
+  if (/*process.env.ABOT_FAST &&*/ categorySet) {
     // we are only interested in categories present in records for domains which contain the category
     // var categoryset = Model.calculateRelevantRecordCategories(theModel,category);
     //knowing the target
@@ -645,7 +645,7 @@ export function matchRecordsQuickMultipleCategories(pSentences: IMatch.IProcesse
   var res = [] as Array<IMatch.IWhatIsTupelAnswer>;
   debuglog("relevant records with first (r=" + relevantRecords.length + ")");
   perflog("relevant records with first nr:" + relevantRecords.length + " sentences " + pSentences.sentences.length);
-  if (process.env.ABOT_FAST && categorySet) {
+  if (/*process.env.ABOT_FAST &&*/ categorySet) {
     // we are only interested in categories present in records for domains which contain the category
     // var categoryset = Model.calculateRelevantRecordCategories(theModel,category);
     //knowing the target

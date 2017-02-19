@@ -73,6 +73,109 @@ exports.testJoinResultsTupel = function (test) {
   test.done();
 };
 
+exports.testListAllMultWithCompareOneBadCat = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','FioriBackendCatalogs'], 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'CA', 'n/a', 'n/a' ],
+  [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'n/a' ],
+  [ 'FI-LOC-FI', 'ODATA_GLO_FIN_APP_DESCRIPTORS', 'n/a' ] ],
+   'correct result');
+  test.done();
+};
+
+
+exports.testListAllMultWithCompareBECategories = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'CA', 'n/a', 'n/a' ],
+    [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+
+exports.testListAllMultHavingCompareOneBadCat = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var res = ListAll.listAllTupelHavingContext(['ApplicationComponent','devclass','FioriBackendCatalogs'], 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'CA', 'n/a', 'n/a' ],
+  [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'n/a' ],
+  [ 'FI-LOC-FI', 'ODATA_GLO_FIN_APP_DESCRIPTORS', 'n/a' ] ],
+   'correct result');
+  test.done();
+};
+
+
+exports.testListAllMultHavingCompareBECategories = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var res = ListAll.listAllTupelHavingContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'CA', 'n/a', 'n/a' ],
+    [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+
+///// with category set !
+
+
+
+exports.testListAllMultWithCompareBECategoriesWithSet = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
+  var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+  var res = ListAll.listAllTupelWithContext(cats, 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records,categorySet);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+exports.testListAllMultHavingCompareBECategoriesWithSet = function (test) {
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+  var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
+  var categorySet = Model.getAllRecordCategoriesForTargetCategories(theModel, cats, true);
+
+  var res = ListAll.listAllTupelHavingContext(cats, 'TransactionCode S_ALR_87012394' ,
+    theModel.rules, theModel.records, categorySet);
+  //console.log(JSON.stringify(res));
+  test.deepEqual(res.tupelanswers.map(o => o.result),
+    [ [ 'FI-AR', 'APPL_FIN_APP_DESCRIPTORS', 'SAP_TC_FIN_ACC_BE_APPS' ],
+      [ 'FI-LOC-FI',
+        'ODATA_GLO_FIN_APP_DESCRIPTORS',
+        'SAP_TC_FIN_GLO_AC_BE_APPS' ] ],
+   'correct result');
+  test.done();
+};
+
+//===
+
+
+
+
+
 
 exports.testListAllWithContextEmpty = function (test) {
   var res = ListAll.listAllWithContext('url', '',

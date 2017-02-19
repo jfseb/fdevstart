@@ -32,15 +32,16 @@ var words = {};
 
 
 function setMockDebug() {
-
   var obj = function(s) {
     //console.log(s);
   };
   obj.enabled = true;
   Erbase.mockDebug(obj);
 }
+if(!debuglog.enabled) {
+  setMockDebug();
+}
 
-setMockDebug();
 
 exports.testEvaluteRangeRulesToPosition = function(test) {
   var tokens = ["ABC" , "def" ];

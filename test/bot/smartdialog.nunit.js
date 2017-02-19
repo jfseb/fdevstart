@@ -269,7 +269,10 @@ exports.testListAllCAtegoryInDomainNonDomain = function (test) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(sRes,
  /*   'the Tables for domain SOBJ Tables are ...\n/UIF/LREPDATTR;\n/UIF/LREPDATTRCD;\n/UIF/LREPDCONT;\n/UIF/LREPDCONTCD;\n/UIF/LREPDEREF;\n/UIF/LREPDEREFCD;\n/UIF/LREPDLTXT;\n/UIF/LREPDLTXTCD;\n/UIF/LREPDREF;\n/UIF/LREPDREFCD;\n/UIF/LREPDSTXT;\n/UIF/LREPDSTXTCD;\n/UIF/LREPDTEXT;\n/UIF/LREPDTEXTCD;\nLTDHTRAW;\nLTDHTTMPL;\nLTR_REPOSITORY;\nTZS02'  */
-  'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTransactionCodes;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
+/*  'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTransactionCodes;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
+  */
+   'I did not infer a domain restriction from "domain ELOM", all my categories are ...\nAppDocumentationLinkKW;\nAppKey;\nAppName;\nApplicationComponent;\nApplicationType;\nArtifactId;\nBSPApplicationURL;\nBSPName;\nBSPPackage;\nBackendCatalogId;\nBusinessCatalog;\nBusinessGroupDescription;\nBusinessGroupName;\nBusinessRoleName;\nCategory;\nExternalReleaseName;\nFrontendSoftwareComponent;\nLPDCustInstance;\nObject name length;\nPrimaryODataPFCGRole;\nPrimaryODataServiceName;\nPrimaryTable;\nRoleName;\nSemanticAction;\nSemanticObject;\nShortText;\nSoftwareComponent;\nTable;\nTableTransportKeySpec;\nTechnicalCatalog;\nTechnicalCatalogSystemAlias;\nTransactionCode;\nTransactionCodes;\nTranslationRelevant;\nTransportObject;\nType;\nURLParameters;\nWebDynproApplication;\n_url;\nalbedo;\nappId;\natomic weight;\nclient;\nclientSpecific;\ndetailsurl;\ndevclass;\ndistance;\neccentricity;\nelement name;\nelement number;\nelement properties;\nelement symbol;\nfiori catalog;\nfiori group;\nfiori intent;\nisPublished;\nmass;\nobject name;\nobject type;\norbit radius;\norbital period;\norbits;\nradius;\nrecordKey;\nreleaseId;\nreleaseName;\nsystemId;\ntcode;\ntool;\ntransaction;\ntransaction description;\nunit test;\nuri;\nurl;\nvisual luminosity;\nvisual magnitude;\nwiki'
+
     , 'correct tables');
     test.done();
   });
@@ -752,6 +755,32 @@ exports.testTrainMe = function (test) {
     test.done();
   });
 };
+
+//"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
+
+exports.testListAllWithModelDataCollision = function (test) {
+  //logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394.', function(oRes) {
+  //  var sRes = oRes;
+    //logPerf('testPerfListAll');
+    test.deepEqual(oRes,'the ApplicationComponent, devclass, FioriBackendCatalogs for TransactionCode S_ALR_87012394 are ...\n"FI-AR", "APPL_FIN_APP_DESCRIPTORS" and "SAP_TC_FIN_ACC_BE_APPS";\n"FI-LOC-FI", "ODATA_GLO_FIN_APP_DESCRIPTORS" and "SAP_TC_FIN_GLO_AC_BE_APPS"', 'correct result');
+    test.done();
+  });
+};
+
+//list all Application Component, fiori intent, Backendcatalog for GRM3...
+exports.testListAllWithModelDataCollisionEXample2 = function (test) {
+  //logPerf('testPerfListAll');
+ // var u = 'list all AppNames in FIN-GL Account Manage fiori intent MM-PUR Work Center WBS Elements Planning related to unit test';
+  testOne('list all Application Component, fiori intent, Backendcatalog for GRM3.', function(oRes) {
+  //  var sRes = oRes;
+    //logPerf('testPerfListAll');
+    test.deepEqual(oRes,'the Application Component, fiori intent, Backendcatalog for GRM3 are ...\n"PS", "#WBSElement-assignToGroupingWBSElementCollectively" and "SAP_TC_PS_BE_APPS"', 'correct x');
+    test.done();
+  });
+};
+
 
 exports.testTrainMeKlingon = function (test) {
   logPerf('testPerfListAll');
