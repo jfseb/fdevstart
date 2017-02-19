@@ -20,7 +20,8 @@ const debuglog = debug('stringcompare.perf');
 //var logger = require(root + '/utils/logger');
 const ds = require(root + '/utils/damerauLevenshtein.js');
 
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 const theModel = Model.loadModels('./sensitive');
 
 

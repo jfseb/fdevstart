@@ -15,7 +15,7 @@
  * @copyright (c) 2016 Gerd Forstmann
  */
 // <reference path="../../lib/node-4.d.ts" />
-import * as distance from '../utils/damerauLevenshtein';
+import * as distance from 'abot_stringdist';
 
 import * as Logger from '../utils/logger'
 
@@ -24,14 +24,14 @@ const logger = Logger.logger('inputFilter');
 import * as debug from 'debug';
 var debugperf = debug('perf');
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 
 import * as Algol from './algol';
 
 import * as IMatch from './ifmatch';
 
-import * as breakdown from './breakdown';
+import { BreakDown as breakdown} from 'fdevsta_monmove';
 
 const AnyObject = <any>Object;
 
@@ -805,7 +805,7 @@ cntRec ? : ICntRec ) : IMatch.ICategorizedString[] {
   var seenIt = words[sWordGroup];
   if (seenIt === undefined) {
     seenIt = categorizeWordWithRankCutoff(sWordGroup, rules, cntRec);
-    utils.deepFreeze(seenIt);
+    Utils.deepFreeze(seenIt);
     words[sWordGroup] = seenIt;
   }
   if (!seenIt || seenIt.length === 0) {
@@ -821,7 +821,7 @@ cntRec ? : ICntRec ) : IMatch.ICategorizedString[] {
     words[sWordGroup] = []
     return [];
   }
-  return utils.cloneDeep(seenIt);
+  return Utils.cloneDeep(seenIt);
 }
 
 
@@ -891,7 +891,7 @@ cntRec ? : ICntRec ) : IMatch.ICategorizedStringRanged[] {
   var seenIt = words[sWordGroup];
   if (seenIt === undefined) {
     seenIt = categorizeWordWithOffsetWithRankCutoff(sWordGroup, rules, cntRec);
-    utils.deepFreeze(seenIt);
+    Utils.deepFreeze(seenIt);
     words[sWordGroup] = seenIt;
   }
   if (!seenIt || seenIt.length === 0) {
@@ -907,7 +907,7 @@ cntRec ? : ICntRec ) : IMatch.ICategorizedStringRanged[] {
     words[sWordGroup] = []
     return [];
   }
-  return utils.cloneDeep(seenIt);
+  return Utils.cloneDeep(seenIt);
 }
 
 
@@ -929,7 +929,7 @@ cntRec ? : ICntRec ) : IMatch.ICategorizedStringRanged[] {
 */
 
 
-const clone = utils.cloneDeep;
+const clone = Utils.cloneDeep;
 
 
 function copyVecMembers(u) {
@@ -1019,7 +1019,7 @@ export function extractCategoryMap(oSentence: Array<IFMatch.IWord>): { [key: str
       res[oWord.matchedString].push({ pos: iIndex });
     }
   });
-  utils.deepFreeze(res);
+  Utils.deepFreeze(res);
   return res;
 }
 

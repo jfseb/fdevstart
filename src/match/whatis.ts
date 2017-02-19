@@ -22,7 +22,6 @@ export function mockDebug(o) {
 }
 
 
-import * as utils from '../utils/utils';
 import * as _ from 'lodash';
 
 import * as IMatch from './ifmatch';
@@ -38,6 +37,9 @@ import * as Sentence from './sentence';
 import * as Word from './word';
 
 import * as Algol from './algol';
+
+import {Model as Model}  from 'fdevsta_monmove';
+
 
 
 /*
@@ -971,7 +973,6 @@ export function resolveCategoryOld(category: string, contextQueryString: string,
 }
 */
 
-import * as Model from '../model/model';
 
 export function resolveCategories(categories: string[], contextQueryString: string,
   theModel: IMatch.IModels, domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {

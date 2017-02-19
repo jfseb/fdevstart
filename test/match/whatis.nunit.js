@@ -17,7 +17,8 @@ const InputFilterRules = require(root + '/match/inputFilterRules.js');
 
 const mRules = InputFilterRules.getMRulesSample();
 
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 const theModel = Model.loadModels();
 const theModel2 = Model.loadModels('testmodel2');
 

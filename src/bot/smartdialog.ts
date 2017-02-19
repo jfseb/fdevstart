@@ -21,14 +21,15 @@ import * as Exec from '../exec/exec';
 import * as Match from '../match/match';
 
 import * as Analyze from '../match/analyze';
-import * as BreakDown from '../match/breakdown';
+import { BreakDown }  from 'fdevsta_monmove';
 
 import * as WhatIs from '../match/whatis';
 import * as ListAll from '../match/listall';
 import * as Describe from '../match/describe';
 import * as MakeTable from '../exec/makeqbetable';
 
-import * as Utils from '../utils/utils';
+import * as Utils from 'abot_utils';
+
 import * as ErError from '../match/ererror';
 
 import * as _ from 'lodash';
@@ -132,7 +133,7 @@ import * as Tools from '../match/tools';
 
 var newFlow = true;
 
-import * as Model from '../model/model';
+import { Model } from 'fdevsta_monmove';
 import * as ExecServer from '../exec/execserver';
 
 //const theDefaultModel = Model.loadModels();

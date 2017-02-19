@@ -16,12 +16,10 @@ const debuglog = debug('erbase');
 const debuglogV = debug('erbase');
 const perflog = debug('perf');
 
-import * as breakdown from './breakdown';
-
 const AnyObject = <any>Object;
 
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 import * as IMatch from './ifmatch';
 

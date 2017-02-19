@@ -4,7 +4,8 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 //var debug = require('debug')('vismodel.nunit');
 
 const Vismodel = require(root + '/model/vismodel.js');
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 
 var m = Model.loadModels();
 
@@ -69,7 +70,13 @@ exports.testMakeViz2 = function (test) {
 
 
 
-var mdltest = Model.loadModels('testmodel');
+var mdltest = Model.loadModels();
+
+try {
+  fs.mkdirSync('./testmodel');
+} catch (e) {
+   /*emtpy*/
+}
 
 
 exports.testMakeViz = function (test) {
@@ -94,8 +101,9 @@ exports.testMakeTab = function (test) {
   test.done();
 };
 
+var TESTMODELLOCATION = 'node_modules/abot_testmodel/';
 
 exports.testMakeLUNR = function (test) {
-  Vismodel.makeLunrIndex('testmodel/iupac','./app/public/js/model_iupac', true);
+  Vismodel.makeLunrIndex(TESTMODELLOCATION  + 'testmodel/iupac','./app/public/js/model_iupac', true);
   test.done();
 };

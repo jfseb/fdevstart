@@ -21,7 +21,7 @@ var perflog = debug('perf');
 import * as IMatch from './ifmatch';
 
 import * as Toolmatcher from './toolmatcher';
-import * as BreakDown from './breakdown';
+import { BreakDown } from 'fdevsta_monmove';
 
 import * as Sentence from './sentence';
 
@@ -30,11 +30,13 @@ import * as Operator from './operator';
 
 import * as WhatIs from './whatis';
 
-import * as Model from '../model/model';
+import { Model } from 'fdevsta_monmove';
+
+
 import * as Match from './match';
 
 
-import * as Utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 
 var sWords = {};

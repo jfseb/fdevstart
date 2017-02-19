@@ -17,12 +17,13 @@ var logPerf = logger.perf("perflistall");
 var perflog = debug('perf');
 //const perflog = logger.perf("perflistall");
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 import * as IMatch from './ifmatch';
 
 import * as Toolmatcher from './toolmatcher';
-import * as BreakDown from './breakdown';
+
+import { BreakDown } from 'fdevsta_monmove';
 
 import * as Sentence from './sentence';
 
@@ -32,7 +33,8 @@ import * as Operator from './operator';
 import * as WhatIs from './whatis';
 import * as ErError from './ererror';
 
-import * as Model from '../model/model';
+import { Model } from 'fdevsta_monmove';
+
 import * as Match from './match';
 
 var sWords = {};
@@ -214,7 +216,7 @@ export function joinResults(results: Array<IMatch.IWhatIsAnswer>): string[] {
   return res;
 }
 
-import * as Utils from '../utils/utils';
+
 
 export function joinResultsTupel(results: Array<IMatch.IWhatIsTupelAnswer>): string[] {
   var res  = [];

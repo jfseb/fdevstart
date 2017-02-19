@@ -11,7 +11,8 @@ var root = (process.env.FSD_COVERAGE) ? './gen_cov' : './gen';
 //var debug = require('debug')('vismodel.nunit');
 
 const Vismodel = require(root + '/model/vismodel.js');
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 
 var mdltest = Model.loadModels('testmodel');
 

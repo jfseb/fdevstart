@@ -19,7 +19,7 @@ import * as logger from '../utils/logger';
 var perf = logger.perf('analyze');
 
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 import * as IMatch from './ifmatch';
 

@@ -1,6 +1,6 @@
 /**
  * @file operator
- * @module jfseb.fdevstart.sentence
+ * @module jfseb.fdevstart.operator
  * @copyright (c) Gerd Forstmann
  *
  * Operator implementation
@@ -11,9 +11,6 @@
 
 // <reference path="../../lib/node-4.d.ts" />
 
-// import * as debug from 'debug';
-
-// import * as utils from '../utils/utils';
 
 import * as IMatch from './ifmatch';
 

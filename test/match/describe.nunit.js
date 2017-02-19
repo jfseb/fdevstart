@@ -13,7 +13,8 @@ var debuglog = require('debug')('describe.nunit');
 
 const Describe = require(root + '/match/describe.js');
 
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 const theModel = Model.loadModels();
 
 exports.testSloppyOrExactExact = function (test) {

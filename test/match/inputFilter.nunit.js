@@ -19,7 +19,8 @@ const Algol = require(root + '/match/algol.js');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 
 
 function setMockDebug() {

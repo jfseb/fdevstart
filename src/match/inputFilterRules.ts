@@ -3,7 +3,7 @@
 import * as xinputFilter from './inputFilter';
 import * as IMatch from './ifmatch';
 
-import * as Model from '../model/model';
+import { Model } from 'fdevsta_monmove';
 
 
 export const oKeyOrder: Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];

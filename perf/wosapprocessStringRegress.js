@@ -44,7 +44,8 @@ if(newProcess) {
   console.log('NEW!!!!\n');
 }
 
-const Model  = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 
 const WhatIs = require(root + '/match/whatis.js');
 

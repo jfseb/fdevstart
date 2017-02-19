@@ -14,7 +14,7 @@ const ListAll = require(root + '/match/listall.js');
 const InputFilterRules = require(root + '/match/inputFilterRules.js');
 
 
-const Model = require(root + '/model/model.js');
+const Model = require('fdevsta_monmove').Model;
 const theModel = Model.loadModels();
 
 

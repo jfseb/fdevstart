@@ -16,7 +16,7 @@ import * as debug from 'debug';
 
 import * as IMatch from './ifmatch';
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 import * as Sentence from './sentence';
 import * as OpsWord from './word';
 
@@ -61,7 +61,7 @@ export function matchTool(oSentence: IMatch.ISentence, oTool: IMatch.ITool): IMa
   });
   debuglog('satisfied : ' + Object.keys(oTool.requires).join(";"));
   debuglog('required  : ' + Object.keys(oTool.requires).join(";"));
-  var missing = utils.ArrayUtils.setMinus(Object.keys(oTool.requires), Object.keys(required)).reduce(
+  var missing = Utils.ArrayUtils.setMinus(Object.keys(oTool.requires), Object.keys(required)).reduce(
     function (map, sKey) {
       map[sKey] = 1;
       return map;

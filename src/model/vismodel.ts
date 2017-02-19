@@ -9,8 +9,9 @@ import * as IMatch from '../match/ifmatch';
 
 import * as fs from 'fs';
 
-import * as Model from './model';
-import * as Util from '../utils/utils';
+import {Model as Model}  from 'fdevsta_monmove';
+
+import * as Util from 'abot_utils';
 
 import * as Describe from '../match/describe';
 

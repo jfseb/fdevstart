@@ -13,7 +13,8 @@ var debuglog = require('debug')('indexwords.nunit');
 
 const IndexWords = require(root + '/match/indexwords.js');
 
-const Model = require(root + '/model/model.js');
+
+const Model = require('fdevsta_monmove').Model;
 
 const pg = require('pg');
 

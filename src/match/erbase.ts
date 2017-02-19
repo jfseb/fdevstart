@@ -18,7 +18,8 @@ var debuglog = debug('erbase');
 var debuglogV = debug('erbase');
 var perflog = debug('perf');
 
-import * as breakdown from './breakdown';
+import { BreakDown as breakdown} from 'fdevsta_monmove';
+
 import * as ERError from './ererror';
 
 const AnyObject = <any>Object;
@@ -30,7 +31,7 @@ export function mockDebug(o) {
 }
 
 
-import * as utils from '../utils/utils';
+import * as Utils from 'abot_utils';
 
 import * as IMatch from './ifmatch';
 
@@ -202,7 +203,7 @@ export function evaluateRangeRulesToPosition(tokens: string[], fusable: boolean[
 
 
 
-const clone = utils.cloneDeep;
+const clone = Utils.cloneDeep;
 
 
 

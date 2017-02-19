@@ -23,10 +23,9 @@ const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
 const InputFilter = require(root + '/match/inputFilter.js');
 
+const Model = require('fdevsta_monmove').Model;
 
-const Model = require(root + '/model/model.js');
-
-var theModel = Model.loadModels('testmodel', true);
+var theModel = Model.loadModels(); //'testmodel', true);
 
 var words = {};
 
@@ -478,7 +477,7 @@ var res = Erbase.processString('element number 10', theModel2.rules, {});
 
 
 
-var theModelX = Model.loadModels('testmodel',true);
+var theModelX = theModel; //Model.loadModels();
 
 exports.testTokenizeStringOrbitWhatis = function (test) {
   // debuglog(JSON.stringify(ifr, undefined, 2))

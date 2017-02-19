@@ -13,7 +13,7 @@ declare interface ObjectConstructor {
 
 var AnyObject = (<any>Object);
 
-import * as distance from '../utils/damerauLevenshtein';
+import * as distance from  'abot_stringdist';
 
 import * as debug from 'debug';
 const debuglog = debug('dispatcher')

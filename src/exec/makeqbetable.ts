@@ -12,8 +12,10 @@ import * as debug from 'debug';
 const debuglog = debug('maketable')
 
 import * as IMatch from '../match/ifmatch';
-import * as Model from '../model/model';
-import * as Utils from '../utils/utils';
+import { Model } from 'fdevsta_monmove';
+
+
+import * as Utils from 'abot_utils';
 
 import * as _ from 'lodash';
 

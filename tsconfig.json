@@ -33,8 +33,6 @@
         "src/match/toolmatch.ts",
         "src/model/vismodel.ts",
         "src/constants.ts",
-        "src/model/model.ts",
-        "src/model/meta.ts",
         "src/match/indexwords.ts",
         "src/exec/exec.ts",
         "src/exec/execserver.ts",
@@ -43,7 +41,6 @@
         "src/bot/smartdialog.ts",
         "src/bot/plainrecognizer.ts",
         "src/bot/dumbdialog.ts",
-        "src/match/breakdown.ts",
         "src/match/algol.ts",
         "src/match/analyze.ts",
         "src/match/dispatcher.ts",
@@ -62,10 +59,8 @@
         "src/match/whatis.ts",
         "src/match/word.ts",
         "src/utils/logger.ts",
-        "src/utils/dialoglogger.ts",
-        "src/utils/circularser.ts",
-        "src/utils/damerauLevenshtein.ts",
-        "src/utils/utils.ts"
+        "src/utils/dialoglogger.ts"
+
     ],
     "exclude": [
 //  "!node_modules/**"

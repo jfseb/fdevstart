@@ -1,5 +1,7 @@
 
 
+import { IFModel } from 'fdevsta_monmove';
+
 export const enum EnumResponseCode {
   NOMATCH = 0,
   EXEC,
@@ -94,10 +96,15 @@ export type IMatchedSetRecords = IMatchedSetRecord[];
  */
 export type IMatchSet = { [key : string] : string};
 
+export type EnumRuleType = IFModel.EnumRuleType;
+
+//export const enum EnumRuleType = IFModel.EnumRuleType;
+/*
 export const  enum EnumRuleType {
   WORD,
   REGEXP
 }
+*/
 
 export interface IToolSet {
       set: string[],
@@ -206,13 +213,15 @@ export interface IWordRules {
   rules : Array<mRule>,
   bitindex: number
 }
-
+export type SplitRules = IFModel.SplitRules;
+/*
 export interface SplitRules {
   allRules: Array<mRule>,
   nonWordRules : Array<mRule>,
   wordMap: { [key : string] : IWordRules },
   wordCache :  { [key: string]: Array<ICategorizedString> }
 };
+*/
 
 export interface ICategorizedString {
   string: string,
@@ -330,6 +339,12 @@ export interface IModel {
     hidden: string[]
 };
 
+export const EnumRuleType = IFModel.EnumRuleType;
+export type IModels = IFModel.IModels;
+
+//export { IFModel.IModels as IModels } from 'fdevsta_monmove';
+/*
+
 export interface IModels {
     full : {
       domain : { [key : string] : {
@@ -353,3 +368,4 @@ export interface IModels {
         t3 : { [key: string] : { [key : string] : any }}
     }
 }
+*/
