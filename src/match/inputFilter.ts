@@ -113,7 +113,7 @@ type EnumRuleType = IFMatch.EnumRuleType
 
 //const levenCutoff = Algol.Cutoff_LevenShtein;
 
-
+/*
 export function levenPenaltyOld(i: number): number {
   // 0-> 1
   // 1 -> 0.1
@@ -124,6 +124,7 @@ export function levenPenaltyOld(i: number): number {
   // reverse may be better than linear
   return 1 + i * (0.8 - 1) / 150
 }
+*/
 
 export function levenPenalty(i: number): number {
   // 1 -> 1
@@ -783,6 +784,7 @@ retainedLen = ${retainedCnt};
 }
 */
 
+/*
 export function filterRemovingUncategorizedSentence(oSentence: IFMatch.ICategorizedString[][]): boolean {
   return oSentence.every(function (oWordGroup) {
     return (oWordGroup.length > 0);
@@ -796,6 +798,7 @@ export function filterRemovingUncategorized(arr: IFMatch.ICategorizedString[][][
     return filterRemovingUncategorizedSentence(oSentence);
   });
 }
+*/
 
 export function categorizeAWord(sWordGroup: string, rules: IMatch.SplitRules, sentence: string, words: { [key: string]: Array<IFMatch.ICategorizedString>},
 cntRec ? : ICntRec ) : IMatch.ICategorizedString[] {

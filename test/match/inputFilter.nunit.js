@@ -408,6 +408,62 @@ exports.test_matchOthersTrue = function (test) {
   test.done();
 };
 
+
+exports.test_checkOneRuleA = function (test) {
+  // prepare
+  var aRule =
+    {
+      word: 'valuea',
+      key: 'keyA',
+      type: enumRULETYPEWORD,
+      follows: {
+        'keyA': 'Synonym',
+        'keyB': 'CategoryB'
+      }
+    };
+  test.expect(1);
+  // act
+  try {
+     var res = ab.checkOneRule('abc','abc', true, [], aRule, {});
+     test.equal(1,0);
+  } catch(e) {
+    test.equal(1,1);
+  }
+  test.done();
+};
+
+
+exports.test_checkOneRuleWithOffsetA = function (test) {
+  // prepare
+  var aRule =
+    {
+      word: 'valuea',
+      key: 'keyA',
+      type: enumRULETYPEWORD,
+      follows: {
+        'keyA': 'Synonym',
+        'keyB': 'CategoryB'
+      }
+    };
+  var oContext = {
+    keyA: 'ValueA',
+    keyB: 'NothingMatches'
+  };
+  test.expect(1);
+  // act
+  try {
+     var res = ab.checkOneRuleWithOffset('abc','abc', true, aRule, {});
+     test.equal(1,0);
+  } catch(e) {
+    test.equal(1,1);
+  }
+  test.done();
+};
+
+
+
+
+
 exports.test_matchOthersFalse = function (test) {
   // prepare
   var aRules = [

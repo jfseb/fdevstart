@@ -7,9 +7,15 @@ import * as debug from 'debug';
 
 const debuglog = debug('indexwords');
 
+var pgInstance = pg;
+
+export function mockPG(pg) {
+  pgInstance = pg;
+}
+
 var columns = ['lowercaseword', 'matchedstring', 'category'];
 export function insertWord(dburl : string,lowercaseword : string, matchedstring : string, category: string, callback : (err: Error, res? : boolean) => void ) {
-  pg.connect(dburl, (err, client : pg.Client, pgDone) => {
+  pgInstance.connect(dburl, (err, client : pg.Client, pgDone) => {
       var oEntry =  {
         matchedstring : matchedstring,
         lowercaseword : lowercaseword,
