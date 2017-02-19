@@ -11,6 +11,34 @@ import * as rere from 'react-redux';
 const MAXWIDTH= 570;
 const MINWIDTH= 30;
 
+// fire off XMLHttpRequest early
+function reqListener () {
+  console.log(this.responseText);
+}
+
+try {
+
+var loadPromise = new Promise(function (resolve, reject) {
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", function() {
+    var r = JSON.parse(this.responseText);
+    (window as any).mdldata = r;
+    records = r.data;
+    console.log("here data" + r.data.length);
+    (window as any).makeElasticIndex(r.serIndex);
+    console.log("parsed ok!");
+    resolve(r);
+  });
+  var url = document.getElementById('container').getAttribute('mdlsrc');
+  console.log("dataurl" + url);
+  oReq.open("GET", url);
+  oReq.send();
+});
+} catch(e) {
+  alert('this page requires a recent version of Microsoft Edge, Chrome, Safari or similar');
+}
+
+
 //var elastic = (window as any).elasticlunr.Index.load(
 //  (window as any).serIndex);
 
@@ -36,7 +64,7 @@ let u = "appId" as keyof IRecord;
                 "BusinessCatalog",
 */
 
- const defaultCols = ( [
+ const XdefaultCols = ( [
   'appId',
   "fiori intent",
   'AppName',
@@ -55,21 +83,46 @@ let u = "appId" as keyof IRecord;
 "RoleName", */
 ] ) as typeof u[];
 
-const allColumns = ( ((window as any).mdldata && (window as any).mdldata.columns) || defaultCols);
+const XallColumns = ( ((window as any).mdldata && (window as any).mdldata.columns) || XdefaultCols);
 
+/*
 var m = /c(\d+(,\d+)*)/.exec((window as any).location.search || "");
 
 var urlcols = ((m && m[1] ) || "").split(",").map(s => { try { return parseInt(s); } catch(e) { return -1; }}).map(i => allColumns[i]).filter(c =>  !!c);
-urlcols = urlcols.slice(0,10);
+urlcols = urlcols.slice(0,15);
+*/
+function getURLColsFromURL(allColumns : string[]) {
+  var m = /c(\d+(,\d+)*)/.exec((window as any).location.search || "");
+  var urlcols = ((m && m[1] ) || "").split(",").map(s => { try { return parseInt(s); } catch(e) { return -1; }}).map(i => allColumns[i]).filter(c =>  !!c);
+  urlcols = urlcols.slice(0,15);
+  return urlcols;
+}
 
-const columns =(  urlcols.length && urlcols || defaultCols );
+var Xurlcols = getURLColsFromURL(XallColumns);
 
-const columnsDescription = ((window as any).mdldata && (window as any).mdldata.columnsDescription)
+const Xcolumns =(  Xurlcols.length && Xurlcols || XdefaultCols );
+
+const XcolumnsDescription = ((window as any).mdldata && (window as any).mdldata.columnsDescription)
  || { "appId" : "The name of the app"};
 
-const columnsDefaultWidth = ((window as any).mdldata && (window as any).mdldata.columnsDefaultWidth)
+const XcolumnsDefaultWidth = ((window as any).mdldata && (window as any).mdldata.columnsDefaultWidth)
  || { "fiori intent" : 180 };
 
+
+function mergeDataRespose(state : IState, mdlData : any) : IState {
+  var aState = Object.assign({},state) ;
+    aState.allColumns = mdlData.columns || XdefaultCols;
+    var urlcols = getURLColsFromURL(aState.allColumns);
+    aState.columns = (  urlcols.length && urlcols || XdefaultCols );
+    aState.columnsDescription = mdlData.columnsDescription  || { "appId" : "The name of the app"};
+    aState.columnsDefaultWidth = mdlData.columnsDefaultWidth  || { "fiori intent" : 180 };
+    return aState;
+}
+
+
+
+
+/*
 const columnsWidth = [
   { id : 'appId',
     width : 50} ,
@@ -80,13 +133,14 @@ const columnsWidth = [
                 "releaseName",
                 "BusinessCatalog"
 ] as typeof u[];
+*/
 
-
-
+/*
 var columnLabels = {} as { [key: string]: string };
 columns.forEach(function (col : string) {
   columnLabels[col] = col;
 });
+*/
 
 var records =  [{
   "fiori intent": "n/a",
@@ -206,7 +260,14 @@ var records =  [{
           status varchar(10) not null,
           meta json
 */
-records = (window as any).data || records;
+//records = (window as any).data || records;
+
+records = [
+{
+  "fiori intent": "loading...",
+  "appId": "loading...",
+} as IRecord
+];
 
 function produceSearchResult(searchString: string): number[] {
 
@@ -434,6 +495,9 @@ var w = window,
 interface IPropsSortExample {
   dispatch: any,
   records: IRecord[],
+  columns : string[],
+  columnsDefaultWidth : IColumnsWidth,
+  columnsDescription : {[key: string] : string},
   columnsWidth : IColumnsWidth,
   colSortDirs: IColSortDirs,
   columnsQBEs : IColumnsQBE,
@@ -487,6 +551,9 @@ class SortExample extends React.Component<IPropsSortExample, ISortState> {
     var size = _dataList.getSize();
     var sortIndexes = this.props.sortIndexes || [];
     var sortIndexes = sortIndexes.slice(0,18);
+    var columnsDefaultWidth = this.props.columnsDefaultWidth;
+    var columnsDescription = this.props.columnsDescription;
+    var columns = this.props.columns;
     var columnsWidth = this.props.columnsWidth;
     this._onClearAllQBEs = this._onClearAllQBEs.bind(this);
     var sortedDataList = new DataListWrapper(sortIndexes, _dataList); //this._dataList),
@@ -542,7 +609,7 @@ class SortExample extends React.Component<IPropsSortExample, ISortState> {
   }
 }
 
-function keyToIndex(key : string) {
+function keyToIndex(key : string, columns: string[]) {
   return (columns as any).indexOf(key);
 }
 
@@ -551,12 +618,12 @@ function updateHash(a : IState) {
   var hsh = "/w";
   var width = getClientRect().width;
   hsh += Object.keys(a.columnsWidth).map(key =>{
-    var i = keyToIndex(key);
+    var i = keyToIndex(key, a.columns);
     return  `${i}=${(100*a.columnsWidth[key]/width).toFixed(1)}`;
   }).join("&");
   hsh += "/q";
   hsh += Object.keys(a.columnsQBE).map(key =>{
-    var i = keyToIndex(key);
+    var i = keyToIndex(key, a.columns);
     return  `${i}=${encodeURIComponent(a.columnsQBE[key])}`;
   }).join("&");
 
@@ -564,7 +631,7 @@ function updateHash(a : IState) {
 
   hsh += "/o";
   hsh += Object.keys(a.colSortDirs).map(key =>{
-    var i = keyToIndex(key);
+    var i = keyToIndex(key, a.columns);
     return  `${i}=${encodeURIComponent(a.colSortDirs[key])}`;
   }).join("&");
 
@@ -606,6 +673,12 @@ interface IActionSetColumnSort extends IAction {
   sortDir: string
 };
 
+
+interface IActionGotData extends IAction {
+  type: string,
+  mdlData : any,
+ };
+
 interface IActionSetColumnWidth extends IAction {
   type: string,
   columnKey: TY_recordKey,
@@ -623,11 +696,14 @@ interface IActionClearAllQBEs extends IAction {
 
 
 function getInitialState() : IState {
-  var hash = window.location.hash;
-  var args = hash.split('/');
+
   var aState = {
     clientRect: getClientRect(),
     allLoadedRecs: [], indexList: [],
+    allColumns: [],
+    columnsDefaultWidth :{},
+    columnsDescription : {},
+    columns : [],
     colSortDirs: {},
     columnsQBE :{},
     sortIndexes: [],
@@ -637,13 +713,23 @@ function getInitialState() : IState {
     columnsWidth: {},
     searchStr: ""
   } as IState;
+  /*
+  aState = mergeDataRespose(aState,(window as any).mdldata);
+  parseAndApplyHash(aState);*/
+  return aState;
+}
+
+function parseAndApplyHash(aState: IState) : IState {
+
+  var hash = window.location.hash;
+  var args = hash.split('/');
   args.forEach(function(o) {
     if(o.charAt(0) === 'w') {
       var cols = o.substring(1).split('&');
       cols.forEach(col => {
         var res = col.split("=");
         try {
-          var c = columns[parseInt(res[0])];
+          var c = aState.columns[parseInt(res[0])];
           if(c) {
             var val = Math.min(MAXWIDTH, Math.max(MINWIDTH, Math.round(aState.clientRect.width * parseFloat(res[1]) / 100)));
             if(typeof val === "number" && val !== NaN) {
@@ -664,8 +750,8 @@ function getInitialState() : IState {
         var res = col.split("=");
         try {
           var column = parseInt(res[0]);
-          if(typeof column === "number" && columns[column] && res[1]) {
-            aState.columnsQBE[columns[column]] = decodeURIComponent(res[1]);
+          if(typeof column === "number" && aState.columns[column] && res[1]) {
+            aState.columnsQBE[aState.columns[column]] = decodeURIComponent(res[1]);
           }
         } catch( e) {
 
@@ -678,8 +764,8 @@ function getInitialState() : IState {
         var res = col.split("=");
         try {
           var column = parseInt(res[0]);
-          if(typeof column === "number" && columns[column] && ((res[1] === "ASC" || res[1] === "DESC"))) {
-            aState.colSortDirs[columns[column]] = decodeURIComponent(res[1]);
+          if(typeof column === "number" && aState.columns[column] && ((res[1] === "ASC" || res[1] === "DESC"))) {
+            aState.colSortDirs[aState.columns[column]] = decodeURIComponent(res[1]);
           }
         } catch( e) {
 
@@ -751,6 +837,13 @@ function searchString(state = getInitialState()
       updateHash(a);
       return applyQBE(a);
     }
+    case 'GotData': {
+      var a = (Object as any).assign({},state) as IState;
+      var actionGotData = action as IActionGotData;
+      a = mergeDataRespose(a, actionGotData.mdlData);
+      a = parseAndApplyHash(a);
+      return a;
+    }
     case 'SetColumnQBE': {
       var a = (Object as any).assign({}, state) as IState;
       var actionSetColumnQBE = action as IActionSetColumnQBE;
@@ -778,6 +871,13 @@ interface IState {
   allLoadedRecs: IRecord[], // a sparse array of records index stable!
   indexListSearchFiltered: number[] // a list of Search filtered indices
   init: boolean,
+
+
+  allColumns: string[],
+  columns : string[],
+
+  columnsDescription : { [key: string] : string},
+  columnsDefaultWidth : IColumnsWidth,
 
   //columnWidths
   columnsWidth : IColumnsWidth,
@@ -948,6 +1048,17 @@ function fireClearAllQBEs() : IActionClearAllQBEs {
   };
 }
 
+function fireGotData(mdlData : any) : IActionGotData {
+  return {
+    type: 'GotData',
+    mdlData : mdlData
+  };
+}
+
+function onGotData(dispatch: any, mdlData: any) {
+   dispatch(fireGotData(mdlData));
+}
+
 
 function fireReceivePosts(searchStr: IsearchStr, dataread: IReadRecords, indexList: number[]) : IActionReceivePosts {
   return {
@@ -963,7 +1074,9 @@ function fetchPosts(state: IState) {
     var toIndices =
       fetch(`${state.searchStr}`)
         .then(function (req: any) { return { json: req.json, indexList: req.indexList }; })
-        .then(function (res: any) { return dispatch(fireReceivePosts(state.searchStr, res.json, res.indexList)) });
+        .then(function (res: any) {
+          console.log("fetch posts ...");
+           return dispatch(fireReceivePosts(state.searchStr, res.json, res.indexList)) });
     return { thehandle: 1 };
   };
 }
@@ -991,7 +1104,7 @@ function logger(a: any /*{ getState }*/) {
   var getState = a.getState;
   return function (next: any) {
     return function (action: any) {
-      console.info('dispatching', action);
+      //console.info('dispatching', action);
       const result = next(action);
       //console.log('state after', getState());
       return result;
@@ -1000,7 +1113,6 @@ function logger(a: any /*{ getState }*/) {
 }
 
 //const createStoreWithMiddleware = createStore);
-
 
 const createStoreWithMiddleware = applyMiddleware(thunk, logger)(createStore);
 const reducer = combineReducers({ searchString }); //, postsBysearchStr });
@@ -1013,6 +1125,32 @@ function fetchDataForMyApp(props: any, force ? :boolean ) {
 }
 
 
+/*
+function registerCallback(dispatch: any) {
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", function() {
+    console.log("got resonse " + this.responseText.length);
+    var r = JSON.parse(this.responseText);
+    (window as any).mdldata = r;
+    records = r.data;
+    console.log("here data" + r.data.length);
+    (window as any).makeElasticIndex(r.serIndex);
+    console.log("parsed ok!");
+    dispatch(fireGotData(r));
+  });
+  var url = document.getElementById('container').getAttribute('mdlsrc');
+  console.log("dataurl" + url);
+  oReq.open("GET", url);
+  oReq.send();
+}
+*/
+
+function registerCallback(dispatch: any) {
+  loadPromise.then(function(r) {
+    dispatch(fireGotData(r));
+  });
+}
+
 
 export interface AppProps { value: string, dispatch: any, searchString: IState }
 
@@ -1022,6 +1160,8 @@ class MyApp extends Component<AppProps, undefined> {
 
   componentDidMount() {
     const { dispatch } = this.props;
+    console.log("componentDisMount");
+    registerCallback(dispatch);
     dispatch(fetchDataForMyApp(this.props));
   }
 
@@ -1054,6 +1194,9 @@ class MyApp extends Component<AppProps, undefined> {
         <Picker value={searchStr}
           onChange={this.handleChange.bind(that)} />
         <SortExample records={posts}
+        columns={this.props.searchString.columns}
+        columnsDefaultWidth={this.props.searchString.columnsDefaultWidth}
+        columnsDescription={this.props.searchString.columnsDescription}
         columnsQBEs={this.props.searchString.columnsQBE}
         columnsWidth={this.props.searchString.columnsWidth}
         colSortDirs={colSortDirs}
@@ -1091,6 +1234,7 @@ interface IPosts {
 }
 
 interface IPostRecord {
+  columns : string[],
   record: IRecord
 }
 
@@ -1103,9 +1247,9 @@ class Line extends Component<IPostRecord, undefined> {
   render() {
     return (
       <tr key={this.props.record.appId}>
-        {columns.map((col) =>
+        {this.props.columns.map((col) =>
           <td key={this.props.record.appId + ' ' + col} >
-            {pluck(this.props.record, col)}
+            {pluck(this.props.record, col as keyof IRecord)}
           </td>
         )}
       </tr>

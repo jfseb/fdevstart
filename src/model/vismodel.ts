@@ -105,8 +105,9 @@ export function makeLunrIndex(modelpath: string, output: string, silent ? : bool
 
   var columnNames = columns.map(col => col.name);
 
-  var jsonp = `var mdldata = {};\n//columns \n mdldata.columns = ['${columns.map(col => col.name).join("','")}'];`;
+  var jsonp = `var mdldata = {};\n//columns \n mdldata.columns = ["${columns.map(col => col.name).join('","')}"];`;
 
+  var json = `{ "columns"  : ["${columns.map(col => JSONEscape(col.name)).join('","')}"],`;
   // jsonp += `\n mdldata.fulldata = ${JSON.stringify(bomdata)};\n`;
   //jsonp += `\n//columns info \n mdldata.lunrcolumns = ["{${LUNRIndex.join('","')}"];`;
 
@@ -115,10 +116,21 @@ export function makeLunrIndex(modelpath: string, output: string, silent ? : bool
   ).join(',')}
       };`;
 
+  json += `"columnsDescription" : {${columns.map(col =>
+    ` \n "${col.name}" :  "${JSONEscape(col.description || col.name)}" `
+  ).join(',')}
+      },`;
+
+
   jsonp += `\n//columns info \n mdldata.columnsDefaultWidth = {${columns.map(col =>
     ` \n "${col.name}" : ${col.defaultWidth || 150} `
   ).join(',')}
       };`;
+
+  json += `\n"columnsDefaultWidth" : {${columns.map(col =>
+    ` \n "${col.name}" : ${col.defaultWidth || 150} `
+  ).join(',')}
+      },`;
 
 
 
@@ -127,6 +139,8 @@ export function makeLunrIndex(modelpath: string, output: string, silent ? : bool
   jsonp += "\nvar serIndex =\"" + JSONEscape(theIndexStr) + "\";\n";
   // jsonp += "\nvar serIndex =" + JSON.stringify(theIndex) + ";\n";
 
+
+  json += '\n"serIndex" :' + theIndexStr +  ',';
 
   //console.log("here all names " + JSON.stringify(qbeDataNames));
   var cleanseddata = bomdata.map(o => {
@@ -149,14 +163,16 @@ export function makeLunrIndex(modelpath: string, output: string, silent ? : bool
 
   jsonp += "var data=" + JSON.stringify(cleanseddata) + ";";
 
+  json += '"data":' + JSON.stringify(cleanseddata) + "\n}";
 
   jsonp += `
 
            // var elastic = elasticlunr.Index.load(serIndex);
 
-
   `;
-  fs.writeFileSync(output + ".lunr.js", jsonp);
+
+  //fs.writeFileSync(output + ".lunr.js", jsonp);
+  fs.writeFileSync(output + ".lunr.json", json);
 }
 
 
