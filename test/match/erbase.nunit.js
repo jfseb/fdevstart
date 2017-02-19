@@ -31,6 +31,17 @@ var theModel = Model.loadModels('testmodel', true);
 var words = {};
 
 
+function setMockDebug() {
+
+  var obj = function(s) {
+    //console.log(s);
+  };
+  obj.enabled = true;
+  Erbase.mockDebug(obj);
+}
+
+setMockDebug();
+
 exports.testEvaluteRangeRulesToPosition = function(test) {
   var tokens = ["ABC" , "def" ];
   var fusable = [false,true,false];
@@ -291,7 +302,6 @@ var res = Erbase.expandTokenMatchesToSentences(['a','b','c','d','e'],src);
   test.deepEqual(res.errors[1].context.token, 'c');
   test.done();
 };
-
 
 
 exports.testExpand0 = function (test) {

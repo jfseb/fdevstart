@@ -105,7 +105,7 @@ let debuglog = debug('smartdialog');
 import * as PlainRecognizer from './plainrecognizer';
 //var builder = require('botbuilder');
 
-var dispatcher = require('../match/dispatcher.js').dispatcher;
+//var dispatcher = require('../match/dispatcher.js').dispatcher;
 
 
 function getConversationId(session: builder.Session): string {
@@ -1243,7 +1243,8 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         var s = "Unknown operator " + operatorWord + ", this is a model bug, check operators.json and intents.json";
         dialoglog("ListAllBinOp", session, send("ouch, this was in internal error. Recovering from a weird operator \""
           + operatorWord + "\"\n"));
-        throw new Error(s);
+        return;
+        // TODO        throw new Error(s);
       }
       var filterDomain = undefined;
       if (filterDomainS) {

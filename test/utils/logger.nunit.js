@@ -160,3 +160,52 @@ exports.testLogException = function (test) {
   test.equal(res.indexOf(stack.toString()) >= 0, true, 'message') ;
   test.done();
 };
+
+
+exports.testLogPerf = function (test) {
+  test.expect(18);
+
+  var sS = undefined;
+  var sU = undefined;
+  var sK = undefined;
+  var cS = 0;
+  var cU = 0;
+  var cK = 0;
+  var FakeCons = {
+    log : function(s) { ++cS; sS = s;},
+    time : function(u) { ++cU; sU = u; },
+    timeEnd : function(k) { ++cK; sK= k;}
+  };
+
+  var logger = Logger.logPerf.bind({ enabled : true , first : 0, on : {}, name: 'thename'}, FakeCons);
+  logger('here');
+  test.equal(cS, 1 , 'cS');
+  test.equal(sS, 'Perfthename',  'firt run hename present');
+  test.equal(cK, 0 , 'cK');
+  test.equal(sK, undefined, 'sK');
+  test.equal(cU, 1 , 'cK');
+  test.equal(sU, 'here', 'sU');
+
+
+  logger('here');
+
+  test.equal(cS, 3 , 'cS');
+  test.equal(sS.indexOf('Perfthename delta:'),0,  'perfthename present');
+  test.equal(cK, 1 , 'cK');
+  test.equal(sK, 'here', 'sK');
+  test.equal(cU, 1 , 'cU');
+  test.equal(sU, 'here', 'sU');
+
+  logger('here');
+
+  test.equal(cS, 5, 'cS');
+  test.equal(sS.indexOf('Perfthename delta:'),0,  'perfthename present');
+  test.equal(cK, 1 , 'cK');
+  test.equal(sK, 'here', 'sK');
+  test.equal(cU, 2 , 'cU');
+  test.equal(sU, 'here', 'sU');
+
+  test.done();
+};
+
+

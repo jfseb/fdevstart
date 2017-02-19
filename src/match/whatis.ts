@@ -19,6 +19,10 @@ import * as _ from 'lodash';
 
 import * as IMatch from './ifmatch';
 
+
+import * as Match from './match';
+
+
 import * as Toolmatcher from './toolmatcher';
 
 import * as Sentence from './sentence';
@@ -225,8 +229,7 @@ export function filterRetainTopRankedResultTupel(res: IMatch.IProcessedWhatIsTup
 }
 
 
-import * as Match from './match';
-
+/*
 export function calcRanking(matched: { [key: string]: IMatch.IWord },
   mismatched: { [key: string]: IMatch.IWord }, relevantCount: number): number {
 
@@ -240,6 +243,7 @@ export function calcRanking(matched: { [key: string]: IMatch.IWord },
 
   return Math.pow(factor2 * factor, 1 / (lenMisMatched + lenMatched));
 }
+*/
 
 /**
  * A ranking which is purely based on the numbers of matched entities,
@@ -505,6 +509,7 @@ export function matchRecordsTupelHavingContext(
   return filterRetainTopRankedResultTupel(result1);
 }
 
+/*
 export function matchRecords(aSentences: IMatch.IProcessedSentences, category: string, records: Array<IMatch.IRecord>)
   : IMatch.IProcessedWhatIsAnswers {
   // if (debuglog.enabled) {
@@ -548,8 +553,7 @@ export function matchRecords(aSentences: IMatch.IProcessedSentences, category: s
   var result = Object.assign({}, aSentences, { answers: res });
   return filterRetainTopRankedResult(result);
 }
-
-
+*/
 
 function makeSimplifiedSentencesCategorySet(aSentences: IMatch.IProcessedSentences,
   categorySet: { [key: string]: boolean }, track: { fl: number, lf: number }
@@ -639,7 +643,7 @@ export function matchRecordsQuickMultipleCategories(pSentences: IMatch.IProcesse
     //knowing the target
     perflog("got categoryset with " + Object.keys(categorySet).length);
     var obj = { fl: 0, lf: 0 };
-    var aSimplifiedSentences = makeSimplifiedSentencesCategorySet(pSentences, categorySet,obj);
+    var aSimplifiedSentences = makeSimplifiedSentencesCategorySet(pSentences, categorySet, obj);
     perflog("post simplify (r=" + relevantRecords.length + " s=" + pSentences.sentences.length + " fl " + obj.fl + "->" + obj.lf + ")");
   } else {
     debuglog("not abot_fast !");

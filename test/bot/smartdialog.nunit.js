@@ -646,6 +646,38 @@ exports.testDescribeEarth = function (test) {
   });
 };
 
+exports.testListAllDomainContaining = function (test) {
+  testOne('list all domains containing IU',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+   'my domains containing "IU" are ...\nIUPAC'
+    );
+    test.done();
+  });
+};
+
+
+exports.testListAllDomainContainingNotPresent = function (test) {
+  testOne('list all domains containing IUNIXDA',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+    'I have no domains containing "IUNIXDA"'
+    );
+    test.done();
+  });
+};
+
+
+exports.testBadOP = function (test) {
+  testOne('list all element names overfroombolding ea',function(oRes) {
+    debuglog(JSON.stringify(oRes));
+    test.deepEqual(oRes,
+   'ouch, this was in internal error. Recovering from a weird operator "overfroombolding"\n'
+    );
+    test.done();
+  });
+};
+
 
 
 exports.testOperatorStartsWith = function (test) {

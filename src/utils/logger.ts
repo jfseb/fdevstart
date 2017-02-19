@@ -21,27 +21,27 @@ interface ILogger {
 
 var perfs = {} as {[key : string] : { enabled : boolean, name : string, last: number, first : number, on : {}}};
 
-function logPerf(sString) {
+export function logPerf(cons : any, sString : string) {
   if(!this || !this.enabled) {
     return;
   }
   var label = 'perf' + this.name;
-  console.log('Perf' + this.name);
+  cons.log('Perf' + this.name);
   if(this.first === 0) {
       this.first = Date.now();
       this.last = this.first;
   } else {
     var t = Date.now();
-    console.log('Perf' + this.name +
+    cons.log('Perf' + this.name +
      ' delta: '  + String("      " + (t-this.last)).slice(-6)
     +' total: '  + String("      " + (t-this.first)).slice(-6));
     this.last =  t;
   }
-  if( this.on[sString]) {
-     console.timeEnd(sString)
+  if(this.on[sString]) {
+     cons.timeEnd(sString)
      delete this.on[sString];
   } else {
-      console.time(sString);
+      cons.time(sString);
       this.on[sString] = 1;
   }
 }
@@ -51,7 +51,7 @@ export function perf(string) {
   if (debug('perf' + string).enabled )
   { perfs[string].enabled = true;
   }
-  return logPerf.bind(perfs[string]);
+  return logPerf.bind(perfs[string], console);
 }
 
 import * as fs from 'fs';

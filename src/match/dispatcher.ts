@@ -186,19 +186,6 @@ const oWikis = matchdata.oWikis
   //
   //
 
-  function startBrowser (url) {
-    var cmd =
-    '"%ProgramFiles(x86)%\\Google\\Chrome\\Application\\chrome.exe" --incognito -url "' + url + '"'
-    exec(cmd, function (error, stdout, stderr) {
-      if (error) {
-        console.error(`exec error: ${error}`)
-        return
-      }
-      debuglog(`stdout: ${stdout}`)
-      debuglog(`stderr: ${stderr}`)
-    })
-  }
-
   // startSAPGUI
 
   //   N:\>"c:\Program Files (x86)\SAP\FrontEnd\SAPgui"\sapshcut.exe  -system=UV2 -client=120 -command=SE38 -type=Transaction -user=AUSER
@@ -215,10 +202,11 @@ const oWikis = matchdata.oWikis
     return ptn
   }
 
+/*
   export function executeStartup (oMergedContextResult) {
     if (oMergedContextResult.result.type === 'URL') {
       var ptn = expandParametersInURL(oMergedContextResult)
-      startBrowser(ptn)
+      exec.startBrowser(ptn)
       return ptn
     } else {
       var s = ("Don't know how to start " + oMergedContextResult.result.type + '\n for "' + oMergedContextResult.query + '"')
@@ -226,6 +214,7 @@ const oWikis = matchdata.oWikis
       return s
     }
   }
+*/
 
   function nrMatches (aObject, oContext) {
     return Object.keys(aObject).reduce(function (prev, key) {
@@ -357,6 +346,7 @@ import * as inputFilter from './inputFilter';
     return filterShowEntityOld(res,aShowEntityActions);
   }
 
+/*
   function execShowEntity (oEntity) {
     var merged = filterShowEntity(oEntity, aShowEntityActions)
     if (merged) {
@@ -364,11 +354,12 @@ import * as inputFilter from './inputFilter';
     }
     return null
   }
+*/
 
   // E:\projects\nodejs\botbuilder\samplebot>"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" --incognito -url www.spiegel.de
 
   export const dispatcher = {
-    execShowEntity: execShowEntity,
+//    execShowEntity: execShowEntity,
     _test: {
       sameOrStar: sameOrStar,
       nrMatches: nrMatches,

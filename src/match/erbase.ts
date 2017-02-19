@@ -12,17 +12,22 @@ import * as InputFilter from './inputFilter';
 
 import * as debug from 'debug';
 
-const debuglog = debug('erbase');
-const debuglogV = debug('erbase');
-const perflog = debug('perf');
+
+
+var debuglog = debug('erbase');
+var debuglogV = debug('erbase');
+var perflog = debug('perf');
 
 import * as breakdown from './breakdown';
 import * as ERError from './ererror';
 
 const AnyObject = <any>Object;
 
-
-
+export function mockDebug(o) {
+  debuglog = o;
+  debuglogV = o;
+  perflog = o;
+}
 
 
 import * as utils from '../utils/utils';

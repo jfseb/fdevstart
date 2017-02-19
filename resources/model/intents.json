@@ -75,20 +75,20 @@
   ],
   "ListAllBinOp": [
     [
-      "^List all (.*) ((starting with)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*) ((in)|(for)|(of)) domain (.*)$",
+      "^List all (.*) ((starting with)|(overfroombolding)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*) ((in)|(for)|(of)) domain (.*)$",
       {
         "category": 1,
         "operator" : 2,
-        "A2": 10,
-        "domain" : 15
+        "A2": 11,
+        "domain" : 16
       }
     ],
     [
-      "^List all (.*) ((starting with)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*)$",
+      "^List all (.*) ((starting with)|(overfroombolding)|(beginning with)|((which)? begin(s)? with)|(containing)|(ending with)) (.*)$",
       {
         "category": 1,
         "operator" : 2,
-        "A2": 10
+        "A2": 11
       }
     ]
   ],
