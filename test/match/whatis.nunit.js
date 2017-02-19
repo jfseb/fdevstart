@@ -21,6 +21,20 @@ const Model = require(root + '/model/model.js');
 const theModel = Model.loadModels();
 const theModel2 = Model.loadModels('testmodel2');
 
+
+function setMockDebug() {
+  var obj = function(s) {
+    //console.log(s);
+  };
+  obj.enabled = true;
+  WhatIs.mockDebug(obj);
+}
+if(!debuglog.enabled) {
+  setMockDebug();
+}
+
+
+
 exports.testCmbByResult = function (test) {
   var aList = [
     {

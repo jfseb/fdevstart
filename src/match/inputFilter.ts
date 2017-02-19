@@ -35,10 +35,15 @@ import * as breakdown from './breakdown';
 
 const AnyObject = <any>Object;
 
-const debuglog = debug('inputFilter')
-const debuglogV = debug('inputVFilter')
-const debuglogM = debug('inputMFilter')
+var debuglog = debug('inputFilter')
+var debuglogV = debug('inputVFilter')
+var debuglogM = debug('inputMFilter')
 
+export function mockDebug(o) {
+  debuglog = o;
+  debuglogV = o;
+  debuglogM = o;
+}
 
 
 import * as matchdata from './matchdata';
@@ -1246,6 +1251,6 @@ export function applyRulesPickFirst(context: IFMatch.context): IFMatch.context {
 /**
  * Decide whether to requery for a contet
  */
-export function decideOnReQuery(context: IFMatch.context): Array<IFMatch.context> {
-  return []
-}
+//export function decideOnReQuery(context: IFMatch.context): Array<IFMatch.context> {
+//  return []
+//}

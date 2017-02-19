@@ -282,6 +282,24 @@ ELEMENT_NAME_IUPAC = 'is a category in domain "IUPAC"\nIt is present in 118 (100
 +'Possible values are ...\n"actinium", "aluminium", "americium", "antimony", "argon", "arsenic", "astatine" ...\nDescription: element name';
 
 
+exports.testDescribeCategoryWthDomain = function (test) {
+  var res = Describe.describeCategory('element name', 'IUPAC', theModel, 'describe element name in domain IUPAC');
+  debuglog(res);
+  var cmp =  ELEMENT_NAME_IUPAC;
+  debuglog(cmp);
+  test.deepEqual(res, [ 'is a category in domain "IUPAC"\nIt is present in 118 (100.0%) of records in this domain,\nhaving 118 distinct values.\nPossible values are ...\n"actinium", "aluminium", "americium", "antimony", "argon", "arsenic", "astatine" ...\nDescription: element name' ]);
+  test.done();
+};
+
+
+exports.testDescribeCategoryWithInvalid = function (test) {
+  var res = Describe.describeCategory('element name', 'IUPOCCCCCAC', theModel, 'describe element name in domain IUPAC');
+  debuglog(res);
+  var cmp =  ELEMENT_NAME_IUPAC;
+  debuglog(cmp);
+  test.deepEqual(res, [ ]);
+  test.done();
+};
 
 exports.testDescribeInDomain = function (test) {
   var res = Describe.describeCategoryInDomain('element name', 'IUPAC', theModel);

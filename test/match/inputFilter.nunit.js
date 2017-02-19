@@ -22,6 +22,19 @@ const inputFilterRules = require(root + '/match/inputFilterRules.js');
 const Model = require(root + '/model/model.js');
 
 
+function setMockDebug() {
+  var obj = function(s) {
+    //console.log(s);
+  };
+  obj.enabled = true;
+  inputFilter.mockDebug(obj);
+}
+if(!debuglog.enabled) {
+  setMockDebug();
+}
+
+
+
 const ab = inputFilter;
 
 exports.testcountAinB = function (test) {

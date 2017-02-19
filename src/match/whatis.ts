@@ -10,9 +10,17 @@ import * as InputFilter from './inputFilter';
 
 import * as debug from 'debug';
 
-const debuglog = debug('whatis');
-const debuglogV = debug('whatVis');
-const perflog = debug('perf');
+var debuglog = debug('whatis');
+var debuglogV = debug('whatVis');
+var perflog = debug('perf');
+
+
+export function mockDebug(o) {
+  debuglog = o;
+  debuglogV = o;
+  perflog = o;
+}
+
 
 import * as utils from '../utils/utils';
 import * as _ from 'lodash';
