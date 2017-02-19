@@ -61,10 +61,11 @@ export function assureColumnLengthNotExceeded(obj : ILogEntry) : ILogEntry {
   return obj;
 }
 
-export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => void ) {
+export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => void , ForceSqlActive? : boolean) {
   "use strict";
   callback = callback || (function() {});
   var session = answer.session;
+  var sqlIsActive = ForceSqlActive || sqlActive;
   var pg = this.pg;
   debuglog("here user id of message session.message.address " +
   JSON.stringify(session.message.address.user));
@@ -89,7 +90,8 @@ export function logAnswer(answer: IAnswer, callback : (err: any, res?: any) => v
   };
 
   oLogEntry = assureColumnLengthNotExceeded(oLogEntry);
-  if (!sqlActive) {
+  debuglog("sqlIsActive" + sqlIsActive);
+  if (!sqlIsActive) {
     return;
   }
   pg.connect(this.dburl, (err, client : pg.Client, pgDone) => {
