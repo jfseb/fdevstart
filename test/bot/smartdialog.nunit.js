@@ -537,7 +537,8 @@ exports.testListAllMultOnlyCat = function (test) {
   testOne('list all orbits, object type',function(oRes) {
     debuglog(JSON.stringify(oRes));
     test.deepEqual(oRes,
-    'the orbits, object type are ...\n"Alpha Centauri C" and "planet";\n"n/a" and "star, red dwarf";\n"Sun" and "planet"'
+      'the orbits, object type are ...\n"Alpha Centauri C" and "planet";\n"n/a" and "star";\n"n/a" and "star, red dwarf";\n"Sun" and "planet"'
+//    'the orbits, object type are ...\n"Alpha Centauri C" and "planet";\n"n/a" and "star, red dwarf";\n"Sun" and "planet"'
      );
     test.done();
   });

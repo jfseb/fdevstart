@@ -600,9 +600,14 @@ export function matchRecordsQuickMultipleCategories(pSentences: IMatch.IProcesse
       return (domainCategoryFilter.domains.indexOf((record as any)._domain) >= 0);
     });
   }
-  /* else*/ {
-    relevantRecords= relevantRecords.filter(function (record: IMatch.IRecord) {
-      return (record[categoryF] !== undefined) && (record[categoryF] !== null);
+  else {
+    relevantRecords = relevantRecords.filter(function (record: IMatch.IRecord) {
+      return !categories.every(cat =>
+            (record[cat] === undefined) || (record[cat] === null)
+      );
+  //      }
+
+ //     return (record[categoryF] !== undefined) && (record[categoryF] !== null);
     });
   }
   var res = [] as Array<IMatch.IWhatIsTupelAnswer>;
@@ -1023,7 +1028,7 @@ export function resolveCategoryOld(category: string, contextQueryString: string,
 import * as Model from '../model/model';
 
 export function resolveCategories(categories: string[], contextQueryString: string,
-  theModel: IMatch.IModels): IMatch.IProcessedWhatIsTupelAnswers {
+  theModel: IMatch.IModels, domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {
   var records = theModel.records;
   var rules = theModel.rules;
   if (contextQueryString.length === 0) {
@@ -1034,7 +1039,7 @@ export function resolveCategories(categories: string[], contextQueryString: stri
     }
   } else {
     // var categorySet = Model.getAllRecordCategoriesForTargetCategory(theModel, cat, true);
-    var res = ListAll.listAllTupelWithContext(categories, contextQueryString, rules, records);
+    var res = ListAll.listAllTupelWithContext(categories, contextQueryString, rules, records, domainCategoryFilter);
     //* sort by sentence
     res.tupelanswers.forEach(o => { o._ranking = o._ranking *  Sentence.rankingProduct( o.sentence ); });
     res.tupelanswers.sort(cmpByRankingTupel);

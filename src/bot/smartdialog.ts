@@ -721,7 +721,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         }
       }
       if (cats.length === 1) {
-        debuglog('category identified:' + cat);
+        debuglog('WI category identified:' + cat);
         const result = WhatIs.resolveCategory(cat, a1.entity,
           theModel.rules, theModel.records);
         debuglog(debuglog.enabled? ('whatis result:' + JSON.stringify(result)):'-');
@@ -749,9 +749,16 @@ function makeBot(connector, modelPath?: string, options? : any ) {
         }
       } // single category
       else {
-        debuglog('categories identified:' + cats.join(","));
+        debuglog('WI categories identified:' + cats.join(","));
+        try {
+        var domainCategoryFilter = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
+      } catch (e) {
+            var explain = "";
+            dialoglog("WhatIs", session, send('I don\'t know anything about "' + category + "\" (" + Utils.listToQuotedCommaAnd(cats) + ')\" in relation to "' + a1.entity + `"${explain}`));
+            return;
+        }
         const resultArr = WhatIs.resolveCategories(cats, a1.entity,
-          theModel);
+          theModel, domainCategoryFilter);
         debuglog(debuglog.enabled ? ('mulst whatis result:' + JSON.stringify(resultArr)):'-');
         logQueryWhatIsTupel(session, 'WhatIs', resultArr.tupelanswers);
         var indis = WhatIs.isIndiscriminateResultTupel(resultArr.tupelanswers);

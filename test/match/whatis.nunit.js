@@ -592,25 +592,6 @@ exports.testcmpByRankingTupel= function (test) {
   test.equal(res < 0, false);
   res = WhatIs.cmpByRankingTupel(a1,c1);
   test.equal(res < 0, true);
-
-
-  test.done();
-};
-
-
-exports.testcmpByRankingTupelSameRes = function (test) {
-  var a1 = {
-    _ranking : 1.0,
-    record : { 'a' : 1, 'b' : 2},
-    result : ['a']
-  };
-  var b1 = {
-    _ranking : 1.0,
-    record : { 'a' : 1, 'b' : 2},
-    result : ['a']
-  };
-  var res = WhatIs.cmpByRankingTupel(a1,a1);
-  test.equal(res, 0);
   test.done();
 };
 
