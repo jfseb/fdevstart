@@ -68,41 +68,6 @@ export function cmpByResultThenRankingTupel(aa: IMatch.IWhatIsTupelAnswer, bb: I
 }
 
 
-
-export function cmpByRankingAscending(a: IMatch.IWhatIsAnswer, b: IMatch.IWhatIsAnswer) {
-  var cmp = (a._ranking - b._ranking);
-  if (cmp) {
-    return cmp;
-  }
-  cmp = a.result.localeCompare(b.result);
-  if (cmp) {
-    return cmp;
-  }
-
-  // are records different?
-  var keys = Object.keys(a.record).concat(Object.keys(b.record)).sort();
-  var res = keys.reduce(function (prev, sKey) {
-    if (prev) {
-      return prev;
-    }
-    if (b.record[sKey] !== a.record[sKey]) {
-      if (!b.record[sKey]) {
-        return -1;
-      }
-      if (!a.record[sKey]) {
-        return +1;
-      }
-      return a.record[sKey].localeCompare(b.record[sKey]);
-    }
-    return 0;
-  }, 0);
-  return res;
-}
-
-
-
-
-
 export function cmpByRanking(a: IMatch.IWhatIsAnswer, b: IMatch.IWhatIsAnswer) {
   var cmp = -(a._ranking - b._ranking);
   if (cmp) {
@@ -313,6 +278,7 @@ export function calcRankingHavingCategory(matched: { [key: string]: IMatch.IWord
 /**
  * list all top level rankings
  */
+/*
 export function matchRecordsHavingContext(
   pSentences: IMatch.IProcessedSentences, category: string, records: Array<IMatch.IRecord>,
   categorySet: { [key: string]: boolean })
@@ -425,7 +391,7 @@ export function matchRecordsHavingContext(
   var result = Object.assign({}, pSentences, { answers: res });
   return filterRetainTopRankedResult(result);
 }
-
+*/
 
 /**
  * list all top level rankings
@@ -647,145 +613,6 @@ function makeSimplifiedSentences(aSentences : IMatch.IProcessedSentences,  track
   });
 }
 
-export function matchRecordsQuick(aSentences: IMatch.IProcessedSentences, category: string, records: Array<IMatch.IRecord>, categorySet?: { [key: string]: boolean })
-  : IMatch.IProcessedWhatIsAnswers {
-  //if (debuglog.enabled) {
-  //  debuglog(JSON.stringify(records, undefined, 2));
-  //}
-  Object.freeze(categorySet);
-  perflog("matchRecordsQuick ...(r=" + records.length + " s=" + aSentences.sentences.length + ") with category : \"" + category + '\"');
-  var relevantRecords = records.filter(function (record: IMatch.IRecord) {
-    return (record[category] !== undefined) && (record[category] !== null);
-  });
-  var res = [];
-  debuglog("matchRecordsQuick: relevant records (r=" + relevantRecords.length + ") sentences " + aSentences.sentences.length);
-  perflog("relevant records nr:" + relevantRecords.length + " sentences " + aSentences.sentences.length);
-  if (process.env.ABOT_FAST && categorySet) {
-    // we are only interested in categories present in records for domains which contain the category
-    // var categoryset = Model.calculateRelevantRecordCategories(theModel,category);
-    //knowing the target
-    perflog("got categoryset with " + Object.keys(categorySet).length);
-    var obj = {
-      fl: 0,
-      lf: 0
-    };
-    var aSimplifiedSentences = makeSimplifiedSentencesCategorySet(aSentences,categorySet, obj);
-    /*aSentences.sentences.map(function (oSentence) {
-      var aDomains = [] as string[];
-      var rWords = oSentence.filter(function (oWord) {
-        if (oWord.category === "domain") {
-          aDomains.push(oWord.matchedString);
-          return false;
-        }
-        if (oWord.category === "meta") {
-          // e.g. domain XXX
-          return false;
-        }
-        return !!categorySet[oWord.category];
-      });
-      fl = fl + oSentence.length;
-      lf = lf + rWords.length;
-      return {
-        domains: aDomains,
-        oSentence: oSentence,
-        cntRelevantWords: rWords.length,
-        rWords: rWords
-      };
-    });
-    */
-    perflog("post simplify (r=" + relevantRecords.length + " s=" + aSentences.sentences.length + " fl " + obj.fl + "->" + obj.lf + ")");
-  } else {
-    var track = {
-      fl : 0,
-      lf : 0
-    };
-    var domains = [] as string[];
-    var aSimplifiedSentences = makeSimplifiedSentences(aSentences,track);
-    /*
-    .sentences.map(function (oSentence) {
-      console.log("here sentence" + Sentence.dumpNice(oSentence));
-      var rWords = oSentence.filter(function (oWord) {
-        if (oWord.category === "domain") {
-          console.log("GOT A DOMAIN!" + oWord.matchedString);
-          domains.push(oWord.matchedString);
-          return false;
-        }
-        if (oWord.category === "meta") {
-          // e.g. domain XXX
-          return false;
-        }
-        return !Word.Word.isFiller(oWord);
-      });
-      fl = fl + oSentence.length;
-      lf = lf + rWords.length;
-      return {
-        oSentence: oSentence,
-        domains: domains,
-        cntRelevantWords: rWords.length,
-        rWords: rWords
-      };
-    });
-    */
-    perflog("post simplify (r=" + relevantRecords.length + " s=" + aSentences.sentences.length + " fl " + track.fl + "->" + track.lf + ")");
-  }
-
-  relevantRecords.forEach(function (record) {
-    aSimplifiedSentences.forEach(function (aSentence) {
-      // count matches in record which are *not* the category
-      var mismatched = 0;
-      var matched = 0;
-      var nouse = 0;
-      var missingcat = 0;
-      aSentence.rWords.forEach(function (oWord) {
-        if (record[oWord.category] !== undefined) {
-          if (oWord.matchedString === record[oWord.category]) {
-            ++matched;
-          } else {
-            ++mismatched;
-          }
-        } else {
-          if (oWord.category !== "category") {
-            nouse += 1;
-          } else {
-            if (!record[oWord.matchedString]) {
-              missingcat += 1;
-            }
-          }
-        }
-      });
-      if (aSentence.domains.length) {
-        if ((record as any)._domain !== aSentence.domains[0]) {
-          mismatched = 3000;
-        } else {
-          matched += 1;
-          //console.log("GOT A DOMAIN HIT" + matched + " " + mismatched);
-        }
-      }
-      // if(matched > 0 || mismatched > 0 ) {
-      //   console.log(" m" + matched + " mismatched" + mismatched);
-      // }
-      //console.log(JSON.stringify(aSentence.oSentence));
-      if (matched > mismatched) {
-        res.push({
-          sentence: aSentence.oSentence,
-          record: record,
-          category: category,
-          result: record[category],
-          _ranking: calcRankingSimple(matched, mismatched, (nouse + missingcat), aSentence.cntRelevantWords)
-        });
-      }
-    })
-  });
-  perflog("sort (a=" + res.length + ")");
-  res.sort(cmpByResultThenRanking);
-  perflog("filterRetain ...");
-  var result2 = Object.assign({ answers: res }, aSentences);
-  var result = filterRetainTopRankedResult(result2);
-
-  debuglog("matchRecordsQuick done: (r=" + relevantRecords.length + " s=" + aSentences.sentences.length + " a=" + result.answers.length + ")");
-  perflog("matchRecordsQuick done: (r=" + relevantRecords.length + " s=" + aSentences.sentences.length + " a=" + result.answers.length + ")");
-  return result;
-}
 
 function extractResult(categories: string[], record: { [key: string]: string }): string[] {
   return categories.map(function (category) { return record[category] || "n/a"; });
@@ -977,7 +804,7 @@ export function processString(query: string, rules: IMatch.SplitRules
   if (!process.env.ABOT_OLDMATCH) {
     return Erbase.processString(query, rules, rules.wordCache);
   }
-
+/*
   var matched = InputFilter.analyzeString(query, rules, sWords);
   if (debuglog.enabled) {
     debuglog("After matched " + JSON.stringify(matched));
@@ -998,6 +825,7 @@ export function processString(query: string, rules: IMatch.SplitRules
     errors: [],
     sentences: aSentencesReinforced
   } as IMatch.IProcessedSentences;
+*/
 }
 
 
@@ -1123,8 +951,6 @@ export function resolveCategoryOld(category: string, contextQueryString: string,
 */
 
 import * as Model from '../model/model';
-
-
 
 export function resolveCategories(categories: string[], contextQueryString: string,
   theModel: IMatch.IModels): IMatch.IProcessedWhatIsTupelAnswers {
