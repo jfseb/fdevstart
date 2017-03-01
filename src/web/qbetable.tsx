@@ -269,12 +269,12 @@ records = [
 } as IRecord
 ];
 
-function produceSearchResult(searchString: string): number[] {
+function produceSearchResult(state: string): number[] {
 
   var u = (window as any).elastic;
-  if(searchString) {
+  if(state) {
     if(u) {
-      var r = u.search(searchString);
+      var r = u.search(state);
       return r.map(function(o :any) {
         return parseInt(o.ref);
       });
@@ -777,18 +777,172 @@ function parseAndApplyHash(aState: IState) : IState {
   return aState;
 }
 
+function reStart(newColumns: number[]) {
+  var s = window.location.toString();
+  var indexStr = newColumns.join(',');
+  // replace columns
+  s = s.replace(/\?c\d+(,\d+)*#/,"?c" + indexStr + "#").replace(/\/s[^\/]+/,"");
+  document.location.assign(s);
+}
+
+/**
+ * Function creating a vector of n dimensions and filling it with a single
+ * value if required.
+ *
+ * @param  {number} n    - Dimensions of the vector to create.
+ * @param  {mixed}  fill - Value to be used to fill the vector.
+ * @return {array}       - The resulting vector.
+ */
+function vec(n : number, fill : any) {
+  const vector = new Array(n);
+
+  if (arguments.length > 1) {
+    for (let i = 0; i < n; i++)
+      vector[i] = fill;
+  }
+  return vector;
+}
+
+/**
+ * Function returning the Jaro score between two sequences.
+ *
+ * @param  {mixed}  a     - The first sequence.
+ * @param  {mixed}  b     - The second sequence.
+ * @return {number}       - The Jaro score between a & b.
+ */
+function jaro(a : string, b : string) {
+  // Fast break
+  if (a === b)
+    return 1;
+
+  let max, min;
+
+  if (a.length > b.length) {
+    max = a;
+    min = b;
+  }
+  else {
+    max = b;
+    min = a;
+  }
+
+  // Finding matches
+  const range = Math.max(((max.length / 2) | 0) - 1, 0),
+        indexes = vec(min.length, -1),
+        flags = vec(max.length, false);
+
+  let matches = 0;
+
+  for (let i = 0, l = min.length; i < l; i++) {
+    const character = min[i],
+          xi = Math.max(i - range, 0),
+          xn = Math.min(i + range + 1, max.length);
+
+    for (let j = xi, m = xn; j < m; j++) {
+      if (!flags[j] && character === max[j]) {
+        indexes[i] = j;
+        flags[j] = true;
+        matches++;
+        break;
+      }
+    }
+  }
+
+  const ms1 = new Array(matches),
+        ms2 = new Array(matches);
+
+  let si;
+
+  si = 0;
+  for (let i = 0, l = min.length; i < l; i++) {
+    if (indexes[i] !== -1) {
+      ms1[si] = min[i];
+      si++;
+    }
+  }
+
+  si = 0;
+  for (let i = 0, l = max.length; i < l; i++) {
+    if (flags[i]) {
+      ms2[si] = max[i];
+      si++;
+    }
+  }
+
+  let transpositions = 0;
+  for (let i = 0, l = ms1.length; i < l; i++) {
+    if (ms1[i] !== ms2[i])
+      transpositions++;
+  }
+
+  // Computing the distance
+  if (!matches)
+    return 0;
+
+  const t = (transpositions / 2) | 0,
+        m = matches;
+
+  return ((m / a.length) + (m / b.length) + ((m - t) / m)) / 3;
+}
+
+
+function findCol(str: string, columns: string[])  : string {
+  var bestCol = undefined;
+  var bestRank = 0.0;
+  columns.forEach(col => {
+    var rank = jaro(str,col.toLowerCase())
+    if(rank > 0.88 && rank > bestRank) {
+      bestCol = col;
+      bestRank = rank;
+    }
+  });
+  return bestCol;
+}
+
+function processColumnOp(a : string, state : IState) {
+  a = a.toLowerCase();
+  var regex = /^((add)|(delete)|(del)) (column )?(.*)/;
+  var m = regex.exec(a);
+  if(!m) {
+    return false;
+  }
+  var op = m[1];
+  var colstr = m[6];
+  console.log("col : " + col);
+  var col = findCol(colstr, state.allColumns);
+  var newColumns = [] as string[];
+  if(col) {
+    if ((op === "delete" || op === "del") && state.columns.indexOf(col) >= 0) {
+      newColumns = state.columns.filter(co => co !== col);
+    } else if(op === "add" && state.columns.indexOf(col) < 0) {
+      newColumns = state.columns;
+      newColumns.push(col);
+    } else {
+      return false;
+    }
+    reStart(newColumns.map(co => state.allColumns.indexOf(co)));
+    return true;
+  }
+  return false;
+}
+
 // ------------
 // reducers
 // ------------
 
-function searchString(state = getInitialState()
+function state(state = getInitialState()
   , action: IAction) {
   switch (action.type) {
-    case 'SetSearchString':
+    case 'Setstate':
       //state.searchStr = action.searchStr;
       var a = (Object as any).assign({}, state) as IState;
-      var actionSetSearchString = action as IActionSetSearch;
-      a.searchStr = actionSetSearchString.searchStr;
+      var actionSetstate = action as IActionSetSearch;
+      if(processColumnOp(a.searchStr, state) ) {
+        return a;
+      }
+      a.searchStr = actionSetstate.searchStr;
+
+
       //console.log("Here select sarch state " + JSON.stringify(state));
       updateHash(a);
       return a; // action.searchStr;
@@ -951,50 +1105,6 @@ function applyQBE(a: IState) {
     return reSortAgain(a);
   }
 
-/*
-function postsBysearchStr(state = {
-  allLoadedRecs: [], indexList: [],
-  colSortDirs: {},
-  sortIndexes: [],
-  searchStr: ""
-} as IState, action: IAction | IActionSort): IState {
-  switch (action.type) {
-    case 'RECEIVE_POSTS':
-      var a = (Object as any).assign({}, state) as IState; // copy of state!
-      a.indexList = [];
-      a.init = true;
-      action.posts.forEach(p => {
-        a.allLoadedRecs[p.i] = p.data;
-        a.indexList.push(p.i);
-      });
-      a.indexList = action.indexList;
-      reSortAgain(a);
-      //a[action.searchStr] = action.posts.map(p => p.data);
-      // {
-      //  ...state,
-      //  [action.searchStr]: action.posts
-      //}
-      //console.log("procudes state on RECEIVE_POSTS " + JSON.stringify(a));
-      return a;
-    case 'SET_SORT': {
-      var a = (Object as any).assign({}, state) as IState;
-      var actionSort = action as IActionSort;
-      return (a, actionSort.columnKey, actionSort.sortDir);
-    }
-    case 'SET_WIDTH': {
-      var a = (Object as any).assign({}, state) as IState;
-      var actionSetWidth = action as IActionSetWidth;
-      a.columnsWidth = (Object as any).assign({}, state.columnsWidth);
-      a.columnsWidth[actionSetWidth.columnKey] = actionSetWidth.newColumnWidth;
-      return (a, actionSort.columnKey, actionSort.sortDir);
-    }
-    default:
-      //console.log("return default state " + JSON.stringify(a));
-      return state;
-  }
-}
-*/
-
 type IReadRecords = { i: number, data: IRecord }[];
 
 type IsearchStr = string;
@@ -1002,9 +1112,9 @@ type IsearchStr = string;
 // action creators
 // --------------
 
-function fireSetSearchString(searchStr: IsearchStr) : IActionSetSearch {
+function fireSetstate(searchStr: IsearchStr) : IActionSetSearch {
   return {
-    type: 'SetSearchString',
+    type: 'Setstate',
     searchStr
   };
 }
@@ -1084,7 +1194,7 @@ function fetchPosts(state: IState) {
 function fetchPostsIfNeeded(searchStr: IState, force? :boolean) {
   return function (dispatch: any, getState: any) {
     {
-      if (force || !getState().searchString.init) {
+      if (force || !getState().state.init) {
         return dispatch(fetchPosts(searchStr));
       }
     }
@@ -1115,13 +1225,13 @@ function logger(a: any /*{ getState }*/) {
 //const createStoreWithMiddleware = createStore);
 
 const createStoreWithMiddleware = applyMiddleware(thunk, logger)(createStore);
-const reducer = combineReducers({ searchString }); //, postsBysearchStr });
+const reducer = combineReducers({ state }); //, postsBysearchStr });
 const store = createStoreWithMiddleware(reducer);
 //ithMiddleware(reducer);
 
 function fetchDataForMyApp(props: any, force ? :boolean ) {
-  const { searchString } = props;
-  return fetchPostsIfNeeded(searchString, force);
+  const { state } = props;
+  return fetchPostsIfNeeded(state, force);
 }
 
 
@@ -1152,7 +1262,7 @@ function registerCallback(dispatch: any) {
 }
 
 
-export interface AppProps { value: string, dispatch: any, searchString: IState }
+export interface AppProps { value: string, dispatch: any, state: IState }
 
 //@provide(store)
 //@connect(state => state)
@@ -1167,22 +1277,22 @@ class MyApp extends Component<AppProps, undefined> {
 
   componentWillReceiveProps(nextProps: AppProps) {
     const { dispatch } = this.props;
-    if (nextProps.searchString.searchStr !== this.props.searchString.searchStr) {
+    if (nextProps.state.searchStr !== this.props.state.searchStr) {
       dispatch(fetchDataForMyApp(nextProps, true));
     }
   }
 
   handleChange(nextsearchStr: string) {
-    this.props.dispatch(fireSetSearchString(nextsearchStr));
+    this.props.dispatch(fireSetstate(nextsearchStr));
   }
 
   render() {
     var that = this;
-    const { searchString, dispatch } = this.props;
-    const posts = searchString.allLoadedRecs || []; //searchStr[searchString];
-    const sortIndexes = searchString.sortIndexes || [];
-    const colSortDirs = searchString.colSortDirs || {};
-    const searchStr = searchString.searchStr || "";
+    const { state, dispatch } = this.props;
+    const posts = state.allLoadedRecs || []; //searchStr[state];
+    const sortIndexes = state.sortIndexes || [];
+    const colSortDirs = state.colSortDirs || {};
+    const searchStr = state.searchStr || "";
     //console.log(" render main component" + JSON.stringify(this.props));
     var fn = function()  : any {
         dispatch(fireOnResize());
@@ -1194,11 +1304,11 @@ class MyApp extends Component<AppProps, undefined> {
         <Picker value={searchStr}
           onChange={this.handleChange.bind(that)} />
         <SortExample records={posts}
-        columns={this.props.searchString.columns}
-        columnsDefaultWidth={this.props.searchString.columnsDefaultWidth}
-        columnsDescription={this.props.searchString.columnsDescription}
-        columnsQBEs={this.props.searchString.columnsQBE}
-        columnsWidth={this.props.searchString.columnsWidth}
+        columns={this.props.state.columns}
+        columnsDefaultWidth={this.props.state.columnsDefaultWidth}
+        columnsDescription={this.props.state.columnsDescription}
+        columnsQBEs={this.props.state.columnsQBE}
+        columnsWidth={this.props.state.columnsWidth}
         colSortDirs={colSortDirs}
         sortIndexes={sortIndexes} dispatch={dispatch} />
       </div>
@@ -1216,7 +1326,7 @@ class Picker extends Component<PickerProps, undefined> {
     return (
       <header className="qbeHeaderFuzzy">
         search:
-        <input className="searchInput" type="text" placeholder="search string" style={{  width : "80%", align:"left"}} onChange={e => onChange(e.target.value)} value={value} />
+        <input className="searchInput" type="text" placeholder="search string  or add/delete column &lt;columnname&gt;" style={{  width : "80%", align:"left"}} onChange={e => onChange(e.target.value)} value={value} />
       </header>
     );
   }
