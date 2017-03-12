@@ -14,7 +14,7 @@ var debuglog = require('debug')('inputFilter.nunit');
 const inputFilter = require(root + '/match/inputFilter.js');
 const InputFilter = inputFilter;
 
-const utils = require(root + '/utils/utils.js');
+const utils = require('abot_utils');
 const Algol = require(root + '/match/algol.js');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');

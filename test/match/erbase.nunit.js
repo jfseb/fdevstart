@@ -16,7 +16,7 @@ const Erbase = require(root + '/match/erbase.js');
 
 const Whatis = require(root + '/match/whatis.js');
 
-const utils = require(root + '/utils/utils.js');
+const utils = require('abot_utils');
 
 const inputFilterRules = require(root + '/match/inputFilterRules.js');
 
