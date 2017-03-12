@@ -300,9 +300,9 @@ exports.testinferDomain = function (test) {
   test.done();
 };
 
-exports.testinferDomain = function (test) {
-  var domain = ListAll.inferDomain(theModel, 'fiori bom');
-  test.equal(domain, 'FioriFLP', ' correct domain inferred');
+exports.testinferDomainBOM = function (test) {
+  var domain = ListAll.inferDomain(theModel, '"fiori bom"');
+  test.equal(domain, 'FioriBOM', ' correct domain inferred');
   test.done();
 };
 
