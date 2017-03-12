@@ -291,6 +291,9 @@
       "BOM Editor",
       "Fiori Application Library"
     ],
+    "FioriBOM": [
+      "fiori bom"
+    ],
     "SemanticObject": [
       "Semantic Object"
     ],

@@ -861,13 +861,6 @@ function makeBot(connector, modelPath?: string, options? : any ) {
           var categorySet = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, true);
           var result1 = ListAll.listAllWithContext(cat, inSomething,
             theModel.rules, theModel.records, categorySet);
-          // TODO classifying the string twice is a terrible waste
-          if (!result1.answers.length) {
-            debuglog('going for having');
-            var categorySetFull = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, false);
-            result1 = ListAll.listAllHavingContext(cat, inSomething, theModel.rules,
-              theModel.records, categorySetFull);
-          }
           debuglog(debuglog? ('listall result >:' + JSON.stringify(result1)):'-');
           var joinresults = restrictLoggedOn(session, ListAll.joinResults(result1.answers));
           logQueryWhatIs(session, 'ListAll', result1.answers);
@@ -886,7 +879,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
           // no filter entity, e.g. list all countries
           //
           var categorySetFull = Model.getDomainCategoryFilterForTargetCategory(theModel, cat, false);
-          var result = ListAll.listAllHavingContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
+          var result = ListAll.listAllWithContext(cat, cat, theModel.rules, theModel.records, categorySetFull);
           logQueryWhatIs(session, 'ListAll', result.answers);
           if (result.answers.length) {
             debuglog(debuglog.enabled ? ('listall result:' + JSON.stringify(result)): '-');
@@ -920,13 +913,6 @@ function makeBot(connector, modelPath?: string, options? : any ) {
           }
           var result1T = ListAll.listAllTupelWithContext(cats, inSomething,
             theModel.rules, theModel.records, domainCategoryFilter);
-          // TODO classifying the string twice is a terrible waste
-          if (!result1T.tupelanswers.length) {
-            debuglog('going for having');
-            var categorySetFull = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, false);
-            result1T = ListAll.listAllTupelHavingContext(cats, inSomething, theModel.rules,
-              theModel.records, domainCategoryFilter);
-          }
           debuglog(debuglog.enabled? ('listall result:' + JSON.stringify(result1T)) : '-');
           var joinresults = restrictLoggedOn(session, ListAll.joinResultsTupel(result1T.tupelanswers));
           logQueryWhatIsTupel(session, 'ListAll', result1T.tupelanswers);
@@ -951,7 +937,7 @@ function makeBot(connector, modelPath?: string, options? : any ) {
             // next();
             return;
           }
-          var resultT = ListAll.listAllTupelHavingContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
+          var resultT = ListAll.listAllTupelWithContext(cats, "\"" + cats.join("\" \"") + "\"", theModel.rules, theModel.records, categorySetFull);
           logQueryWhatIsTupel(session, 'ListAll', resultT.tupelanswers);
           if (resultT.tupelanswers.length) {
             debuglog(debuglog.enabled? ('listall result:' + JSON.stringify(resultT)):'-');

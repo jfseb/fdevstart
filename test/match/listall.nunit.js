@@ -90,7 +90,7 @@ exports.testListAllMultWithCompareOneBadCat = function (test) {
 
 exports.testListAllMultHavingCompareOneBadCat = function (test) {
 //"list all ApplicationComponent, devclass, FioriBackendCatalogs with TransactionCode S_ALR_87012394."
-  var res = ListAll.listAllTupelHavingContext(['ApplicationComponent','devclass','FioriBackendCatalogs'], 'TransactionCode S_ALR_87012394' ,
+  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','FioriBackendCatalogs'], 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
@@ -106,7 +106,7 @@ exports.testListAllMultHavingCompareBECategories = function (test) {
 
   theModel.rules.wordCache = {};
 
-  var res = ListAll.listAllTupelHavingContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
+  var res = ListAll.listAllTupelWithContext(['ApplicationComponent','devclass','BackendCatalogId'], 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records);
 
   //console.log(JSON.stringify(res));
@@ -186,7 +186,7 @@ exports.testListAllMultHavingCompareBECategoriesWithSet = function (test) {
   var cats = ['ApplicationComponent','devclass','BackendCatalogId'];
   var categorySet = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
 
-  var res = ListAll.listAllTupelHavingContext(cats, 'TransactionCode S_ALR_87012394' ,
+  var res = ListAll.listAllTupelWithContext(cats, 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records, categorySet);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
@@ -206,7 +206,7 @@ exports.testListAllMultHavingCompareBECategoriesWithSetOrder = function (test) {
   var cats = ['devclass', 'ApplicationComponent', 'BackendCatalogId'];
   var categorySet = Model.getDomainCategoryFilterForTargetCategories(theModel, cats, true);
 
-  var res = ListAll.listAllTupelHavingContext(cats, 'TransactionCode S_ALR_87012394' ,
+  var res = ListAll.listAllTupelWithContext(cats, 'TransactionCode S_ALR_87012394' ,
     theModel.rules, theModel.records, categorySet);
   //console.log(JSON.stringify(res));
   test.deepEqual(res.tupelanswers.map(o => o.result),
@@ -234,7 +234,7 @@ exports.testListAllWithContextEmpty = function (test) {
 };
 
 exports.testListAllHavingContext = function (test) {
-  var res = ListAll.listAllHavingContext('url', 'unit test',
+  var res = ListAll.listAllWithContext('url', 'unit test',
     mRules, records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
 
@@ -244,7 +244,7 @@ exports.testListAllHavingContext = function (test) {
 
 
 exports.testListAllHavingContextEmpty = function (test) {
-  var res = ListAll.listAllHavingContext('url', '', mRules, records);
+  var res = ListAll.listAllWithContext('url', '', mRules, records);
   var res2 = ListAll.formatDistinctFromWhatIfResult(res.answers);
   test.deepEqual(res2, '');
   test.done();
@@ -299,6 +299,13 @@ exports.testinferDomain = function (test) {
   test.equal(domain, 'FioriFLP', ' correct domain inferred');
   test.done();
 };
+
+exports.testinferDomain = function (test) {
+  var domain = ListAll.inferDomain(theModel, 'fiori bom');
+  test.equal(domain, 'FioriFLP', ' correct domain inferred');
+  test.done();
+};
+
 
 
 exports.testinferDomainUndef = function (test) {

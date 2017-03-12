@@ -34,45 +34,43 @@ if(!debuglog.enabled) {
 }
 
 
-
-exports.testCmbByResult = function (test) {
+exports.testCmbByResultTupel = function (test) {
   var aList = [
     {
       _ranking: 1.0,
-      result: 'ABC'
+      result: ['ABC']
     },
     {
       _ranking: 0.9,
-      result: 'ABC'
+      result: ['ABC']
     },
     {
       _ranking: 1.2,
-      result: 'DEF'
+      result: ['DEF']
     },
     {
       _ranking: 0.3,
-      result: 'DEF'
+      result: ['DEF']
     },
   ];
 
-  var res = aList.sort(WhatIs.cmpByResultThenRanking);
+  var res = aList.sort(WhatIs.cmpByResultThenRankingTupel);
 
-  test.deepEqual(res[0], { result: 'ABC', _ranking: 1.0 }, 'sort order');
-  test.deepEqual(res[1], { result: 'ABC', _ranking: 0.9 }, 'sort order 2nd');
+  test.deepEqual(res[0], { result: ['ABC'], _ranking: 1.0 }, 'sort order');
+  test.deepEqual(res[1], { result: ['ABC'], _ranking: 0.9 }, 'sort order 2nd');
 
-  var resx = WhatIs.filterRetainTopRankedResult({ answers: res });
-  res = resx.answers;
+  var resx = WhatIs.filterDistinctResultAndSortTupel({ tupelanswers : res });
+  res = resx.tupelanswers;
 
   debuglog(' after filter: ' + JSON.stringify(res));
   res.sort(WhatIs.cmpByRanking);
   debuglog(JSON.stringify(res));
-  test.deepEqual(res[0], { result: 'DEF', _ranking: 1.2 });
-  test.deepEqual(res[1], { result: 'ABC', _ranking: 1.0 });
+  test.deepEqual(res[0], { result: ['DEF'], _ranking: 1.2 });
+  test.deepEqual(res[1], { result: ['ABC'], _ranking: 1.0 });
 
   test.equal(res.length, 2);
   test.done();
 };
-
 
 
 
@@ -581,12 +579,12 @@ exports.testcmpByRankingTupel= function (test) {
     record : { 'a' : '1'},
     result : ['a']
   };
-
   var res = WhatIs.cmpByRankingTupel(a1,a1);
   test.equal(res, 0);
-  res = WhatIs.cmpByRankingTupel(a1,b1);
-  test.equal(res < 0, true);
-  res = WhatIs.cmpByRankingTupel(b1,a1);
+  res = WhatIs.cmpByRankingTupel(a1,b1, 'compare 2');
+  // console.log('here res' + res);
+  test.equal(res < 0, true, 'cmp 2'); //
+  res = WhatIs.cmpByRankingTupel(b1,a1,'def');
   test.equal(res < 0, false);
   res = WhatIs.cmpByRankingTupel(c1,a1);
   test.equal(res < 0, false);
