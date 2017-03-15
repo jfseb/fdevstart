@@ -43,7 +43,6 @@
         "src/bot/dumbdialog.ts",
         "src/match/algol.ts",
         "src/match/analyze.ts",
-        "src/match/dispatcher.ts",
         "src/match/listall.ts",
         "src/match/matchdata.ts",
         "src/match/match.ts",
