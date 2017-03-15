@@ -95,7 +95,7 @@
   "devDependencies": {
     "@types/flux": "^3.0.1",
     "@types/lodash": "^4.14.50",
-    "@types/core-js": "0.9.35",
+    "@types/node": "^7.0.5",
     "@types/debug": "0.0.29",
     "@types/fixed-data-table": "^0.6.31",
     "@types/pg": "^6.1.34",
