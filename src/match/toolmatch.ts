@@ -43,7 +43,7 @@ var oToolFLP = {
 };
 */
 
-import * as Sentence from './sentence';
+import { Sentence as Sentence} from 'abot_erbase';
 
 function cmpToolSet(sets : IMatch.IToolSets, a : string, b:string) {
   return -(sets[a].set.length - sets[b].set.length);

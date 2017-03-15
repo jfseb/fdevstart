@@ -328,9 +328,9 @@ const oWikis = matchdata.oWikis
     }
     return null
   }
+/*
 
-
-import * as inputFilter from './inputFilter';
+import {InputFilter as inputFilter} from 'abot_erbase';
 
   function filterShowEntity (oContext, aShowEntityActions) {
     Object.keys(oContext).forEach(function (sKey) {
@@ -345,7 +345,7 @@ import * as inputFilter from './inputFilter';
     debuglog("** after filter rules" + JSON.stringify(res, undefined, 2))
     return filterShowEntityOld(res,aShowEntityActions);
   }
-
+*/
 /*
   function execShowEntity (oEntity) {
     var merged = filterShowEntity(oEntity, aShowEntityActions)
@@ -365,7 +365,7 @@ import * as inputFilter from './inputFilter';
       nrMatches: nrMatches,
       nrNoMatches: nrNoMatches,
       expandParametersInURL: expandParametersInURL,
-      filterShowEntity: filterShowEntity,
+  //    filterShowEntity: filterShowEntity,
     //  fnFindUnitTest: fnFindUnitTest,
       calcDistance: calcDistance,
       _aShowEntityActions: aShowEntityActions

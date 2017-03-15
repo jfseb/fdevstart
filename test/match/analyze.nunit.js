@@ -8,14 +8,13 @@ var process = require('process');
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 var debuglog = require('debug')('analyze.nunit');
-
 const Analyze = require(root + '/match/analyze.js');
 
 const Match = require(root + '/match/match.js');
-const InputFilter = require(root + '/match/inputFilter.js');
+const InputFilter = require('abot_erbase').InputFilter;
 
 const Result = Match.Result;
-const InputFilterRules = require(root + '/match/inputFilterRules.js');
+const InputFilterRules = require('abot_erbase').InputFilterRules;
 
 const mRules = InputFilterRules.getMRulesSample();
 

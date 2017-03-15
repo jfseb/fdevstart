@@ -23,9 +23,9 @@ import * as IMatch from './ifmatch';
 import * as Toolmatcher from './toolmatcher';
 import { BreakDown } from 'fdevsta_monmove';
 
-import * as Sentence from './sentence';
+import { Sentence as Sentence } from 'abot_erbase';
 
-import * as Word from './word';
+import { Word as Word } from 'abot_erbase';
 import * as Operator from './operator';
 
 import * as WhatIs from './whatis';

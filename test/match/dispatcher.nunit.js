@@ -1,7 +1,7 @@
 var process = require('process');
 var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
-var debug = require('debug')('dispatcher.nunit');
+//var debug = require('debug')('dispatcher.nunit');
 
 const dispatcher = require(root + '/match/dispatcher.js').dispatcher;
 
@@ -193,6 +193,7 @@ exports.test_fnFindUnitTest = function (test) {
 };
 */
 
+/*
 var aShowEntityActions = [
   {
     context: {
@@ -211,7 +212,7 @@ var aShowEntityActions = [
       systemId: 'uv2',
       client: /^\d{3,3}$/,
       systemObjectCategory: 'fiori catalog',
-      systemObjectId: /.*/,
+      systemObjectId: /. * /,
       systemtype: 'ABAPFES',
       tool: 'FLPD'
     },
@@ -413,7 +414,7 @@ exports.test_filterShowEntityWiki = function (test) {
   test.deepEqual(aMerged, {
     context: {
       systemObjectCategory: 'wiki',
-      _weight: { systemObjectCategory: 1, /*0, */ systemObjectId: 0.98},
+      _weight: { systemObjectCategory: 1, /*0, * / systemObjectId: 0.98},
       //   systemId: undefined,
       systemObjectId: 'CA-UI2-INT-FE support',
       path: 'wiki/display/UICEI/CSS+Message+Dispatching+-+component+CA-UI2-INT-FE'
@@ -491,3 +492,4 @@ exports.testFilterShowEntityBetterMatch = function (test) {
   }, 'ok');
   test.done();
 };
+*/

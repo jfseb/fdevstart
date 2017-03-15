@@ -1050,7 +1050,7 @@ export function reinForceSentence(oSentence) {
 }
 
 
-import * as Sentence from './sentence';
+import { Sentence as Sentence} from 'abot_erbase';
 
 export function reinForce(aCategorizedArray) {
   "use strict";

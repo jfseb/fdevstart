@@ -7,7 +7,7 @@
 
 "use strict";
 
-import * as InputFilter from './inputFilter';
+import {InputFilter as InputFilter, Sentence as Sentence} from 'abot_erbase';
 
 import * as debug from 'debug';
 
@@ -25,7 +25,6 @@ import * as IMatch from './ifmatch';
 
 import * as Toolmatcher from './toolmatcher';
 
-import * as Sentence from './sentence';
 
 export function analyzeAll(sString: string, rules: IMatch.SplitRules, aTools: Array<IMatch.ITool>, words? ) {
   "use strict";

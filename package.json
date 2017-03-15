@@ -49,7 +49,7 @@
   "author": "jfsebpublic@gmail.com",
   "license": "MIT",
   "dependencies": {
-
+    "abot_erbase": "file:///E:\\projects\\nodejs\\botbuilder\\erbase_bitmap\\abot_erbase-0.1.0.tgz",
     "abot_stringdist": "^0.1.3",
     "abot_utils": "^0.1.0",
     "body-parser": "^1.15.2",

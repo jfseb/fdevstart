@@ -11,9 +11,9 @@ var debuglog = require('debug')('analyze.nunit');
 
 const WhatIs = require(root + '/match/whatis.js');
 
-var Sentence = require(root + '/match/sentence.js');
+var Sentence = require('abot_erbase').Sentence;
 
-const InputFilterRules = require(root + '/match/inputFilterRules.js');
+const InputFilterRules = require('abot_erbase').InputFilterRules;
 
 const mRules = InputFilterRules.getMRulesSample();
 

@@ -17,8 +17,9 @@ import * as debug from 'debug';
 import * as IMatch from './ifmatch';
 
 import * as Utils from 'abot_utils';
-import * as Sentence from './sentence';
-import * as OpsWord from './word';
+import { Sentence as Sentence} from 'abot_erbase';
+
+import { Word as OpsWord }  from 'abot_erbase';
 
 const Word = OpsWord.Word;
 const Category = OpsWord.Category;

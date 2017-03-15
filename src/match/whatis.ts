@@ -6,13 +6,18 @@
  */
 
 
-import * as InputFilter from './inputFilter';
+import { InputFilter as InputFilter} from 'abot_erbase';
 
 import * as debug from 'debug';
 
 var debuglog = debug('whatis');
 var debuglogV = debug('whatVis');
 var perflog = debug('perf');
+
+
+import { ErError as ErError} from 'abot_erbase';
+
+import { ErBase as ErBase} from 'abot_erbase';
 
 
 export function mockDebug(o) {
@@ -26,15 +31,13 @@ import * as _ from 'lodash';
 
 import * as IMatch from './ifmatch';
 
-
 import * as Match from './match';
-
 
 import * as Toolmatcher from './toolmatcher';
 
-import * as Sentence from './sentence';
+import { Sentence as Sentence} from 'abot_erbase';
 
-import * as Word from './word';
+import { Word as Word}  from 'abot_erbase';
 
 import * as Algol from './algol';
 
@@ -813,14 +816,13 @@ export function filterAcceptingOnly(res: IMatch.ICategorizedString[][], categori
 }
 
 
-import * as Erbase from './erbase';
 
 
 export function processString(query: string, rules: IMatch.SplitRules
 ): IMatch.IProcessedSentences {
 
 //  if (!process.env.ABOT_OLDMATCH) {
-    return Erbase.processString(query, rules, rules.wordCache);
+    return ErBase.processString(query, rules, rules.wordCache);
 //  }
 /*
   var matched = InputFilter.analyzeString(query, rules, sWords);
@@ -909,8 +911,6 @@ export function analyzeOperator(opword: string, rules: IMatch.SplitRules, wholes
   return classifyWordWithTargetCategory(opword, 'operator', rules, wholesentence);
 }
 
-
-import * as ErError from './ererror';
 
 import * as ListAll from './listall';
 // const result = WhatIs.resolveCategory(cat, a1.entity,

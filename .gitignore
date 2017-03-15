@@ -13,6 +13,8 @@ testmodel2/graph/*
 testmodel2/*.gv
 testmodel2/*.bak
 gen_cov
+*.bak
+**/*.bak
 sensitive
 app/public/css/cssorig/*
 regress/runs/20*

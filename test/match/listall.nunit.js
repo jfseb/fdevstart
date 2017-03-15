@@ -11,7 +11,7 @@ var root = (process.env.FSD_COVERAGE) ? '../../gen_cov' : '../../gen';
 
 const ListAll = require(root + '/match/listall.js');
 //const WhatIs = require(root + '/match/whatis');
-const InputFilterRules = require(root + '/match/inputFilterRules.js');
+const InputFilterRules = require('abot_erbase').InputFilterRules;
 
 
 const Model = require('fdevsta_monmove').Model;

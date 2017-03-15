@@ -30,7 +30,7 @@ import * as MakeTable from '../exec/makeqbetable';
 
 import * as Utils from 'abot_utils';
 
-import * as ErError from '../match/ererror';
+import { ErError as ErError} from 'abot_erbase';
 
 import * as _ from 'lodash';
 
@@ -105,9 +105,6 @@ var elizabot = require('../extern/elizabot/elizabot.js');
 let debuglog = debug('smartdialog');
 import * as PlainRecognizer from './plainrecognizer';
 //var builder = require('botbuilder');
-
-//var dispatcher = require('../match/dispatcher.js').dispatcher;
-
 
 function getConversationId(session: builder.Session): string {
   return session.message &&
