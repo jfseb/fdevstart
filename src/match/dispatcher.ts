@@ -53,7 +53,7 @@ const oWikis = matchdata.oWikis
     })
     // later: in case of conflicts, ask,
     // now:
-    var dist = calcDistance(oMap[0].key, sKeywordLc)
+    var dist = distance.calcDistance(oMap[0].key.toLowerCase(), sKeywordLc)
     debuglog('best dist' + dist + ' /  ' + oMap[0].key + ' ' + sKeyword)
     if (dist > Algol.Cutoff_WordMatch) {
       var o1 = (<any>Object).assign({}, oContext)
@@ -361,9 +361,9 @@ import {InputFilter as inputFilter} from 'abot_erbase';
   export const dispatcher = {
 //    execShowEntity: execShowEntity,
     _test: {
-      sameOrStar: sameOrStar,
-      nrMatches: nrMatches,
-      nrNoMatches: nrNoMatches,
+     // sameOrStar: sameOrStar,
+  //    nrMatches: nrMatches,
+  //    nrNoMatches: nrNoMatches,
       expandParametersInURL: expandParametersInURL,
   //    filterShowEntity: filterShowEntity,
     //  fnFindUnitTest: fnFindUnitTest,

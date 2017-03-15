@@ -1,5 +1,5 @@
 /**
- * connect dispatcher
+ * connect  htmlconnector
  * to HTML engine
  */
 
