@@ -1,9 +1,10 @@
 
 
 import * as xinputFilter from './inputFilter';
-import * as IMatch from './ifmatch';
+import { IFErBase as IMatch}  from 'abot_erbase';
+import { Model as Model } from 'fdevsta_monmove';
 
-import { Model } from 'fdevsta_monmove';
+import { IFModel } from 'fdevsta_monmove';
 
 
 export const oKeyOrder: Array<String> = ["systemObjectCategory", "systemId", "systemObjectId"];
@@ -154,7 +155,7 @@ var mUnitTestWords = UnitTestList.map(function (sEntry) {
   return {
     category: "unit test",
     matchedString: sString,
-    type: IMatch.EnumRuleType.WORD,
+    type: IFModel.EnumRuleType.WORD,
     bitindex : 0x03,
     word: sString,
     _ranking: 0.95
@@ -168,7 +169,7 @@ export function getRuleMap() {
 
   var systemObjectCategory = [
     {
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       key: "systemObjectCategory",
       word: "unit test",
       follows: {
@@ -176,7 +177,7 @@ export function getRuleMap() {
       }
     },
     {
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       key: "systemObjectCategory",
       word: "unit",
       follows: {
@@ -197,7 +198,7 @@ export function getRuleMap() {
     var bestSynonym = aArr[0];
     return aArr.map(function (sEntry) {
       return {
-        type: IMatch.EnumRuleType.WORD,
+        type: IFModel.EnumRuleType.WORD,
         key: "systemObjectCategory",
         word: sEntry,
         follows: {
@@ -222,7 +223,7 @@ export function getRuleMap() {
           1: 'systemId',
           2: 'client'
         },
-        type: IMatch.EnumRuleType.REGEXP,
+        type: IFModel.EnumRuleType.REGEXP,
         follows: {}
       },
       {
@@ -231,7 +232,7 @@ export function getRuleMap() {
         argsMap: {
           1: 'systemId'
         },
-        type: IMatch.EnumRuleType.REGEXP,
+        type: IFModel.EnumRuleType.REGEXP,
         follows: {}
       }
     ],
@@ -245,7 +246,7 @@ export function getRuleMap() {
     return {
       key: "systemObjectId",
       word: sString,
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       follows: {
         systemObjectCategory: "unit test",
         systemObjectId: sString
@@ -280,7 +281,7 @@ export function getRuleMap() {
     return {
       word: oEntry.key,
       key: "systemObjectId",
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       follows: {
         systemObjectCategory: "wiki",
         systemObjectId: (oEntry.res || oEntry.key).toLowerCase()
@@ -294,14 +295,14 @@ export function getRuleMap() {
 
   systemObjectId = systemObjectId.concat([
     {
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       key: "systemObjectId",
       word: "flpd",
       follows: {
       }
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       key: "systemObjectId",
       regexp: /^\S+$/i,
       follows: {
@@ -316,9 +317,9 @@ export function getRuleMap() {
 
 }
 
-var mRuleArray: Array<IMatch.mRule>;
+var mRuleArray: Array<IFModel.mRule>;
 
-export function compareMRuleFull(a: IMatch.mRule, b: IMatch.mRule) {
+export function compareMRuleFull(a: IFModel.mRule, b: IFModel.mRule) {
   var r = a.category.localeCompare(b.category);
   if (r) {
     return r;
@@ -352,7 +353,7 @@ export function compareMRuleFull(a: IMatch.mRule, b: IMatch.mRule) {
   return 0;
 }
 
-export function cmpMRule(a: IMatch.mRule, b: IMatch.mRule) {
+export function cmpMRule(a: IFModel.mRule, b: IFModel.mRule) {
   var r = a.category.localeCompare(b.category);
   if (r) {
     return r;
@@ -389,61 +390,61 @@ export function cmpMRule(a: IMatch.mRule, b: IMatch.mRule) {
 
 }
 
-export function getIntMRulesSample(): Array<IMatch.mRule> {
-  var mRules = [] as Array<IMatch.mRule>;
+export function getIntMRulesSample(): Array<IFModel.mRule> {
+  var mRules = [] as Array<IFModel.mRule>;
   mRules = mRules.concat([
     // a generic rule for any id
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "systemObjectId",
       regexp: /^\S+$/i,
       bitindex : 0x01,
       _ranking: 0.5
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^[A-Z0-9a-z_\/]+$/i,
       bitindex : 0x01,
       _ranking: 0.5
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "client",
       regexp: /^\d{3,3}$/i,
       bitindex : 0x01,
       _ranking: 0.8
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "systemId",
       regexp: /^[A-Z][A-Z0-9][A-Z0-9]$/i,
       bitindex : 0x01,
       _ranking: 0.7
     },
     {
-      type: IMatch.EnumRuleType.WORD,
+      type: IFModel.EnumRuleType.WORD,
       category: "systemId",
       word: "UV2",
       bitindex : 0x01,
       matchedString: "UV2"
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "transaction",
       regexp: /^[A-Z][A-Z0-9_]{3,3}$/i,
       bitindex : 0x01,
       _ranking: 0.7
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^SAP_BC[A-Z][A-Z0-9_]*$/,
       bitindex : 0x01,
       _ranking: 0.85
     },
     {
-      type: IMatch.EnumRuleType.REGEXP,
+      type: IFModel.EnumRuleType.REGEXP,
       category: "fiori catalog",
       regexp: /^SAP_TC[A-Z][A-Z0-9_]*$/,
       bitindex : 0x01,
@@ -591,21 +592,21 @@ export function getIntMRulesSample(): Array<IMatch.mRule> {
       bitindex : 0x02,
       _ranking: 0.9
     },
-  ]
+  ] as  Array<IFModel.mRule>
   );
   var mRules = assureLowerCaseWord(mRules);
   return mRules.sort(cmpMRule);
 }
 
 
-export function getMRulesSample(): IMatch.SplitRules {
+export function getMRulesSample(): IFModel.SplitRules {
   return Model.splitRules(getIntMRulesSample());
 }
 
 
-export function assureLowerCaseWord(mRules: Array<IMatch.mRule>) {
+export function assureLowerCaseWord(mRules: Array<IFModel.mRule>) {
   return mRules.map(function (oRule) {
-    if (oRule.type === IMatch.EnumRuleType.WORD) {
+    if (oRule.type === IFModel.EnumRuleType.WORD) {
       oRule.lowercaseword = oRule.word.toLowerCase();
     }
     return oRule;
@@ -622,9 +623,9 @@ export function getWikiUrl(string: string) {
 }
 
 
-export function getMRulesFull(): IMatch.SplitRules {
+export function getMRulesFull(): IFModel.SplitRules {
   var mRules = getIntMRulesSample();
-  mRules = mRules.concat(mUnitTestWords);
+  mRules = mRules.concat(mUnitTestWords as Array<IFModel.mRule> );
   mRules = assureLowerCaseWord(mRules);
   return Model.splitRules(mRules.sort(cmpMRule));
 }

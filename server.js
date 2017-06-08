@@ -39,7 +39,7 @@ server.listen(process.env.PORT || 42043);
 io.sockets.on('connection', function (socket) {
   var id = uuid.v4().toString(); // '' + Date.now();
   socket.id = id; //uuid.v4();// id;
-  console.log('Client connected' + Object.keys(io.clients).join(' '));
+  console.log('Client connected' + Object.keys(io.clients).join(' ')+ ' this id ' + socket.id);
        // console.log('Got answer : ' + sAnswer + '\n');
 // not now  htmlconnector.startConversation({ id : id } , function() {});
 

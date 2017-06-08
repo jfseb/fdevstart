@@ -6,7 +6,9 @@
  */
 
 
-import * as InputFilter from './inputFilter';
+//import * as InputFilter from './inputFilter';
+
+import { InputFilter as InputFilter} from 'abot_erbase';
 
 import * as Algol from './algol';
 import * as debug from 'debug';
@@ -19,11 +21,11 @@ var perflog = debug('perf');
 
 import * as Utils from 'abot_utils';
 
-import * as IMatch from './ifmatch';
+import { IFErBase as IMatch}  from 'abot_erbase';
 
 import * as Toolmatcher from './toolmatcher';
 
-import { BreakDown } from 'fdevsta_monmove';
+import { IFModel, BreakDown } from 'fdevsta_monmove';
 
 import { Sentence as Sentence} from 'abot_erbase';
 
@@ -234,7 +236,7 @@ export function joinResultsTupel(results: Array<IMatch.IWhatIsTupelAnswer>): str
   return res;
 }
 
-export function inferDomain(theModel : IMatch.IModels, contextQueryString: string): string {
+export function inferDomain(theModel : IFModel.IModels, contextQueryString: string): string {
  // console.log("here the string" + contextQueryString);
  //  console.log("here the rules" + JSON.stringify(theModel.mRules));
   var res = analyzeContextString(contextQueryString, theModel.rules);

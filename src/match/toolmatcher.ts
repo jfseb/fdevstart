@@ -14,7 +14,8 @@
 
 import * as debug from 'debug';
 
-import * as IMatch from './ifmatch';
+import { IFErBase as IMatch } from 'abot_erbase';
+import { IFModel as IFModel } from 'fdevsta_monmove';
 
 import * as Utils from 'abot_utils';
 import { Sentence as Sentence} from 'abot_erbase';
@@ -26,7 +27,7 @@ const Category = OpsWord.Category;
 
 const debuglog = debug('toolmatcher');
 
-export function matchTool(oSentence: IMatch.ISentence, oTool: IMatch.ITool): IMatch.IToolMatchResult {
+export function matchTool(oSentence: IMatch.ISentence, oTool: IFModel.ITool): IMatch.IToolMatchResult {
   var used = {} as { [key: number]: number };
   var required = {} as { [key: string]: IMatch.IWord };
   var optional = {} as { [key: string]: IMatch.IWord };
@@ -77,11 +78,19 @@ export function matchTool(oSentence: IMatch.ISentence, oTool: IMatch.ITool): IMa
   }
 }
 
+
+export interface IToolMatch {
+  toolmatchresult: IMatch.IToolMatchResult,
+  sentence: IMatch.ISentence,
+  tool: IFModel.ITool,
+  rank: number
+}
+
 import * as match from './match';
 
 const ToolMatch = match.ToolMatch;
 
-export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMatch.ITool>): IMatch.IToolMatch[] /* objectstream*/ {
+export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IFModel.ITool>): IToolMatch[] /* objectstream*/ {
   //var stream = new streamutils.MatchStream();
   debuglog("matchTools: sentences \n" +
     aSentences.map(function (oSentence, index) {
@@ -96,7 +105,7 @@ export function matchTools(aSentences: Array<IMatch.ISentence>, aTool: Array<IMa
         sentence: oSentence,
         tool : oTool,
         rank : 0
-      } as IMatch.IToolMatch;
+      } as IToolMatch;
       toolmatch.rank = ToolMatch.rankResult(toolmatch.toolmatchresult);
       if (ToolMatch.isAnyMatch(toolmatch)) {
         result.push(toolmatch);

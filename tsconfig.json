@@ -6,6 +6,8 @@
         "module": "CommonJS",
         "moduleResolution": "node",
         "isolatedModules": false,
+        "skipLibCheck" : false,
+
       //  "jsx": "react",
        // "watch" : true,
         // new ^^

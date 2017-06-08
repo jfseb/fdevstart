@@ -28,7 +28,9 @@ var debuglog= debug('accountmanager');
 //		o.country 	= newData.country;
 
 var pg = require('pg');
-pg.defaults.ssl = true;
+if(!(process.env.ABOT_DBNOSSL)) {
+  pg.defaults.ssl = true;
+}
 
 /*
 pg.connect(dburl, function(err,client,done) {

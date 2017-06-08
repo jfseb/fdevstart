@@ -29,7 +29,7 @@ export function mockDebug(o) {
 
 import * as _ from 'lodash';
 
-import * as IMatch from './ifmatch';
+import {IFErBase as IMatch}  from 'abot_erbase';
 
 import * as Match from './match';
 
@@ -41,7 +41,7 @@ import { Word as Word}  from 'abot_erbase';
 
 import * as Algol from './algol';
 
-import {Model as Model}  from 'fdevsta_monmove';
+import {Model as Model, IFModel }  from 'fdevsta_monmove';
 
 
 
@@ -224,7 +224,7 @@ export function filterDistinctResultAndSortTupel(res: IMatch.IProcessedWhatIsTup
     return true;
   });
   result.sort(cmpByRankingTupel);
-  return Object.assign(res, { tupelanswers: result });
+  return (Object as any).assign(res, { tupelanswers: result });
 }
 
 
@@ -749,7 +749,7 @@ export function matchRecordsQuickMultipleCategories(pSentences: IMatch.IProcesse
   perflog("sort (a=" + res.length + ")");
   res.sort(cmpByResultThenRankingTupel);
   perflog("MRQMC filterRetain ...");
-  var result1 = Object.assign({ tupelanswers: res }, pSentences);
+  var result1 = (Object as any).assign({ tupelanswers: res }, pSentences);
   /*debuglog("NEWMAP" + res.map(o => "\nrank" + o._ranking + " =>"
               + o.result.join("\n")).join("\n")); */
   var result2 = filterDistinctResultAndSortTupel(result1);
@@ -975,7 +975,7 @@ export function resolveCategoryOld(category: string, contextQueryString: string,
 
 
 export function resolveCategories(categories: string[], contextQueryString: string,
-  theModel: IMatch.IModels, domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {
+  theModel: IFModel.IModels, domainCategoryFilter : IMatch.IDomainCategoryFilter): IMatch.IProcessedWhatIsTupelAnswers {
   var records = theModel.records;
   var rules = theModel.rules;
   if (contextQueryString.length === 0) {
