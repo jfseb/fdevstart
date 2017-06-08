@@ -140,7 +140,12 @@ setTimeout(function() {
 // Create bot and bind to console
   var connector = new htmlconnector.HTMLConnector();
 
-  botdialog.makeBot(connector);
+  var modelPath = undefined;
+  if(!process.env.ABOT_MODELPATH && process.env.ABOT_EMAIL_USER) {
+    modelPath = 'testmodel';
+  }
+
+  botdialog.makeBot(connector, modelPath);
 
 
 

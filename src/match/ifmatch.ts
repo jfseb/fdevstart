@@ -63,6 +63,10 @@ export interface IWhatIsAnswer {
   _ranking : number
 }
 
+export type IRule = IFModel.IRule;
+
+export type mRule = IFModel.mRule;
+
 
 export interface IProcessedWhatIsAnswers extends IProcessed {
   sentences? : ISentence[],
@@ -157,21 +161,11 @@ export interface IWord {
   levenmatch?: number,
   reinforce?: number,
   bitindex? : number,
-  rule? : mRule
+  rule? : IFModel.mRule
 }
 
 export type ISentence = Array<IWord>;
 
-export interface IRule {
-  type: EnumRuleType,
-  key: string,
-  word?: string,
-  regexp?: RegExp,
-  argsMap?: { [key: number]: string }  // a map of regexp match group -> context key
-  // e.g. /([a-z0-9]{3,3})CLNT([\d{3,3}])/
-  //      { 1 : "systemId", 2 : "client" }
-  follows: context
-}
 
 export interface IntentRule {
   type: EnumRuleType,
@@ -192,6 +186,11 @@ export interface IWordRange extends IRange
 /**
  * A rule matching a single string
  */
+
+//import { IErRule } from 'abot_erbase'
+
+/*}
+
 export interface mRule {
   type: EnumRuleType,
   word?: string,
@@ -202,15 +201,16 @@ export interface mRule {
   category: string,
   bitindex : number,
   range? :  IWordRange,
-  /**
+  /* *
    * only use an exact match
-   */
+   * /
   exactOnly? : boolean,
   _ranking?: number
 }
+*/
 
 export interface IWordRules {
-  rules : Array<mRule>,
+  rules : Array<IFModel.mRule>,
   bitindex: number
 }
 export type SplitRules = IFModel.SplitRules;
