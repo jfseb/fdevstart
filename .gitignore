@@ -3,9 +3,8 @@ docs
 gen_tsc
 info.lcov
 logs
-gen/**
-gen/*
 gen3
+gen2/**
 testmodel/*.bak
 testmodel/graph/*
 testmodel/*.gv
