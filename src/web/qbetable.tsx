@@ -18,7 +18,7 @@ function reqListener () {
 
 try {
 
-var loadPromise = new Promise(function (resolve, reject) {
+var loadPromise = new (window as any).Promise(function (resolve, reject) {
   var oReq = new XMLHttpRequest();
   oReq.addEventListener("load", function() {
     var r = JSON.parse(this.responseText);
@@ -110,7 +110,7 @@ const XcolumnsDefaultWidth = ((window as any).mdldata && (window as any).mdldata
 
 
 function mergeDataRespose(state : IState, mdlData : any) : IState {
-  var aState = Object.assign({},state) ;
+  var aState = (Object as any).assign({},state) ;
     aState.allColumns = mdlData.columns || XdefaultCols;
     var urlcols = getURLColsFromURL(aState.allColumns);
     aState.columns = (  urlcols.length && urlcols || XdefaultCols );
@@ -287,7 +287,7 @@ function produceSearchResult(state: string): number[] {
 select a bunch of requested indices,
 */
 function fetch(input: string): any {
-  return new Promise(function (resolve, reject) {
+  return new (window as any).Promise(function (resolve, reject) {
 
     setTimeout(function () {
 

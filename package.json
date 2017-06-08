@@ -141,12 +141,11 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "request-defaults": "^1.2.0",
-    "socket.io": "^1.7.1",
     "source-map-loader": "^0.1.6",
     "stream-to-array": "^2.3.0",
     "textarea-autogrow": "^1.0.0",
     "ts-loader": "^2.0.0",
-    "typescript": "^2.0.10",
+    "typescript": "^2.2.2",
     "webpack": "^2.2.1",
     "webpack-stream": "^3.2.0"
   }
