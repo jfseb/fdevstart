@@ -167,6 +167,7 @@ gulp.task('tscx', function () {
  * @input srcDir
  * @output genDir
  */
+/*
 gulp.task('tsc2', function () {
   var tsProject = ts.createProject('tsconfig.json', { inlineSourceMap: false });
   var tsResult = tsProject.src() // gulp.src('lib/*.ts')
@@ -182,6 +183,7 @@ gulp.task('tsc2', function () {
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('gen2'));
 });
+*/
 
 
 var jsdoc = require('gulp-jsdoc3');
@@ -229,7 +231,6 @@ var newer = require('gulp-newer');
 
 var imgSrc = 'src/**/*.js';
 var imgDest = 'gen';
-var imgDest2 = 'gen2';
 
 // compile standard sources with babel,
 // as the coverage input requires this
@@ -248,6 +249,7 @@ gulp.task('babel', ['tsc'], function () {
 // compile standard sources with babel,
 // as the coverage input requires this
 //
+/*
 gulp.task('babel2', ['tsc2'], function () {
   // Add the newer pipe to pass through newer images only
   return gulp.src([imgSrc])
@@ -258,6 +260,7 @@ gulp.task('babel2', ['tsc2'], function () {
     }))
     .pipe(gulp.dest('gen2'));
 });
+*/
 
 
 //const replace = require('gulp-replace');
@@ -347,7 +350,7 @@ gulp.task('standard', ['babel'], function () {
 
 const eslint = require('gulp-eslint');
 
-gulp.task('standard', () => {
+gulp.task('eslint', () => {
   // ESLint ignores files with "node_modules" paths.
   // So, it's best to have gulp ignore the directory as well.
   // Also, Be sure to return the stream from the task;
@@ -364,14 +367,6 @@ gulp.task('standard', () => {
     .pipe(eslint.failAfterError());
 });
 
-// we don't use this'
-var coveralls = require('gulp-coveralls');
-
-gulp.task('coveralls', function () {
-  gulp.src('testcov/**/lcov.info')
-    .pipe(coveralls());
-});
-
 
 var gulp_shell = require('gulp-shell');
 
@@ -380,9 +375,7 @@ gulp.task('graphviz', function () {
   .pipe(gulp_shell([ 'dot -O -Tjpeg <%= file.path %>']));
 });
 
-// gulp.task('coverage', ['tsc', 'babel', 'standard', 'instrument', 'doc', 'coveralls'])
-
 // Default Task
-gulp.task('default', ['tsc', 'babel', 'standard', 'webpack', 'doc', 'test', 'babel2', 'tsc2']);
-gulp.task('build', ['tsc', 'webpack', 'babel', 'standard', 'babel2', 'tsc2']);
+gulp.task('default', ['tsc', 'babel', 'eslint', 'webpack', 'doc', 'test']);
+gulp.task('build', ['tsc', 'webpack', 'babel']);
 gulp.task('allhome', ['default', 'graphviz']);
