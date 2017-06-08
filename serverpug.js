@@ -182,19 +182,21 @@ setTimeout(function() {
     socket.on('reconnect_failed', (err) => {
       console.log(err);
     });
+    debuglog('associate answerhook '+ id);
     connector.setAnswerHook(function (sAnswer, oCommand, sId) {
       debuglog('sending answer for ' + sId + ' to ' + id + ' > ' + sAnswer);
       socket.emit('wosap',{ time : new Date(),
         name : 'unknown' ,
         command : oCommand,
-        text : sAnswer
+        text : sAnswer,
+        id : id
       });
     }, id);
 
   //socket.emit('register', { id : id });
    // io.clients(0).send('chat' ,{ time  : new Date(), name : 'HUGO', text: 'something'});
     socket.on('disconnect', () => {
-      debuglog('Client disconnected');  });
+      debuglog('Client disconnected' + id);  });
 	// der Client ist verbunden
     socket.emit('wosap', { time : new Date(), text: 'Indicate your query or wish:' });
     debuglog('got a message from ' + user + ' ' + id  );
@@ -204,7 +206,18 @@ setTimeout(function() {
     //console.log('Here data on request' + JSON.stringify(socket.handshake.session));
     //console.log(data);
     //var user = getUser(socket.handshake.session)
+      debuglog('request has conversationid? '  + (data && data.conversationid) );
       var conversationid = data.conversationid || id;
+      debuglog('re associate answerhook ' + conversationid);
+      connector.setAnswerHook(function (sAnswer, oCommand, sId) {
+        debuglog('sending answer for ' + sId + ' to ' + conversationid + ' > ' + sAnswer);
+        socket.emit('wosap',{ time : new Date(),
+          name : 'unknown' ,
+          command : oCommand,
+          text : sAnswer,
+          id : conversationid
+        });
+      }, conversationid);
       debuglog('user' + user + ' conv: ' + conversationid + ' asks '  + data.text);
       connector.processMessage(data.text, { conversationid :conversationid,
         user : user});
